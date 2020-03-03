@@ -1,0 +1,63 @@
+\usepackage[bookmarks]{hyperref}
+\usepackage[T1]{fontenc}
+\usepackage{textcomp}
+\usepackage{lmodern}
+\usepackage[latin1]{inputenc}
+\usepackage[swedish,english]{babel}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx,psfrag}
+\usepackage{color}
+\usepackage{cite}
+\usepackage{url}
+\usepackage{array}
+\usepackage{enumerate}
+\usepackage{amsthm}
+\usepackage{comment}
+\usepackage{float}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{balance}
+\usepackage{bm}
+\usepackage{subfig}
+\usepackage{epstopdf}
+\usepackage{comment}
+\usepackage{makeidx}
+\makeindex
+\usepackage{nomencl}
+\makenomenclature
+\renewcommand{\nomname}{Acronyms and Notations}
+\usepackage{etoolbox}
+\renewcommand\nomgroup[1]{
+\item[\bfseries
+\ifstrequal{#1}{A}{Acronyms}{%
+\ifstrequal{#1}{N}{Notations}{}}
+]}
+
+\newtheorem{theorem}{Theorem}
+\numberwithin{theorem}{chapter}
+\newtheorem{lemma}{Lemma}
+\numberwithin{lemma}{chapter}
+\newtheorem{proposition}{Proposition}
+\numberwithin{proposition}{chapter}
+\newtheorem{corollary}{Corollary}
+\numberwithin{corollary}{chapter}
+\newtheorem{remark}{Remark}
+\numberwithin{remark}{chapter}
+\newtheorem{property}{Property}
+\numberwithin{property}{chapter}
+\newtheorem{conjecture}{Conjecture}
+\numberwithin{conjecture}{chapter}
+\newtheorem{assumption}{Assumption}
+\numberwithin{assumption}{chapter}
+\numberwithin{algorithm}{chapter}
+
+\renewcommand{\algorithmicrequire}{\textbf{input:}}
+\renewcommand{\algorithmicensure}{\textbf{output:}}
+
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../main"
+%%% End:

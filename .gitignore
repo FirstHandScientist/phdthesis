@@ -12,3 +12,4 @@ auto/*
 *.nls
 *.out
 *.synctex.gz
+*.el
