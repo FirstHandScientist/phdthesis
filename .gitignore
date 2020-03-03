@@ -1,0 +1,14 @@
+Bibl.log
+auto/*
+*.aux
+*.bbl
+*.blg
+*.dvi
+*.idx
+*.ilg
+*.ind
+*.log
+*.nlo
+*.nls
+*.out
+*.synctex.gz
