@@ -6,8 +6,8 @@ Schedule following: [KTH public defense of doctoral thesis](https://intra.kth.se
 - [ ] **March**: ~~preliminary Content organizing~~ We decide revise content organizing while along writing content.
 - [ ] **March-May**: Finish the first complete draft of thesis.
 - [ ] **June-August**: Improving and revising thesis.
-- [ ] **1st-15th, June**: Lars and Ragnar check availability of committee members.
-- [ ] **1st-15th, June**: Lars and Ragnar confirm advance reviewer of the thesis.
+- [ ] **1st-15th, June**: **Lars and Ragnar** check availability of committee members.
+- [ ] **1st-15th, June**: **Lars and Ragnar** confirm advance reviewer of the thesis.
 - [ ] Considering that summer break **16 June -- 14 August** is not taken into account into KTH public defense procedure, we would like to start the standard 10-week-ahead procedure (as follows) right before summer break.
 - [ ] **1st-15th, June**~~23rd-29th August, the 35th week (23rd-29th August the 35th week)~~: lecture hall booking, revise eISP, advance reviewer and preliminary version to thesis to advance reviewer.
 - [ ] **20th-26th September, the 39th week** (time adjustment may follows above for summer break) ISP, TRITA number, defense application form, thesis preliminary version.
