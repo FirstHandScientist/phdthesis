@@ -12,5 +12,5 @@ Schedule following: [KTH public defense of doctoral thesis](https://intra.kth.se
 - [ ] **1st-15th, June**~~23rd-29th August, the 35th week (23rd-29th August the 35th week)~~: lecture hall booking, revise eISP, advance reviewer and preliminary version to thesis to advance reviewer.
 - [ ] **20th-26th September, the 39th week** (time adjustment may follows above for summer break) ISP, TRITA number, defense application form, thesis preliminary version.
 - [ ] **11th-17th, October, the 42 week** (time adjustment may follows above for summer break):Thesis finalized and delivered to DiVA and KTH libarary.
-- [ ] **1st-7th November, the 45th week** (time adjustment may follows above for summer break): Defense week.
+- [ ] **Mid of October--7th November, the 45th week** (The time ranges large to tolerate the availability of committee): Defense week.
 
