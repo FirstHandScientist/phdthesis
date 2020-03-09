@@ -2,11 +2,36 @@
 \label{chapter2}
 Background on probabilistic graphical models
 
-\section{Directed and Undirected graphs}.
+\section{Graphical representation and inference}.
+\subsection{graphical models}
+It is clear that undirected graphs should be explained, since Part I is work on it. For HMM, it can be viewed either a dynamic Bayesian network (chapter 6, Koller) or condition random field(introduction to CRF, Sutton).
 
-\section{Dealing with latent variables}
 
+\subsection{intro to inference methods}
+\section{Learning principles}
+It may be better to discuss the learning principle here.
 
+Cited from 10-708 lecture6 note:
+
+UNOBSERVED VARIABLES:
+
+A variable can be unobserved or latent because it is a(n):
+
+-Abstract or imaginary quantity meant to simplifiy the data generation process, e.g. speech recognition models, mixture models.
+-A real-world object that is difficult or impossible to measure, e.g. the temperature of a star, causes of disease, evolutionary ancestors.
+-A real-world object that was not measured due to missed samples, e.g. faulty sensors.
+
+Discrete latent variables can used to partition or cluster data into sub-groups
+
+Continuous latent variables (factors) can be used for dimensionality reduction (e.g. factor analysis, etc)
+\subsection{Dealing with latent variables}
+\subsection{about clamping node}
+clamping node gives conditional distribution.
+
+\subsection{about ELBO bound}
+1. the bound used by EM
+
+2. talk about ELBO/variational inference \href{https://media.nips.cc/Conferences/2016/Slides/6199-Slides.pdf}{Variational Inference}, which is closely related the bound used in EM.
 
 %%% Local Variables:
 %%% mode: latex

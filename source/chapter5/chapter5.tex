@@ -1,6 +1,111 @@
+\chapter{Learning with inference}
+
+
+\section{learning Undirected graphical models/ MRF}
+move the MRF learning by using RENN here
+
+I should read lecture note 7 of 10-708 again when writing this seciton.
+
+\section{Amortized/Neural Variational Learning and Inference of partial observed MRF}
+1. TRW as upper bound to partition function
+
+2. Mean field or negative TRW as lower bound to partition function
+
+combining above together, we can obtain two different lower bound of likelihood. Consider if worthy a paper.
+
+\begin{itemize}
+\item The log-likelihood of partial observed MRF is non-convex in general ( log-sum-exp is convex, but the difference of two log-sum-exp functions might not be). This combination convert the original non-convex learning into convex optimization with regarding to MRF parameter? should be, but need a confirmation.
+\item 1. The speed of training can be improved by directly optimizing amortized beliefs.
+\item The bound becomes tighter by using clamping of variable, clamping can be done with or without selection of variables. No sampling is needed in training or inference.
+\item If need more contribution, use tree-reweighted hyper graph to obtain tighter bound.
+  
+\item Not necessarily done here: the bound can also be further improved by important sampling.
+\end{itemize}
+
+Reference:
+\begin{itemize}
+\item 1. \href{http://ssg.mit.edu/group/willsky/publ_pdfs/166_pub_AISTATS.pdf}{Wainwright, 2003, Tree-reweighted belief propagation algorithms and approximate ML estimation by pseudo-moment matching}
+\item 2. \href{https://arxiv.org/abs/1510.00087}{Weller, 2015,Clamping Improves TRW and Mean Field Approximations}
+\item 3. \href{https://arxiv.org/pdf/1402.0030.pdf}{Mnih, 2014, Neural Variational Inference and Learning in Belief Networks}, which describes a neural variational method for belief network. The major difference is the belief network as a DAG do not have the problem of partition function difficulty as MRF or partial observed MRF.
+  
+\end{itemize}
+
+\section{Notation}
+Random variable $\bm{v} \in \Xx_v$ that can be observed.
+Random variable $\bm{h} \in \Xx_h$ that is hidden variable and can not be observed.
+
+\section{Model and Problem Definition}
+
+We define the conditional probabilistic model as
+\begin{equation}\label{eq:model}
+  p(\bm{v}, \bm{h} ; \bm{\theta}) = \frac{1}{Z(\bm{\theta})} \tilde{p}(\bm{v}, \bm{h} |\bm{\theta}),
+\end{equation}
+with
+
+\begin{align}
+  Z(\bm{\theta}) & = \sum_{\bm{v}}\sum_{\bm{h}} \tilde{p}(\bm{v}, \bm{h} |\bm{\theta})\\
+  \tilde{p}(\bm{v}, \bm{h} ; \bm{\theta}) & = \exp\left\{-E(\bm{v}, \bm{h}, \bm{\theta})\right\}
+\end{align}
+
+where $E(\bm{v}, \bm{h}; \bm{\theta})$ is the average energy: $\Xx_v \times \Xx_h \rightarrow \RR$.
+
+We want to maximize the marginal likelihood:
+\begin{equation}
+  \umax{\bm{\theta}}{\log\;\sum_{\bm{h}}p(\bm{v}, \bm{h}; \bm{\theta})} = \umax{\bm{\theta}}{\log\;Z(\bm{v}, \bm{\theta})} - \log\; Z(\bm{\theta}), 
+\end{equation}
+where $Z(\bm{v}, \bm{\theta})  = \sum_{\bm{h}}\tilde{p}(\bm{v}, \bm{h} ; \bm{\theta})$
+\section{A lower bound of the marginal likelihood}
+Denote $A(\bm{\theta}) = \log{Z(\bm{\theta})}$ and $A(\bm{v}, \bm{\theta}) = \log{Z(\bm{v}, \bm{\theta})}$
+\begin{equation}
+  E(\bm{v}, \bm{h}, \bm{\theta}) = - \langle  \bm{\theta}, \bm{\phi}(\bm{v}, \bm{h})\rangle
+\end{equation}
+and
+\begin{equation}
+  \bm{\mu} = \EE_{p(\bm{v}, \bm{h}; \bm{\theta})}[\bm{\phi}(\bm{v}, \bm{h})].
+\end{equation}
+In case of overcomplete representation of $\bm{\phi}$, $\bm{\mu}$ is the set of marginal distributions.
+
+With mean field approximation,
+\begin{equation}
+  A_{M}(\bm{v}, \bm{\theta}) = \umax{\bm{\mu}_{\bm{v}} \in \Mm_M}{ \langle {\bm{\theta}, \bm{\mu}_{\bm{v}}} \rangle + H(\bm{\mu}_{\bm{v}})},
+\end{equation}
+where $\Mm_M$ is the subspace of distributions where each variable is independent. And we have
+\begin{equation}
+  A_{M}(\bm{v}, \bm{\theta}) \leq A(\bm{v}, \bm{\theta}).
+\end{equation}
+
+With tree-reweighted approximation, TRW,
+\begin{equation}
+  A_{T}(\bm{\theta}) = \umax{\bm{\mu} \in \Mm_T}{ \langle {\bm{\theta}, \bm{\mu}} \rangle + H(\bm{\mu})},
+\end{equation}
+where $\Mm$ is the subspace of distributions where each variable is independent. And we have
+\begin{equation}
+  A_{T}(\bm{\theta}) \geq A( \bm{\theta}).
+\end{equation}
+
+We define the lower bound of marginal loglikelihood:
+\begin{equation}
+  \Ll(\bm{\theta}) = A_{M}(\bm{v}, \bm{\theta}) - A_{T}(\bm{\theta}) \leq \log\sum_{\bm{h}}p(\bm{v}, \bm{h}; \bm{\theta}).
+\end{equation}
+
+
+
 \chapter{Powering the expectation maximization method by neural networks}
 content: \href{https://arxiv.org/abs/1907.13432}{Neural Network based Explicit Mixture Models and Expectation-maximization based Learning}, under review
 
+section/chapter transition text: mixture model could be obtained from clamping and condition on a discrete variable, ref to Geier, \href{http://auai.org/uai2015/proceedings/papers/158.pdf}{Locally conditional belief propagation}. \href{https://papers.nips.cc/paper/5529-clamping-variables-and-approximate-inference.pdf}{Weller, clamping variables and approximate inference}
+
+\begin{remark}
+  RELATIONSHIP TO K-MEANS CLUSTERING
+  Big picture: The EM algorithm for mixtures of Gaussians is like a soft version of the K-means algorithm.
+\end{remark}
+
+\begin{remark}
+  EM lower bound $+$ entropy of posterior of latent variable if a free energy. ref to 10-708 lecture6 note.
+  EM using posterior of latent variable is equivalent to fully observable MLE where statistics are replaced by their expectations w.r.t the posterior.
+\end{remark}
+
+Can be viewed as two-node graphical model learning. \href{https://sailinglab.github.io/pgm-spring-2019/notes/lecture-05/}{10-708lecture5-note}
 \section{Normalizing flow}
 
 \section{expectation maximization of neural network based mixture models}

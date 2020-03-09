@@ -24,7 +24,8 @@
 \usepackage{makeidx}
 % Several biblographies
 \usepackage{bibunits}
-
+% figure drawing
+\usepackage{tikz}
 \makeindex
 \usepackage{nomencl}
 \makenomenclature
@@ -35,7 +36,7 @@
 \ifstrequal{#1}{A}{Acronyms}{%
 \ifstrequal{#1}{N}{Notations}{}}
 ]}
-
+\newtheorem{example}{Example}
 \newtheorem{theorem}{Theorem}
 \numberwithin{theorem}{chapter}
 \newtheorem{lemma}{Lemma}
@@ -57,8 +58,9 @@
 \renewcommand{\algorithmicrequire}{\textbf{input:}}
 \renewcommand{\algorithmicensure}{\textbf{output:}}
 
-\DeclareMathOperator*{\argmin}{arg\,min}
-\DeclareMathOperator*{\argmax}{arg\,max}
+
+\usepackage{preamble/mystyle}
+
 
 %%% Local Variables:
 %%% mode: latex
