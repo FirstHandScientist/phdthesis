@@ -88,6 +88,24 @@ We define the lower bound of marginal loglikelihood:
   \Ll(\bm{\theta}) = A_{M}(\bm{v}, \bm{\theta}) - A_{T}(\bm{\theta}) \leq \log\sum_{\bm{h}}p(\bm{v}, \bm{h}; \bm{\theta}).
 \end{equation}
 
+Connection to RBM:
+\begin{equation}
+  p(\bm{v}, \bm{h}; \bm{\theta}) = \frac{1}{Z(\bm{\theta})} \exp{\bm{v}\bm{W}\bm{h} + \bm{v}\bm{b} + \bm{v}\bm{a}}
+\end{equation}
+Note $p(\bm{h}|\bm{h})$ is exactly independent, and thus the $A_{M}(\theta) = A(\bm{\theta})$ can be achieved, then how tight the lower bound $\Ll(\bm{theta})$ would dependent only on the TRW bound.
+
+\section{Experiment}
+\begin{itemize}
+\item Start with standard RBM \href{https://papers.nips.cc/paper/9687-amortized-bethe-free-energy-minimization-for-learning-mrfs.pdf}{section 4.2 in Amortized learning of MRFs}
+  \begin{itemize}
+  \item Try to break the conditinal independence by connecting nodes of $\bm{h}$
+  \item Extent to conditional RBM training for denoising and data completion
+  \end{itemize}
+\item high-order HMMs
+
+\end{itemize}
+
+
 
 
 \chapter{Powering the expectation maximization method by neural networks}
