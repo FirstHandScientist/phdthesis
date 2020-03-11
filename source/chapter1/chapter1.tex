@@ -23,7 +23,7 @@ With all the discussed problems above, modelling, inference and learning, our pu
 These problems can be treated nicely with probabilistic models. Probabilistic models is built on the fundamental calculus of probability theory that is natural to accommodate the \textit{uncertainty}, which is desired in reasoning. In additional, the probabilistic models offers rich space to modeling problems, where inference can be carried on either exactly or approximately. \textbf{More importantly, the modeling or modeling learning part is not necessarily coupled with inference algorithm.} This proper separation allows free that a certain family of general inference algorithms can be applies to a broad class probabilistic models. It offers the freedom of trying different models of a class without the need of replacing inference algorithm. 
 
 \begin{example}\label{example-corona}
-  Consider the coronavirus infection problem. Using probabilistic modelk, we are able to model the problem in a rigid way. Additionally, we can make query more formally in probabilistic model framework. Assume each symptom among fever, cough and breathing difficulty can take value from $\left\{ \mathrm{True}, \mathrm{False} \right\}$. Also the coronavirus infection is either true or false. One exemplified query can be
+  Consider the coronavirus infection problem. Using probabilistic model, we are able to model the problem in a rigid way. Additionally, we can make query more formally in probabilistic model framework. Assume each symptom among fever, cough and breathing difficulty can take value from $\left\{ \mathrm{True}, \mathrm{False} \right\}$. Also the coronavirus infection is either true or false. One exemplified query can be
   \begin{equation}
     P(\mathrm{Infection} = \mathrm{True} | \mathrm{Fever} = \mathrm{True}, \mathrm{Cough} = \mathrm{False}, \mathrm{Breathing Difficulty}= \mathrm{True}), \nonumber
   \end{equation}
@@ -31,12 +31,8 @@ These problems can be treated nicely with probabilistic models. Probabilistic mo
 
 \end{example}
 
-\begin{example}
-  digital communication? Y, X do we need this example
-\end{example}
-
 \begin{figure}[!t]
-  \captionsetup[subfigure]{justification=centering}
+  % \captionsetup[subfigure]{justification=centering}
   \begin{subfigure}{.4\textwidth}
     \begin{tikzpicture}
       \tikzstyle{cnode} = [thick, draw=black, ellipse, inner sep = 1pt,  align=center]
@@ -51,18 +47,18 @@ These problems can be treated nicely with probabilistic models. Probabilistic mo
     \end{tikzpicture}
     \caption{A directed graphical model for Example~\ref{example-corona}.}
     \label{fig:dag-coronavirus}
-  \end{subfigure}\hspace{3cm}
+  \end{subfigure}\hspace{2.5cm}
   \begin{subfigure}{0.3\textwidth}
     \begin{tikzpicture}
       \tikzstyle{cnode} = [thick, draw=black, ellipse, inner sep = 2pt,  align=center]
-      \node[cnode] (x1) at (0,0) {$x_1$};
-      \node[cnode] (x2) at (3,0) {$x_2$};
-      \node[cnode] (y1) at (0,-2) {$y_1$};
-      \node[cnode] (y2) at (3,-2) {$y_2$};
-      \draw[-] (x1) -- (y1);
-      \draw[-] (x2) -- (y1);
-      \draw[-] (x1) -- (y2);
-      \draw[-] (x2) -- (y2);
+      \node[cnode] (ts) at (0,0) {True Symbol};
+      \node[cnode] (rs) at (0.5,-2) {Received Symbol};
+      \node[cnode] (env) at (2,-1) {Environment};
+      
+      \draw[-] (ts) -- (rs);
+      \draw[-] (ts) -- (env);
+      \draw[-] (rs) -- (env);
+      
     \end{tikzpicture}
     \caption{An undirected graphical model.}
     \label{fig:mrf-communication}
@@ -71,172 +67,81 @@ These problems can be treated nicely with probabilistic models. Probabilistic mo
   \hspace{1cm}
 \end{figure}
 
-Todo:
 
-Explain probabilistic graphical models with figure illustrated.
+Given the fact that probabilistic theory offers a rigid foundation to model and study the problems, which is used to answer query that we concerns, it soon becomes intractable when dozens or hundreds of relevant attributes are joint considered. This can be exemplified by giving finer levels of each symptom in coronavirus infection, e.g. symptom fever is represented by the actual body temperature in integer instead of true-or-false binary state on the one hand. On the other hand, there could be more directly and indirectly relevant symptoms such as muscle pain and congestion. Together with the symptoms, the recent travel itinerary is also related. Additionally, season flu could also similarly bring up some symptoms listed above. 
 
-% \begin{figure}[!t]
-%   \centering
-%   \begin{tikzpicture}
-%     \begin{scope}[scale=0.7]
+Probabilistic graphical model offers a general framework to encode random variable dependency of a complex probabilistic distribution into a structured graph, which is a powerful tool to compactly model relevant attributes and facts of a complex problem. As show in Figure~\ref{fig:dag-coronavirus} that represents the problem of Example~\ref{example-corona} into a directed graphical model (or Bayesian network), the nodes (or vertexes) corresponds to the variables that represents symptoms and infection state, whereas the edges between nodes correspond how one variable may influence others. In contract to the directed graphical model, there are more scenarios that the influence or interaction between related random variables is not directional, an undirected edge is used, which leads the undirected graphical model (or Markov random field, Section~\ref{sec:background-graphial-reppresentation}) representation. The undirected graphical models are popular used in computer vision \cite{}, computational biology \cite{}, digital communication \cite{}, statistical physics, etc. Figure~\ref{fig:mrf-communication} illustrates an exemplified undirected graphical model in digital communication context, where the receiver wants to guess what is the true symbol by joint considering the communication environment and the received symbol, whereas the symbol received by the receiver is jointly formulated by the true symbol and environment.
 
-%       \tikzstyle{cnode} = [thick, draw=black, circle, inner sep = 1pt,  align=center]
-%       \tikzstyle{nnode} = [thick, rectangle, rounded corners = 0pt,draw,inner sep = 2pt]
-%       \node[cnode] (x1) at (0,0) {1};
-%       \node[cnode] (x2) at (2,0) {2};
-%       \node[cnode] (x3) at (4,0) {3};
+Probabilistic graphical model offers a 'scientific language' to do reasoning with uncertainty within framework of probabilistic theory. It is usually very nature to represent a complex system or problem by a probabilistic graphical model. The compact representation of probabilistic graphical model bridges the joint distribution of a complex system, and its graphical abstraction that captures the statistic dependency reflecting our understanding of the system. The advantage of its representation power is one of its popular application in difference disciplines.
 
-%       \node[cnode] (x4) at (0,-2) {4};
-%       \node[cnode] (x5) at (2,-2) {5};
-%       \node[cnode] (x6) at (4,-2) {6};
+\begin{figure}[!t]
+  \centering
+  \begin{tikzpicture}
+    \tikzstyle{cnode} = [thick, draw=black, ellipse, inner sep = 2pt,  align=center]
+    \tikzstyle{fnode} = [thick, draw=black, ellipse, inner sep = 10pt,  align=center]
+    
+    \node[cnode] (infn) at (0,0) {Inference};
+    \node[cnode] (lern) at (3,0) {Learning};
+    
+    \node[fnode, fit=(infn)(lern)] (box) {};
+    \node[] at (1.4, -0.6) {Probabilistic Graphical Model};
+    \draw[->,line width=0.2mm] (infn) to[out=15, in=165] (lern);
+    \draw[->,line width=0.2mm] (lern) to[out=195, in=-15] (infn);
+  \end{tikzpicture}
+  \caption{Two key aspects in practical graphical models.}
+  \label{fig:intro-pgm}
+  \hspace{1cm}
+\end{figure}
 
-%       \node[nnode] (fa) at (1,0) {\small$A$};
-%       \node[nnode] (fb) at (3,0) {\small$B$};
-
-%       \node[nnode] (fc) at (0,-1) {\small$C$};
-%       \node[nnode] (fd) at (2,-1) {\small$D$};
-%       \node[nnode] (fe) at (4,-1) {\small$E$};
-
-%       \node[nnode] (ff) at (1,-2) {\small$F$};
-%       \node[nnode] (fg) at (3,-2) {\small$G$};
-
-
-%       \draw[-] (x1) -- (fa);
-%       \draw[-] (x1) -- (fc);
-
-%       \draw[-] (x2) -- (fa);
-%       \draw[-] (x2) -- (fb);
-%       \draw[-] (x2) -- (fd);
-
-%       \draw[-] (x3) -- (fb);
-%       \draw[-] (x3) -- (fe);
-
-%       \draw[-] (x4) -- (fc);
-%       \draw[-] (x4) -- (ff);
-
-%       \draw[-] (x5) -- (fd);
-%       \draw[-] (x5) -- (ff);
-%       \draw[-] (x5) -- (fg);
-
-%       \draw[-] (x6) -- (fe);
-%       \draw[-] (x6) -- (fg);
-
-%     \end{scope}
-%     \draw[dashed] (0, -1.8) -- (7.5, -1.8) (3.3, 0) -- (3.3, -1.8);
-
-%     \begin{scope}[xshift=4.5cm, yshift=-0.3cm,scale=0.7]
-%       \tikzstyle{rnode} = [thick, rectangle, rounded corners = 2pt,minimum size = 0.0cm,draw,inner sep = 2pt]
-%       \node[rnode] (r01) at (0,0) {\small \begin{tabular}[x]{@{}c@{}}1, 2, 4, 5 \\ $A,C,D,F$ \end{tabular}};
-%       \node[rnode] (r02) at (3,0) {\small \begin{tabular}[x]{@{}c@{}}2, 3, 5, 6\\ $B,D,E,G$ \end{tabular}};
-%       \node[rnode] (r11) at (1.5, -1.5) {\small 2, 5, $D$};
-
-%       \draw[->] (r01.south) -- (r11.north);
-%       \draw[->] (r02.south) -- (r11.north);
-
-%     \end{scope}
-
-%     \begin{scope}[xshift=0.5cm, yshift=-2.35cm,scale=0.7]
-%       \tikzstyle{rnode} = [thick, rectangle, rounded corners = 2pt,minimum size = 0.0cm,draw,inner sep = 2pt]
-%       \node[rnode] (r01) at (0,0) {\small\begin{tabular}[x]{@{}c@{}}1, 2, 4, 5 \\ $A,C,D,F$ \end{tabular}};
-%       \node[rnode] (r02) at (3.7,0) {\small\begin{tabular}[x]{@{}c@{}}2, 3, 5, 6\\ $B,D,E,G$ \end{tabular}};
-%       \node[rnode] (r03) at (8,0) {\small\begin{tabular}[x]{@{}c@{}}1, 2, 3, 4, 5, 6\\ $A,B,C,E,F,G$ \end{tabular}};
-%       \begin{scope}[yshift=-0.2cm]
-%         \node[rnode] (r11) at (0, -2.0) {\small\begin{tabular}[x]{@{}c@{}}1, 2\\ $A$ \end{tabular}};
-%         \node[rnode] (r12) at (1.5, -2.0) {\small\begin{tabular}[x]{@{}c@{}}2, 3\\ $B$ \end{tabular}};
-%         \node[rnode] (r13) at (3, -2.0) {\small\begin{tabular}[x]{@{}c@{}}1, 4\\ $C$ \end{tabular}};
-%         \node[rnode] (r14) at (4.5, -2.0) {\small\begin{tabular}[x]{@{}c@{}}2, 5\\ $D$ \end{tabular}};
-%         \node[rnode] (r15) at (6, -2.0) {\small\begin{tabular}[x]{@{}c@{}}3, 6\\ $E$ \end{tabular}};
-%         \node[rnode] (r16) at (7.5, -2.0) {\small\begin{tabular}[x]{@{}c@{}}4, 5\\ $F$ \end{tabular}};
-%         \node[rnode] (r17) at (9, -2.0) {\small\begin{tabular}[x]{@{}c@{}}5, 6\\ $G$ \end{tabular}};
-
-%         \begin{scope}[yshift=0.5cm]
-%           \node[rnode] (r21) at (1, -4) {\small 1};
-%           \node[rnode] (r22) at (2.5, -4) {\small 2};
-%           \node[rnode] (r23) at (4, -4) {\small 3};
-%           \node[rnode] (r24) at (5.5, -4) {\small 4};
-%           \node[rnode] (r25) at (7, -4) {\small 5};
-%           \node[rnode] (r26) at (8.5, -4) {\small 6};
-%         \end{scope}
-%       \end{scope}
-%       %       edge level0 to level1
-%       \draw[->] (r01.south) -- (r11.north);
-%       \draw[->] (r03.south) -- (r11.north);
-
-%       \draw[->] (r02.south) -- (r12.north);
-%       \draw[->] (r03.south) -- (r12.north);
-
-%       \draw[->] (r01.south) -- (r13.north);
-%       \draw[->] (r03.south) -- (r13.north);
-
-%       \draw[->] (r01.south) -- (r14.north);
-%       \draw[->] (r02.south) -- (r14.north);
-
-%       \draw[->] (r02.south) -- (r15.north);
-%       \draw[->] (r03.south) -- (r15.north);
-
-%       \draw[->] (r01.south) -- (r16.north);
-%       \draw[->] (r03.south) -- (r16.north);
-
-%       \draw[->] (r02.south) -- (r17.north);
-%       \draw[->] (r03.south) -- (r17.north);
-
-%       %       edge level1 to level2
-%       \draw[->] (r11.south) -- (r21.north);
-%       \draw[->] (r13.south) -- (r21.north);
-
-%       \draw[->] (r11.south) -- (r22.north);
-%       \draw[->] (r12.south) -- (r22.north);
-%       \draw[->] (r14.south) -- (r22.north);
-
-
-%       \draw[->] (r12.south) -- (r23.north);
-%       \draw[->] (r15.south) -- (r23.north);
-
-%       \draw[->] (r13.south) -- (r24.north);
-%       \draw[->] (r16.south) -- (r24.north);
-
-%       \draw[->] (r14.south) -- (r25.north);
-%       \draw[->] (r16.south) -- (r25.north);
-%       \draw[->] (r17.south) -- (r25.north);
-
-%       \draw[->] (r15.south) -- (r26.north);
-%       \draw[->] (r17.south) -- (r26.north);
-%     \end{scope}
-%   \end{tikzpicture}
-%   \vskip -0.15in
-%   \caption{Illustration of a factor graph for 2-by-3 grid (top left, variable nodes are indexed by number and factor nodes by letters), and two alternative regions graphs (two levels for the top right one and three levels for bottom one) constructed from the factor graph.}
-%   \label{fig:factor-region-graphs}
-%   \vskip -0.2in
-% \end{figure}
-basic problems: 1. modeling, 2. inference, 3. learning?
-
-what graphical models do and why
-
-what learning means
-
-
-the inference diagram here
-
-
-the learning diagram here
-\begin{itemize}
-\item Structural learning
-\item parameter learning
-\end{itemize}
-
-
-the learning principle:
-\begin{itemize}
-\item Maximal likelihood estimation (MLE)
-\item Bayesian estimation
-\item Maximal conditional likelihood
-\item Maximal '' `Margin`''
-\item Maximum entropy
-\end{itemize}
+Probabilistic graphical model coupled with its underlining distribution is also a powerful tool for effective inference, apart from its advantage of representation power. It allows to answer queries with regarding to the underlining distribution when practical inference algorithms are provided, which meets our need of reasoning with uncertainty. In addition to inference, probabilistic graphical model also supports learning from data. With certain amount of data available, a probabilistic graphical model can be learned to explain the observed data better in addition to align with our own understanding of a domain. The learned graphical model can serve to do inference with higher confidence in return. A diagram is illustrated in Figure~\ref{fig:intro-pgm}. As would become clear in Part~\ref{part:learning}, the inference may be needed to carry out model learning as well, apart from the above mutual-benefiting interaction.
 
 
 
 \section{Scope and Thesis Outline}
+We gives the intuition and motivation of probabilistic graphical model in last section, and the interaction between inference and learning in this framework. We would explore a bit further  and state what topics within this framework we would cover in this thesis.
+
+Inference in probabilistic graphical model is about the answer queries with regarding to its  coupled distribution. These queries can be generally grouped into the following cases:
+\begin{itemize}
+\item Computing the likelihood of observed data or unobserved random variable.
+\item Computing the marginals distribution over a particular subset of nodes.
+\item Computing the conditional distribution a subset of nodes given the configuration of another subset of nodes. 
+\item Computing the most likely configuration of (a subset of) nodes.
+\end{itemize}
+\textit{The work of this thesis would be mainly related with the first three cases in inference part.}
+
+
+Due to either the requirement of efficiency in solving a problem or the graphical structure of the problem's representation, it is not always that case that the above inference problem can solved exactly. Thus inference methods can be divided into
+\begin{itemize}
+\item Exact inference,
+\item Approximate inference.
+\end{itemize}
+For a limited class of graphs, exact inference such as variable elimination and sum-product algorithm can be used. Some graphs also allow efficient inference after mild modification, e.g. junction tree method. However, the above listed inference problems can only be approximately solved in general graphs. The approximation inference family can be further broken into
+\begin{itemize}
+\item Stochastic Approximation (Particle methods),
+\item Deterministic Approximation (Variational methods).
+\end{itemize}
+Stochastic approximation mainly relies on samples to answer queries. Gibbs sampling, importance sampling and Markov Chain Monte Carlo are within this family. On the other hand, deterministic approximations refer to the variational methods, such as mean field approximation, loopy belief propagation, expectation propagation etc. \textit{From the perspectives of methodology, we related work in this thesis locates in the family of variational methods under approximate inference category.}
+
+
+As for learning in probabilistic graphical models, there are two types of learning problems
+\begin{itemize}
+\item Structure learning,
+\item Parameter learning.
+\end{itemize}
+The first case refer to determine the structure of a graphical model from observation of data, which is usually reduced to the problem of whether there should be an edge between a pair of nodes in the graphical model. The parameter learning is about to determine the parameter of a probabilistic graphical model (or its coupled distribution), with its graphical structure known. Structure learning is out of the scope of this thesis. The term \textit{learning} in thesis means the estimation of the parameters of a distribution. This problem is mainly discussed in Part~\ref{part:learning}, where we would touch the learning of both undirected and directed graphical models.
+
+
+As for the learning techniques, the learning principles can categorized into
+\begin{itemize}
+\item Maximal likelihood estimation
+\item Maximal conditional likelihood
+\item Bayesian estimation
+\item Maximal `Margin`
+\item Maximum entropy
+\end{itemize}
+in general. We would touch and use techniques of the first four cases in Part~\ref{part:learning}.
+
+
 We organizing the general Bayesian problems and/or methods as the follows, based on which we would discuss the part that this thesis would cover.
 
 \begin{itemize}
@@ -260,7 +165,7 @@ We organizing the general Bayesian problems and/or methods as the follows, based
       \item \ldots
       \end{itemize}
       
-    \item Deterministic Approximation (Variational methods)
+    \item \textbf{Deterministic Approximation (Variational methods)}
       \begin{itemize}
       \item Mean field
       \item Loopy belief propagation
@@ -278,7 +183,7 @@ We organizing the general Bayesian problems and/or methods as the follows, based
     \item Undirected graphical models
     \end{itemize}
     
-  \item Parameter Learning
+  \item \textbf{Parameter Learning}
     \begin{itemize}
     \item Directed graphical models
     \item Undirected graphical models
@@ -287,6 +192,12 @@ We organizing the general Bayesian problems and/or methods as the follows, based
 \end{itemize}
 
 The main work of this thesis would about the deterministic approximate inference methods and parameter learning of graphical models, although the rest topics or issues would be referred in  context in the above category.
+
+
+
+
+
+
 \subsection{Summary of Contributions}
 \cite{liu2019dominant}
 

@@ -65,9 +65,10 @@ and
 \end{equation}
 In case of overcomplete representation of $\bm{\phi}$, $\bm{\mu}$ is the set of marginal distributions.
 
+
 With mean field approximation,
 \begin{equation}
-  A_{M}(\bm{v}, \bm{\theta}) = \umax{\bm{\mu}_{\bm{v}} \in \Mm_M}{ \langle {\bm{\theta}, \bm{\mu}_{\bm{v}}} \rangle + H(\bm{\mu}_{\bm{v}})},
+  A_{M}(\bm{v}, \bm{\theta}) = \umax{\bm{\mu}_{\bm{v}} \in \Mm_M}{ \langle {\bm{\theta}, \bm{\mu}_{\bm{v}}} \rangle + H_{M}(\bm{\mu}_{\bm{v}})},
 \end{equation}
 where $\Mm_M$ is the subspace of distributions where each variable is independent. And we have
 \begin{equation}
@@ -90,10 +91,12 @@ We define the lower bound of marginal loglikelihood:
 
 Connection to RBM:
 \begin{equation}
-  p(\bm{v}, \bm{h}; \bm{\theta}) = \frac{1}{Z(\bm{\theta})} \exp{\bm{v}\bm{W}\bm{h} + \bm{v}\bm{b} + \bm{v}\bm{a}}
+  p(\bm{v}, \bm{h}; \bm{\theta}) = \frac{1}{Z(\bm{\theta})} \exp\{\bm{v}\bm{W}\bm{h} + \bm{v}\bm{b} + \bm{v}\bm{a}\}
 \end{equation}
 Note $p(\bm{h}|\bm{h})$ is exactly independent, and thus the $A_{M}(\theta) = A(\bm{\theta})$ can be achieved, then how tight the lower bound $\Ll(\bm{theta})$ would dependent only on the TRW bound.
 
+
+\color{red}{I should also consider how to use the trained model for prediction.}
 \section{Experiment}
 \begin{itemize}
 \item Start with standard RBM \href{https://papers.nips.cc/paper/9687-amortized-bethe-free-energy-minimization-for-learning-mrfs.pdf}{section 4.2 in Amortized learning of MRFs}
