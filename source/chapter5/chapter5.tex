@@ -34,6 +34,12 @@ Reference:
 Random variable $\bm{v} \in \Xx_v$ that can be observed.
 Random variable $\bm{h} \in \Xx_h$ that is hidden variable and can not be observed.
 
+An alternative plan:
+\begin{itemize}
+\item Training RENN with marginal-likelihood instead of joint likelihood, ref to Domke13
+\item If the above works, use Gaussian kernals to define potential, Marvin T. T. Teichmann Convolutional CRFs for Semantic Segmentation
+\end{itemize}
+
 \section{Model and Problem Definition}
 
 We define the conditional probabilistic model as
@@ -97,6 +103,8 @@ Note $p(\bm{h}|\bm{h})$ is exactly independent, and thus the $A_{M}(\theta) = A(
 
 
 \textcolor{red}{I should also consider how to use the trained model for prediction.}
+
+This is also closely connected to variational see Section 6.2, Wainwright, Graphical Models, Exponential Families, and Variational Inference.
 \section{Experiment}
 \begin{itemize}
 \item Start with standard RBM \href{https://papers.nips.cc/paper/9687-amortized-bethe-free-energy-minimization-for-learning-mrfs.pdf}{section 4.2 in Amortized learning of MRFs}
@@ -115,6 +123,11 @@ Note $p(\bm{h}|\bm{h})$ is exactly independent, and thus the $A_{M}(\theta) = A(
 content: \href{https://arxiv.org/abs/1907.13432}{Neural Network based Explicit Mixture Models and Expectation-maximization based Learning}, under review
 
 section/chapter transition text: mixture model could be obtained from clamping and condition on a discrete variable, ref to Geier, \href{http://auai.org/uai2015/proceedings/papers/158.pdf}{Locally conditional belief propagation}. \href{https://papers.nips.cc/paper/5529-clamping-variables-and-approximate-inference.pdf}{Weller, clamping variables and approximate inference}
+
+\begin{remark}
+Theory interpretation of EM and variational EM, see Section 6.2, Wainwright, Graphical Models, Exponential Families, and Variational Inference.
+\end{remark}
+
 
 \begin{remark}
   RELATIONSHIP TO K-MEANS CLUSTERING
