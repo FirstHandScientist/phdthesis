@@ -19,13 +19,13 @@ A graphical model over random variable $\bm{X}$ consists of a set of local nonne
   \begin{subfigure}{.3\textwidth}
     \begin{tikzpicture}
       \begin{scope}[scale=0.7]
-      \tikzstyle{cnode} = [thick, draw=black, circle, inner sep = 2pt,  align=center]
-      \node[cnode] (x1) at (0,0) {$1$};
-      \node[cnode] (x2) at (3,0) {$2$};
-      \node[cnode] (x3) at (1.5,-2) {$3$};
-      \draw[-] (x1) -- (x2);
-      \draw[-] (x1) -- (x3);
-      \draw[-] (x2) -- (x3);
+        \tikzstyle{cnode} = [thick, draw=black, circle, inner sep = 2pt,  align=center]
+        \node[cnode] (x1) at (0,0) {$1$};
+        \node[cnode] (x2) at (3,0) {$2$};
+        \node[cnode] (x3) at (1.5,-2) {$3$};
+        \draw[-] (x1) -- (x2);
+        \draw[-] (x1) -- (x3);
+        \draw[-] (x2) -- (x3);
       \end{scope}
     \end{tikzpicture}
   \end{subfigure}
@@ -45,8 +45,8 @@ A graphical model over random variable $\bm{X}$ consists of a set of local nonne
     \centering
     \begin{tikzpicture}
       \node[] at (0,0) {$\cdots$};
-      \end{tikzpicture}
-   \end{subfigure}
+    \end{tikzpicture}
+  \end{subfigure}
   \begin{subfigure}{0.3\textwidth}
     \begin{tabular}{llc}
       \toprule
@@ -64,7 +64,7 @@ A graphical model over random variable $\bm{X}$ consists of a set of local nonne
   \hspace{1cm}
 \end{figure}
 
-\begin{example}
+\begin{example}\label{chpt2:mrf-3node-example}
   As shown in Figure~\ref{chp2:tab:toy_mrf}, the MRF encodes dependency of three random variables $X_1$, $X_2$, and $X_3$, where node $i$ is associated with variable $X_i$ and each has a binary domain, i.e. $\Xx_i = {0,1}$ for $i =1,2,3$. Three potential factors of the MRF together define the joint distribution
   \begin{equation*}
     p(\bm{x}) = \frac{1}{Z} \phi_{1,2}(x_1, x_2) \phi_{2,3}(x_2, x_3) \phi_{1,3}(x_1, x_3)
@@ -82,11 +82,114 @@ where $\Ii$ is the set of indexes of potential factors, and each factor $\phi_{\
 \end{equation}
 is the \textit{partition function}. Apparently, the partition function normalizes the potential factors such that $p(\bm{x}; \bm{\theta})$ is a proper probability.
 
- 
+
 We would focus mainly on the undirected graphical models here.
 
 
 It is clear that undirected graphs should be explained, since Part I is work on it. For HMM, it can be viewed either a dynamic Bayesian network (chapter 6, Koller) or condition random field(introduction to CRF, Sutton).
+
+
+\subsection{Alternative Representation of MRF}
+\begin{figure}[!t]
+  % \captionsetup[subfigure]{justification=centering}
+  \begin{subfigure}{.5\textwidth}
+    \centering
+    \begin{tikzpicture}
+      \begin{scope}[scale=0.7]
+        \tikzstyle{cnode} = [thick, draw=black, circle, inner sep = 2pt,  align=center]
+        \tikzstyle{nnode} = [thick, rectangle, rounded corners = 0pt,draw,inner sep = 5pt]
+        \node[cnode] (x1) at (0,0) {$1$};
+        \node[above=0.2mm of x1] {$X_1$};
+        \node[cnode] (x2) at (3,0) {$2$};
+        \node[above=0.2mm of x2] {$X_2$};
+        \node[cnode] (x3) at (1.5,-2) {$3$};
+        \node[below=0.2mm of x3] {$X_3$};
+
+        \node[nnode] (f12) at (1.5, 0) {};
+        \node[] at ($(f12) + (0,0.6)$) {$\phi_{1,2}$};
+        \node[nnode] (f13) at (0.75, -1) {};
+        \node[] at ($(f13) + (-0.8,0)$) {$\phi_{1,3}$};
+        \node[nnode] (f23) at (2.25, -1) {};
+        \node[] at ($(f23) + (0.80,0)$) {$\phi_{2,3}$};
+        \path[-, draw, thick]
+        (x1) edge node {} (f12)
+        (f12) edge node {} (x2)
+        (x2) edge node {} (f23)
+        (f23) edge node {} (x3)
+        (x3) edge node {} (f13)
+        (f13) edge node {} (x1)
+        ;
+      \end{scope}
+      
+    \end{tikzpicture}
+    \caption{Factor graph of Example~\ref{chpt2:mrf-3node-example}}
+  \end{subfigure}
+  \begin{subfigure}{.5\textwidth}
+    \centering
+    \begin{tikzpicture}
+      \begin{scope}[scale=0.7]
+        \tikzstyle{cnode} = [thick, draw=black, circle, inner sep = 2pt,  align=center]
+        \tikzstyle{cfnode} = [thick, draw=black, fill=gray,circle, inner sep = 2pt,  align=center]
+        \tikzstyle{nnode} = [thick, rectangle, rounded corners = 0pt,draw,inner sep = 5pt]
+        \node[cnode] (x1) at (0,0) {$1$};
+        \node[above=0.2mm of x1] {$X_1$};
+        \node[cfnode] (x2) at (3,0) {$2$};
+        \node[above right=0.2mm and 0.2mm of x2] {$X_2=x_2$};
+        \node[cnode] (x3) at (1.5,-2) {$3$};
+        \node[below=0.2mm of x3] {$X_3$};
+        \node[nnode] (f12) at (1.5, 0) {};
+        \node[] at ($(f12) + (0.2,0.6)$) {$\phi_{1,2}\bm{1}(x_2)$};
+        \node[nnode] (f13) at (0.75, -1) {};
+        \node[] at ($(f13) + (-0.8,0)$) {$\phi_{1,3}$};
+        \node[nnode] (f23) at (2.25, -1) {};
+        \node[] at ($(f23) + (1.50,0)$) {$\phi_{2,3}\bm{1}(x_2)$};
+        \path[-, draw, thick]
+        (x1) edge node {} (f12)
+        (f12) edge node {} (x2)
+        (x2) edge node {} (f23)
+        (f23) edge node {} (x3)
+        (x3) edge node {} (f13)
+        (f13) edge node {} (x1)
+        ;
+      \end{scope}
+    \end{tikzpicture}
+    \caption{Conditioning on $X_2=x_2$}
+  \end{subfigure}
+
+  \caption{A Markov random field with three binary nodes. Potential factors are represented by tables.}
+  \label{chp2:tab:toy-factor-graph}
+  \hspace{1cm}
+\end{figure}
+
+The representation of a MRF by $\Gg(\Vv, \Ee)$ as explained above is compact, but the potential factors are missing. An alternative representation of MRF is \textit{factor graph}\cite{}, which is a bipartite graph topology. In a factor graph, a potential factor is explicitly represented as a factor node, as counterpart of variable node associated with a random variable.
+\begin{definition}\label{chpt2:def:factor-graph}
+  A factor graph $\Gg_F$, is a bipartite graph that represents the factorization structure of \eqref{chp2:eq:mrf-definition}. A factor graph has two types of nodes: i) a variable node for each variable $x_i$; ii) a factor node for each potential function $\phi_{\alpha}$. An edge between a variable node $i$ and factor node $\alpha$ if and only if $x_i$ is argument of $\phi_{\alpha}$. We would denote a factor graph by $\Gg_F(\Vv \cup \Ff, \Ee_F)$ with $\Vv$ as the set of variable nodes, $\Ff$ as the set of factor nodes, and $\Ee_F$ the set of undirected edges.
+\end{definition}
+\begin{example}
+  factor graph of example \ref{chpt2:mrf-3node-example}.
+\end{example}
+
+
+\subsection{Conditioning on Observations}
+It is not rare that a graphical model may contain observed variable. The node set of a MRF can be separated into a subset $\Vv_O$ of nodes, that are associated with observed variable $\bm{X}_O$, and a subset $\Vv_U$ of nodes associated with unobserved variable $\bm{X}_U$. For an observation $\bm{X}_O=\bm{x}_o$,
+\begin{equation}
+  p(\bm{x}_u|\bm{x}_o;\bm{\theta}) = \frac{p(\bm{x}; \bm{\theta})}{p(\bm{y};\bm{\theta})} =  \frac{Z(\bm{y},\bm{\theta})}{Z(\bm{\theta})},
+\end{equation}
+where 
+\begin{align}
+  \tilde{p}(\bm{x}; \bm{\theta}) &= \prod_{\alpha \in \Ii} \phi_{\alpha}(\bm{x_{\alpha}};\bm{\theta}), \nonumber \\
+  Z(\bm{x}_o, \bm{\theta}) &= \sum_{\bm{x}_u} \tilde{p}(\bm{x}; \bm{\theta}), \nonumber \\
+  Z(\bm{\theta}) &= \sum_{\bm{x}_o}\sum_{\bm{x}_u} \tilde{p}(\bm{x}; \bm{\theta}).
+\end{align}
+This means that a condition probability can be computed by partition function and sub-partition functions. Alternatively, the conditional probability can be written as
+\begin{equation}
+  p(\bm{x}_u|\bm{x}_o;\bm{\theta}) = \frac{\tilde{p}(\bm{x}; \bm{\theta})\bm{1}(\bm{x}_o)}{\sum_{\bm{x}_u}\tilde{p}(\bm{x}; \bm{\theta})\bm{1}(\bm{x}_o)}
+\end{equation}
+where $\bm{1}(\bm{x}_o)$ is an indicator function and equals to one if and only if the states of nodes in $\Vv_o$ are jointly $\bm{x}_o$. This can be understood as clamping nodes in $\Vv_o$ of the MRF to configuration $\bm{x}_o$, i.e. the domain of $\bm{X}_O$ becomes a set containing only $\bm{x}_o$. Then any inference applicable to a MRF applies to the MRF with nodes clamped as well.
+
+In addition to the above intuitions, conditioning can also be understood as a process of reducing the graph of a MRF. When a MRF is conditioned on $\bm{x}_o$, the variables nodes of set $\Vv_O$ are removed from $\Gg$, along with their edges. The potential factors with regarding to $\Vv_U$ are modified accordingly \cite[Chapter~4.2.3]{koller2009pgm}.
+
+It can be seen that MRF framework is capable to handle conditioning as well. Therefore, in the following part of the thesis, it might or might not have bee based on conditioning observed variables when a MRF is mentioned.
 
 \section{Inference Tasks}
 \label{sec:background-graphial-reppresentation}
