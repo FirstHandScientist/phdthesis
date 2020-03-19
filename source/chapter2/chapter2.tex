@@ -3,7 +3,7 @@
 In this chapter, we discuss the background knowledge and introduce notation that will be used for the thesis. We begin with intruding graphical models formally, which is followed with the inference tasks of graphical models. We also discusses the learning principles in model learning. \textcolor{blue}{Provide more thorough explanation here after this chapter is finished}.
 
 \section{Graphical Models}
-Graphical models provide a formal graph representation of statistical dependency of complex problems. The conditional independence of any random variables can be conveniently analyzed in a graphical model (I-map, d-Separation, markov blanket[]). More importantly, a intractable complex problem can be resolved by local interactions of small parts of a graphical model.
+Graphical models provide a formal graph representation of statistical dependency of complex problems. The conditional independence of any random variables can be conveniently analyzed in a graphical model (I-map, d-Separation, markov blanket). More importantly, a intractable complex problem can be resolved by local interactions of small parts of a graphical model.
 
 More formally, a graphical model is a representation of a collection of random variables (along their domains) and nonnegative functions. Let $\bm{X}= (X_1, X_2, \cdots, X_N)$ be a vector of random variables, where an element variable $X_i$ can be either discrete or continuous and takes values from its domain $\Xx_i$. Note that domain of a random variable is not necessary be the same as that of another.
 
@@ -207,20 +207,29 @@ In addition to the above intuitions, conditioning can also be understood as a pr
 
 It can be seen that MRF framework is capable to handle conditioning as well. Therefore, in the following part of the thesis, it might or might not have bee based on conditioning observed variables when a MRF is mentioned.
 
-\section{Divergence}
+\section{Divergence}\label{chpt2:sec:devergence}
 Before we get into more discussion about inference and learning topics, we firstly introduce the concept of \textit{divergence} measures since principles of both learning and inference are closed related with divergence measure.
 A divergence measure play a fundamental role when we try to use a probability density (or mass for discrete cases) function $q$ to approximate another probability density function $p$. A divergence measure is used to formal quantity how much information is lost when $p$ is represented by $q$. Denote $\PP$ as the space of measures $p$ and $q$, i.e. $p, q \in \PP$.
 \begin{definition}
   Given the space of probability density (or mass) function $\PP$ for a random variable $\bm{x}$, a divergence on this space is defined as a function $D(p\|q): \PP \times \PP \rightarrow \RR$ such that $D(p\|q) \geq 0$ for all $p, q \in \PP$ and $D(p\|q)=0$ if and only if $p=q$.
 \end{definition}
 
-todo: KL divergence
+Here we introduce the classic \textit{Kullback-Leibler divergence} \cite{kullback1959, kullback1951}, KL divergence for short, which is one of the most widely used divergence measures in machine learning, statistics and information theory.
+\begin{definition}
+  The Kullback-Leibler (KL) divergence on $\PP$ is defined as a function $KL(\cdot \| \cdot): \PP \times \PP \rightarrow \RR^{+} \cup {0}$ with the following form
+  \begin{equation}\label{chpt2:def:kl-divergence}
+    \mathrm{KL}(p\|q) = \sum_{\bm{x}}p(\bm{x}) \log{\frac{p(\bm{x})}{q(\bm{x})}},
+  \end{equation}
+  where $\log$ is the natural loggarithm. Note the sum in \ref{chpt2:def:kl-divergence} should be replaced by intergral when $p$ and $q$ are probability density functions.
+\end{definition}
 
 
-  
+KL divergence is not symmetric. In another word, there is no equivalence between $\mathrm{KL}(p\|q)$ and $\mathrm{KL}(q\|p)$ in general. 
+
+
+
 \section{Inference Tasks}
 \label{sec:background-graphial-reppresentation}
-refer to 2.3 of Domke TPAMI and 2.3 of Wainwright graphical models.
 
 Given a probability distribution $p(\bm{x})$ as the underline distribution of a graphical model, inference in general can be generally divided into four kinds of tasks, as brought up in Chapter~\ref{chpt1:sec:scope-outline}. Our work in this thesis would closed involved with the problems
 \begin{itemize}
@@ -235,20 +244,20 @@ in MRFs. The above tasks are also close related with the inference of partition 
 
 
 
-\section{Variational inference}J
-variational principle, refer to IT paper\cite{yedida2005constucting}
+\section{Variational inference}
+\textcolor{red}{fix notation and consistency in this section}
 
-
-\subsection{Variational Free Energy and Mean Field}
-Using a simple analytic form for approximation instead of the original distribution, starts from \textit{variational free energy} \cite{opper2001advanced}, which uses a probability distribution $b(\bm{x})$ to approximate $p(\bm{x};\bm{\theta})$ defined in \eqref{eq:joint-px}. The variational free energy is defined by
+In solving inference tasks, one important technique is based on a variational approach. With $p(\bm{x})$ as the underlining probability distribution of a graphical model, directly inference with $p(\bm{x})$ is often unfeasible due to the system represented by the graphical model is too large or complex (Even we know the form of $p(\bm{x})$, the computation in inference tasks can be prohibitive). In variational approach, a 'trial' probability distribution $b(\bm{x})$ is introduced to approximate $p(\bm{x})$. The trial distribution should be intuitively simpler than $p(\bm{x})$. 
+\textit{Variational free energy} \cite{opper2001advanced} is used to find such a approximation, which uses a probability distribution $b(\bm{x})$ to approximate $p(\bm{x};\bm{\theta})$. The variational free energy is defined by
 \begin{align}
-  F_V(b) &= \sum_{\bm{x}}b(\bm{x}) \ln{\frac{b(\bm{x})}{{p}(\bm{x}; \bm{\theta})}} - \ln{Z(\bm{\theta})} \nonumber \\
-         & = \sum_{\bm{x}}b(\bm{x}) \ln{\frac{b(\bm{x})}{\tilde{p}(\bm{x};
-           \bm{\theta})}} \nonumber \\
-         & = KL(b( \bm{x}) || \tilde{p}(\bm{x}; \bm{\theta}))
+  F_V(b) & = KL(b( \bm{x}) || p(\bm{x}; \bm{\theta})) - \log{Z(\bm{\theta})} \nonumber \\
+         &= \sum_{\bm{x}}b(\bm{x}) \ln{\frac{b(\bm{x})}{{p}(\bm{x}; \bm{\theta})}} - \ln{Z(\bm{\theta})} \nonumber \\
+         & = \sum_{\bm{x}}b(\bm{x}) \ln{\frac{b(\bm{x})}{\tilde{p}(\bm{x}; \bm{\theta})}} 
 \end{align}
 
-where $\tilde{p}(\bm{x}; \bm{\theta}) =  \prod_{a} \psi_a(\bm{x}_a; \bm{\theta}_a)$ and $KL(\cdot || \cdot)$ is the Kullback-Leibler divergence.
+where $\tilde{p}(\bm{x}; \bm{\theta}) =  \prod_{\alpha \in \Ii} \psi_{\alpha}(\bm{x}_{\alpha}; \bm{\theta}_{\alpha})$. Since $\mathrm{KL}(b(\bm{x})\|p(\bm{x};\bm{\theta}))$ is always non-negative and is zero if and only if $b(\bm{x}) = p(\bm{x};\bm{\theta})$, we have $F_V(b) \geq - \log{Z(\bm{\theta})}$, with equality when $b(\bm{x}) = p(\bm{x};\bm{\theta})$.
+
+\subsection{Variational Free Energy and Mean Field}
 
 In mean field approach, a fully-factorized approximation is used,
 \begin{equation}\label{eq:mf-factorization}
@@ -256,15 +265,15 @@ In mean field approach, a fully-factorized approximation is used,
 \end{equation}
 Substituting \eqref{eq:mf-factorization} into the variational free energy gives
 \begin{align}
-  F_{MF} = & - \sum_{a}\sum_{\bm{x}_a} \ln{\psi_a(\bm{x}_{a};\bm{\theta})}
-             \prod_{i\in \mathrm{ne}_a}b_i(x_i) \nonumber\\
+  F_{MF} = & - \sum_{a}\sum_{\bm{x}_{\alpha}} \ln{\psi_{\alpha}(\bm{x}_{a};\bm{\theta})}
+             \prod_{i\in \mathrm{ne}_{\alpha}}b_i(x_i) \nonumber\\
            &+ \sum_i \sum_{x_i} b_i(x_i) \ln{b_i(x_i)},
 \end{align}
-where $\mathrm{ne}_a = \left\{ i \in \Vv | x_i \in \Ss(a) \right\}$ gives the neighboring variable nodes of factor $a$, and $\Ss(a)$ is the scope set (arguments) of factor node $a$.
+where $\mathrm{ne}_{\alpha} = \left\{ i \in \Vv | x_i \in \Ss(a) \right\}$ gives the neighboring variable nodes of factor $a$, and $\Ss(a)$ is the scope set (arguments) of factor node $a$.
 Solving the minimization of $F_{MF}$ w.r.t. $b_{MF}(\bm{x})$ gives the
 update rule of mean field
 \begin{equation}
-  \ln{b_i(x_i)} \sim \sum_{a\in \mathrm{ne}_i} \sum_{\bm{x}_a \backslash x_i} \ln{\psi_a}(\bm{x}_a;\bm{\theta}_a) \prod_{j\in \mathrm{ne}_a\backslash i} b_j(x_j),
+  \ln{b_i(x_i)} \sim \sum_{a\in \mathrm{ne}_i} \sum_{\bm{x}_{\alpha} \backslash x_i} \ln{\psi_{\alpha}}(\bm{x}_{\alpha};\bm{\theta}_{\alpha}) \prod_{j\in \mathrm{ne}_{\alpha}\backslash i} b_j(x_j),
 \end{equation}
 where $\mathrm{ne}_i = \left\{ a | i \in \Ss(a), a \in \Ff \right\}$, i.e. the
 neighboring factors of node $i$.
@@ -272,37 +281,76 @@ neighboring factors of node $i$.
 \subsection{Bethe Free Energy and (Loopy) Belief Propagation}
 
 
-Different from the mean field approximation, Bethe approximation also includes the non-single-node beliefs $\{b_a(\bm{x}_a)\}$ apart from the single-node beliefs $\{b_i(x_i)\}$\cite{yedidia2003understanding}. In this case, the Bethe free energy is given by
+Different from the mean field approximation, Bethe approximation also includes the non-single-node beliefs $\{b_{\alpha}(\bm{x}_{\alpha})\}$ apart from the single-node beliefs $\{b_i(x_i)\}$\cite{yedidia2003understanding}. In this case, the Bethe free energy is given by
 \begin{align}\label{apdix:bethe-free-energy}
-  F_{Bethe} = &\sum_{a} \sum_{\bm{x}_a}
-                b_a(\bm{x}_a)\ln{\frac{b_a(\bm{x}_a)}{\psi_a(\bm{x}_a)}
+  F_{Bethe} = &\sum_{a} \sum_{\bm{x}_{\alpha}}
+                b_{\alpha}(\bm{x}_{\alpha})\ln{\frac{b_{\alpha}(\bm{x}_{\alpha})}{\psi_{\alpha}(\bm{x}_{\alpha})}
                 } \nonumber \\
               & -  \sum_{i=1}^{N} (|\mathrm{ne}_i| - 1) \sum_{x_i} b_i(x_i) \ln{b_i(x_i)}.
 \end{align}
-Due to the  non-single-node beliefs, there are consistency constrains $\sum_{\bm{x}_a} b_a(\bm{x}_a) = \sum_{ x_i} b_i({x}_i) =1$, $\forall~ i \in \Ss(a)$ to obey. Then, solving the Bethe free energy minimization problem
+Due to the  non-single-node beliefs, there are consistency constrains $\sum_{\bm{x}_{\alpha}} b_{\alpha}(\bm{x}_{\alpha}) = \sum_{ x_i} b_i({x}_i) =1$, $\forall~ i \in \Ss(a)$ to obey. Then, solving the Bethe free energy minimization problem
 \begin{align}
-  \min_{\{b_a(\bm{x}_a)\}, \{b_i(x_i)\}}& F_{Bethe} \nonumber \\
-  \mathrm{s.t.}~~ & \sum_{\bm{x}_a \backslash x_i} b_a(\bm{x}_a)  =
+  \min_{\{b_{\alpha}(\bm{x}_{\alpha})\}, \{b_i(x_i)\}}& F_{Bethe} \nonumber \\
+  \mathrm{s.t.}~~ & \sum_{\bm{x}_{\alpha} \backslash x_i} b_{\alpha}(\bm{x}_{\alpha})  =
                     b_i(x_i), \nonumber \\
-                                      & \sum_{\bm{x}_a} b_a(\bm{x}_a) = \sum_{ x_i} b_i({x}_i) =1,
-                                        \nonumber \\
-                                      &  0 \leq b_i(x_i) \leq 1,  \nonumber \\
-                                      &  b_a(\bm{x}_a) \in [0,1]^{|S(\bm{x}_a)|\times K}, \nonumber \\
-                                      & i \in \Vv , a \in \Ff,
+                                                      & \sum_{\bm{x}_{\alpha}} b_{\alpha}(\bm{x}_{\alpha}) = \sum_{ x_i} b_i({x}_i) =1,
+                                                        \nonumber \\
+                                                      &  0 \leq b_i(x_i) \leq 1,  \nonumber \\
+                                                      &  b_{\alpha}(\bm{x}_{\alpha}) \in [0,1]^{|S(\bm{x}_{\alpha})|\times K}, \nonumber \\
+                                                      & i \in \Vv , a \in \Ff,
 \end{align}
 where $\Vv$ and $\Ff$ are the set of variable nodes and the set of
 factor nodes in factor graph as defined in
-Definition~\ref{def:factor-graph}, gives the (loopy) BP message-passing rule
+Definition~\ref{chpt2:def:factor-graph}, gives the (loopy) BP message-passing rule
 \begin{equation}
-  m_{a\rightarrow i}(x_i) \sim \sum_{\bm{x}_a \backslash x_i}
-  \psi_a(\bm{x}_a) \prod_{j \in \Ss(a) \backslash i} \prod_{b \in \mathrm{ne}_j
+  m_{a\rightarrow i}(x_i) \sim \sum_{\bm{x}_{\alpha} \backslash x_i}
+  \psi_{\alpha}(\bm{x}_{\alpha}) \prod_{j \in \Ss(a) \backslash i} \prod_{b \in \mathrm{ne}_j
     \backslash a} m_{b\rightarrow j}(x_j).
 \end{equation}
 
 
 \section{Learning principles}
-begin with KL minimization, refer to \cite[chapter16]{koller2009pgm}
+We have touched the learning topic in \autoref{chapter1}, which is to find the 'best' probability distribution $p(\bm{x}; \bm{\theta})$ in its space $\PP$. To make the discussion more concrete, we assume the domain is governed by a underlying distribution $p^{\ast}$ that is induced by a (directed or undirected) graphical model, $\Mm = \left\{ \Kk^{\ast}, \bm{\theta}^{\ast} \right\}$ with $\Mm^{\ast}$ representing its structure and $\bm{\theta}^{\ast}$ representing its parameter. Here we discuss about \textit{model learning} (parameter learning only). For notation simplicity, we use $p^{\ast}(\bm{x})$ to denote this distribution. We are given a dataset $\Dd = \{\bm{x}^{1}, \bm{x}^{2}, \cdots, \bm{x}^{M}\}$. Following the standard assumption, these sample instances are \textit{independent and identically distributed (i.i.d.)}. The task is then to use the information from the dataset to learn a distribution $p$ within its space $\PP$, since the governing distribution $p^{\ast}(\bm{x})$ is not known.
 
+The problem of learning a distribution in $\PP$ to approximate $p^{\ast}$ can be formulated as density estimation. With the concept of KL divergence in \autoref{chpt2:sec:devergence}, learning of $p$ can be formulated as minimizing the KL divergence
+\begin{align}\label{chpt2:sec:mle-as-min-kl}
+  &\mathrm{KL}(p^{\ast}(\bm{x})\|p(\bm{x}; \bm{\theta})) \nonumber \\
+  =& \EE_{\bm{x} \sim p^{\ast}}\left[ \log{\frac{p^{\ast}(\bm{x})}{p(\bm{x}; \bm{\theta})}} \right] \nonumber \\
+  =& - H(p^{\ast}) - \EE_{\bm{x} \sim p^{\ast}}\left[ \log{{p(\bm{x}; \bm{\theta})}} \right],
+\end{align}
+where $H(p^{\ast})$ is the entropy of $p^{\ast}$.
+Due to the property of divergence, the KL divergence in \ref{chpt2:sec:mle-as-min-kl} is zero if and only if $p(\bm{x};\bm{\theta})=p^{\ast}(\bm{x})$. The last line of \ref{chpt2:sec:mle-as-min-kl} shows that the negative entropy term does not depends on $p(\bm{x}; \bm{\theta})$. Thus we can just focus on the expectation term $\EE_{\bm{x} \sim p^{\ast}}\left[ \log{{p(\bm{x}; \bm{\theta})}} \right]$, which is \textit{expected log-likelihood}. Therefore, we can just use the expected log-likelihood to do model learning instead of minimizing the KL divergence.
+
+Note although we can use the expected log-likelihood for model learning task and even model comparison (comparing a trained model with another one), we loss the information of how close a trained model is to $p^{\ast}$. This is due to the omitting of $H(p^{\ast})$, which is not available.
+
+Since it is not possible to know $p^{\ast}$ (otherwise we do not need to learn it), the expected log-likelihood is approximated by sample instances of $p^{\ast}$,
+\begin{equation}
+  \Ll(\Dd; \bm{\theta}) = \frac{1}{\abs{\Dd}}\sum_{\bm{x}\in \Dd}\log{p(\bm{x};\bm{\theta})},
+\end{equation}
+and
+\begin{equation}
+  \EE_{\bm{x}\sim p^{\ast}}(\log{{p(\bm{x}; \bm{\theta})}}) \approx \Ll(\Dd; \bm{\theta}).
+\end{equation}
+
+Log-likelihood $\Ll(\Dd; \bm{\theta})$ is one of the most widely used loss for model learning. However, $\Ll(\Dd; \bm{\theta})$ is not always a feasible loss to compute due to:
+\begin{itemize}
+\item exact computation of $p(\bm{x})$ is not possible;
+\item there are some elements of $\bm{x}$ which are not observable (hidden variables).
+\end{itemize}
+For the first case, the typical treatment is to approximate the exact log-likelihood. This is done by approximation with employing inference methods or   making simplified assumptions on dependency structure of the graphical model of $p(\bm{x})$. Then, optimization is carried out with regarding to the approximated log-likelihood. These methods include surrogate likelihood \cite{wainwright06estimating, lu2019blockBP}, pseudo-likelihood\cite{qu2019gmnn}, piecewise likelihood \cite{sutton2012piecewise, lin_2016_CVPR}, saddle-point approximation \cite{srikumar-etal-2012-amortizing, NIPS2019_9687}.
+
+For the second case that there are hidden variables,
+1. EM
+
+2. variational EM
+
+3. a bit Bayesian ?
+
+1. begin with KL minimization, refer to \cite[chapter16]{koller2009pgm}
+
+
+
+2. talk a bit of others learning objectives, refer to Domke 2013 paper.
 \subsection{Learning of Full Observation}
 
 the learning diagram here
