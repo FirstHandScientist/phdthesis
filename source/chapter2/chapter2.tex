@@ -3,6 +3,7 @@
 In this chapter, we review some background knowledge that is going be used in this thesis. We begin with the introduction to probabilistic graphical models. Then a divergence measure is introduced. Common inference tasks and methods are discussed before the learning problems in probabilistic graphical models are reviewed, which are interpreted as minimization of the divergence measure.
 
 \section{Graphical Models}
+\label{chpt2:sec:graphical-models}
 Graphical models provide a formal graph representation of statistical dependency of complex problems or systems. The conditional independence of random variables can be conveniently encoded and analyzed by a graphical model. More importantly, query problems can be resolved by interactions of local regions of a graphical model in exact or approximate ways, which are usually unfeasible to solve directly.
 
 More formally, a graphical model is a graphical representation of a collection of random variables (along their domains) where their statistical dependency encoded into a set of non-negative functions and the graphical structure. Let $\bm{x}= (x_1, x_2, \cdots, x_N)$ be a vector of random variables with $N$ as a positive integer, where an element variable $x_i$ can be either discrete or continuous random variable and takes values from its domain $\Xx_i$. Note that the domain of a random variable is not necessary be the same as that of another. With some abuse of notation, we might use $\bm{x}$ to denote its assignment when there is no cause of ambiguity in context. The joint probability is denoted by $p(\bm{x})=p(x_1, x_2, \cdots, x_N)$.
@@ -258,7 +259,7 @@ KL divergence is not symmetric. In another word, there is no equivalence between
 
 
 \section{Inference Tasks}
-\label{sec:background-graphial-reppresentation}
+
 
 Given a probability distribution $p(\bm{x})$ as the underline distribution of a graphical model, inference in general can be divided into four kinds of tasks, as brought up in Chapter~\ref{chpt1:sec:scope-outline}. Our work in this thesis would be closely involved with the problems
 \begin{itemize}
