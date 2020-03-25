@@ -173,7 +173,7 @@ is the \textit{partition function}. Apparently, the partition function normalize
         \tikzstyle{nnode} = [thick, rectangle, rounded corners = 0pt,draw,inner sep = 5pt]
         \node[cnode] (x1) at (0,0) {$1$};
         \node[above=0.2mm of x1] {$x_1$};
-       
+        
         \node[cnode] (x3) at (1.5,-2) {$3$};
         \node[below=0.2mm of x3] {$x_3$};
         \node[nnode] (f12) at (1.5, 0) {};
@@ -184,8 +184,8 @@ is the \textit{partition function}. Apparently, the partition function normalize
         \node[] at ($(f23) + (1.2,0.6)$) {$\phi_{2,3}(x_2\!\!=\!\! 1, x_3)$};
         \path[-, draw, thick]
         (x1) edge node {} (f12)
-       
-       
+        
+        
         (f23) edge node {} (x3)
         (x3) edge node {} (f13)
         (f13) edge node {} (x1)
@@ -276,15 +276,29 @@ In the following section, we would introduce the variational methods for the abo
 
 
 \section{Variational inference}
-\textcolor{red}{fix notation and consistency in this section}
 
-In solving inference tasks, one important technique is based on a variational approach. With $p(\bm{x};\bm{\theta})$ as the underlining probability distribution of a graphical model, directly inference with $p(\bm{x}; \bm{\theta})$ is often unfeasible due to the system represented by the graphical model is too large or complex. It can also be the case that even we know the form of $p(\bm{x}; \bm{\theta})$, the computation in inference tasks can be prohibitive. In variational approaches, a 'trial' probability distribution $b(\bm{x})$ is introduced to approximate $p(\bm{x})$. The trial distribution should be intuitively simpler than $p(\bm{x}; \bm{\theta})$. \textit{Variational free energy} \cite{opper2001advanced} is a quantity used to find such a approximation. The variational free energy is defined by
-\begin{align}
-  F_V(b) & = KL(b( \bm{x}) || p(\bm{x}; \bm{\theta})) - \log{Z(\bm{\theta})} \nonumber \\
+
+In solving inference tasks, one important technique is based on a variational approach. With $p(\bm{x};\bm{\theta})$ as the underlining probability distribution of a graphical model, directly inference with $p(\bm{x}; \bm{\theta})$ is often unfeasible due to the system represented by the graphical model is too large or complex. It can also be the case that even we know the form of $p(\bm{x}; \bm{\theta})$, the computation in inference tasks can be prohibitive. In variational approaches, a 'trial' probability distribution $b(\bm{x})$ is introduced to approximate $p(\bm{x};\bm{\theta})$. The trial distribution should be intuitively simpler than $p(\bm{x}; \bm{\theta})$. \textit{Variational free energy} \cite{opper2001advanced} is a quantity used to find such a approximation. The variational free energy is defined by
+\begin{align}\label{chpt2:eq:variational-free-energy}
+  F_V(b) & = \mathrm{KL}(b( \bm{x}) || p(\bm{x}; \bm{\theta})) - \log{Z(\bm{\theta})} \nonumber \\
          &= \sum_{\bm{x}}b(\bm{x}) \log{\frac{b(\bm{x})}{{p}(\bm{x}; \bm{\theta})}} - \log{Z(\bm{\theta})} \nonumber \\
          & = \sum_{\bm{x}}b(\bm{x}) \log{\frac{b(\bm{x})}{\tilde{p}(\bm{x}; \bm{\theta})}},
 \end{align}
 where $\tilde{p}(\bm{x}; \bm{\theta}) =  \prod_{\alpha \in \Ii} \psi_{\alpha}(\bm{x}_{\alpha}; \bm{\theta}_{\alpha})$. Since $\mathrm{KL}(b(\bm{x})\|p(\bm{x};\bm{\theta}))$ is always non-negative and is zero if and only if $b(\bm{x}) = p(\bm{x};\bm{\theta})$, we have $F_V(b) \geq - \log{Z(\bm{\theta})}$, with equality when $b(\bm{x}) = p(\bm{x};\bm{\theta})$.
+
+\begin{remark}
+  Note from \ref{chpt2:eq:variational-free-energy}, the minimization w.r.t. $b$ of variational free energy is equivalent to the divergence minimization, i.e. $\mathrm{KL}(b( \bm{x}) || p(\bm{x}; \bm{\theta}))$, since $\log{Z(\bm{\theta})}$ does not depend on $b$. By observing $F_V(b) = \sum_{\bm{x}}b(\bm{x}) \log{\frac{b(\bm{x})}{\tilde{p}(\bm{x}; \bm{\theta})}}$, the free energy minimization guides the choice of $b$ such that $b$ is close to an unnormalized measure $\tilde{p}(\bm{x}; \bm{\theta})$ in its space.
+
+  Another benefit of \ref{chpt2:eq:variational-free-energy} is that we are able to approximate $p(\bm{x}; \bm{\theta})$ without inference of the true marginal distributions $\{p(\bm{x}_{\alpha};\bm{\theta}), \alpha \in \Ii\}$. Since $\log\tilde{p}(\bm{x}; \bm{\theta})$ can be formulated as sum of log-potential-factors that are all local functions, the computation of $F_V(v)$ can be done by inference of marginals $\left\{ b_{\alpha}(\bm{x}_{\alpha}), \alpha \in \Ii \right\}$ of the approximate distribution, which are tractable.
+\end{remark}
+
+\begin{remark}
+  Discussion: Since we are essentially approximating distribution $p$ by a distribution $b$, can we minimize $\mathrm{KL}(p(\bm{x}, \bm{\theta})\|b(\bm{x}))$ instead?
+
+  It might be feasible by instinct. But a further check would reveal its infeasibility. The $\mathrm{KL}(p(\bm{x}; \bm{\theta})\|b(\bm{x}))$ would inevitable requires the marginals of $p$ and therefore requires the exact inference in $p$, which are what we are trying to avoid. But it does not mean this divergence is useless. As shall be seen in \autoref{chpt2:sec:learning-principles}, this type of divergence measure is what we need in model learning.
+\end{remark}
+
+
 
 \subsection{Variational Free Energy and Mean Field}
 
@@ -295,7 +309,7 @@ In mean field approach, a fully-factorized approximation is used,
 Substituting \eqref{eq:mf-factorization} into the variational free energy gives
 \begin{align}
   F_{MF}(b) =  - \sum_{\alpha \in \Ii}\sum_{\bm{x}_{\alpha}} \log{\phi_{\alpha}(\bm{x}_{a};\bm{\theta})}
-             \prod_{i\in \alpha}b_i(x_i) + \sum_{i \in \Vv} \sum_{x_i} b_i(x_i) \log{b_i(x_i)},
+  \prod_{i\in \alpha}b_i(x_i) + \sum_{i \in \Vv} \sum_{x_i} b_i(x_i) \log{b_i(x_i)},
 \end{align}
 where $i \in \alpha$ stands for the node $i$'s associated $x_i$ is argument of $\phi_{\alpha}$.
 Solving the minimization of $F_{MF}$ w.r.t. $b_{MF}(\bm{x})$ gives the
@@ -312,8 +326,8 @@ potential factors that has $x_i$ as argument.
 Different from the mean field approximation, Bethe approximation also includes the non-single-node beliefs $\{b_{\alpha}(\bm{x}_{\alpha})\}$ apart from the single-node beliefs $\{b_i(x_i)\}$\cite{yedidia2003understanding}. In this case, the Bethe free energy is given by
 \begin{align}\label{apdix:bethe-free-energy}
   F_{Bethe}(b) = \sum_{\alpha} \sum_{\bm{x}_{\alpha}}
-                b_{\alpha}(\bm{x}_{\alpha})\log{\frac{b_{\alpha}(\bm{x}_{\alpha})}{\phi_{\alpha}(\bm{x}_{\alpha})}
-                } -  \sum_{i=1}^{N} (|\mathrm{ne}_i| - 1) \sum_{x_i} b_i(x_i) \log{b_i(x_i)},
+  b_{\alpha}(\bm{x}_{\alpha})\log{\frac{b_{\alpha}(\bm{x}_{\alpha})}{\phi_{\alpha}(\bm{x}_{\alpha})}
+  } -  \sum_{i=1}^{N} (|\mathrm{ne}_i| - 1) \sum_{x_i} b_i(x_i) \log{b_i(x_i)},
 \end{align}
 where $|\cdot|$ stands for carnality.
 Due to the  non-single-node beliefs, there are consistency constrains $\sum_{\bm{x}_{\alpha}} b_{\alpha}(\bm{x}_{\alpha}) = \sum_{ x_i} b_i({x}_i) =1$, $\forall~ i \in \alpha$ to obey. Then, solving the Bethe free energy minimization problem
@@ -337,6 +351,7 @@ Definition~\ref{chpt2:def:factor-graph}, gives the (loopy) BP message-passing ru
 
 
 \section{Learning principles}
+\label{chpt2:sec:learning-principles}
 We have touched the learning topic in \autoref{chapter1}, which is to find the 'best' probability distribution $p(\bm{x}; \bm{\theta})$ in its space $\PP$. To make the discussion more concrete, we assume the domain is governed by a underlying distribution $p^{\ast}$ that is induced by a (directed or undirected) graphical model, $\Mm^{\ast} = \left\{ \Kk^{\ast}, \bm{\theta}^{\ast} \right\}$ with $\Mm^{\ast}$ representing its structure and $\bm{\theta}^{\ast}$ representing its parameter. Here we discuss about \textit{model learning} (parameter learning only). For notation simplicity, we use $p^{\ast}(\bm{x})$ to denote this distribution. We are given a dataset $\Dd = \{\bm{x}^{1}, \bm{x}^{2}, \cdots, \bm{x}^{M}\}$. Following the standard assumption, these sample instances are \textit{independent and identically distributed (i.i.d.)}. The task is then to use the information from the dataset to learn a distribution $p$ within its space $\PP$, since the governing distribution $p^{\ast}(\bm{x})$ is not known.
 
 The problem of learning a distribution in $\PP$ to approximate $p^{\ast}$ can be formulated as density estimation. With the concept of KL divergence in \autoref{chpt2:sec:devergence}, learning of $p$ can be formulated as minimizing the KL divergence
@@ -376,7 +391,7 @@ In general, latent variables are commonly used to deal with partial observation 
 \begin{align}
   l(\bm{x}_O; \bm{\theta}) =& \log{p(\bm{x}_O; \bm{\theta})} \nonumber \\  
   = & \EE_{q(\bm{x}_U|\bm{x}_O)}\left[ \log{\frac{q(\bm{x}_U|\bm{x}_O)}{p(\bm{x}_U|\bm{x}_O;\bm{\theta})} \cdot \frac{p(\bm{x}_U,\bm{x}_O;\bm{\theta})}{q(\bm{x}_U|\bm{x}_O)}} \right] \nonumber \\
-      = & \mathrm{KL}(q(\bm{x}_U|\bm{x}_O)\|p(\bm{x}_U|\bm{x}_O;\bm{\theta})) + F(q, \bm{\theta})
+  = & \mathrm{KL}(q(\bm{x}_U|\bm{x}_O)\|p(\bm{x}_U|\bm{x}_O;\bm{\theta})) + F(q, \bm{\theta})
 \end{align}
 with
 \begin{equation}
@@ -390,53 +405,56 @@ with equality when $q(\bm{x}_U|\bm{x}_O) = p(\bm{x}_U|\bm{x}_O; \bm{\theta})$. $
 
 One of the most wide used methods in learning with latent variable is \textit{expectation maximization (EM)} \cite{DEMP1977em}. In EM method, the posterior of $\bm{x}_U$ is computed exactly from $p$, $q(\bm{x}_U|\bm{x}_O) = \argmax_{q}{F(q, \bm{\theta})} = p(\bm{x}_U|\bm{x}_O; \bm{\theta})$, which is the optimal solution to $q$. Then the parameter $\bm{\theta}$ of $p$ is optimized. The two steps are optimized iteratively.
 
-\textcolor{red}{the end of chapter 2}
-
-In cases the posterior of $\bm{x}_U$ is not feasible to compute, the variational EM\cite[section~6.2.2]{wainwright2008graphical} or Monte Carlo EM (need sampling technique) \cite{neath2012convergence}. There are also neural network based methods with Monte Carlo estimator to cope with the latent variable problems, see \cite{DBLP:journals/corr/KingmaW13}\cite{kuleshov2017NVIL, lazarogredilla2019learning, goodfellow2014gan}
+In cases the posterior of $\bm{x}_U$ is not feasible to compute, the variational EM\cite[section~6.2.2]{wainwright2008graphical} or Monte Carlo EM (need sampling technique) \cite{neath2012convergence}. There are also neural network based methods with Monte Carlo estimator to cope with the latent variable problems, see \cite{DBLP:journals/corr/KingmaW13}\cite{kuleshov2017NVIL, lazarogredilla2019learning, goodfellow2014gan}.
 
 
-\subsection{Learning of Full Observation}
+In above discussion, we have assumed that the model's distribution $q$ is explicitly defined, i.e. the distribution (along its density function or mass function) is available. In an alternative track, the deep generative models grow popularity in literature and can be applied to different areas such as high-dimensional data representation, reinforcement learning and semi-supervised learning for its efficient sampling of multi-mode distributions \cite{2017arXiv170100160G}. A generator in a deep generative model induces a distribution that can be either explicit (cite RealNVP, differential flow, autoencoders) or implicit (GAN) distribution. The former problem dates back to \cite{deco1995high-order} and receives more attention in recent years with latest work such as varational autoencoder \cite{DBLP:journals/corr/KingmaW13}, Real-NVP \cite{2016arXiv160508803D}, normalizing flow model \cite{2018arXiv180703039K} and neural ordinary difference equations \cite{ricky2018ODE}. The training of these models are still based on the (varational) maximum likelihood principle.
 
-the learning diagram here
-\begin{itemize}
-\item Structural learning
-\item parameter learning
-\end{itemize}
+The later case brings a implicit distribution, where the maximum likelihood principle is not applicable any more. In this case, a state-of-art method is the generative adversarial model that employs a discriminator to play the role of divergence measure \cite{goodfellow2014gan, 2017arXiv170104862A}\cite{NIPS2016_6125}, which is essentially explained by a process of the minimization of the Jensen-Shannon divergences. Additionally, other sample based distances are employed as alternative methods for implicit model learning. Optimal transport is receiving more attention in recent years \cite{santambrogio2015optimal},\cite{2013arXiv1306.0895C} in this track, which also applied for training of Boltzmann machine \cite{NIPS2016_6248} auto-encoders\cite{2017arXiv171101558T} and generative adversarial networks \cite{2017arXiv170107875A}.
 
 
-the learning principle:
-\begin{itemize}
-\item Maximal likelihood estimation (MLE)
-\item Bayesian estimation
-\item Maximal conditional likelihood
-\item Maximal '' `Margin`''
-\item Maximum entropy
-\end{itemize}
+% \subsection{Learning of Full Observation}
+
+% the learning diagram here
+% \begin{itemize}
+% \item Structural learning
+% \item parameter learning
+% \end{itemize}
 
 
-It may be better to discuss the learning principle here.
+% the learning principle:
+% \begin{itemize}
+% \item Maximal likelihood estimation (MLE)
+% \item Bayesian estimation
+% \item Maximal conditional likelihood
+% \item Maximal '' `Margin`''
+% \item Maximum entropy
+% \end{itemize}
 
-Cited from 10-708 lecture6 note:
 
-UNOBSERVED VARIABLES:
+% It may be better to discuss the learning principle here.
 
-A variable can be unobserved or latent because it is a(n):
+% Cited from 10-708 lecture6 note:
 
--Abstract or imaginary quantity meant to simplifiy the data generation process, e.g. speech recognition models, mixture models.
--A real-world object that is difficult or impossible to measure, e.g. the temperature of a star, causes of disease, evolutionary ancestors.
--A real-world object that was not measured due to missed samples, e.g. faulty sensors.
+% UNOBSERVED VARIABLES:
 
-Discrete latent variables can used to partition or cluster data into sub-groups
+% A variable can be unobserved or latent because it is a(n):
 
-Continuous latent variables (factors) can be used for dimensionality reduction (e.g. factor analysis, etc)
-\subsection{Dealing with latent variables}
-\subsection{about clamping node}
-clamping node gives conditional distribution.
+% -Abstract or imaginary quantity meant to simplifiy the data generation process, e.g. speech recognition models, mixture models.
+% -A real-world object that is difficult or impossible to measure, e.g. the temperature of a star, causes of disease, evolutionary ancestors.
+% -A real-world object that was not measured due to missed samples, e.g. faulty sensors.
 
-\subsection{about ELBO bound}
-1. the bound used by EM
+% Discrete latent variables can used to partition or cluster data into sub-groups
 
-2. talk about ELBO/variational inference \href{https://media.nips.cc/Conferences/2016/Slides/6199-Slides.pdf}{Variational Inference}, which is closely related the bound used in EM.
+% Continuous latent variables (factors) can be used for dimensionality reduction (e.g. factor analysis, etc)
+% \subsection{Dealing with latent variables}
+% \subsection{about clamping node}
+% clamping node gives conditional distribution.
+
+% \subsection{about ELBO bound}
+% 1. the bound used by EM
+
+% 2. talk about ELBO/variational inference \href{https://media.nips.cc/Conferences/2016/Slides/6199-Slides.pdf}{Variational Inference}, which is closely related the bound used in EM.
 
 %%% Local Variables:
 %%% mode: latex
