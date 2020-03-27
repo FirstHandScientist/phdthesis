@@ -276,7 +276,7 @@ In the following section, we would introduce the variational methods for the abo
 
 
 \section{Variational inference}
-
+\label{chpt2:sec:variational-inference}
 
 In solving inference tasks, one important technique is based on a variational approach. With $p(\bm{x};\bm{\theta})$ as the underlining probability distribution of a graphical model, directly inference with $p(\bm{x}; \bm{\theta})$ is often unfeasible due to the system represented by the graphical model is too large or complex. It can also be the case that even we know the form of $p(\bm{x}; \bm{\theta})$, the computation in inference tasks can be prohibitive. In variational approaches, a 'trial' probability distribution $b(\bm{x})$ is introduced to approximate $p(\bm{x};\bm{\theta})$. The trial distribution should be intuitively simpler than $p(\bm{x}; \bm{\theta})$. \textit{Variational free energy} \cite{opper2001advanced} is a quantity used to find such a approximation. The variational free energy is defined by
 \begin{align}\label{chpt2:eq:variational-free-energy}
