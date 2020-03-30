@@ -1,70 +1,65 @@
 \chapter{An alternative view of belief propagation}
+% set the path to figures in this section
+\graphicspath{{source/chapter3/}}
 
-Belief propagation (BP) is a meta message-passing algorithm in probabilistic graphical models. BP answers queries by locally exchanging beliefs (statistical information) between nodes in a graphical model \cite{kschischang2001factor_graph, Bishop:2006:PRM:1162264}. In \autoref{chpt2:sec:variational-inference}, we introduced the classic belief propagation as a free energy minimization, instead of a iterative message-passing routine. Interestingly, the message-passing rules of BP had been popularly used in different fields before the free energy optimization intuition was developed in literature \cite{yedidia2003understanding}.
+Belief propagation (BP) is a meta message-passing algorithm for inference problems in probabilistic graphical models. BP answers queries by locally exchanging beliefs (statistical information) between nodes in a graphical model \cite{kschischang2001factor_graph, Bishop:2006:PRM:1162264}. In \autoref{chpt2:sec:variational-inference}, we introduced the classic belief propagation as the minimization of a free energy, instead of a iterative message-passing routine. Interestingly to note, the message-passing rule of BP was developed as early as $1986$ \cite{pearl1986b} and had been popularly used in different fields before the free energy optimization intuition was developed in literature \cite{yedidia2003understanding}.
 
-
-BP can solve inference problems in linear-time exactly when graphs are loop-free or tree-structured \cite{kschischang2001factor_graph}. The message-passing routine of BP can be boiled down to variable elimination in tree-structured graphs\footnote{This applies to cases where systems themselves can be represented by tree-structured graphs, or cases where original graphs are not trees but becoming tree-structured after reorganized (such as clustering).}, the message scheduling of which corresponds to variable elimination order. The message scheduling can be omitted and equivalent exact inference results can be obtained when beliefs are updated via message passing with division \cite[section~10.3]{koller2009pgm}. BP and its variants are widely applied due to their 'magic' of reducing the exponential number of operation for inference with enumeration into linear complexity. This is possible because of
+BP can solve inference problems in linear-time exactly when graphs are loop-free or tree-structured \cite{kschischang2001factor_graph}. The message-passing routine of BP can be boiled down to variable elimination in tree-structured graphs\footnote{This applies to cases where systems themselves can be represented by tree-structured graphs, or cases where original graphs are not trees but becoming tree-structured after reorganized (such as clustering).}, the message scheduling of which corresponds to variable elimination order. The message scheduling can be omitted and equivalent exact inference results can be obtained, when beliefs are updated via message passing with division \cite[section~10.3]{koller2009pgm}. BP and its variants are widely applied in large computation systems due to their 'magic' of reducing the exponential number of operation for inference with enumeration into linear complexity. This is possible because 
 \begin{itemize}
 \item A underline distribution of a graphical model is usually factorized, each sub-expressions (factors) depends only on a small number of variables.
 \item The intermediary results are computed once and cached as messages, which are reused in coming computations. 
 \end{itemize}
 
-Inevitably, many real-world signals are naturally modeled by graph representations with loops. Surprisingly, although lost its original guarantees in loopy graphs, BP is still a practical method and gives reasonable good inference results by running it as if there were no loop, i.e. loopy BP. But its performance can vary from case to case and its behavior is not well understood in general. 
+Inevitably, many real-world signals are naturally modeled by graph representations with loops. Surprisingly, although lost its original guarantees in loopy graphs, BP is still a practical method and gives reasonable good inference results by running it as if there was no loop, i.e. loopy BP. But its performance can vary from case to case and its behavior is not well understood in general. 
 
 In this chapter, to gain more insights of BP in general graphs, we take the path of variational methods to develop an interpretable variant of BP, which is termed as $\alpha$-BP.
-The intuition of $\alpha$-BP starts with a surrogate distribution $q(\bm{x})$. $q(\bm{x})$ is assumed to be fully factorized and each factor of $q(\bm{x})$ represents a message in the graphical model with an underlining distribution $p(\bm{x})$. We derive a message-passing rule that is induced by minimizing a localized $\alpha$-divergence. The merits of $\alpha$-BP are as follows: i). {$\alpha$-BP is derived intuitively as localized minimization of $\alpha$-divergence between original distribution $p$ and surrogate distribution $q$}; ii). {$\alpha$-BP generalizes the standard BP, since the message-passing rule of BP is a special case of $\alpha$-BP}. iii). {$\alpha$}-BP can outperform BP significantly in full-connected graphs while still maintaining simplicity of BP for inference. 
+The intuition of $\alpha$-BP starts with a surrogate distribution $q(\bm{x})$, i.e. an approximate distribution. $q(\bm{x})$ is assumed to be fully factorized and each factor of $q(\bm{x})$ actually represents a message in the graphical model with an underlining distribution $p(\bm{x})$. We derive a message-passing rule that is induced by minimizing a localized $\alpha$-divergence. The merits of $\alpha$-BP are as follows: i). {$\alpha$-BP is derived intuitively as localized minimization of $\alpha$-divergence between original distribution $p$ and surrogate distribution $q$}; ii). {$\alpha$-BP generalizes the standard BP, since the message-passing rule of BP is a special case of $\alpha$-BP}. iii). {$\alpha$}-BP can outperform BP in full-connected graphs while still maintaining simplicity of BP for inference.
 
 Apart from the algorithmic perspective, another common issue of BP and its variants in general graphs is convergence. We devote \autoref{chpt3:sec:cnvg-thm} to convergence study of $\alpha$-BP. Sufficient conditions that guarantee the convergence of $\alpha$-BP to a unique fixed point, are studied and obtained. It turns out that the derived convergence conditions of $\alpha$-BP depend on both the graph and also the value of $\alpha$. This result suggests that proper choice of $\alpha$ can help to guarantee the convergence of $\alpha$-BP.
 
+\section{Preliminary}\label{chpt3:sec:preliminary}
+Before we get into the algorithmic discussion, we firstly provide some preliminaries for the algorithmic intuition. As an extended discussion to \autoref{chpt2:sec:devergence}, we firstly introduce a more generalized divergence than $\mathrm{KL}$ divergence, i.e. $\alpha$-divergence. We also introduce a widely used MRF that we are going to use in explaining $\alpha$-BP, i.e. pairwise MRF.
 
-
-% set the path to figures in this section
-\graphicspath{{source/chapter3/}}
-Content:p
-
-1. \href{https://ieeexplore.ieee.org/abstract/document/8969545}{$\alpha$ Belief Propagation as Fully Factorized Approximation}, GlobalSIP 2019.
-
-2. \href{https://github.com/FirstHandScientist/alpha-bp/blob/submit_icml/manuscript/main.pdf}{$\alpha$ Belief Propagation for Approximate Bayesian Inference}, under review.
-
-% \section{$\alpha$ belief propagation}
-
-% \section{Convergence study}
-high-level idea of the convergence study, summary of the convergence study here, refer to \cite[section~11.3.4]{koller2009pgm}
-
-
-
-
-
-
-
-
-
-\section{Preliminary}\label{sec:preliminary}
-We provide some preliminaries in this section that are needed in this paper. $\alpha$-divergence is introduced firstly and then a Markov random field is explained.
 
 \subsection{Divergence Measures}
-$\alpha$-divergence, introduced in \cite{Zhu95informationgeometric, divergence-measures-and-message-passing}, is a typical way to measure how different two measures characterized by densities $p$ and $q$ are. The definition of $\alpha$-divergence is as follows,
-\begin{equation}\label{eq:alpha-divergence}
-  \Dd_{\alpha}(p \| q ) = \frac{\int_{\bm{x}} \alpha p(\bm{x}) + (1-\alpha) q (\bm{x}) - p(\bm{x})^{\alpha} q(\bm{x})^{1-\alpha} d\bm{x}}{\alpha(1-\alpha)},
+Apart from the KL divergence, another divergence measure that generalizes KL divergence is $\alpha$-divergence. In fact, $\alpha$-divergence appeared in literature just one year later than KL divergence when Herman Chernoff initially defined it for likelihood-ratio test \cite{Chernoff1952measure}. Around a decade later, Alfr\'ed R\'enyi proposed his version of divergence as well \cite{renyi1961entropy}. In the 80s of last century, Amari extended Chernoff's version of $\alpha$-divergence \cite{amari1982differential}, which is widely used now in study the geometry of distribution manifolds. 
+$\alpha$-divergence, similar to KL divergence, is a typical way to measure how different two measures characterized by densities $p$ and $q$ are. By following the notation \cite{Zhu95informationgeometric}, the definition of $\alpha$-divergence (Amari's version, with correction term to accommodate unnormalized measure) is as follows,
+\begin{equation}\label{chpt3:eq:alpha-divergence}
+  \Dd_{\alpha}(p \| q ) = \frac{\int \alpha p(\bm{x}) + (1-\alpha) q (\bm{x}) - p(\bm{x})^{\alpha} q(\bm{x})^{1-\alpha} d\bm{x}}{\alpha(1-\alpha)},
 \end{equation}
-where $\alpha$ is the parameter, $p$ and $q$ are not necessary to be normalized.
+where $\alpha$ is the parameter of this divergence. Difference from the KL divergence definition in \autoref{chpt2:sec:devergence}, $p$ and $q$ here are not necessary to be normalized measure.
 
-KL divergence as another way of characterizing difference of measures, is closely related with $\alpha$-divergence. KL divergence is defined as
-\begin{equation}
+In \autoref{chpt2:sec:devergence}, KL divergence was defined over two normalized measure. Here we extend that definition to a generalized case where $p$ and $q$ are not necessarily normalized, as another way of characterizing difference of measures, is closely related with $\alpha$-divergence. KL divergence is defined as
+\begin{equation}\label{chpt3:eq:kl-divergence}
   KL(p \| q) = \int p(\bm{x}) \log{\frac{p(\bm{x})}{q(\bm{x})}} d \bm{x}+ \int q(\bm{x}) - p(\bm{x}) d\bm{x},
 \end{equation}
-where the $\int q(\bm{x}) - p(\bm{x}) d\bm{x}$ is a correction factor to accommodate possibly unnormalized $p$ and $q$. The KL divergence can be seen as a special case of $\alpha$-divergence, by observing $\lim_{\alpha \rightarrow 1}\Dd_{\alpha}(p \| q ) = KL(p\|q)$ and $\lim_{\alpha \rightarrow 0}\Dd_{\alpha}(p \| q ) = KL(q\|p)$ (applying L'H\^opital's rule to \eqref{eq:alpha-divergence}).
+where the $\int q(\bm{x}) - p(\bm{x}) d\bm{x}$ is a correction factor to accommodate possibly unnormalized $p$ and $q$.
+\begin{remark}
+  Note in \eqref{chpt3:eq:alpha-divergence} and \eqref{chpt3:eq:kl-divergence}, the integral should be replaced by sum for discrete $\bm{x}$.
+\end{remark}
+\begin{remark}
+The KL divergence can be seen as a special case of $\alpha$-divergence, by observing $\lim_{\alpha \rightarrow 1}\Dd_{\alpha}(p \| q ) = KL(p\|q)$ and $\lim_{\alpha \rightarrow 0}\Dd_{\alpha}(p \| q ) = KL(q\|p)$ (applying L'H\^opital's rule to \eqref{chpt3:eq:alpha-divergence}).
 
-Regarding basic properties of divergence measures, both $\alpha$-divergence and KL divergence are zero when $p=q$, and they are non-negative. Denote KL-projection by
+Regarding basic properties of divergence measures, both $\alpha$-divergence and KL divergence are zero when $p=q$, and they are non-negative. 
+\end{remark}
+
+Denote KL-projection by
 \begin{equation}
   \text{proj}[p] = \uargmin{q \in \Ff} KL(p\|q),
 \end{equation}
 where $\Ff$ is a family of distribution $q$.
-According to the stationary point equivalence Theorem in \cite{divergence-measures-and-message-passing}, $\text{proj}[p^{\alpha}q^{1- \alpha}]$ and $\Dd_{\alpha}(p\|q)$ have same stationary points (gradient is zero). A heuristic scheme to find $q^{\ast}$ minimizing $\Dd_{\alpha}(p\|q)$ starts with an initial $q$, and repeatedly updates $q$ via the projection on $\Ff$
+According to the stationary point equivalence Theorem in \cite{divergence-measures-and-message-passing}, $\text{proj}[p^{\alpha}q^{1- \alpha}]$ and $\Dd_{\alpha}(p\|q)$ have same stationary points (gradient is zero). This equivalence holds by assuming $\theta$ is parameter of $q(x)$ and observing
+\begin{align}
+  \pd{\mathrm{KL}(p\|q)}{\theta} &= \int \pd{q(\bm{x})}{\theta} - \int \frac{p(\bm{x})}{q(\bm{x})} \pd{q(\bm{x})}{\theta} d\bm{x}, \nonumber \\
+  \pd{\mathrm{\Dd_{\alpha}}(p\|q)}{\theta} &= \frac{1}{\alpha} \left( \int \pd{q(\bm{x})}{\theta} - \int \frac{p^{\prime}(\bm{x})}{q(\bm{x})} \pd{q(\bm{x})}{\theta} d\bm{x}  \right), \nonumber
+\end{align}
+with $p^{\prime}(\bm{x}) = p^{\alpha}(\bm{x})q^{1-\alpha}(\bm{x})$. Then it gives $\pd{\mathrm{\Dd_{\alpha}}(p\|q)}{\theta}  = \frac{1}{\alpha}\pd{\mathrm{KL}(p\|q)}{\theta}|_{p=p^{\prime}}$.
+
+A heuristic scheme to find $q^{\ast}$ minimizing $\Dd_{\alpha}(p\|q)$ starts with an initial $q$, and repeatedly updates $q$ via the projection on $\Ff$
 \begin{equation}\label{eq:fixed-point-iter}
   q(\bm{x})^{\text{new}}  = \text{proj}[p(\bm{x})^{\alpha}q(\bm{x})^{1-\alpha}].
 \end{equation}
-This heuristic scheme is a fixed-point iteration. It does not guarantee to converge.
+This heuristic scheme is a fixed-point iteration, which does not guarantee to converge.
 
 \subsection{Pairwise MRF}
 
@@ -73,20 +68,29 @@ This heuristic scheme is a fixed-point iteration. It does not guarantee to conve
     \begin{tikzpicture}
       % \tikzstyle{enode} = [thick, draw=blue, circle, inner sep = 3pt,
       % align=center]
-      \tikzstyle{enode} = [thick, draw=black, circle, inner sep = 4pt,  align=center]
-      \tikzstyle{nnode} = [thick, rectangle, rounded corners = 2pt,minimum size = 0.8cm,draw,inner sep = 2pt]
+      \tikzstyle{enode} = [thick, draw=black, circle, inner sep = 4pt, minimum size = 0.7cm, align=center]
+      \tikzstyle{nnode} = [thick, rectangle, rounded corners = 0pt, minimum size = 0.5cm,draw,inner sep = 2pt]
 
       \tikzstyle{cnode} = [thick, cloud, draw,cloud puffs=10, cloud puff arc=120, aspect=2, inner ysep=4pt]
 
       \node[cnode] (pajk) at (3, 1.5) {$\Nn(t)\backslash s$};
       \node[cnode] (paik) at (-3, 1.5) {$\Nn(s)\backslash t$};
 
-      \node[nnode] (tk) at (0, 1.5) {$\phi_{st}(x_s, x_t)$};
-      \node[enode] (xi) at (-1.5 ,0) {$x_s$};
-      \node[nnode] (fi) at (-1.5 , -1.5) {$\phi_s(x_s)$};
+      \node[nnode] (tk) at (0, 1.5) {};
+      \node[] at ($(tk) + (0, 0.5)$) {$\phi_{st}(x_s, x_t)$};
+      \node[enode] (xi) at (-1.5 ,0) {};
+      \node[] at ($(xi) + (0.75,0)$) {$x_s$};
+      
+      \node[nnode] (fi) at (-1.5 , -1.5) {};
+      \node[] at ($(fi) + (0.95,0)$) {$\phi_s(x_s)$};
+        
 
-      \node[enode] (xj) at (1.5 ,0) {$x_t$};
-      \node[nnode] (fj) at (1.5 , -1.5) {$\phi_t(x_t)$};
+      \node[enode] (xj) at (1.5 ,0) {};
+      \node[] at ($(xj) + (0.75,0)$) {$x_t$};
+      
+      \node[nnode] (fj) at (1.5 , -1.5) {};
+      \node[] at ($(fj) + (0.95,0)$) {$\phi_t(x_t)$};
+      
       % connections
 
       \draw[-] (xi) to (fi);
@@ -102,15 +106,16 @@ This heuristic scheme is a fixed-point iteration. It does not guarantee to conve
   \end{centering}
 \end{figure}
 
-A graphical model is a probabilistic model that uses a graph to illustrate the statistical dependence between random variables. An undirected graphical model, known as Markov random field (MRF), defines a family of joint probability distributions over random vector $\bm{x} := \left(  x_1, x_2, \cdots,  x_N  \right)$, where each $x_i$ takes values in a discrete finite set $\Aa$. Let us denote the undirected graph of a MRF by $\Gg:=(\Vv, \Ee)$. $\Vv:=\left[ 1 : N \right]$ is the node set associated with the index set of entries of $\bm{x}$. The graph contains undirected edges $\Ee \subset \Vv \times \Vv$, where a pair of $(s, t) \in \Ee$ if and only if nodes $v$ and $u$ are connected by an edge. In addition to the undirected edge set, let us also define the directed edge set of $\Gg$ by $\vec{\Ee}$. We have $\abs{\vec{\Ee}} = 2\abs{\Ee}$, where $\abs{\cdot}$ denotes the carnality.
+
+We consider a probability distribution over random vector $\bm{x} = \left(  x_1, x_2, \cdots,  x_N  \right)$, where each $x_i$ takes values in a discrete finite set $\Aa$. Let us denote the undirected graph of a pairwise MRF by $\Gg:=(\Vv, \Ee)$. $\Vv=\left[ 1 : N \right]$ is the node set associated with the index set of entries of $\bm{x}$. The graph contains undirected edges $\Ee \subset \Vv \times \Vv$, where a pair of $(s, t) \in \Ee$ if and only if nodes $v$ and $u$ are connected by an edge. In addition to the undirected edge set, let us also define the directed edge set induced from $\Gg$ by $\vec{\Ee}$. We have $\abs{\vec{\Ee}} = 2\abs{\Ee}$, where $\abs{\cdot}$ denotes the carnality. These directed edges serve the purpose of convergence analysis only.
 
 
 
-The joint distribution of $\bm{x}$ can be formulated into a pairwise factorization form as
+The joint distribution of $\bm{x}$ can be formulated into a pairwise factorization form in a pairwise MRF as
 \begin{equation}\label{eq:mrf}
   p(\bm{x}) \propto \prod_{{s\in \Vv}} \phi_s(x_s) \prod_{(s,t) \in \Ee} \phi_{st}(x_s, x_t),
 \end{equation}
-where $\phi_{s}: \Aa \rightarrow (0, \infty)$ and $\phi_{st}: \Aa \times \Aa \rightarrow (0, \infty)$ are factor potentials. Relation $\propto$ in \eqref{eq:mrf} indicates that a normalized factor is needed to turn the right-hand side into a distribution.
+where $\phi_{s}: \Aa \rightarrow (0, \infty)$ and $\phi_{st}: \Aa \times \Aa \rightarrow (0, \infty)$ are factor potentials. Relation $\propto$ in \eqref{eq:mrf} indicates that a normalized factor is needed to turn the right-hand side into a distribution. Here the normalization is omitted. Note the joint of node set and edge set, i.e. $\Vv \cup \Ee$, instantiates the factor index set $\Ii$ of a general MRF in \eqref{chp2:eq:mrf-definition}.
 
 The factor graph representation of \eqref{eq:mrf} is shown in
 Figure~\ref{fig:factor-graph}. In the figure, $\Nn(s)$ is the set of variable nodes neighboring $x_s$ via
@@ -119,7 +124,6 @@ pairwise factors, i.e. $\Nn(s) = \left\{ t|(t,s) \in \Ee \right\}$, and $\backsl
 \section{$\alpha$ Belief Propagation Algorithm}\label{sec:alpha-bp-factor-refine}
 In this section, we detail the development of the $\alpha$-BP algorithm. We start with defining a surrogate distribution and then use the surrogate distribution to approximate a given distribution. The message passing rule of $\alpha$-BP is derived by solving the distribution approximation problem.
 
-\subsection{Algorithm Development}\label{sec:alpha-bp-a}
 % \subsubsection{Fully Factorized Surrogate}
 We begin with defining a distribution
 \begin{equation}
@@ -136,12 +140,12 @@ We use the notation $m_{ts}(x_s)$ to denote the factor as a function of $x_s$. $
 
 Now, we are going to use the heuristic scheme as in \eqref{eq:fixed-point-iter} to minimize the information loss by using a fully factorized $q(\bm{x})$ to represent $p(\bm{x})$. The information loss is measured by $\alpha$-divergence $\Dd_{\alpha}(p(\bm{x}) \| q(\bm{x}))$.
 
-We perform a factor-wise refinement procedure to update the factors of $q(\bm{x})$ such that $q(\bm{x})$ approximates $p(\bm{x})$. This approach is similar to the factor-wise refinement procedure of assumed density filtering\cite{ghosh2016assumed,opper1999bayesian} and  expectation propagation \cite{divergence-measures-and-message-passing,Minka:2001:EPA:647235.720257}. Without loss of generality, we begin to refine the factor $\tilde{\phi}_{ts}(x_t, x_s)$ via $\alpha$-divergence characterized by $\alpha$-parameter assigned with $\alpha_{ts}$. Define $q^{\backslash (t,s)}(\bm{x})$ as the product of all other factors excluding $\tilde{\phi}_{ts}(x_t, x_s)$
+
+We perform a factor-wise refinement procedure to update the factors of $q(\bm{x})$ such that $q(\bm{x})$ approximates $p(\bm{x})$. This approach is similar to the factor-wise refinement procedure of assumed density filtering\cite{ghosh2016assumed, opper1999bayesian} and expectation propagation \cite{divergence-measures-and-message-passing,Minka:2001:EPA:647235.720257}. Without loss of generality, we begin to refine the factor $\tilde{\phi}_{ts}(x_t, x_s)$ via $\alpha$-divergence characterized by $\alpha$-parameter assigned with $\alpha_{ts}$. Define $q^{\backslash (t,s)}(\bm{x})$ as the product of all other factors excluding $\tilde{\phi}_{ts}(x_t, x_s)$
 \begin{align}
   q^{\backslash (t,s)}(\bm{x})
-  &= q(\bm{x})/\tilde{\phi}_{ts}(x_t,
-    x_s) \nonumber \\
-  &\propto \prod_{{s\in \Vv}} \tilde{\phi}_s(x_s) \prod_{(v,u) \in
+  = q(\bm{x})/\tilde{\phi}_{ts}(x_t,
+    x_s) \propto \prod_{{s\in \Vv}} \tilde{\phi}_s(x_s) \prod_{(v,u) \in
     \Ee\backslash (t,s)}
     \tilde{\phi}_{vu}(x_v, x_u).
     % &= \left(
@@ -169,22 +173,28 @@ we consider the following tractable problem
 which searches for new factor $\tilde{\phi}_{ts}^{\mathrm{new}}(x_t, x_s)$ such $q$ can approximate $p$ better. In \eqref{eq:alpha-minimize-factor}, $\Dd_{\alpha_{ts}}(\cdot)$ denotes the $\alpha$-divergence with the correcponding parameter $\alpha_{ts}$. Note that the approximation \eqref{eq:alpha-minimize-factor} is accurate when $q^{\backslash (t,s)}(\bm{x})$ is equal to $p^{\backslash (t,s)}(\bm{x})$. 
 Using fixed-point update in \eqref{eq:fixed-point-iter}, the problem in \eqref{eq:alpha-minimize-factor} is equivalent to
 \begin{align}\label{eq:update-rule}
-  \!\!&q^{\backslash (t,s)}(\bm{x})\tilde{\phi}_{ts}^{\mathrm{new}}(x_t, x_s) \propto \nonumber\\
+  q^{\backslash (t,s)}(\bm{x})\tilde{\phi}_{ts}^{\mathrm{new}}(x_t, x_s) \propto
   % &\propto \text{proj}\left[ \left( q^{\backslash (t,s)}(\bm{x}){\phi}_{ts}(x_t, x_s) \right)^{\alpha_{ts}} \left(q^{\backslash (t,s)}(\bm{x})\tilde{\phi}_{ts}(x_t, x_s)  \right)^{1-\alpha_{ts}} \right] \nonumber \\
-  \!\!&  \mathrm{proj}\left[ q^{\backslash
+    \mathrm{proj}\left[ q^{\backslash
         (t,s)}(\bm{x}){\phi}_{ts}(x_t, x_s)^{\alpha_{ts}} \tilde{\phi}_{ts}(x_t, x_s)^{1-\alpha_{ts}} \right]. 
 \end{align}
 \begin{figure}[!t]
   \begin{centering}
     \begin{tikzpicture}
-      \tikzstyle{enode} = [thick, draw=black, circle, inner sep = 4pt,  align=center]
-      \tikzstyle{nnode} = [thick, rectangle, rounded corners = 2pt,minimum size = 0.8cm,draw,inner sep = 2pt]
+      \tikzstyle{enode} = [thick, draw=black, circle, inner sep = 4pt, minimum size = 0.7cm, align=center]
+      \tikzstyle{nnode} = [thick, rectangle, rounded corners = 0pt, minimum size = 0.5cm,draw,inner sep = 2pt]
+
       \tikzstyle{cnode} = [thick, cloud, draw,cloud puffs=10, cloud puff arc=120, aspect=2, inner ysep=4pt]
 
       \node[cnode] (paik) at (-2, 0) {$\Nn(s)$};
-      \node[enode] (xi) at (0 ,0) {$x_s$};
-      \node[nnode] (fi) at (0 , -1.5) {$\phi_s(x_s)$};
-      \node[nnode] (pi) at (2, 0) {$\hat{p}_s(x_s)$};
+      \node[enode] (xi) at (0 ,0) {};
+      \node[] at ($(xi) + (0,0.6)$) {$x_s$};
+
+      \node[nnode] (fi) at (0 , -1.5) {};
+      \node[] at ($(fi) + (0.95, 0)$) {$\phi_s(x_s)$};
+
+      \node[nnode] (pi) at (2, 0) {};
+      \node[] at ($(pi) + (0, 0.6)$) {$\hat{p}_s(x_s)$};
       % connections
       \draw[-] (xi) to (fi);
       \draw[-] (xi) to (pi);
@@ -198,17 +208,15 @@ Without loss of generality, we update $m_{ts}$ and define
 \begin{equation}\label{eq:new_ts}
   \tilde{\phi}_{ts}^{\mathrm{new}}(x_t, x_s) = m_{ts}^{\mathrm{new}}(x_s) m_{st}(x_t).
 \end{equation}
-Since KL-projection onto a fully factorized distribution reduces to matching the marginals, substituting \eqref{eq:new_ts} into \eqref{eq:update-rule}, we obtain
+Since KL-projection onto a fully factorized distribution reduces to matching the marginals \cite[Proposition~8.3]{koller2009pgm}, substituting \eqref{eq:new_ts} into \eqref{eq:update-rule}, we obtain
 \begin{align}\label{eq:message-update}
-  &\sum_{\bm{x}\backslash x_s} q^{\backslash (t,s)}(\bm{x}) \tilde{\phi}_{ts}^{\mathrm{new}}(x_t, x_s) \nonumber\\
-  &\propto \sum_{\bm{x}\backslash x_s} q^{\backslash (t,s)}(\bm{x}) \phi_{ts}(x_t, x_s)^{\alpha_{ts}} \tilde{\phi}_{ts}(x_t, x_s)^{1-\alpha_{ts}}.
+  \sum_{\bm{x}\backslash x_s} q^{\backslash (t,s)}(\bm{x}) \tilde{\phi}_{ts}^{\mathrm{new}}(x_t, x_s) 
+  \propto \sum_{\bm{x}\backslash x_s} q^{\backslash (t,s)}(\bm{x}) \phi_{ts}(x_t, x_s)^{\alpha_{ts}} \tilde{\phi}_{ts}(x_t, x_s)^{1-\alpha_{ts}}.
 \end{align}
 We use summation here. But it should be replaced by integral if $\Aa$ is a continuous set.
 Solving \eqref{eq:message-update} gives the message passing rule as
 \begin{align}\label{eq:message-rule-pairwise}
-  {m}^{\text{new}}_{ts}(x_s) \propto  &m_{ts}(x_s)^{1-\alpha_{ts}} \bigg[
-                                        \sum_{x_t} \phi_{ts}(x_t, x_s)^{\alpha_{ts}} {m}_{st}(x_t)^{1-\alpha_{ts}}\nonumber \\
-                                      &\tilde{\phi}_t(x_t) \prod_{w\in \Nn(t)\backslash s}m_{wt}(x_t) \bigg].
+  {m}^{\text{new}}_{ts}(x_s) \propto  m_{ts}(x_s)^{1-\alpha_{ts}} \bigg[\sum_{x_t} \phi_{ts}(x_t, x_s)^{\alpha_{ts}} {m}_{st}(x_t)^{1-\alpha_{ts}}\tilde{\phi}_t(x_t) \prod_{w\in \Nn(t)\backslash s}m_{wt}(x_t) \bigg].
 \end{align}
 
 As for the singleton factor $\tilde{\phi}_t(x_t)$, we can do the refinement procedure on $\tilde{\phi}_t(x_t)$ in the same way as we have done on $\tilde{\phi}_{ts}(x_t, x_s)$. This gives us the update rule of $\tilde{\phi}_t(x_t)$ as
@@ -220,20 +228,40 @@ we initialize $\tilde{\phi}_t(x_t) = \phi_t(x_t)$, then it remains the
 same in all iterations, which makes
 \begin{align}\label{eq:message-rule}
   {m}^{\mathrm{new}}_{ts}(x_s) \propto
-  & m_{ts}(x_s)^{1-\alpha_{ts}} \bigg[\sum_{x_t} \phi_{ts}(x_t, x_s)^{\alpha_{ts}} {m}_{st}(x_t)^{1-\alpha_{ts}} \nonumber \\
-  &{\phi}_t(x_t) \prod_{w\in \Nn(t)\backslash s}m_{wt}(x_t) \bigg].
+  m_{ts}(x_s)^{1-\alpha_{ts}} \bigg[\sum_{x_t} \phi_{ts}(x_t, x_s)^{\alpha_{ts}} {m}_{st}(x_t)^{1-\alpha_{ts}} {\phi}_t(x_t) \prod_{w\in \Nn(t)\backslash s}m_{wt}(x_t) \bigg].
 \end{align}
 In our notations, a factor potential is undirected, i.e. $\phi_{ts}(x_t, x_s)=\phi_{st}(x_s, x_t)$ for all $(t,s) \in \Ee$. When refining factors with $\alpha$-BP, each factor potential (corresponding to an edge of $\Gg$) can be associated with a difference setting of $\alpha$ value. In addition we also have $\alpha_{ts} = \alpha_{st}$.
 
-\vskip -0.5in
-\subsection{Remarks on $\alpha$ Belief Propagation}\label{subsec:remark}
+\section{Remarks on $\alpha$ Belief Propagation}\label{subsec:remark}
 
-As discussed in Section~\ref{sec:preliminary}, $KL(p\|q)$ is the special case of $\Dd_{\alpha}(p\|q)$ when $\alpha \rightarrow 1$. When restricting $\alpha_{st}=1$ for all $(s,t) \in \Ee$, the message-passing rule in \eqref{eq:message-rule} becomes
-\begin{equation}\label{eq:bp-update-rule}
+As discussed in Section~\ref{chpt3:sec:preliminary}, $\mathrm{KL}(p\|q)$ is the special case of $\Dd_{\alpha}(p\|q)$ when $\alpha \rightarrow 1$. When restricting $\alpha_{st}=1$ for all $(s,t) \in \Ee$, the message-passing rule in \eqref{eq:message-rule} becomes
+\begin{equation}\label{chpt3:eq:bp-update-rule}
   {m}^{\text{new}}_{ts}(x_s) \propto 
   \sum_{x_t} \phi_{st}(x_s, x_t) {\phi}_t(x_t) \prod_{w\in \Nn(t)\backslash s}m_{wt}(x_t),
 \end{equation}
-which is exactly the messages of standard BP \cite{Bishop:2006:PRM:1162264}. From this point of view, we can say $\alpha$-BP is a generalization of BP.
+which is exactly the messages of standard BP \cite{Bishop:2006:PRM:1162264}. From this point of view, we can say $\alpha$-BP is a generalization of BP. Additionally, the BP update rule in \eqref{chpt3:eq:bp-update-rule} actually corresponds to the fixed-point iteration assignment by solving the Bethe free energy minimization problem in \eqref{chpt2:bethe-free-energy}.
+
+
+Note although mean field method also uses fully-factorized approximation, it is obtained differently from $\alpha$-BP and its factorization differs from that of $\alpha$-BP. From another perspective, mean field methods is actually using information project from $p(\bm{x})$ to a fully-factorized space via KL divergence as explained in \autoref{chpt2:sec:variational-inference}.
+In addition, 
+$\alpha$-BP is different from standard BP with damping technique. The later case uses message update rule that differs from \eqref{chpt3:eq:bp-update-rule} slightly by the way of assigning  updated message. 
+
+
+Additionally, $\alpha$-BP differs from the tree-reweighted belief propagation \cite{wainwright2008graphical} by the way of message update rule and also how algorithm is derived. 
+The tree-reweighted BP shares some similarity with $\alpha$-BP in formula of the message-passing rule, namely the pairwise log-potential functions are scaled by a weight and reweighted old messages appear in computation of new messages. But different from $\alpha$-BP, tree-reweighted BP is derived by obtaining an upper bound of log-partition function of $p(\bm{x})$ first via a Jensen's inequality and minimize the upper bound. The upper bound is
+\begin{align}
+   F_T(q) =& \sum_{s\in\Vv}\sum_{x_s}q_s(x_s) \ln{\frac{q_s(x_s)}{\phi_s(x_s)}}  + \sum_{(s,t)\in\Ee}\mu_{st}\sum_{x_s, x_t} q_{st}(x_s, x_t) \ln\frac{q_{st}(x_s,x_t)}{q_s(x_s)q_t(x_t)} \nonumber \\
+  & - \sum_{(s,t)\in\Ee}\sum_{x_s, x_t} q_{st}(x_s, x_t)\ln{\phi_{st}(x_t, x_t)},
+\end{align}
+where $0\leq \mu_{st} \leq 1$ is defined as the appearance probability of edge $(s, t) \in \Ee$, which denotes the appearance rate of edge $(s,t)$ among all spanning trees of graph $\Gg$. Denote the set of all spanning trees of $\Gg$ by $\Tt(\Gg)$. $\mu_{st}$ is the probability that edge $(s,t)$ exists in a randomly selected spanning tree from $\Tt(\Gg)$. The appearance rate can be expensive to compute as it is defined on all spanning trees of a graph.
+
+
+The upper bound $F_T$ can be reduced into the Bethe free energy \eqref{chpt2:bethe-free-energy} when $\mu_{st}=1$, $\forall ~(s,t)\in \Ee$. The message-passing updates of the tree-reweighted algorithm corresponds to the minimization of $F_T$ with marginalization constraints, which can be written as
+\begin{align}
+    {m}^{\text{new}}_{ts}(x_s) \propto \sum_{x_t} \phi_{st}(x_s, x_t)^{1/\mu_{st}} {\phi}_t(x_t) \frac{\prod_{w\in \Nn(t)\backslash s}m_{wt}(x_t)^{\mu_{wt}} }{m_{st}(x_t)^{1-\mu_{st}}}.
+\end{align}
+In the message update rule, both pairwise potential factor and old messages are reweighted, which are different from the way of how pairwise potential factor and old message are reweighted in message update in \eqref{eq:message-rule}. Nevertheless, $\alpha$-BP is derived in the way that is different from tree-reweighted BP.
+
 
 From the practical perspective of view, $\alpha$-BP as a meta algorithm can be used with other methods in hybrid way. Inspired by \cite{pseudo_priorBP2010} and assembling methods \cite{James:2014:ISL:2517747}, we can modify the graphical model shown in Figure~\ref{fig:factor-graph} by adding an extra factor potential $\hat{p}_s(x_s)$ to each $x_s$. The extra factor potential $\hat{p}_s(x_s)$ acts as prior information that can be obtained from other methods. In other words, this factor potential stands for our belief from exterior estimation. Then we can run our $\alpha$-BP on the modified graph. The modified graph is shown in Figure~\ref{fig:factor-graph-with-prior}.
 
@@ -257,11 +285,20 @@ From the practical perspective of view, $\alpha$-BP as a meta algorithm can be u
 % \end{algorithm}
 
 
-Note although mean field method also uses fully-factorized approximation, it is obtained differently from $\alpha$-BP and its factorization differs from that of $\alpha$-BP. In addition, 
-$\alpha$-BP is different from standard BP with damping technique. The later case uses message update rule that differs from \eqref{eq:bp-update-rule} slightly by the way of assigning  updated message. Also, $\alpha$-BP differs from the tree-reweighted belief propagation \cite{wainwright2008graphical} by the way of message update rule and also how algorithm is derived. Please refer to the section~\ref{apdx:sec:related-msg-passings} in the supplementary for detailed discussion.
-
 \section{Convergence of $\alpha$-BP with a Binary State Space}\label{chpt3:sec:cnvg-thm}
-In this section we discuss the convergence of $\alpha$-BP. Without loss of generality, we consider the case of binary $\Aa$, i.e. $\Aa=\left\{ -1, 1 \right\}$. The factor potentials are further detailed as
+
+As pointed earlier, a key issue of BP and its variants is whether and when they converge. In this section, we discuss when $\alpha$-BP converges. 
+From the high-level perspective, we are going to use \textit{contraction} property to show when $\alpha$-BP does converge.
+\begin{definition}\label{chpt3:def:contraction}
+  For a number $c \in [0,1)$, an operator $G$ over a metric space $(\Delta, d(;))$ is $c$-contraction relative to the distance function $d(,)$ if for any $\bm{z}, \bm{z}^{\prime} \in \Delta$, we have
+  \begin{equation}
+    d(G(\bm{z}), G(\bm{z}^{\prime})) \leq c d(\bm{z}, \bm{z}^{\prime}).
+  \end{equation}
+\end{definition}
+Definition~\ref{chpt3:def:contraction} tells us that an operator is a contraction if its application to two points in the space is guaranteed to decrease the distance between them by at least a constant $c < 1$. Thus, we essentially are going to show that the message update rule of $\alpha$-BP is actually a contraction, under which condition we would show that $\alpha$-BP converges.
+
+
+Without loss of generality, we consider the case of binary $\Aa$, i.e. $\Aa=\left\{ -1, 1 \right\}$. The factor potentials are further detailed as
 \begin{align}
   \phi_{st}(x_s, x_t) &= \exp\left\{ \theta_{st}(x_s, x_t)\right\}, \nonumber \\
   \phi_{s}(x_s) &= \exp\left\{ \theta_{s}(x_s) \right\}.
@@ -625,6 +662,8 @@ Additional, we also carry out the experiments where the proposed $\alpha$-BP is 
 In this paper, we have developed and analyzed a new alternative to standard BP message passing algorithm. The developed $\alpha$-BP algorithm has the clear intuition of minimization of a localized $\alpha$-divergence. Convergence conditions of $\alpha$-BP are offered in binary state space of each random variable. $\alpha$-BP is a valid and practical algorithm accoinding to our experiments. With prior trick, the performance of $\alpha$-BP can be further improved. Future works would be to investigate more general conditions for convergence of $\alpha$-BP. 
 
 \section{Relevant Literature}
+\textcolor{blue}{may refer to 11.7} for literature
+
 Inevitably, many real-world signals are naturally modeled by graph representations with loops. Although BP is still a practical method to do inference approximately (loopy BP) by running it as if there were no loop, its performance varies from case to case and its behavior is not well understood in general. Attempts have been made to study this issue. A direct workaround is to propagate messages on a manipulated graph instead of the original graph. The representative methods of this family are junction tree (clique tree) method \cite[section~10]{koller2009pgm} and generalized belief propagation (GBP)\cite{yedida2005constucting}. Although they both cluster multiple nodes of the original graph into a node in a hyper-graph (clique tree or region graph) and propagate message in the new graph. Junction tree provides a exact inference method while GBP is an approximate inference method. How to convert a general graph to a junction tree or region graph is not trivial, and structure of the converted graph makes significant difference in inference performance. Additionally, the former's complexity relies on tree-width (the size of the largest clique minuses one), which means that there is not too much gain by using junction tree than enumerating configurations in very dense graphs. For the latter, constructing a region graph itself is a challenging task and still need further study.
 
 Apart from the work of transforming the problem represented by a loopy graph into one of a hyper-graph, research is more active in approximate methods. Starting from the stationary point explanation of Bethe free energy in \cite{Yedidia:2000:GBP:3008751.3008848}, variants of BP have been derived to improve BP in general graph. Fractional BP in \cite{Wiegerinck:2002:FBP:2968618.2968673} applies a correction coefficient to each factor and obtain a message passing rule similarly as minimization of Bethe free energy. 
