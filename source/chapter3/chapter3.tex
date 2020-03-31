@@ -38,9 +38,9 @@ where the $\int q(\bm{x}) - p(\bm{x}) d\bm{x}$ is a correction factor to accommo
   Note in \eqref{chpt3:eq:alpha-divergence} and \eqref{chpt3:eq:kl-divergence}, the integral should be replaced by sum for discrete $\bm{x}$.
 \end{remark}
 \begin{remark}
-The KL divergence can be seen as a special case of $\alpha$-divergence, by observing $\lim_{\alpha \rightarrow 1}\Dd_{\alpha}(p \| q ) = KL(p\|q)$ and $\lim_{\alpha \rightarrow 0}\Dd_{\alpha}(p \| q ) = KL(q\|p)$ (applying L'H\^opital's rule to \eqref{chpt3:eq:alpha-divergence}).
+  The KL divergence can be seen as a special case of $\alpha$-divergence, by observing $\lim_{\alpha \rightarrow 1}\Dd_{\alpha}(p \| q ) = KL(p\|q)$ and $\lim_{\alpha \rightarrow 0}\Dd_{\alpha}(p \| q ) = KL(q\|p)$ (applying L'H\^opital's rule to \eqref{chpt3:eq:alpha-divergence}).
 
-Regarding basic properties of divergence measures, both $\alpha$-divergence and KL divergence are zero when $p=q$, and they are non-negative. 
+  Regarding basic properties of divergence measures, both $\alpha$-divergence and KL divergence are zero when $p=q$, and they are non-negative. 
 \end{remark}
 
 Denote KL-projection by
@@ -83,7 +83,7 @@ This heuristic scheme is a fixed-point iteration, which does not guarantee to co
       
       \node[nnode] (fi) at (-1.5 , -1.5) {};
       \node[] at ($(fi) + (0.95,0)$) {$\phi_s(x_s)$};
-        
+      
 
       \node[enode] (xj) at (1.5 ,0) {};
       \node[] at ($(xj) + (0.75,0)$) {$x_t$};
@@ -145,19 +145,19 @@ We perform a factor-wise refinement procedure to update the factors of $q(\bm{x}
 \begin{align}
   q^{\backslash (t,s)}(\bm{x})
   = q(\bm{x})/\tilde{\phi}_{ts}(x_t,
-    x_s) \propto \prod_{{s\in \Vv}} \tilde{\phi}_s(x_s) \prod_{(v,u) \in
-    \Ee\backslash (t,s)}
-    \tilde{\phi}_{vu}(x_v, x_u).
-    % &= \left(
-    %   \tilde{\phi}_s(x_s) \prod_{w\in \Nn(s) \backslash t}m_{ws}(x_s)
-    % \right)
-    % \left(
-    %   \tilde{\phi}_t(x_t) \prod_{w\in \Nn(t) \backslash s}m_{wt}(x_t)
-    % \right)
-    % \left(
-    %   \prod_{v \in \Vv \backslash s,t}
-    %   \tilde{\phi}_v(x_v) \prod_{w\in \Nn(v)}m_{wv}(x_v)
-    % \right)\nonumber \\
+  x_s) \propto \prod_{{s\in \Vv}} \tilde{\phi}_s(x_s) \prod_{(v,u) \in
+  \Ee\backslash (t,s)}
+  \tilde{\phi}_{vu}(x_v, x_u).
+  % &= \left(
+  %   \tilde{\phi}_s(x_s) \prod_{w\in \Nn(s) \backslash t}m_{ws}(x_s)
+  % \right)
+  % \left(
+  %   \tilde{\phi}_t(x_t) \prod_{w\in \Nn(t) \backslash s}m_{wt}(x_t)
+  % \right)
+  % \left(
+  %   \prod_{v \in \Vv \backslash s,t}
+  %   \tilde{\phi}_v(x_v) \prod_{w\in \Nn(v)}m_{wv}(x_v)
+  % \right)\nonumber \\
 \end{align}
 We also exclude the factor $\phi_{ts}(x_t, x_s)$ in $p(\bm{x})$ to obtain $p^{\backslash (t,s)}(\bm{x})$. % Assume that we already have had $q^{\backslash (t,s)}(\bm{x})$ as a good approximation of $p^{\backslash (t,s)}(\bm{x})$, i.e. $q^{\backslash (t,s)}(\bm{x}) \approx p^{\backslash (t,s)}(\bm{x})$, where $\approx$ denotes approximately equality, it is $\tilde{\phi}_{ts}(x_t, x_s)$ that remains to be refined. In refining factor $\tilde{\phi}_{ts}(x_t, x_s)$ with $\alpha$-divergence under such assumption, the problem
 Instead of updating $\tilde{\phi}_{ts}(x_t, x_s)$ directly by solving
@@ -175,8 +175,8 @@ Using fixed-point update in \eqref{eq:fixed-point-iter}, the problem in \eqref{e
 \begin{align}\label{eq:update-rule}
   q^{\backslash (t,s)}(\bm{x})\tilde{\phi}_{ts}^{\mathrm{new}}(x_t, x_s) \propto
   % &\propto \text{proj}\left[ \left( q^{\backslash (t,s)}(\bm{x}){\phi}_{ts}(x_t, x_s) \right)^{\alpha_{ts}} \left(q^{\backslash (t,s)}(\bm{x})\tilde{\phi}_{ts}(x_t, x_s)  \right)^{1-\alpha_{ts}} \right] \nonumber \\
-    \mathrm{proj}\left[ q^{\backslash
-        (t,s)}(\bm{x}){\phi}_{ts}(x_t, x_s)^{\alpha_{ts}} \tilde{\phi}_{ts}(x_t, x_s)^{1-\alpha_{ts}} \right]. 
+  \mathrm{proj}\left[ q^{\backslash
+  (t,s)}(\bm{x}){\phi}_{ts}(x_t, x_s)^{\alpha_{ts}} \tilde{\phi}_{ts}(x_t, x_s)^{1-\alpha_{ts}} \right]. 
 \end{align}
 \begin{figure}[!t]
   \begin{centering}
@@ -250,15 +250,15 @@ $\alpha$-BP is different from standard BP with damping technique. The later case
 Additionally, $\alpha$-BP differs from the tree-reweighted belief propagation \cite{wainwright2008graphical} by the way of message update rule and also how algorithm is derived. 
 The tree-reweighted BP shares some similarity with $\alpha$-BP in formula of the message-passing rule, namely the pairwise log-potential functions are scaled by a weight and reweighted old messages appear in computation of new messages. But different from $\alpha$-BP, tree-reweighted BP is derived by obtaining an upper bound of log-partition function of $p(\bm{x})$ first via a Jensen's inequality and minimize the upper bound. The upper bound is
 \begin{align}
-   F_T(q) =& \sum_{s\in\Vv}\sum_{x_s}q_s(x_s) \ln{\frac{q_s(x_s)}{\phi_s(x_s)}}  + \sum_{(s,t)\in\Ee}\mu_{st}\sum_{x_s, x_t} q_{st}(x_s, x_t) \ln\frac{q_{st}(x_s,x_t)}{q_s(x_s)q_t(x_t)} \nonumber \\
-  & - \sum_{(s,t)\in\Ee}\sum_{x_s, x_t} q_{st}(x_s, x_t)\ln{\phi_{st}(x_t, x_t)},
+  F_T(q) =& \sum_{s\in\Vv}\sum_{x_s}q_s(x_s) \ln{\frac{q_s(x_s)}{\phi_s(x_s)}}  + \sum_{(s,t)\in\Ee}\mu_{st}\sum_{x_s, x_t} q_{st}(x_s, x_t) \ln\frac{q_{st}(x_s,x_t)}{q_s(x_s)q_t(x_t)} \nonumber \\
+          & - \sum_{(s,t)\in\Ee}\sum_{x_s, x_t} q_{st}(x_s, x_t)\ln{\phi_{st}(x_t, x_t)},
 \end{align}
 where $0\leq \mu_{st} \leq 1$ is defined as the appearance probability of edge $(s, t) \in \Ee$, which denotes the appearance rate of edge $(s,t)$ among all spanning trees of graph $\Gg$. Denote the set of all spanning trees of $\Gg$ by $\Tt(\Gg)$. $\mu_{st}$ is the probability that edge $(s,t)$ exists in a randomly selected spanning tree from $\Tt(\Gg)$. The appearance rate can be expensive to compute as it is defined on all spanning trees of a graph.
 
 
 The upper bound $F_T$ can be reduced into the Bethe free energy \eqref{chpt2:bethe-free-energy} when $\mu_{st}=1$, $\forall ~(s,t)\in \Ee$. The message-passing updates of the tree-reweighted algorithm corresponds to the minimization of $F_T$ with marginalization constraints, which can be written as
 \begin{align}
-    {m}^{\text{new}}_{ts}(x_s) \propto \sum_{x_t} \phi_{st}(x_s, x_t)^{1/\mu_{st}} {\phi}_t(x_t) \frac{\prod_{w\in \Nn(t)\backslash s}m_{wt}(x_t)^{\mu_{wt}} }{m_{st}(x_t)^{1-\mu_{st}}}.
+  {m}^{\text{new}}_{ts}(x_s) \propto \sum_{x_t} \phi_{st}(x_s, x_t)^{1/\mu_{st}} {\phi}_t(x_t) \frac{\prod_{w\in \Nn(t)\backslash s}m_{wt}(x_t)^{\mu_{wt}} }{m_{st}(x_t)^{1-\mu_{st}}}.
 \end{align}
 In the message update rule, both pairwise potential factor and old messages are reweighted, which are different from the way of how pairwise potential factor and old message are reweighted in message update in \eqref{eq:message-rule}. Nevertheless, $\alpha$-BP is derived in the way that is different from tree-reweighted BP.
 
@@ -311,14 +311,13 @@ Further assume the symmetric property of potentials
 
 For notation simplicity, we use $\theta_{ts}=\theta_{ts}(1, 1)$ and $\theta_s = \theta_s(1)$. Denote by $\bm{\alpha}$ the vector of all local assignments of parameter $\alpha$, i.e. $\bm{\alpha} = \left(  \alpha_{ts} \right)_{(t ,s) \in \Ee }$, by $\bm{\theta}$ the vector of all parameters of potentials, i.e. $\bm{\theta} = \left(  \theta_{ts} \right)_{(t ,s) \in \Ee }$.  Define a matrix $\bm{M}(\bm{\alpha}, \bm{\theta})$ of size $\abs{\vec{\Ee}} \times \abs{\vec{\Ee}}$, in which its entries are indexed by directed edges $(t\rightarrow s)$, as
 \begin{align}\label{eq:matrix_m}
-  &M_{(t\rightarrow s), (u \rightarrow v)} \nonumber \\
-  &=
-    \begin{cases}
-      \abs{ 1 - \alpha_{ts}}, &\quad u=t, v=s, \\
-      \abs{ 1 - \alpha_{ts}} \tanh \abs{\alpha_{ts} \theta_{ts}}, & \quad u = s, v =t, \\
-      \tanh\abs{\alpha_{ts} \theta_{ts}}, & \quad u \in \Nn(t)\backslash s, v = t, \\
-      0, & \quad \mathrm{otherwise}.
-    \end{cases}
+  M_{(t\rightarrow s), (u \rightarrow v)} =
+  \begin{cases}
+    \abs{ 1 - \alpha_{ts}}, &\quad u=t, v=s, \\
+    \abs{ 1 - \alpha_{ts}} \tanh \abs{\alpha_{ts} \theta_{ts}}, & \quad u = s, v =t, \\
+    \tanh\abs{\alpha_{ts} \theta_{ts}}, & \quad u \in \Nn(t)\backslash s, v = t, \\
+    0, & \quad \mathrm{otherwise}.
+  \end{cases}
 \end{align}
 \begin{theorem}\label{thm:normd}
   For an arbitrary pairwise Markov random field over binary variables,
@@ -395,8 +394,7 @@ For notation simplicity, we use $\theta_{ts}=\theta_{ts}(1, 1)$ and $\theta_s = 
     & = \abs{(1-\alpha_{ts}) (z_{ts}^{(n)} - z_{ts}^{(n-1)}) + \nabla f_{ts}(\bm{z}^{\lambda})^{T} (\bm{z}^{(n)} - \bm{z}^{(n-1)})} \nonumber \\
     & \leq \abs{(1-\alpha_{ts}) (z_{ts}^{(n)} - z_{ts}^{(n-1)})} + \abs{\nabla f_{ts}(\bm{z}^{\lambda})^{T} (\bm{z}^{(n)} - \bm{z}^{(n-1)})} \nonumber \\
     & = \abs{ 1 - \alpha_{ts}} \abs{z_{ts}^{(n)} - z_{ts}^{(n-1)}} + \abs{\nabla f_{ts}(\bm{z}^{\lambda})}^{T} \abs{\bm{z}^{(n)} - \bm{z}^{(n-1)}} \nonumber \\
-    & \overset{(a)}{\leq} \abs{ 1 - \alpha_{ts}} \abs{z_{ts}^{(n)} - z_{ts}^{(n-1)}} \nonumber \\
-    &+ \abs{ 1 - \alpha_{ts}} \tanh(\abs{\alpha_{ts} \theta_{ts}}) \abs{z_{st}^{(n)} - z_{st}^{(n-1)}} \nonumber \\
+    & \overset{(a)}{\leq} \abs{ 1 - \alpha_{ts}} \abs{z_{ts}^{(n)} - z_{ts}^{(n-1)}} + \abs{ 1 - \alpha_{ts}} \tanh(\abs{\alpha_{ts} \theta_{ts}}) \abs{z_{st}^{(n)} - z_{st}^{(n-1)}} \nonumber \\
     &+ \sum_{w\in N(t)\backslash s} \tanh(\abs{\alpha_{ts} \theta_{ts}}) \abs{z_{wt}^{(n)} - z_{wt}^{(n-1)}},
   \end{align}
   where step $(a)$ holds by applying \eqref{eq:F_pd} and \eqref{eq:f-bound}.
@@ -465,13 +463,11 @@ Given the fact that $\alpha$-BP would converge if the condition in Theorem~\ref{
 \begin{corollary}
   $\alpha$-BP would converge to a fixed point if the condition
   \begin{align}
-    \umax{u \rightarrow v} & \abs{1-\alpha_{uv}} + \abs{1-\alpha_{vu}}\tanh{(\abs{\alpha_{vu} \theta_{vu}})} \nonumber \\
-                           &+ \sum_{w \in \Nn(v) \backslash u} \tanh{(\abs{\alpha_{{vw}} \theta_{vw}})} < 1,
+    \umax{u \rightarrow v}  \abs{1-\alpha_{uv}} + \abs{1-\alpha_{vu}}\tanh{(\abs{\alpha_{vu} \theta_{vu}})} + \sum_{w \in \Nn(v) \backslash u} \tanh{(\abs{\alpha_{{vw}} \theta_{vw}})} < 1,
   \end{align}
   is fulfilled or the condition
   \begin{align}
-    \umax{t \rightarrow s} &\abs{1-\alpha_{ts}} (1 + \tanh(\abs{\alpha_{ts} \theta_{ts}})) \nonumber \\
-                           &+ (\abs{\Nn(t)}-1)\tanh(\abs{\alpha_{ts} \theta_{ts}}) < 1.
+    \umax{t \rightarrow s} \abs{1-\alpha_{ts}} (1 + \tanh(\abs{\alpha_{ts} \theta_{ts}})) + (\abs{\Nn(t)}-1)\tanh(\abs{\alpha_{ts} \theta_{ts}}) < 1.
   \end{align}
   is achieved, where $\abs{\Nn(t)}$ denotes the carnality of the set $\Nn(t)$. The associated fixed point is unique.
 \end{corollary}
@@ -494,11 +490,9 @@ Given the fact that $\alpha$-BP would converge if the condition in Theorem~\ref{
   where we omit the parameters of $\bm{M}$ here for simplicity. We can expand the first multiplicand on the right hand side of \eqref{eq:row-col-norm-ineq} as follows
   \begin{align}
     \normu{\bm{M}} =& \umax{u \rightarrow v}{\sum_{t\rightarrow s} M_{(t\rightarrow s), (u\rightarrow v)}} \nonumber \\
-    =& \umax{u \rightarrow v}\abs{1-\alpha_{uv}} + \abs{1-\alpha_{vu}}\tanh{\abs{\alpha_{vu} \theta_{vu}}} \nonumber \\
-                    &+ \sum_{w \Nn(v) \backslash u} \tanh{\abs{\alpha_{{vw}} \theta_{vw}}}, \nonumber \\
+    =& \umax{u \rightarrow v}\abs{1-\alpha_{uv}} + \abs{1-\alpha_{vu}}\tanh{\abs{\alpha_{vu} \theta_{vu}}} + \sum_{w \Nn(v) \backslash u} \tanh{\abs{\alpha_{{vw}} \theta_{vw}}}, \nonumber \\
     \normi{\bm{M}} =& \umax{t \rightarrow s}{\sum_{u\rightarrow v} M_{(t\rightarrow s), (u\rightarrow v)}} \nonumber \\
-    =& \umax{t \rightarrow s} \abs{1-\alpha_{ts}} (1 + \tanh\abs{\alpha_{ts} \theta_{ts}}) \nonumber \\
-                    &+ (\abs{\Nn(t)}-1)\tanh\abs{\alpha_{ts} \theta_{ts}}.
+    =& \umax{t \rightarrow s} \abs{1-\alpha_{ts}} (1 + \tanh\abs{\alpha_{ts} \theta_{ts}}) + (\abs{\Nn(t)}-1)\tanh\abs{\alpha_{ts} \theta_{ts}}.
   \end{align}
   When condition $\normu{\bm{M}} < 1$ is met, sequence $\left( \abs{\bm{z}^{(n+1)} - \bm{z}^{n}} \right)$ approaches to zero as $n\rightarrow \infty$. Similarly, condition $\normi{\bm{M}}<1$ can also guarantee the convergence to zero of sequence $\left( \abs{\bm{z}^{(n+1)} - \bm{z}^{n}} \right)$. The analysis for uniqueness of converged fixed point is similar to that in proof of Theorem~\ref{thm:normd}.
 \end{proof}
@@ -549,45 +543,21 @@ Given the fact that $\alpha$-BP would converge if the condition in Theorem~\ref{
                %                \textcolor{red}{analysis on async case of update compared to sync case}
 
 
-\begin{figure*}[!ht]
-               %                the first figure
-  
-  \begin{subfigure}{0.5\textwidth}
-    \centering
-    \includegraphics[width=1\columnwidth]{figures/converge/contraction_vs_variance_crop.pdf}
-    \caption{}
-    \label{fig:largest_singular}
-  \end{subfigure}
-               %                the second figure
-  \begin{subfigure}{0.5\textwidth}
-    \includegraphics[width=1\columnwidth]
-    {figures/converge/converge_erp0_4_alpha_1_stn_0_5_vs_filter_false_crop.pdf}
-    \caption{}
-    \label{fig:log-error-iter-diverse}
-  \end{subfigure}
-               %                the third figure
-  \begin{subfigure}{0.5\textwidth}
-    \includegraphics[width=1\columnwidth]{figures/converge/converge_erp0_4_alpha_0_5_stn_0_1_vs_filter_true_crop.pdf}
-    \caption{}
-    \label{fig:log-error-iter-converge}
-  \end{subfigure}
-  \caption{Numerical results on convergence, number of nodes $N=16$: (\textbf{a}) the largest singular value of $\bm{M}$ defined in \eqref{eq:matrix_m} versus variance of potential parameter $\bm{\theta}$, normalized error ${\normd{\bm{m}^{(n)}-\bm{m}^{\ast}}}/{\normd{\bm{m}^{\ast}}}$ versus the number of iterations. Parameter setting: $\gamma =
-    0.4$, $\alpha = 1$ (equivalent to standard BP), $\sigma = 0.5$.
-    and (\textbf{c}) normalized error
-    ${\normd{\bm{m}^{(n)}-\bm{m}^{\ast}}}/{\normd{\bm{m}^{\ast}}}$
-    versus the number of iterations. Parameter setting: $\gamma =
-    0.4$, $\alpha = 0.5$, $\sigma = 0.1$.
-    For (b) and (c), blue region denotes the range from minimum to maximum of the normalized error of $100$ graph realizations, whereas the curve stands for mean error of the $100$ realized graphs. }
-  \label{fig:mimo_detection}
-  
-\end{figure*}
-
 
 \section{Experiments}
 
-In this section, we firstly give the simulations for convergence condition of $\alpha$-BP explained in Theorem~\ref{thm:normd}. Then the application of $\alpha$-BP to a MIMO detection problem is demonstrated. {Code is attached along with the submission.}
+In this section, we firstly give the simulations for convergence condition of $\alpha$-BP explained in Theorem~\ref{thm:normd}. Then the application of $\alpha$-BP to a MIMO detection problem is demonstrated.
 
-\subsection{Simulations on Synthetic Problem}
+\subsection{Simulations on Random Graphs}
+\begin{figure*}[!t]
+  % the first figure
+  \centering
+  \includegraphics[width=0.6\columnwidth]{figures/converge/contraction_vs_variance_r1-crop.pdf}
+  \caption{The largest singular value of $\bm{M}$ defined in \eqref{eq:matrix_m} versus variance of potential parameter $\bm{\theta}$. A value of each curve is the mean of $100$ graph realizations.}
+  \label{fig:largest_singular}
+  % the second figure
+\end{figure*}
+
 
 In this section simulations on random graphs are carried out
 to gain some insights on the $\alpha$-BP. The random graphs used here are generated
@@ -602,7 +572,27 @@ with $\phi_{ts}(x_t, x_s) = e^{- 2 J_{t,s} x_t x_s}$ and $\phi_s(x_s) = e^{ - J_
 For this set of experiments, we set $\Aa = \left\{ -1, 1 \right\}$ and $N=16$. To specify \eqref{eq:mrf_matrix_form}, the non-zero entries of $\bm{J}$ is sampled from a Gaussian distribution $\mathsf{N}(0, \sigma^2)$, i.e. $J_{ts} \sim \mathsf{N}(0, \sigma^2)$ if $J_{ts}\neq 0$. For entries of $\bm{b}$, we use $b_t \in \mathsf{N}(0, (\sigma/4)^2)$.
 For each edge $(t,s) \in \Ee$, we set $\alpha_{ts}=\alpha$, i.e. the edges share a global value $\alpha$.
 
-In Figure~\ref{fig:largest_singular}, we show how the largest singular value of $\bm{M}(\bm{\alpha}, \bm{\theta})$ as defined in \eqref{eq:matrix_m} changes when the standard deviation $\sigma$ of potential factors increases. The behavior is illustrated with different values of $\alpha$ and the edge probability $\gamma$. For each curve, a point on the curve is the mean of $100$ realizations of random graphs as described above. The curves of Figure~\ref{fig:largest_singular} show in general that a larger standard deviation of potential factors of graph edges makes it more difficult to fulfill the convergence condition in Theorem~\ref{thm:normd}. This is also the case when a graph is denser as we raise the edge probability $\gamma$ in generating random graphs, by comparing the green and orange curves. The comparison between green and blue curves indicates that choice of $\alpha$ value in $\alpha$-BP also makes a difference, and its effect depends on the graph itself. How to tune $\alpha$ value to fulfill condition of Theorem~\ref{thm:normd} depends not only how dense ($\gamma$) the graph is, but also how potential factors spread out from each other.
+Figure~\ref{fig:largest_singular} illustrate how the largest singular value of $\bm{M}(\bm{\alpha}, \bm{\theta})$ as defined in \eqref{eq:matrix_m} changes when the standard deviation $\sigma$ of potential factors increases. The behavior is illustrated with different values of $\alpha$ and the edge probability $\gamma$. For each curve, a point on the curve is the mean of $100$ realizations of random graphs as described above. The curves of Figure~\ref{fig:largest_singular} show in general that a larger standard deviation of potential factors of graph edges makes it more difficult to fulfill the convergence condition in Theorem~\ref{thm:normd}. This is also the case when a graph is denser as we raise the edge probability $\gamma$ in generating random graphs, by comparing the green and orange curves. The comparison between green and blue curves indicates that choice of $\alpha$ value in $\alpha$-BP also makes a difference, and its effect depends on the graph itself. How to tune $\alpha$ value to fulfill condition of Theorem~\ref{thm:normd} depends not only how dense ($\gamma$) the graph is, but also how potential factors spread out from each other.
+
+\begin{figure*}[!t]
+  \begin{subfigure}{0.5\textwidth}
+    \includegraphics[width=1\columnwidth]
+    {figures/converge/converge_erp0_4_alpha_1_stn_0_5_vs_filter_false_crop.pdf}
+    \caption{}
+    \label{fig:log-error-iter-diverse}
+  \end{subfigure}
+  % the third figure
+  \begin{subfigure}{0.5\textwidth}
+    \includegraphics[width=1\columnwidth]{figures/converge/converge_erp0_2_alpha_0_5_stn_0_1_vs_filter_true-crop.pdf}
+    \caption{}
+    \label{fig:log-error-iter-converge}
+  \end{subfigure}
+  \caption{Numerical illustration on convergence, with normalized error ${\normd{\bm{m}^{(n)}-\bm{m}^{\ast}}}/{\normd{\bm{m}^{\ast}}}$ versus the number of iterations. Number of nodes $N=16$. \ref{fig:log-error-iter-diverse} parameter setting: $\gamma =0.4$, $\alpha = 1$ (equivalent to standard BP), $\sigma = 0.5$. \ref{fig:log-error-iter-converge} Parameter setting: $\gamma =0.2$, $\alpha = 0.5$, $\sigma = 0.1$.
+    Blue region denotes the range from minimum to maximum of the normalized error of $100$ graph realizations, whereas the curve stands for mean error of the $100$ realized graphs. }
+  \label{fig:mimo_detection}
+\end{figure*}
+
+
 
 To illustrate our developed convergence condition for $\alpha$-BP, we also observe how messages in a graph changes along belief propagation iterations. To be specific, we run our $\alpha$-BP with $200$ iterations on a graph, after which the messages in the graph are denoted by $\bm{m}^{\ast}$. $\bm{m}^{\ast}$ can be the converged messages if $\alpha$-BP has converged within the $200$ iterations. Then we measure the quantity $\normd{\bm{m}^{(n)} - \bm{m}^{\ast}}/\normd{\bm{m}^{\ast}}$ during the iterations. In Figure~\ref{fig:log-error-iter-diverse}, we generate $100$ random graphs by ER model with parameter setting as $\gamma =0.4$, $\alpha = 1$\footnote{$\alpha=1$ in $\alpha$-BP corresponding to standard BP.}, $\sigma = 0.5$. By referring to the curves in Figure~\ref{fig:largest_singular}, it can be inferred that this setting does not fulfill the condition in Theorem~\ref{thm:normd}. The log error changes versus iteration number $n$ for the $100$ graphs are shown in Figure~\ref{fig:log-error-iter-diverse}, in which the blue region indicates the range and the solid curve indicates the mean of the normalized errors. It is clear that Figure~\ref{fig:log-error-iter-diverse} does not show any sign of convergence within $200$ iterations.
 
@@ -627,11 +617,11 @@ To illustrate our developed convergence condition for $\alpha$-BP, we also obser
   \label{fig:mimo_detection}
 \end{figure*}
 
-We then carry out a set of experiments in Figure~\ref{fig:log-error-iter-converge} similar to our experiments in Figure~\ref{fig:log-error-iter-diverse}. The only difference lies in the graph generating process. Here we set the parameters to be $\gamma =0.4$, $\alpha = 0.5$, $\sigma = 0.1$. According to our curves in Figure~\ref{fig:largest_singular}, a graph generated with this parameter setting should fulfill the condition in Theorem~\ref{thm:normd}. Due to randomness of both graph generating by ER and potential factors, we regenerate a graph if the initial generated graph does not satisfy $\lambda^{\ast}(\bm{M})<1$. Therefore the $100$ graphs used in experiments for Figure~\ref{fig:log-error-iter-converge} all fulfill the Theorem~\ref{thm:normd}. The result in Figure~\ref{fig:log-error-iter-converge} is consistent with our analysis on the convergence of $\alpha$-BP.
+We then carry out a set of experiments in Figure~\ref{fig:log-error-iter-converge} similar to our experiments in Figure~\ref{fig:log-error-iter-diverse}. The only difference lies in the graph generating process. Here we set the parameters to be $\gamma =0.2$, $\alpha = 0.5$, $\sigma = 0.1$. According to our curves in Figure~\ref{fig:largest_singular}, a graph generated with this parameter setting should fulfill the condition in Theorem~\ref{thm:normd}. Due to randomness of both graph generating by ER and potential factors, we regenerate a graph if the initial generated graph does not satisfy $\lambda^{\ast}(\bm{M})<1$. Therefore the $100$ graphs used in experiments for Figure~\ref{fig:log-error-iter-converge} all fulfill the Theorem~\ref{thm:normd}. The result in Figure~\ref{fig:log-error-iter-converge} is consistent with our analysis on the convergence of $\alpha$-BP.
 
 
 
-\subsection{Application to MIMO Detection}
+\subsection{Full-connected Graph Case: Application to MIMO Detection}
 
 In this section, we show the application of $\alpha$-BP to a MIMO detection problem. For a MIMO system, the observation $\bm{y}$ is a linear function of channel $\bm{H}\in \RR^{N\times N}$ when unknown signal $\bm{x}$ need to be estimated,
 \begin{equation}\label{eq:linear-model}
@@ -706,42 +696,42 @@ The intuition of $\alpha$-BP starts with a surrogate distribution $q(\bm{x})$. $
 Apart from the algorithm itself, we give the convergence analysis of $\alpha$-BP. Sufficient conditions that guarantee the convergence of $\alpha$-BP to a unique fixed point, are studied and obtained. It turns out that the derived convergence conditions of $\alpha$-BP depend on both the graph and also the value of $\alpha$. This result suggests that proper choice of $\alpha$ can help to guarantee the convergence of $\alpha$-BP. In addition, performance improvement of $\alpha$-BP over standard BP is demonstrated in a practical application.
 
 
-% It turns out the   Choice of $\alpha$ value affects the performance of $\alpha$-BP according our numerical results. $\alpha$-BP outperforms BP and MMSE in the exemplified linear model that is tested in our experiments this paper.
+                     %                      It turns out the   Choice of $\alpha$ value affects the performance of $\alpha$-BP according our numerical results. $\alpha$-BP outperforms BP and MMSE in the exemplified linear model that is tested in our experiments this paper.
 
-% -------------------------------------------------------
+                     %                      -------------------------------------------------------
 
-% Then try to minimize the information loss by using $q(\bm{x})$ to represent $p(\bm{x})$.  We follow Minka's work \cite{divergence-measures-and-message-passing} to make these steps feasible:
-% \begin{itemize}
-% \item Pick $q$ from a distribution family;
-% \item Pick a divergence to measure the information loss due to use $q$ to represent $p$;
-% \item Construct an optimization plan to approximate $p$ by $q$ with criteria of selected divergence;
-% \item Propagate the optimization across factor graph.
-% \end{itemize}
-% Then we estimate the most probable $\bm{x}$ from $q(\bm{x})$.
-% Fully factorized $q(\bm{x})$ is chosen such that we can avoid the search of whole discrete space $\Aa^{N}$. For the criteria selection, we use $\alpha$-divergence which generalize the classic Kullback-Leibler (KL) divergence. We refer to the obtained algorithm as $\alpha$-BP.
-
-
-% When $\bm{x}$ is defined in unconstrained continuous space $\Rr^N$, the MAP inference problem may comes with closed-form solution. For instance, minimum mean square error (MMSE) in linear system. For cases where there is no closed-form solution, gradient decent based optimization methods \cite{DBLP:journals/corr/KingmaB14} could be applied to find the most probable $\bm{x}$ with target of maximizing the $p(\bm{x})$ (or log-likelihood) directly or using variational Bayesian \cite{DBLP:journals/corr/KingmaW13}.
+                     %                      Then try to minimize the information loss by using $q(\bm{x})$ to represent $p(\bm{x})$.  We follow Minka's work \cite{divergence-measures-and-message-passing} to make these steps feasible:
+                     %                      \begin{itemize}
+                     %                      \item Pick $q$ from a distribution family;
+                     %                      \item Pick a divergence to measure the information loss due to use $q$ to represent $p$;
+                     %                      \item Construct an optimization plan to approximate $p$ by $q$ with criteria of selected divergence;
+                     %                      \item Propagate the optimization across factor graph.
+                     %                      \end{itemize}
+                     %                      Then we estimate the most probable $\bm{x}$ from $q(\bm{x})$.
+                     %                      Fully factorized $q(\bm{x})$ is chosen such that we can avoid the search of whole discrete space $\Aa^{N}$. For the criteria selection, we use $\alpha$-divergence which generalize the classic Kullback-Leibler (KL) divergence. We refer to the obtained algorithm as $\alpha$-BP.
 
 
+                     %                      When $\bm{x}$ is defined in unconstrained continuous space $\Rr^N$, the MAP inference problem may comes with closed-form solution. For instance, minimum mean square error (MMSE) in linear system. For cases where there is no closed-form solution, gradient decent based optimization methods \cite{DBLP:journals/corr/KingmaB14} could be applied to find the most probable $\bm{x}$ with target of maximizing the $p(\bm{x})$ (or log-likelihood) directly or using variational Bayesian \cite{DBLP:journals/corr/KingmaW13}.
 
 
 
-% ---------------------------------------------------------------------
-% Motivation starts from MRF and linear system, target to find most likely configuration/signal,
-% 1. continuous support, $\Rr^n$, closed form or optimization algorithm
-% 2. discrete finite support, no-closed form nor optimization method
-% examples: compressed sensing, MIMO detection
-
-% Introduction to graphical model and BP, this is usually used to cope with this problem here. Problem is the loopy graph, where performance is bad. Another problem is the leaf-root belief propagation explanation is gone loopy graph, since it is not tree structure any more.
-
-% In this work, we attempt the problem via looking for fully factorized approximation to true posterior, by minimizing alpha-divergence in a heuristic fixed-point scheme. $\alpha$-BP It turns out this generalize the standard BP. \\
-% 1. improvement can be achieved by alternating the choice of alpha value in $\alpha$-divergence. \\
-% 2. Run $\alpha$-BP with prior belief from other low cost estimation, help further impove the configuration estimation.
 
 
+                     %                      ---------------------------------------------------------------------
+                     %                      Motivation starts from MRF and linear system, target to find most likely configuration/signal,
+                     %                      1. continuous support, $\Rr^n$, closed form or optimization algorithm
+                     %                      2. discrete finite support, no-closed form nor optimization method
+                     %                      examples: compressed sensing, MIMO detection
 
-%%% Local Variables:
-%%% mode: latex
-%%% TeX-master: "../../main"
-%%% End:
+                     %                      Introduction to graphical model and BP, this is usually used to cope with this problem here. Problem is the loopy graph, where performance is bad. Another problem is the leaf-root belief propagation explanation is gone loopy graph, since it is not tree structure any more.
+
+                     %                      In this work, we attempt the problem via looking for fully factorized approximation to true posterior, by minimizing alpha-divergence in a heuristic fixed-point scheme. $\alpha$-BP It turns out this generalize the standard BP. \\
+    %     1. improvement can be achieved by alternating the choice of alpha value in $\alpha$-divergence. \\
+    %     2. Run $\alpha$-BP with prior belief from other low cost estimation, help further impove the configuration estimation.
+
+
+
+    %%%     Local Variables:
+    %%%     mode: latex
+    %%%     TeX-master: "../../main"
+    %%%     End:
