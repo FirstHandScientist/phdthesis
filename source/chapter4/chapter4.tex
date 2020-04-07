@@ -1,7 +1,897 @@
 \chapter{Inference as Optimization: An Region-based Energy Method}
-work in \href{https://github.com/FirstHandScientist/paper_renn}{Region-based Energy Neural Network for Approximate Inference}, under, review
 
-One of the motivations to use region graph: refer to \cite[section~11.3.5.3]{koller2009pgm} and figure~11.7 in this section.
+In last chapter, we explained an iterative message passing algorithm and discussed the connection with mean field, belief propagation and tree-reweighted belief propagation. These methods fellow different message-passing rules (fix point iterations) that are manually developed. The manual efforts in implementation for a practical inference problem includes both the message-passing rule definition and also message update schedule, both of which make a significant difference in performance of approximate inference. However, on our way towards automated inference methods, we intend to reduce the manual efforts without degenerating their performance. In this chapter, we would discuss one promising way to realize this target. The principle idea is to do inference as solving an optimization problem, i.e. inference as optimization.
+
+In fact, we have touched this topic in \autoref{chpt2:sec:variational-inference}, where we were trying to interpret what message-passing updates of mean field and belief propagation are actually doing. It turns out that the message passing rules are fix-point iterations of optimization problems. Therefore mean field and belief propagation get the intuition of minimization of variational free energy. Take the most widely used belief propagation method as example, since the message-passing rule can be obtained from minimization of Bethe free energy cost, we may just as well solve the optimization problem by other optimization techniques such as gradient descent. But early attempt on this track showed that it might suffer from the stability for peaky potential functions compared to iterative message-passing method \cite{welling2001belief}.
+
+
+Another limitation lies on the Bethe approximation itself. When representing Bethe approximation in a factor graph (not necessary to be pairwise case), a factor node associated with a potential function is related with more than one random variable, while a variable node is associated with one random variable. When beliefs are propagated on the graph, only a univariate marginal distribution (associated with a variable node) can be propagated from one neighboring factor to another neighboring factor of the variable node. The interactions between variables can not be directly propagated as messages in the graph. This limitation actually affects the performance of Bethe approximation in general graphs, especially the loopy graphs.
+
+In this chapter, we seek to use larger clusters in graphical representation to overcome the above mentioned limitation. Along with that, we would bring the concept of inference as optimization into the alternative representation.
+
+\section{Introduction}
+Probabilistic graphical models offer natural ways to encode the conditional dependence of random variables. Message-passing algorithms are practical and powerful methods to solve probabilistic inference problems on graphical models, including obtaining the overall state of a system or marginal probabilities of subset of nodes in the system. The well-known standard belief propagation (BP) algorithm \cite{Pearl1982reverend,kschischang2001factor_graph} has been popularly used in exact inference problems of tree-structures graphs and approximate inference in general graphs (loopy BP), which was explained by the Bethe free energy minimization later on \cite{yedidia2003understanding}. The approximate inference of BP was then improved by the generalized BP (GBP, also known as parent-to-child algorithm) that is also an iterative message-passing algorithm on a constructed region graph \cite{Yedidia:2000:GBP:3008751.3008848, yedida2005constucting}. GBP propagates messages between regions (clusters of nodes), is generally more accurate than loopy BP but is more complex than BP. Fix points of GBP that operate on regions graphs, correspond to stationary points of region-based free energy of the region graphs. Depending on the graph size and potential functions, the iterative message-passing algorithms can take long time to converge (if they can converge) before returning inference results. Also, inference of these message-passing methods can degenerate significantly in dense graphs (graphs with too many circles).
+
+Recent deep generative models, such as auto-encoders \cite{DBLP:journals/corr/KingmaW13,2017arXiv170104722M, 2017arXiv171101558T} show promising results on data generating and latent variable estimations. Also in the generative probabilistic model framework, \cite{li2018graphical, johansonNIPS2016_6379} combines deep neural networks with directed graphical models to represent the dependency structures of random variables.
+These models are advantageously fast on modern GPU devices.
+These work mainly do directed graphical modeling, and usually do not explicitly model the structure dependency of random variables fully. End-to-end training is used to learn a generative network and also a separate neural network to perform approximate inference. Sampling is usually used to perform neural network training when cost function is based on a probability distribution that is not modeled explicitly.
+
+We proposed a model to conjoin the benefits of both and avoid the drawbacks of each. Specifically, we use a neural network to directly minimize the region-based free energy for approximate probabilistic inference in general Markov random fields (MRFs), without iterative message-passing as belief propagation methods do. We term the region-based energy neural network as RENN for short. RENN allows quick approximate inference, and outperforms loopy BP, GBP and state-of-the-art neural network based inference model. The advantage of RENN remains even in challenging complete graphs (every two nodes are connected).
+
+We also consider learning MRFs with use of inference by RENN. Learning with RENN outperforms benchmark methods.
+In both learning MRFs with RENN and employing RENN for inference only, no sampling is required. 
+
+
+
+\begin{figure}[!t]
+  \centering
+  \begin{tikzpicture}
+    \begin{scope}[scale=0.7]
+
+    \tikzstyle{cnode} = [thick, draw=black, circle, inner sep = 1pt,  align=center]
+    \tikzstyle{nnode} = [thick, rectangle, rounded corners = 0pt,draw,inner sep = 2pt]
+    \node[cnode] (x1) at (0,0) {1};
+    \node[cnode] (x2) at (2,0) {2};
+    \node[cnode] (x3) at (4,0) {3};
+
+    \node[cnode] (x4) at (0,-2) {4};
+    \node[cnode] (x5) at (2,-2) {5};
+    \node[cnode] (x6) at (4,-2) {6};
+
+    \node[nnode] (fa) at (1,0) {\small$A$};
+    \node[nnode] (fb) at (3,0) {\small$B$};
+
+    \node[nnode] (fc) at (0,-1) {\small$C$};
+    \node[nnode] (fd) at (2,-1) {\small$D$};
+    \node[nnode] (fe) at (4,-1) {\small$E$};
+        
+    \node[nnode] (ff) at (1,-2) {\small$F$};
+    \node[nnode] (fg) at (3,-2) {\small$G$};
+
+
+    \draw[-] (x1) -- (fa);
+    \draw[-] (x1) -- (fc);
+
+    \draw[-] (x2) -- (fa);
+    \draw[-] (x2) -- (fb);
+    \draw[-] (x2) -- (fd);
+
+    \draw[-] (x3) -- (fb);
+    \draw[-] (x3) -- (fe);
+
+    \draw[-] (x4) -- (fc);
+    \draw[-] (x4) -- (ff);
+
+    \draw[-] (x5) -- (fd);
+    \draw[-] (x5) -- (ff);
+    \draw[-] (x5) -- (fg);
+
+    \draw[-] (x6) -- (fe);
+    \draw[-] (x6) -- (fg);
+
+    \end{scope}
+    \draw[dashed] (0, -1.8) -- (7.5, -1.8) (3.3, 0) -- (3.3, -1.8);
+    
+    \begin{scope}[xshift=4.5cm, yshift=-0.3cm,scale=0.7]
+      \tikzstyle{rnode} = [thick, rectangle, rounded corners = 2pt,minimum size = 0.0cm,draw,inner sep = 2pt]
+      \node[rnode] (r01) at (0,0) {\small \begin{tabular}[x]{@{}c@{}}1, 2, 4, 5 \\ $A,C,D,F$ \end{tabular}};
+      \node[rnode] (r02) at (3,0) {\small \begin{tabular}[x]{@{}c@{}}2, 3, 5, 6\\ $B,D,E,G$ \end{tabular}};
+      \node[rnode] (r11) at (1.5, -1.5) {\small 2, 5, $D$};
+
+      \draw[->] (r01.south) -- (r11.north);
+      \draw[->] (r02.south) -- (r11.north);
+
+    \end{scope}
+
+    \begin{scope}[xshift=0.5cm, yshift=-2.35cm,scale=0.7]
+      \tikzstyle{rnode} = [thick, rectangle, rounded corners = 2pt,minimum size = 0.0cm,draw,inner sep = 2pt]
+      \node[rnode] (r01) at (0,0) {\small\begin{tabular}[x]{@{}c@{}}1, 2, 4, 5 \\ $A,C,D,F$ \end{tabular}};
+      \node[rnode] (r02) at (3.7,0) {\small\begin{tabular}[x]{@{}c@{}}2, 3, 5, 6\\ $B,D,E,G$ \end{tabular}};
+      \node[rnode] (r03) at (8,0) {\small\begin{tabular}[x]{@{}c@{}}1, 2, 3, 4, 5, 6\\ $A,B,C,E,F,G$ \end{tabular}};
+      \begin{scope}[yshift=-0.2cm]
+      \node[rnode] (r11) at (0, -2.0) {\small\begin{tabular}[x]{@{}c@{}}1, 2\\ $A$ \end{tabular}};
+      \node[rnode] (r12) at (1.5, -2.0) {\small\begin{tabular}[x]{@{}c@{}}2, 3\\ $B$ \end{tabular}};
+      \node[rnode] (r13) at (3, -2.0) {\small\begin{tabular}[x]{@{}c@{}}1, 4\\ $C$ \end{tabular}};
+      \node[rnode] (r14) at (4.5, -2.0) {\small\begin{tabular}[x]{@{}c@{}}2, 5\\ $D$ \end{tabular}};
+      \node[rnode] (r15) at (6, -2.0) {\small\begin{tabular}[x]{@{}c@{}}3, 6\\ $E$ \end{tabular}};
+      \node[rnode] (r16) at (7.5, -2.0) {\small\begin{tabular}[x]{@{}c@{}}4, 5\\ $F$ \end{tabular}};
+      \node[rnode] (r17) at (9, -2.0) {\small\begin{tabular}[x]{@{}c@{}}5, 6\\ $G$ \end{tabular}};
+
+      \begin{scope}[yshift=0.5cm]
+      \node[rnode] (r21) at (1, -4) {\small 1};
+      \node[rnode] (r22) at (2.5, -4) {\small 2};
+      \node[rnode] (r23) at (4, -4) {\small 3};
+      \node[rnode] (r24) at (5.5, -4) {\small 4};
+      \node[rnode] (r25) at (7, -4) {\small 5};
+      \node[rnode] (r26) at (8.5, -4) {\small 6};
+      \end{scope}
+      \end{scope}
+      % edge level0 to level1
+      \draw[->] (r01.south) -- (r11.north);
+      \draw[->] (r03.south) -- (r11.north);
+
+      \draw[->] (r02.south) -- (r12.north);
+      \draw[->] (r03.south) -- (r12.north);
+
+      \draw[->] (r01.south) -- (r13.north);
+      \draw[->] (r03.south) -- (r13.north);
+
+      \draw[->] (r01.south) -- (r14.north);
+      \draw[->] (r02.south) -- (r14.north);
+
+      \draw[->] (r02.south) -- (r15.north);
+      \draw[->] (r03.south) -- (r15.north);
+
+      \draw[->] (r01.south) -- (r16.north);
+      \draw[->] (r03.south) -- (r16.north);
+
+      \draw[->] (r02.south) -- (r17.north);
+      \draw[->] (r03.south) -- (r17.north);
+
+      % edge level1 to level2
+      \draw[->] (r11.south) -- (r21.north);
+      \draw[->] (r13.south) -- (r21.north);
+
+      \draw[->] (r11.south) -- (r22.north);
+      \draw[->] (r12.south) -- (r22.north);
+      \draw[->] (r14.south) -- (r22.north);
+
+
+      \draw[->] (r12.south) -- (r23.north);
+      \draw[->] (r15.south) -- (r23.north);
+
+      \draw[->] (r13.south) -- (r24.north);
+      \draw[->] (r16.south) -- (r24.north);
+
+      \draw[->] (r14.south) -- (r25.north);
+      \draw[->] (r16.south) -- (r25.north);
+      \draw[->] (r17.south) -- (r25.north);
+
+      \draw[->] (r15.south) -- (r26.north);
+      \draw[->] (r17.south) -- (r26.north);
+    \end{scope}
+  \end{tikzpicture}
+  \vskip -0.15in
+  \caption{Illustration of a factor graph for 2-by-3 grid (top left, variable nodes are indexed by number and factor nodes by letters), and two alternative regions graphs (two levels for the top right one and three levels for bottom one) constructed from the factor graph.}
+  \label{fig:factor-region-graphs}
+  \vskip -0.2in
+\end{figure}
+
+\section{Preliminary}
+
+Let $\left\{X_1, X_2, \cdots, X_N\right\}$ be a set of N discrete-valued random variables and $x_i$ represent the possible realization of of $X_i$. We denote the joint probability function $p(X_1=x_1, X_2=x_2, \cdots, X_N=x_N; \bm{\theta})$ that is parameterized by $\bm{\theta}$, by $p(\bm{x}; \bm{\theta})$. For notation simplicity, we define that each variable has $K$ states, i.e. $|x_i|=K$, where $|\cdot|$ denotes the cardinality.
+
+
+In a MRF, the joint probability distribution of $\bm{x}$ can be written as
+\begin{equation}\label{eq:joint-px}
+  p(\bm{x}; \bm{\theta}) = \frac{1}{Z(\bm{\theta})} \prod_{a} \psi_a(\bm{x}_a; \bm{\theta}_a),
+\end{equation}
+where $a$ is an index labeling $M$ potential functions $\psi_A, \psi_B, \cdots, \psi_M$. Also, the potential function $\psi_a(\bm{x}_a;\bm{\theta}_a)$ is nonnegative, parameterized by $\bm{\theta}_a$, and has arguments $\bm{x}_a$ that are some subset of $\left\{ x_1, x_2, \cdots, x_N \right\}$. $Z(\bm{\theta})$ is the partition function of $p(\bm{x}; \bm{\theta})$, i.e. $Z(\bm{\theta}) = \sum_{\bm{x}}\prod_{a} \psi_a(\bm{x}_a;\bm{\theta}_a)$.
+
+\begin{definition}\label{def:factor-graph}
+A factor graph $\Gg_F$, is a bipartite graph that represents the factorization structure of \eqref{eq:joint-px}. A factor graph has two types of nodes: i) a variable node for each variable $x_i$; ii) a factor node for each potential function $\psi_a$. An edge between a variable node $i$ and factor node $a$ if and only if $x_i$ is argument of $\psi_a$. We would denote a factor graph by $\Gg_F(\Vv \cup \Ff, \Ee_F)$ with $\Vv$ as the set of variable nodes, $\Ff$ as the set of factor nodes, and $\Ee_F$ the set of undirected edges.
+\end{definition}
+
+Loopy BP as a message-passing algorithm operates on factor graphs (as the top-left example in Figure~\ref{fig:factor-region-graphs}) and computes the marginal distributions or most likely $\bm{x}$ of \eqref{eq:joint-px}. These estimations are done by iteratively exchanging messages between factor and variable nodes in a factor graph ({see \ref{apdix:sec:bethe-lBP} in supplementary file for detailed discussions and message update rules}). GBP was later developed to improve the performance of loopy BP, in which the messages are propagated among sets of nodes, or regions (see \ref{apdix:sec:gbp} in supplementary file). A region graph is a structured graph that originally proposed to organize the computation of GBP messages. Two alternative region graphs constructed from the same factor graph are shown in Figure~\ref{fig:factor-region-graphs}.
+
+\begin{definition}
+  A \textit{region} $R$ is a set $V_R$ of variables nodes and a set $A_R$ of factor nodes, such that if a factor node $a$ belong to $A_R$, all the variables nodes neighboring $a$ are in $V_R$.
+\end{definition}
+
+
+
+\begin{definition}\label{def:region-graph}
+  A \textit{region graph} is  a directed graph $\Gg_R(\Rr, \Ee)$, where each vertex $R \in \Rr$ is defined as the joint set of variable and factor nodes in this region, i.e. $R = \left\{ i \in V_R, a \in A_R | i \in \Vv, a \in \Ff \right\}$. Each edge $e \in \Ee$ in $\Gg_R$ is directed from $R_p$ to $R_c$ such that $R_c \subset R_p$. 
+\end{definition}
+
+\begin{definition}
+  Given a region $R$ in $\Gg$ and $\bm{\theta}_R=\{\bm{\theta}_a, a\in A_R\}$, the region energy is defined to be
+  \begin{equation}
+    E_R(\bm{x}_R; \bm{\theta}_R) = - \sum_{a\in A_R} \ln{\psi_a(\bm{x}_a; \bm{\theta}_a)}.
+  \end{equation}
+\end{definition}
+
+\begin{definition}\label{def:region-free-energy}
+  For any region graph $\Gg_R$, the region-based free energy is defined as
+  \begin{equation}\label{eq:def-region-free-energy}
+    F_R(\Bb; \bm{\theta}) = \hspace{-0.15cm}\sum_{R\in \Rr} \hspace{-0.1cm}c_R\hspace{-0.1cm} \sum_{\bm{x}_R}b_R(\bm{x}_R) (E_R(\bm{x}_R; \bm{\theta}_R) + \ln{b_R}(\bm{x}_R)),
+  \end{equation}
+  where $b_R(\bm{x}_R)$ is the belief to region $R$, $\Bb$ is the set of region beliefs $\Bb = \left\{ b_R| R \in \Rr \right\}$, and integer $c_R \in \NN$ is the counting number for region $R$.
+\end{definition}
+
+{Region-based free energy generalizes the well known Bethe free energy. The loopy BP is equivalent to minimizing of Bethe free energy. Please refer to \ref{apdix:sec:get-bethe-from-region-energy} in the supplementary file where we detail how to recover Bethe free energy from Definition~\ref{def:region-free-energy}}.
+
+
+We define some notations that are going to be used in our paper. Since $\Gg_R$ is a hierarchical directed graph, $\Rr_l$ denotes regions in level $l$, and 
+$R^{[l]}_i\in \Rr_l$ denotes $R^{[l]}_i$ is the $i$-th region node in level $l$. This means $\Rr_0$ is set of the top root regions that have no parents, i.e. the level $0$ regions. Also, $R^{[l]}$ means it can be any node in $\Rr_l$ and $R$ denotes a region node when it is not clear or doesn't matter which level it locates. Lastly, we define the scope of $R$ by $\Ss(R)$, i.e. $\Ss(R) = \left\{ x_i| i \in R \right\}$.
+
+\begin{figure}[!t]
+  \centering
+  \begin{tikzpicture}
+    
+    \tikzstyle{enode} = [thick, draw=black, ellipse, inner sep = 2pt,  align=center]
+    \tikzstyle{cnode} = [thick, draw=black, circle, inner sep = 0.0pt,  align=center]
+    \tikzstyle{nnode} = [thick, rectangle, rounded corners = 0pt,draw,inner sep = 2pt]
+    \begin{scope}[xshift=-1cm, yshift=-1.3cm, scale=0.6]
+      \node[enode, rotate=90] (em) at (-2.5,0) {Embedings};
+      \node[enode, rotate=90] (nn) {Neural Network};
+    \end{scope}
+    
+    % level0 regions
+    \begin{scope}[scale=0.6]
+    \node[cnode] (r01) at (1, 0) {\tiny$R_1^{[0]}$};
+    \node[cnode] (r02) at (1, -1) {\tiny$R_2^{[0]}$};
+    \node[cnode] (r03) at (1, -2) {\tiny$R_3^{[0]}$};
+    \node[cnode] (r04) at (1, -3) {\tiny$R_4^{[0]}$};
+    \node[cnode] (r05) at (1, -4) {\tiny$R_5^{[0]}$};
+    \node[label=below:$\Rr_0$, draw,rounded corners = 2pt, inner sep=1mm, fit=(r01) (r05)] {};
+  \end{scope}
+
+  \draw[->] (nn.351.9) |- (r01);
+  \draw[->] (nn.340) |- (r02);
+  \draw[->] (nn.295) |- (r03);
+  \draw[->] (nn.210) |- (r04);
+  \draw[->] (nn.191) |- (r05);
+
+  \draw[->] (em) -- (nn);
+
+
+    % level 1 regions
+    \begin{scope}[xshift=1.5cm, yshift=-0.2cm, scale=0.6]
+    \node[cnode] (r11) at (1, 0) {\tiny$R_1^{[1]}$};
+    \node[cnode] (r12) at (1, -1) {\tiny$R_2^{[1]}$};
+    \node[cnode] (r13) at (1, -2) {\tiny$R_3^{[1]}$};
+    \node[cnode] (r14) at (1, -3) {\tiny$R_4^{[1]}$};
+    \node[label=below:$\Rr_1$, draw, rounded corners = 2pt, inner sep=1mm, fit=(r11) (r14)] {};
+    \end{scope}
+
+    
+    
+    % level 1 regions
+    \begin{scope}[xshift=3cm, yshift=-0.2cm, scale=0.6]
+    \node[cnode] (r21) at (1, 0) {\tiny$R_1^{[2]}$};
+    \node[cnode] (r22) at (1, -1) {\tiny$R_2^{[2]}$};
+    \node[cnode] (r23) at (1, -2) {\tiny$R_3^{[2]}$};
+    \node[cnode] (r24) at (1, -3) {\tiny$R_4^{[2]}$};
+    \node[label=below:$\Rr_2$, draw, rounded corners = 2pt, inner sep=1mm, fit=(r21) (r24)] {};
+    \end{scope}
+
+    \draw[->] (r01) -- (r11);
+    \draw[->] (r03) -- (r11);
+
+    \draw[->] (r02) -- (r12);
+    \draw[->] (r04) -- (r12);
+    \draw[->] (r05) -- (r12);
+
+    \draw[->] (r01) -- (r13);
+    \draw[->] (r04) -- (r13);
+
+    \draw[->] (r03) -- (r14);
+    \draw[->] (r05) -- (r14);
+
+
+    \draw[->] (r11) -- (r21);
+    \draw[->] (r14) -- (r21);
+
+    \draw[->] (r11) -- (r22);
+    \draw[->] (r13) -- (r22);
+
+    \draw[->] (r12) -- (r23);
+    \draw[->] (r14) -- (r23);
+
+    \draw[->] (r12) -- (r24);
+    \draw[->] (r13) -- (r24);
+
+    
+    
+  \end{tikzpicture}
+  
+  \caption{Illustration of a RENN with three levels of regions ($\Rr_0$, $\Rr_1$, $\Rr_2$).}
+  \label{fig:renn-illustration}
+  
+\end{figure}
+
+
+\section{Region-based Energy Neural Network}
+In this section, we explain how the proposed region-based energy neural network (RENN) works.
+We are interested in finding marginal probabilities such as $p(\bm{x}_R)$. The belief $b_R(\bm{x}_R)$ can be understood as the estimation to $p(\bm{x}_R)$.
+Instead of directly optimize w.r.t. variables ${b_R(\bm{x}_R)}$ of interests, we use the reparameterization technique that are also used by recent works \cite{DBLP:journals/corr/KingmaW13, srikumar-etal-2012-amortizing, NIPS2019_9687, akbayrak2019reparameterization}, to model the values of interests to be the output of a neural network. We then optimize w.r.t. the parameters of the neural network.
+
+Note that in RENN, the neural network only need to directly model beliefs on root regions $\Rr_0$. The beliefs of non-root regions $\Rr_l,~l>0$ could be obtained from root region beliefs according to the structure of the region graph. This can reduce the amount of neural network parameters compared to directly modeling beliefs of all regions.
+
+\subsection{Inference by RENN}
+\label{sec:infer-renn}
+
+For a root region $R^{[0]}\in \Rr_0$, our RENN has a corresponding vector representing its score $\bm{f}(\Gg_R, R^{[0]}; \bm{\omega}) \in \RR^{|{\Ss(R^{[0]})}| \times K}$, where $\bm{\omega}$ is the parameter of mapping $\bm{f}$ that is modeled by a neural network. We define the predicted belief on the root region node $R^{[0]}$ as
+\begin{equation}
+  b_{R^{[0]}}(\bm{x}_{R^{[0]}}; \bm{\omega}) = \sigma(\bm{f}(\Gg_R, R^{[0]}; \bm{\omega})), \forall~ {R^{[0]}} \in \Rr,
+\end{equation}
+where $\sigma(\cdot)$ is the softmax function. The softmax function guarantees $b_{R^{[0]}} \in (0,1)^{|{\Ss(R^{[0]})}| \times K}$.
+
+The representation maping $\bm{f}$ followed by the softmax function in a RENN only needs to directly ouput the beliefs on root regions $\Rr_0$, with the dimension of $|\Rr_0| \times |\Ss(R)| \times K$ (if the number of variable nodes in each root region is the same).
+For the rest regions $\left\{R \in \Rr \backslash \Rr_0 \right\}$ that are not root regions in the region graph, where $\backslash$ denotes the set exclusion, the RENN computes the belief as
+\begin{equation}\label{eq:l-level-beliefs}
+  b_{R^{[l]}}(\bm{x}_{R^{[l]}}; \bm{\omega}) = \hspace{-0.04cm}\frac{1}{|\Pp(R^{[l]})|}\hspace{-0.15cm} \sum_{R_p\!\in \! \Pp(R^{[l]})}\sum_{\Ss\!(R_p)\backslash \Ss\!(R^{[l]})} \hspace{-0.5cm}b_{R_p}(\bm{x}_{R_p}; \bm{\omega}),
+\end{equation}
+where $\Pp(R^{[l]})$ is the set of parent regions of $R^{[l]}$ in region graph $\Gg_R$. The non-root region belief of RENN defined in this way comes with the intuition of typical iterative belief propagation methods. In BP and its variants, messages are passed to a variable node to reduce the mismatch of beliefs w.r.t. the variable node, which are sent from this node's neighbors in a factor graph. The message passing iteration of BP or its variants stops when this kind of mismatch w.r.t. every variable node is eliminated in the factor graph.
+
+In RENN, we directly put the mismatch between a non-root region belief $b_{R^{[l]}}(\bm{x}_{R^{[l]}}; \bm{\omega})$ and the marginalization from its parent region $\sum_{\Ss(R_p)\backslash \Ss(R^{[l]})}b_{R_p}(\bm{x}_{R_p}; \bm{\omega})$ as a penalty in the cost function. As the mismatch penalty is close to zero, the non-root region belief gets close to marginalization calculated from its parent regions. Matching a region's belief with marginalization from its parent regions' beliefs is termed as region belief consistency in region graph.
+
+Different from GBP that minimizes region-based free energy by iterative message-passing, RENN minimizes the region-based free energy by optimizing w.r.t. the neural network parameter $\bm{\omega}$.
+Considering the region belief consistency, we summarize the cost function of RENN to include both the region-based free energy and mismatch penalty on non-root regions. This gives the optimization problem:
+\begin{equation}\label{eq:infer-F-all-belief}
+  \umin{\bm{\omega}}{F_R(\Bb;\bm{\theta}) \!+\! \lambda \hspace{-0.3cm}\sum_{R\in \Rr \backslash \Rr_0} \sum_{R_p \in \Pp(R)}\hspace{-0.3cm}d( b_R, \hspace{-0.4cm}\sum_{\Ss(R_p)\backslash \Ss(R)}\hspace{-0.4cm} b_{R_p}(\bm{x}_{R_p}; \bm{\omega}))},
+\end{equation}
+where $d(\cdot, \cdot)$ is distance metric or divergence to measure the mismatch between the beliefs ($L_2$ distance is used in our experiments), $\lambda$ is the regulation parameter.
+
+As shown in Figure~\ref{fig:renn-illustration}, a RENN takes embedding vectors as input and outputs the beliefs on $\Rr_0$ directly (embedding vectors would be explained in subsection~\ref{subsec:exp-setting}, although not explicitly included in the objective function \eqref{eq:infer-F-all-belief}). The beliefs in other levels $\{\Rr_1$, $\Rr_2\}$ are computed as in \eqref{eq:l-level-beliefs}. Then the region-based free energy along with the penalty of region belief consistency is minimized w.r.t. $\bm{\omega}$.
+
+\subsection{Region Graph Construction for RENN}
+In this section we would detail how to construct the region graph $\Gg_R$ for RENN.
+Informally, a region graph can be generated by firstly clustering the nodes in a factor graph in any way and then connect the clusters with directed edges. But it does not mean we can rely on an arbitrary region graph to do our inference. Conditions such as \textit{valid} region graph (would be discussed in the following subsection), and \textit{maxent-normality} \cite{yedida2005constucting,welling2005structured} have been proposed for region graphs. But these conditions do not gives rules of how to construct ''good'' region graphs.
+Our idea for this issue is to combine the cluster variation method \cite{PhysRev.81.988,morita1991cluster} with \textit{tree-robust} condition \cite{gelfand2012generalized} (that was originally developed to improve accuracy of GBP) for practical region graph construction.
+
+
+\subsubsection{Determining the counting numbers}
+\label{subsec:count-number}
+In Definition~\ref{def:region-free-energy}, region-based free energy is a function of counting numbers $\left\{ c_R \right\}$. The counting numbers here are used to balance each region's contribution to the free energy. According to \cite{yedida2005constucting}, the region-base free energy is \text{valid} if the following $1$-balanced conditions holds
+\begin{equation}\label{eq:1-ballanced-condition}
+  \sum_{R\in\Rr} c_R \delta_{R}(i)  = 1, \forall~ \mathrm{node}~ i~~ \mathrm{in} ~~\Gg_F,
+\end{equation}
+where $\delta_{R}(i)$ is the indicator function, equal to $1$ if and only if node $i$ defined in factor graph $\Gg_F$ is in region $R$ of region graph $\Gg_R$ and equal to $0$ otherwise. Note that node $i$ can be either a variable or factor node here. It can be seen that each node would be counted exactly once if the condition \eqref{eq:1-ballanced-condition} holds.
+
+Given a region graph $\Gg_R$, the counting numbers $\left\{ c_R \right\}$ can be constructed recursively as:
+\begin{equation}
+  c_R = 1 - \sum_{R_i \in \Aa(R)} c_{R_i}, \forall R,
+\end{equation}
+where $\Aa(R)$ denotes the ancestor set of region node $R$ in $\Gg_R$. This rule means the counting numbers of root regions are always $1$, since they do not have any ancestors.
+
+
+\subsubsection{Generating graph by Cluster Variation Method}
+\label{sec:cluster-variation-method}
+Cluster variation method was in introduced by Kikuchi and other physcists \cite{PhysRev.81.988,morita1991cluster}, which started with the intuition of approximating free energy by using larger set of variable nodes instead of the single-node factorization in mean field approximation.
+
+Cluster variation method starts with the root regions $\Rr_0$. There are two requirements for $\Rr_0$: i) every variable node $i$ of factor graph $\Gg_F$ is included in at least one region $R^{[0]}\in\Rr_0$; ii) there should be no region $R^{[0]}\in \Rr_0$ being a subregion of any other region in $\Rr_0$.
+With $\Rr_0$ ready, the other sets of regions are generated hierarchically. To construct level-$1$ regions $\Rr_1$ from $\Rr_0$, we find out all the intersections between regions in $\Rr_0$, but omit any that are subregion of other intersection regions. Then level-$2$ regions $\Rr_2$ can be similarly constructed from $\Rr_1$. Assume there are $L$ such sets, then $\Rr = \Rr_0 \cup \Rr_1 \cup \cdots \cup \Rr_{L-1}$. The construction rule can be formulated as
+\begin{align}
+  &\Rr_l = \{ R^{[l]}_i = R^{[l-1]}_j \cap R^{[l-1]}_k | R^{[l]}_i \not\subset R^{[l]}_n,~ \forall i \neq n, \nonumber \\
+  &R^{[l-1]}_j, R^{[l-1]}_k \in \Rr_{l-1} , j\neq k\}, l=1, 2, \cdots, L-1.
+\end{align}
+
+With the hierarchical region sets built, we need to draw the edges. The directed edges are always connected from regions in $\Rr_{l-1}$ to these in $\Rr_{l}$. For one region $R^{[l]}$ in $\Rr_l$, a directed edge is drawn from any superregion of $R^{[l]}$ in $\Rr_l$. This can be represented as
+\begin{align}
+  \Ee = &\{ e = (R^{[l-1]}, R^{[l]}) | R^{[l]} \subset R^{[l-1]}, \nonumber \\
+        &R^{[l]} \in \Rr_l, R^{[l-1]} \in \Rr_{l-1} , \forall l\}.
+\end{align}
+
+
+
+\subsubsection{Selection criteria for Root Regions $\Rr_{0}$}
+\label{sec:criteria-root-regions}
+In subsection~\ref{sec:cluster-variation-method}, we detailed the region graph construction steps by cluster variation method, starting from $\Rr_0$. In this subsection, we detail how to build the root region set $\Rr_0$. This is important since it totally decides from which we start building region graph.
+We take the path of \cite{welling2005structured, gelfand2012generalized} for this issue.
+
+Specifically, we use the \textit{tree-robust} condition \cite{gelfand2012generalized} to build the root regions for our RENN. These root regions are then used to grow the other hierarchical levels of region graphs by cluster variation method in subsection~\ref{sec:cluster-variation-method}. Tree-robust condition was developed original for GBP to gain better approximations. GBP has better accuracy on tree-robust graphs than on non-tree-robust graphs. We would show in our experiment section that RENN outperforms GBP even in tree-robust graphs. For the formal definition of tree-robust condition, please refer to section~\ref{apdix:sec:root-region-construct} in the supplementary file.
+
+Although each root region of $\Gg_R$ can be any set of nodes clustered in any way, we restrict ourselves to construct root regions that are cycles of factor graph $\Gg_F$. Then constructing root regions for $\Gg_R$ becomes to construct a cycle-structured region sets. A cycle-structured region set becomes a cycle basis when it fulfills certain conditions (see Definition~\ref{apdix:def:cycle-basis} in supplementary file).
+
+To maintain the consistency of our paper, we cite two important theorems from \cite{gelfand2012generalized} for choosing cycle basis in two specific graph cases, i.e. planar graphs and complete graphs. A planar graph is a graph that can be embedded in the two-dimensional plain (it can be drawn on the plane in such a way that its edges intersect only at their nodes). In a complete graph, every pair of distinct nodes is connected by an unique edge.
+
+\begin{theorem}\label{thm:planar-tree-robust}
+  In a planar graph $\Gg$, the cycle basis comprised of the faces of graph $\Gg$ is tree-robust.
+\end{theorem}
+
+\begin{theorem}\label{thm:complete-tree-robust}
+  In a complete graph $\Gg$, construct a cycle basis as follows. Choose a node $i$ as the root. Create a 'star' spanning tree rooted at $i$. Then construct cycles of form $(i,j,k)$ from each off-tree edge $(j,k)$. The constructed basis is tree-robust.
+\end{theorem}
+
+Tree-robust root regions can also be constructed for general graphs, which can be seen as an extension from Theorem~\ref{thm:planar-tree-robust} and \ref{thm:complete-tree-robust}. Please refer to Algorithm~\ref{apdix:alg:root-region-general-graph} in section~\ref{apdix:sec:root-region-construct} in supplementary file for detail.
+
+
+\section{Model Learning with Inference of RENN}
+\label{sec:model-learning-with-renn}
+In section~\ref{sec:infer-renn}, we explained how to do inference with RENN when parameter $\bm{\theta}$ of $p(\bm{x}; \bm{\theta})$ is assumed to be known. In this section, we would consider the case of learning parameter $\bm{\theta}$ of $p(\bm{x}; \bm{\theta})$ with inference by RENN.
+
+When we are given a dataset $\{\bm{x}\}$ and we want to learn the model of $p(\bm{x}; \bm{\omega})$ by maximizing the log-likelihood, it requires to
+\begin{equation}\label{eq:maximizing-likelihood}
+  \umin{\bm{\theta}}{ -\log{\tilde{p}(\bm{x}; \bm{\theta})} + \log{Z(\bm{\theta})}},
+\end{equation}
+where $\tilde{p}(\bm{x}; \bm{\theta}) =  \prod_{a} \psi_a(\bm{x}_a; \bm{\theta}_a)$. Due to the intractability of $\log{Z(\bm{\theta})}$, it is expensive or prohibitive to solve \eqref{eq:maximizing-likelihood} directly. The region-based free energy $F_R(\Bb;\bm{\theta})$ would exactly be negative partition function of $p(\bm{x};\bm{\theta})$, i.e. $-Z(\bm{\theta})$, if each belief is exactly the corresponding marginalization, $b_R(\bm{x}_R)=p(\bm{x}_{R})$, $\forall~R\in \Rr$. Otherwise, $F_R(\Bb^{\ast};\bm{\theta})$ can always be an approximation of $-Z(\bm{\theta})$, where $\Bb^{\ast}= \{b_R(\bm{x}_R; \bm{\omega}^{\ast}), R\in \Rr\}$ with $\bm{\omega}^{\ast}$ being the solution to problem \eqref{eq:infer-F-all-belief}.
+
+Combining the model learning and inference, we have
+\begin{align}\label{eq:learning-min-max}
+  \!\!\!\!\!\!\!\!\!\!&\min_{\bm{\theta}}\max_{\bm{\omega}} -\log{\tilde{p}(\bm{x}; \bm{\theta})} - F_R(\Bb; \bm{\theta}) \nonumber \\
+  &-\lambda \!\!\!\!\! \sum_{R\in \Rr \backslash \Rr_0} \sum_{R_p \in \Pp(R)}\!\!\!\!\!d( b_R, \!\!\!\!\! \sum_{\Ss(R_p)\backslash \Ss(R)}\!\!\!\!\! b_{R_p}(\bm{x}_{R_p}; \bm{\omega})).
+\end{align}
+Then the difficulty of computing $Z(\bm{\theta})$ is dealt with by joint learning and inference of RENN in \eqref{eq:learning-min-max}.
+
+Note that model learning with RENN inference does not need to do sampling to estimate gradient of the objective. The gradients in \eqref{eq:learning-min-max} can be directly computed with autodiff functions in modern toolboxs such as PyTorch or TensorFlow. {Also, since RENN don't need iterative message propagation, model learning with inference by RENN can be faster.}
+
+Last but not the least, our method can be extended to learn models where there are both observable variable $\bm{x}$ and hidden variable $\bm{z}$ that we do not have observations for. Please refer to section~\ref{apdix:sec:crf-learning} in supplementary file for detail.
+
+
+\section{Experimental Results}
+
+We conducted a series of experiments to validate the proposed RENN model. The experiments are designed to verify RENN in both inference and model learning problems. Experiment code is attached in submission.
+
+
+
+\begin{table*}[t]
+  \caption{Inference on grid graph ($\gamma=0.1$). $\ell_1$ error and correlation $\rho$ between true and approximate marginals, and $\log{Z}$ error.}
+  \vskip -0.15in
+  \label{table:infer-grid-gamma0.1}
+  \begin{center}
+    \begin{small}
+
+        \begin{tabular}{lcccccccc}
+          \toprule
+          Metric & $n$ & Mean Field & Loopy BP & Damped BP & GBP & Inference Net & RENN \\
+          \midrule
+          \multirow{4}{*}{\begin{tabular}[x]{@{}c@{}}$\ell_1$\\error \end{tabular} }
+                 &    25   &$0.271 \pm 0.051$ &  $0.086 \pm 0.078$ & $0.084 \pm 0.076$ & $0.057 \pm 0.024$ & $0.111 \pm 0.072$ & \textbf{0.049} $\pm$ 0.078 \\
+          
+                 &    100   & $0.283 \pm 0.024$ &  $0.085 \pm 0.041$ & $0.062 \pm 0.024$ & $0.064 \pm 0.019$ & $0.074 \pm 0.034$ & \textbf{0.025} $\pm$ 0.011 \\
+          
+                 &    225   & $0.284 \pm 0.019$ &  $0.100 \pm 0.025$ & $0.076 \pm 0.025$ & $0.073 \pm 0.013$ & $ 0.073 \pm 0.012$ & \textbf{0.046} $\pm$ 0.011 \\
+          
+                 &    400   & $0.279 \pm 0.014$ &  $0.110 \pm 0.016$ & $0.090 \pm 0.016$ & $0.079 \pm 0.009$ & $ 0.083 \pm 0.009$ & \textbf{0.061} $\pm$ 0.009 \\
+
+          \midrule
+          \multirow{4}{*}{\begin{tabular}[x]{@{}c@{}}Corre-\\lation\\ $\rho$ \end{tabular}}
+                 &   25    & 0.633 $\pm$ 0.197  &  0.903 $\pm$ 0.114  &  0.905 $\pm$ 0.113  &  0.923 $\pm$ 0.045  &  0.866$\pm$ 0.117 &  \textbf{0.951} $\pm$ 0.112 \\
+          
+                 &   100   & 0.582 $\pm$ 0.112  &  0.827 $\pm$ 0.134  &  0.902 $\pm$ 0.059  &  0.899 $\pm$ 0.043  &  0.903$\pm$ 0.049 &   \textbf{0.983} $\pm$ 0.012 \\
+          
+                 &   225   & 0.580 $\pm$ 0.080  &  0.801 $\pm$ 0.078  &  0.863 $\pm$ 0.088  &  0.869 $\pm$ 0.037  & 0.873 $\pm$ 0.037 &  \textbf{0.949} $\pm$ 0.022 \\
+          
+                 &   400   & 0.596 $\pm$ 0.054  &  0.779 $\pm$ 0.059  &  0.822 $\pm$ 0.047  &  0.852 $\pm$ 0.024  & 0.841 $\pm$ 0.028 &  \textbf{0.912} $\pm$ 0.025 \\
+
+          \midrule
+          \multirow{4}{*}{\begin{tabular}[x]{@{}c@{}}$\log{Z}$ \\error\end{tabular}}
+                 &   25    & 2.512 $\pm$ 1.060  &  0.549 $\pm$ 0.373  &  0.557 $\pm$ 0.369  &  \textbf{0.169} $\pm$ 0.142  &  0.762 $\pm$ 0.439  &  0.240 $\pm$ 0.140 \\
+
+                 &  100    & 13.09 $\pm$ 2.156  &  1.650 $\pm$ 1.414  &  1.457 $\pm$  1.365 &  \textbf{0.524} $\pm$ 0.313  &  2.836 $\pm$ 2.158  & 1.899 $\pm$ 0.495 \\
+
+                 &  225    & 29.93 $\pm$ 4.679  &  3.348 $\pm$ 1.954  &  3.423 $\pm$ 2.157  &  \textbf{1.008} $\pm$ 0.653  &  3.249 $\pm$ 2.058  & 4.344 $\pm$ 0.813  \\
+
+                 &  400    & 51.81 $\pm$ 4.706  &  5.738 $\pm$ 2.107  &  5.873$\pm$ 2.211   &  \textbf{1.750} $\pm$ 0.869  &  3.953 $\pm$ 2.558  & 7.598 $\pm$ 1.146 \\
+          
+                 % \midrule
+                 % \multirow{4}{*}{Time}
+                 % &   25   &  0.259 $\pm$ 0.076  &  2.990 $\pm$ 4.563  &  1.591 $\pm$ 0.609  &  6.817 $\pm$ 0.339  &  5.253 $\pm$ 1.189  &  5.828 $\pm$ 2.372  \\
+                 % &  100   &  1.290 $\pm$ 0.205  &  57.10 $\pm$ 25.64 &  28.70 $\pm$ 24.62 & 46.89$ \pm$ 1.365 & 22.05 $\pm$ 10.53  & 22.63 $\pm$ 6.202 \\
+
+                 % &  225   &  3.838 $\pm$ 1.015  &  184.1 $\pm$ 3.648  &  124.2 $\pm$ 68.70  &  131.1 $\pm$ 3.440  &  36.43 $\pm$ 2.087  & 51.82 $\pm$ 2.431 \\
+
+                 % &  400   &  7.908 $\pm$ 1.508  & 335.3 $\pm$ 12.83   &  326.9 $\pm$ 27.56  &  253.7 $\pm$ 11.00   &  69.54 $\pm$ 5.140  & 103.9 $\pm$ 8.379 \\
+          
+          
+          \bottomrule
+        \end{tabular}
+
+    \end{small}
+  \end{center}
+  \vskip -0.3in
+\end{table*}
+
+\begin{table*}[t]
+  \caption{Inference on grid Graph. ($\gamma=1$)}
+  \label{table:infer-grid-gamma1.0}
+  \vskip -0.1in
+  \begin{center}
+    \begin{small}
+      
+        \begin{tabular}{lcccccccc}
+          \toprule
+          Metric & $n$ & Mean Field & Loopy BP & Damped BP & GBP & Inference Net & RENN \\
+          \midrule
+          \multirow{4}{*}{L1}
+                 & 25   &  0.131 $\pm$ 0.080  &  \textbf{0.022} $\pm$ 0.017  &  0.022 $\pm$ 0.018  &  0.137 $\pm$ 0.026  &  0.043 $\pm$ 0.017  &  0.027 $\pm$ 0.014 \\
+                 & 100  &  0.130 $\pm$ 0.041  &  0.025 $\pm$ 0.014  &  0.025 $\pm$ 0.014  &  0.146 $\pm$ 0.020  &  0.046 $\pm$ 0.009  &  \textbf{0.017} $\pm$ 0.002  \\
+
+                 &225   &  0.135 $\pm$ 0.024  &  0.024 $\pm$ 0.010  &  0.023 $\pm$ 0.009  &  0.154 $\pm$ 0.012  &  0.052 $\pm$ 0.010  &  \textbf{0.017} $\pm$ 0.003 \\
+
+                 &400   &  0.131 $\pm$ 0.020  &  0.020 $\pm$ 0.003  &  0.020 $\pm$ 0.003  &  0.158 $\pm$ 0.007  &  0.052 $\pm$ 0.007  &  \textbf{0.017} $\pm$ 0.001  \\
+          
+          
+          
+          \midrule
+          \multirow{4}{*}{\begin{tabular}[x]{@{}c@{}}Corre-\\lation\end{tabular}}
+                 & 25   &  0.849 $\pm$ 0.159  &  \textbf{0.992} $\pm$ 0.011  &  0.991 $\pm$ 0.012  &  0.798 $\pm$ 0.088  &  0.980 $\pm$ 0.015  & 0.988 $\pm$ 0.025  \\
+                 & 100  &  0.841 $\pm$ 0.087  &  0.988 $\pm$ 0.013  &  0.988 $\pm$ 0.012  &  0.788 $\pm$ 0.051  &  0.976 $\pm$ 0.013  &  \textbf{0.997} $\pm$0.001 \\
+
+                 & 225  &  0.824 $\pm$ 0.057  &  0.989 $\pm$ 0.010  &  0.990 $\pm$ 0.010  &  0.764 $\pm$ 0.022  &  0.966 $\pm$ 0.016  &  \textbf{0.996} $\pm$ 0.001 \\
+          
+                 & 400  &  0.828 $\pm$ 0.043  &  0.993 $\pm$ 0.002  &  0.993 $\pm$ 0.002  &  0.759 $\pm$ 0.018  &  0.967 $\pm$ 0.013  &  \textbf{0.997} $\pm$ 0.001  \\
+
+          \midrule
+          \multirow{4}{*}{\begin{tabular}[x]{@{}c@{}}$\log{Z}$ \\error\end{tabular}}
+                 & 25  &  2.113 $\pm$ 1.367  &  \textbf{0.170} $\pm$ 0.199  &  0.194 $\pm$ 0.188  &  0.605 $\pm$ 0.611  &  2.214 $\pm$ 0.775  &  0.649 $\pm$ 0.363  \\
+
+                 &100  &  8.034 $\pm$ 2.523  &  \textbf{0.372} $\pm$ 0.427  &  0.415 $\pm$ 0.422  &  1.545 $\pm$ 1.081  &  11.14 $\pm$ 0.954  &  3.129 $\pm$ 0.520  \\
+
+                 &225  &  17.923 $\pm$ 3.474 &  0.952 $\pm$ 1.037  &  \textbf{0.917} $\pm$ 0.922  &  3.143 $\pm$ 2.122  &  25.55 $\pm$ 2.025  &  7.473 $\pm$ 0.906  \\
+
+                 &400  &  31.74 $\pm$ 4.766          &  \textbf{0.919} $\pm$ 0.684   &  1.011 $\pm$ 0.685  &  3.313 $\pm$ 1.872  &  46.61 $\pm$ 3.094  &  12.77 $\pm$ 0.991  \\
+
+          
+                 % \midrule
+                 % \multirow{4}{*}{Time}
+                 % & 25  &  0.281 $\pm$ 0.129  &  0.937 $\pm$ 0.442  &  1.253 $\pm$ 0.403  &  6.982 $\pm$ 0.260  &  5.146 $\pm$ 0.398  &  5.341 $\pm$ 1.368  \\
+
+                 % & 100 &  1.219 $\pm$ 0.314  &  6.339 $\pm$ 3.965  &  6.948 $\pm$ 1.664  &  49.64 $\pm$ 1.301  &  21.59 $\pm$ 4.703  &  31.79 $\pm$ 15.51  \\
+          
+                 % &125  &  3.539 $\pm$ 1.107  &  33.09 $\pm$ 48.62  &  17.85 $\pm$ 4.765  &  127.1 $\pm$ 3.547  &  56.99 $\pm$ 4.625  &  94.05 $\pm$ 38.64  \\
+
+
+                 % &400  &  6.313 $\pm$ 1.465  &  49.26 $\pm$ 65.20  &  33.07 $\pm$ 8.777  &  
+                 % 255.1 $\pm$ 10.13  &  157.3 $\pm$ 34.04  &  172.58 $\pm$ 27.08  \\
+          \bottomrule
+        \end{tabular}
+
+    \end{small}
+  \end{center}
+  \vskip -0.2in
+\end{table*}
+
+
+\subsection{Experiment Setting and Evaluation Metrics}
+\label{subsec:exp-setting}
+Without loss of generality, our experiments are carried out on binary pairwise MRF (Ising model). This gives us $p(\bm{x}; \bm{\theta}) = \frac{1}{Z(\bm{\theta})}\exp{(\sum_{(i,j)\in \Ee_F} J_{ij} x_i x_j + \sum_{i\in \Vv}h_i x_i)}$, $\bm{x} \in \{-1, 1\}^{N}$, where $J_{ij}$ is the pairwise log-potential between node $i$ and $j$, $h_i$ is the node log-potential for node $i$. Then $\bm{\theta} = \left\{ J_{ij}, h_i| (i,j) \in \Ee_F, i \in \Vv \right\}$. $J_{ij}$ is always sampled from standard normal distribution, i.e. $J_{ij}\sim \Nn(0,1)$, meanwhile $h_i \sim \Nn(0, \gamma^{2})$.
+
+In the inference experiments, we are interested into how well beliefs from RENN approximate true marginal distributions of $p(\bm{x};\bm{\theta})$. We quantity this by both the $\ell_1$ error ($\ell_1$-norm distance) and Pearson correlation coefficient $\rho$, between true marginals and beliefs of RENN. The marginal evaluations include both $p(x_i)$ and $p(x_i,x_j)$. In addition, we also quantify the $\log{Z}$ error as the absolute difference between true partition function and estimated value.
+
+Apart from the inference experiments, we also carried out the modeling learning experiments. We use the negative log-likelihood (NLL) to evaluate how well the model is learned, which is then compared with NLL of true model.
+
+In all experiments, for each evaluation of RENN, mean field, (loopy) BP \cite{mooij2007sufficient}, damped BP \cite{Pretti2005damping} with damping factor $0.5$, and GBP \cite{yedida2005constucting} as benchmarks, are all evaluated on the same MRF, which are then compared with RENN. Additionally, a recent neural network benchmark model, saddle-point Inference Net \cite{NIPS2019_9687} targeting at Bethe free energy, is also used as comparison. To make the comparison with Inference Net fair, RENN and Inference Net use the same neural network structures and hidden dimension. Each variable $x_i$ is associated with a learnable embedding vector $\bm{e}_i$. A transform layer \cite{AshishNIPS2017_7181} consumes $\bm{e}_i$ and output a hidden representation $\bm{h}_i$. The transform layer is shared by all embeddings. Then an affine layer followed by softmax consumes $[\bm{h}_1, \cdots, \bm{h}_N]$ and outputs beliefs.
+
+\subsection{Inference on Grid Graphs}
+
+We first evaluate how well RENN can estimate the marginal distributions, compared with benchmark algorithms/models, w.r.t. marginal $\ell_1$ errors and Pearson correlation $\rho$, at different graph size $n$ and standard deviation $\gamma$ of $\{h_i\}$. At each evaluation for a given size $n$, $20$ MRFs are generated by sampling $\{J_{ij}\}$ and $\{h_i\}$. Then RENN and other candidate algorithms perform inference on these MRFs. Then the $\ell_1$ error and correlation $\rho$ between true and estimated marginal distributions are evaluated. The $\log{Z}$ error is also recorded.
+Experiments are carried out in large and small standard deviation of $\{h_i\}$ ($\gamma=0.1$, $\gamma=1$), which reflects the relative strength of standalone node log-potentials to pairwise log-potentials. The results are reported as 'mean $\pm$ standard deviation'.
+
+\begin{table}[h]
+  \vskip -0.2in
+  \caption{Inference with the \textit{infinite face} on grid, $n=25$.}
+  \label{tab:infer-infinite-face}
+  \begin{center}
+    \begin{small}
+      
+        \begin{tabular}{llcc}
+          \toprule
+          $\gamma$ & Metric & GBP & RENN \\
+          \midrule
+          \multirow{3}{*}{0.1}
+                   & $\ell_1$ Error & 0.061 $\pm$ 0.025 & \textbf{0.025} $\pm$ 0.020 \\
+
+                   & $\rho$   & 0.913 $\pm$ 0.049  &  \textbf{0.984} $\pm$ 0.021  \\
+                   & $\log{Z}$ Error & 3.564 $\pm$ 2.823  &  0.384 $\pm$ 0.223  \\
+          \midrule
+          \multirow{3}{*}{1}
+                   & $\ell_1$ Error & 0.145 $\pm$ 0.028  & \textbf{0.016} $\pm$ 0.010 \\
+
+                   & $\rho$   & 0.783 $\pm$ 0.091  &  \textbf{0.995} $\pm$ 0.010 \\
+                   & $\log{Z}$ Error & 0.825 $\pm$ 0.841  & 0.364 $\pm$ 0.201 \\
+          
+          \bottomrule
+        \end{tabular}
+
+    \end{small}
+  \end{center}
+  \vskip -0.2in
+\end{table}
+
+
+
+
+
+
+
+\begin{table*}[hbt!]
+  \caption{Inference on complete graph of size $9$.}
+  \label{tab:infer-full-n9}
+  % \vskip -0.1in
+  \begin{center}
+    \begin{small}
+      
+        \begin{tabular}{lcccccccc}
+          \toprule
+          Metric & $\gamma$ & Mean Field & Loopy BP & Damped BP & GBP & Inference Net & RENN \\
+          \midrule
+          \multirow{4}{*}{\begin{tabular}[x]{@{}c@{}}$\ell_1$\\error\end{tabular}}
+          % pen1
+                 & 0.1   &  0.294 $\pm$ 0.061  &  0.120 $\pm$ 0.038  &  0.118 $\pm$ 0.034  &   0.237 $\pm$ 0.061  &  \textbf{0.109} $\pm$ 0.025  &  0.130 $\pm$ 0.085  \\
+
+                 % pen2
+                 & 1     &  0.233 $\pm$ 0.133  &  0.200 $\pm$ 0.098  &  0.201 $\pm$ 0.098  &  0.246 $\pm$ 0.135  &  0.196 $\pm$ 0.061  &  \textbf{0.137} $\pm$ 0.117  \\
+
+                 % pen3
+                 & 2     &  0.187 $\pm$ 0.131  &  0.176 $\pm$ 0.114  &  0.177 $\pm$ 0.113  &  0.247 $\pm$ 0.117  &  0.182 $\pm$ 0.084  &  \textbf{0.067} $\pm$ 0.045  \\
+
+                 % pen3
+                 & 3     &  0.155 $\pm$ 0.120  &  0.145 $\pm$ 0.112  &  0.146 $\pm$ 0.112  &  0.204 $\pm$ 0.107  &  0.152 $\pm$ 0.079  &  \textbf{0.060} $\pm$ 0.038  \\
+
+                 % pen3
+                 & 4     &  0.124 $\pm$ 0.115  &  0.120 $\pm$ 0.103  &  0.121 $\pm$ 0.102  &  0.194 $\pm$ 0.076  &  0.129 $\pm$ 0.071  &  \textbf{0.051} $\pm$ 0.050  \\
+
+          
+          \midrule
+          \multirow{4}{*}{\begin{tabular}[x]{@{}c@{}}Corre-\\lation\\$\rho$\end{tabular}}
+                 & 0.1   & 0.262 $\pm$ 0.177  &  0.695 $\pm$ 0.104  &  0.698 $\pm$ 0.099  &  0.446 $\pm$ 0.196  &   0.720 $\pm$ 0.065  &  \textbf{0.741} $\pm$ 0.220  \\
+
+                 & 1     & 0.465 $\pm$ 0.349  &  0.538 $\pm$ 0.292  &  0.538 $\pm$ 0.292  &  0.461 $\pm$ 0.331  &  0.639 $\pm$ 0.159   &  \textbf{0.769} $\pm$ 0.313  \\
+
+                 &  2    & 0.587 $\pm$ 0.300  &  0.619 $\pm$ 0.284  &  0.619 $\pm$ 0.282  &  0.457 $\pm$ 0.257  &   0.645 $\pm$ 0.175  &  \textbf{0.929} $\pm$ 0.118  \\
+
+                 &  3    & 0.657 $\pm$ 0.289  &  0.697 $\pm$ 0.267  &  0.697 $\pm$ 0.265  &  0.582 $\pm$ 0.218  &  0.697 $\pm$ 0.162   &  \textbf{0.936} $\pm$ 0.076  \\
+
+                 &  4    & 0.758 $\pm$ 0.257  &   0.778 $\pm$ 0.221 &  0.776 $\pm$ 0.221  &  0.597 $\pm$ 0.177  &  0.753 $\pm$ 0.178   &  \textbf{0.941} $\pm$ 0.099  \\
+          
+          
+          
+          \midrule
+          \multirow{4}{*}{\begin{tabular}[x]{@{}c@{}}$\log{Z}$ \\error\end{tabular}}
+                 & 0.1  & 8.402 $\pm$ 4.369  &  34.61 $\pm$ 2.439  &  34.74 $\pm$ 2.195  &  \textbf{1.763} $\pm$ 1.176  &  35.46 $\pm$ 1.651  &  3.171 $\pm$ 1.259   \\
+
+                 &  1   & 6.473 $\pm$ 3.737  &  45.91 $\pm$ 6.888  &  45.96 $\pm$ 6.927  &  \textbf{1.826} $\pm$ 2.024  &  51.87 $\pm$ 6.150  &  2.796 $\pm$ 1.194  \\
+          
+                 &  2   & 5.830 $\pm$ 2.979  &  75.35 $\pm$ 14.58  &  75.46 $\pm$ 14.57  &  3.080  $\pm$ 2.958  &  81.23 $\pm$ 12.939 &  \textbf{2.577} $\pm$ 1.845  \\
+
+                 &  3   & 4.401 $\pm$ 2.522  &  111.0 $\pm$ 22.20  &  111.1 $\pm$ 22.17  &  3.205 $\pm$ 3.720  &  116.1 $\pm$ 19.76  &  \textbf{2.645} $\pm$ 1.507  \\
+
+                 &  4   & 3.037 $\pm$ 2.122  &  142.9 $\pm$ 25.58  &  143.1 $\pm$ 25.56  &  5.167 $\pm$ 5.249  &  147.2 $\pm$ 23.38  &  \textbf{1.820} $\pm$ 1.306  \\
+
+                 % \midrule
+                 % \multirow{4}{*}{Time}
+                 % & 0.1  &  0.270 $\pm$ 0.096  &  0.490 $\pm$ 0.315  &  0.590 $\pm$ 0.544  & 3.023 $\pm$ 0.122  &  4.644 $\pm$ 0.326  &  4.979 $\pm$ 1.612  \\
+
+                 % &  1   & 0.186 $\pm$ 0.059   &  0.302 $\pm$ 0.072  &  0.501 $\pm$ 0.112  &  2.854 $\pm$ 0.098  &  4.330 $\pm$ 0.423  &  4.905 $\pm$ 1.815  \\
+
+                 % &  2   & 0.111 $\pm$ 0.031   &  0.178 $\pm$ 0.028  &  0.315 $\pm$ 0.048  &  2.722 $\pm$ 0.099  &  4.529 $\pm$ 0.569  &  5.329 $\pm$ 1.725  \\
+
+                 % &  3   & 0.112 $\pm$ 0.072   &  0.155 $\pm$ 0.025  &  0.281 $\pm$ 0.057  &  2.671 $\pm$ 0.131  &  4.667 $\pm$ 1.217  &  4.477 $\pm$ 2.076  \\
+
+                 % &  4   & 0.098 $\pm$ 0.039   &  0.141 $\pm$ 0.026  &  0.279 $\pm$ 0.062  &  2.731 $\pm$ 0.110  &  5.091 $\pm$ 1.798  &  4.309 $\pm$ 1.152  \\
+          
+          \bottomrule
+        \end{tabular}
+      
+    \end{small}
+  \end{center}
+  \vskip -0.3in
+\end{table*}
+
+\begin{table*}[t]
+  \caption{Inference on complete graph of size $16$.}
+  \label{tab:infer-full-n16}
+  % \vskip -0.05in
+  \begin{center}
+    \begin{small}
+      
+        \begin{tabular}{lcccccccc}
+          \toprule
+          Metric & $\gamma$ & Mean Field & Loopy BP & Damped BP & GBP & Inference Net & RENN \\
+          \midrule
+          \multirow{4}{*}{\begin{tabular}[x]{@{}c@{}}$\ell_1$-\\error\end{tabular}}
+          % pen3
+                 & 0.1   &  0.303 $\pm$ 0.056  &  0.176 $\pm$ 0.039  &  0.174 $\pm$ 0.038  &  0.244 $\pm$ 0.047  &  0.174 $\pm$ 0.044  &  \textbf{0.169} $\pm$ 0.052  \\
+
+                 % pen2
+                 &  1    &  0.273 $\pm$ 0.086  &  0.239 $\pm$ 0.059  &  0.239 $\pm$ 0.059  &  0.260 $\pm$ 0.086  &  0.249 $\pm$ 0.067  &  \textbf{0.181} $\pm$ 0.092  \\
+          
+                 % pen2
+                 &  2    &  0.231 $\pm$ 0.079  &  0.222 $\pm$ 0.064  &  0.221 $\pm$ 0.064  &  0.249 $\pm$ 0.078  &  0.232 $\pm$ 0.069  &  \textbf{0.170} $\pm$ 0.109  \\
+
+                 % pen3
+                 &  3    &  0.218 $\pm$ 0.042  &  0.204 $\pm$ 0.038  &  0.204 $\pm$ 0.038  &  0.247 $\pm$ 0.065  &  0.213 $\pm$ 0.051  &  \textbf{0.138} $\pm$ 0.106  \\
+
+                 % pen1
+                 &  4    &  0.197 $\pm$0.049   &  0.181 $\pm$ 0.035  &  0.180 $\pm$ 0.034  &  0.210 $\pm$ 0.070  &  0.174 $\pm$ 0.030  &  \textbf{0.125} $\pm$ 0.050  \\
+          
+          
+          \midrule
+          \multirow{4}{*}{\begin{tabular}[x]{@{}c@{}}Corre-\\lation\\$\rho$\end{tabular}}
+                 & 0.1   &  0.231 $\pm$ 0.196  &  0.509 $\pm$ 0.056  &  0.510 $\pm$ 0.055  &  0.316 $\pm$ 0.207  &  0.506 $\pm$ 0.063  &  \textbf{0.539} $\pm$ 0.235  \\
+
+                 &  1    &  0.381 $\pm$ 0.255  &  0.514 $\pm$ 0.185  &  0.515 $\pm$ 0.185  &  0.445 $\pm$ 0.223  &  0.533 $\pm$ 0.150  &  \textbf{0.756} $\pm$ 0.187  \\
+
+
+                 &  2    &  0.535 $\pm$ 0.207  &  0.569 $\pm$ 0.180  &  0.570 $\pm$ 0.179  &  0.480 $\pm$ 0.186  &  0.559 $\pm$ 0.176  &  \textbf{0.750} $\pm$ 0.261  \\
+
+
+                 &  3    &  0.586 $\pm$ 0.142  &  0.618 $\pm$ 0.134  &  0.619 $\pm$ 0.134  &  0.502 $\pm$ 0.144  &  0.613 $\pm$ 0.128  &  \textbf{0.853} $\pm$ 0.159  \\
+
+                 &  4    &  0.622 $\pm$ 0.166  &  0.658 $\pm$ 0.133  &  0.660 $\pm$ 0.132  &  0.564 $\pm$ 0.165  &  0.693 $\pm$ 0.060  &  \textbf{0.868} $\pm$ 0.053  \\
+
+          
+          \midrule
+          \multirow{4}{*}{\begin{tabular}[x]{@{}c@{}}$\log{Z}$ \\error\end{tabular}}
+                 & 0.1   &  24.45 $\pm$ 7.560  &  143.7 $\pm$ 9.297  &  145.5 $\pm$ 6.096  &  166.3 $\pm$ 11.98  &  148.5 $\pm$ 3.522  &  \textbf{12.57} $\pm$ 3.689  \\
+
+                 &  1    &  20.66 $\pm$ 5.451  &  178.7 $\pm$ 22.18  &  178.9 $\pm$ 21.88  &  153.3 $\pm$ 25.29  &  213.6 $\pm$ 12.75  &  \textbf{14.41} $\pm$ 4.135  \\
+
+                 &  2    &  16.04 $\pm$ 4.352  &  296.3 $\pm$ 44.41  &  296.9 $\pm$ 44.24  &  116.9 $\pm$ 32.72  &  335.1 $\pm$ 32.86  &  \textbf{13.37} $\pm$ 4.531  \\
+
+
+                 &  3    &  13.87 $\pm$ 6.554  &  432.7 $\pm$ 66.44  &  433.4 $\pm$ 66.30  &  100.2 $\pm$ 39.62  &  462.9 $\pm$ 53.61  &  \textbf{12.56} $\pm$ 6.046  \\
+
+                 &  4    &  \textbf{10.74} $\pm$ 7.385  &  565.7 $\pm$ 73.33  &  566.1 $\pm$ 73.13  &  106.0 $\pm$ 54.43  &  588.3 $\pm$ 62.58  &  14.72 $\pm$ 4.155  \\
+          
+
+                 % \midrule
+                 % \multirow{4}{*}{Time}
+                 % & 0.1   &  0.555 $\pm$ 0.135  &  1.705 $\pm$ 1.256  &  1.428 $\pm$ 0.400  &  13.68 $\pm$ 0.432  &  12.63 $\pm$ 0.592  &  15.26 $\pm$ 4.759  \\
+
+                 % &  1    &  0.457 $\pm$ 0.103  &  0.777 $\pm$ 0.167  &  1.285 $\pm$ 0.190  &  14.29 $\pm$ 0.487  &  12.45 $\pm$ 0.603  &  16.16 $\pm$ 5.695  \\
+
+                 % &  2    &  0.424 $\pm$ 0.101  &  0.630 $\pm$ 0.096  &  1.143 $\pm$ 0.196  &  14.76 $\pm$ 0.512  &  15.04 $\pm$ 1.106  &  14.74 $\pm$ 4.606  \\
+
+                 % &  3    &  0.377 $\pm$ 0.114  &  0.567 $\pm$ 0.118  &  1.084 $\pm$ 0.254  &  14.49 $\pm$ 0.392  &  15.62 $\pm$ 1.218  &  13.40 $\pm$ 3.070  \\
+
+                 % &  4    &  0.521 $\pm$ 0.475  &  0.543 $\pm$ 0.137  &  1.018 $\pm$ 0.171  &  14.00 $\pm$ 0.379  &  14.59 $\pm$ 5.254  &  14.24 $\pm$ 2.536 \\
+          
+
+          \bottomrule
+        \end{tabular}
+      
+    \end{small}
+  \end{center}
+  \vskip -0.2in
+\end{table*}
+
+Marginal approximation can be reflected by $\ell_1$ error and correlation coefficient $\rho$. The results are reported in Table~\ref{table:infer-grid-gamma0.1} and \ref{table:infer-grid-gamma1.0}. In all cases except one, beliefs of RENN outperform benchmark algorithms with large marginals. As expected, performances of loopy BP and its variant damped BP are similar in general while damped BP sometime gets better estimations. Both loopy BP and damped BP have better marginal estimations than mean field method in all of our considered scenarios. GBP outperforms loopy BP and damped BP at case $\gamma=0.1$, $h_i\sim \Nn(0,0.1^2)$, agreeing with the results at \cite{yedida2005constucting}, but performs poorly at case of $\gamma=1$. Similar phenomena happen to Inference Net, which has better estimations than loopy BP and damped BP in some cases of $\gamma=0.1$ but falls behind in all cases of $\gamma=1$.
+
+
+As for the error of partition function values, GBP gets the most accurate estimations when $\gamma=0.1$. $\log{Z}$ estimated by loopy BP and damped BP is better for $\gamma=1$. Partition function estimation by RENN is acceptable at different considered cases.
+
+Note the region graphs in this set of experiments uses all faces of grid graph but the \textit{infinite face} (the perimeter circle). {For instance, the region $\{1, 2, 3, 4, 5, 6, A, B, C ,E, F, G\}$ is obtained from the infinite face in the 2-by-3 grid in Figure~\ref{fig:factor-region-graphs}}. By comparing Table~\ref{tab:infer-infinite-face} with the $n=25$ cases of Table~\ref{table:infer-grid-gamma0.1} and \ref{table:infer-grid-gamma1.0}, performance of RENN can be further better when we include the infinite face in building region graphs from grid. On the contrary, performance of GBP drops slightly after including the infinite face. But number of nodes in the region built from the infinite face would scale with the perimeter of grid graph. Since RENN already has reasonable good accuracy outperforming benchmark methods as shown in Table~\ref{table:infer-grid-gamma0.1} and \ref{table:infer-grid-gamma1.0}, we suggest to drop the infinite face in constructing region graphs from grids.
+
+
+\begin{table*}[t]
+  \caption{NLL of grid graphical models training using different inference methods.}
+  \label{tab:nll-training-grid-n5n10}
+  \begin{center}
+    \begin{small}
+      
+        \begin{tabular}{lcccccccc}
+          % std=1.0
+          \toprule
+          $n$ & True & Exact & Mean Field & Loopy BP & Damped BP & GBP & Inference Net & RENN \\
+          25  &  9.000  &  9.004  &  9.811  &  {9.139}  &  9.196  &  10.56  &  9.252  &  \textbf{9.048}  \\
+          100 &  19.34  &  19.38  &  23.48  &  {19.92}  &  20.02  &  28.61  &  20. 29  &  \textbf{19.76} \\
+          225 &  63.90  &  63.97  &  69.01  &  66.44    &  66.25  &  92.62  &  68.15  &  \textbf{64.79}  \\
+          \bottomrule
+        \end{tabular}
+      
+    \end{small}
+  \end{center}
+  \vskip -0.3in
+\end{table*}
+
+
+\begin{table*}[t]
+  \caption{NLL of complete graphical models training using different inference methods.}
+  \label{tab:nll-training-full-n3n4}
+  \begin{center}
+    \begin{small}
+      
+        \begin{tabular}{lcccccccc}
+          \toprule
+          % std=1.0
+          $n$ & True & Exact & Mean Field & Loopy BP & Damped BP & GBP & Inference Net & RENN \\
+          \midrule
+          9  &  3.276  &  3.286  &  9.558  &  5.201  &  5.880  &  10.06  &  5.262  & \textbf{3.414}  \\
+          16  &  4.883  &  4.934  &  28.74  &  13.64  &  18.95  &  24.45  &  13.77  &  \textbf{5.178}  \\
+          
+          \bottomrule
+        \end{tabular}
+      
+    \end{small}
+  \end{center}
+  \vskip -0.2in
+\end{table*}
+
+% \begin{table}[t]
+%   \caption{Consumed time per epoch (unit second).}
+%   \label{tab:time-training}
+%   \begin{center}
+%     \begin{small}
+%       \begin{sc}
+%         \begin{tabular}{lcc}
+%           \toprule
+%           $n$ & 25 & 100 \\
+%           \midrule
+%           Mean Field & 8.850 & 24.36 \\
+%           Loopy BP &  41.58 & 94.97 \\
+%           Damped BP & 35.85 & 156.8 \\
+%           GBP &  1.466 & 9.245  \\
+%           Inference Net & 1.466 & 5.314 \\
+%           RENN &  2.329 & 10.98\\
+
+%           \bottomrule
+%         \end{tabular}
+%       \end{sc}
+%     \end{small}
+%   \end{center}
+%   \vskip -0.2in
+% \end{table}
+
+\begin{table}[h]
+  \vskip -0.1in
+  \caption{Average consumed time per epoch (unit: second) for two training cases in Table~\ref{tab:nll-training-grid-n5n10} and \ref{tab:nll-training-full-n3n4}.}
+  \label{tab:time-training}
+  \vskip -0.1in
+  \begin{center}
+    \begin{small}
+      
+        \begin{tabular}{lcc}
+          \toprule
+          {} & \begin{tabular}[x]{@{}c@{}} Grid Graph\\ $n=225$\end{tabular}
+             & \begin{tabular}[x]{@{}c@{}} Complete Graph\\ $n=16$\end{tabular}  \\
+          \midrule
+          Mean Field & 40.09 & 2.499 \\
+          Loopy BP &  335.1 & 12.40\\
+          Damped BP & 525.1 & 5.431\\
+          GBP &   12.37    & 1.387\\
+          Inference Net & 19.49 & 0.882 \\
+          RENN & 16.03  & 2.262\\
+
+          \bottomrule
+        \end{tabular}
+      
+    \end{small}
+  \end{center}
+  \vskip -0.3in
+\end{table}
+
+
+\subsection{Inference on Challenging Complete Graphs}
+
+In this subsection, we evaluate RENN in comparison with benchmark methods on more challenging graphs, i.e. complete graphs in which every two nodes are connected by an unique edge. Due the high complexity, we carry out the inference experiments on complete graphs of size $n=9$ and $n=16$ but with richer setting of $\gamma$, to be able the track the true marginals and partition functions exactly, which are used to evaluate candidate methods.
+
+For marginal distribution estimations, RENN still outperforms all other benchmark methods except for one case at $\gamma=0.1$ in size-$9$ graph, as shown in Table~\ref{tab:infer-full-n9} and \ref{tab:infer-full-n16}. In the case of $\gamma=0.1$ in Table~\ref{tab:infer-full-n9}, Inference Net outperforms RENN w.r.t. $\ell_1$ error, i.e. $0.109$ versus $0.130$, but falls behind RENN w.r.t. correlation $\rho$ ($0.720$ versus $0.741$) and $\log{Z}$ estimation significantly ($35.46$ versus $3.171$).
+
+In the complete graphs, GBP does not have privilege over loopy BP and damped BP any more, RENN operating on the same region graphs as those for GBP, gives consistently better marginal distribution estimations. Also, generally speaking, the performance of Inference Net is close to loopy BP and damped in most cases of complete graphs.
+
+As for partition function evaluations of complete graphs, the results are quite different from those of grid graphs, by observing Table~\ref{tab:infer-full-n9} and \ref{tab:infer-full-n16}. Loopy BP, damped BP, and Inference Net are getting very large error of partition function as node log-potentials are more different from each other, i.e. $\gamma$ gets larger. GBP has reasonable good estimation of $\log{Z}$ in smaller sized complete graph in Table~\ref{tab:infer-full-n9}, but gets large $\log{Z}$ error in a bit larger complete graph as in Table~\ref{tab:infer-full-n16}. Mean field methods gives much better estimation of $\log{Z}$ in compete graphs than loopy BP, damped BP and Inference Net, but it has poorer marginal distribution estimations.
+
+\subsection{Model Learning with Inference of RENN}
+
+In this subsection, we report the results of training MRFs, i.e. learning the model parameter $\bm{\theta}$ as discussed in section~\ref{sec:model-learning-with-renn}, by using inference of RENN.
+
+
+
+We do training on two types of graphs, grid (Table~\ref{tab:nll-training-grid-n5n10}) and complete graphs (Table~\ref{tab:nll-training-full-n3n4}). For both cases, we firstly sample the parameter set $\bm{\theta}^{\prime}$, then sample training and testing dataset from $p(\bm{x}; \bm{\theta}^{\prime})$. The true NLL of sampled datasets can be computed by $p(\bm{x}; \bm{\theta}^{\prime})$. We then train a randomly-initialized model with the obtained training dataset by using RENN (section~\ref{sec:model-learning-with-renn}). The trained model by RENN is evaluated with testing dataset w.r.t. NLL value, which is compared with trained models by other methods. We also include the comparison with exact inference where $Z(\bm{\theta})$ is computed exactly.
+In the grid graphs, there are $4000$ samples for training and $1000$ for testing. In the complete graph case, there are $2000$ samples for training and $1000$ samples for testing. 
+
+In the cases of grid graphs, the NLLs of most methods are close to the true NLL for small-sized graphs ($n=25,100$), with RENN reaching the lowest NNL. At case of $n=255$, RENN outperforms all other methods significantly. Additionally, RENN is much faster. As shown in Table~\ref{tab:time-training}, loopy BP needs almost $335$s and damped BP needs about $525$s per epoch iteration, while RENN takes $16$s per epoch. Please refer to section~\ref{apdx:sec:extrx-exp} for computation time of other cases in the supplementary file.
+Neural network based methods parameterize the beliefs or marginal distributions and thus can do new inference estimations much faster when model parameter $\bm{\theta}$ is updated in optimization steps. % When the learning step of $\bm{\theta}$ is small, multiple steps of update of $\bm{\theta}$ can share one inference estimation of marginals without degenerating performance.
+
+
+
+In the cases of complete graph, the advantage of RENN is significant, compared with other methods as shown in Table~\ref{tab:nll-training-full-n3n4}. Other benchmark methods fall behind RENN by a distinct difference, given the size of graph is relatively small. The results here actually agree with inference experiments shown in Table~\ref{tab:infer-full-n9} and \ref{tab:infer-full-n16}, where partition function estimations of other benchmark methods have much larger errors. As for the average time per epoch, neural network based models still are faster than iterative message passing methods in general.
+
+\section{Related Work}
+
+
+Neural networks are popularly used in deep graphical generative models for structured data modeling \cite{qu2019gmnn, johansonNIPS2016_6379, li2018graphical}. Along with a neural network based generative model, a separate recognitive neural network has to be trained for inference. In these directed graphical models built on neural networks, training of inference networks need sampling which brings in the trade-off between training speed and estimation variance. These issues also lies in the autoencoders \cite{DBLP:journals/corr/KingmaW13,2017arXiv170104722M}, and other variational methods \cite{kuleshov2017neural_variational,NIPS2017_7136}.
+
+Apart from the directed graphical models, there is also a track of work on using neural network to model the message passing functions. \cite{akbayrak2019reparameterization} models the intractable message update functions by a Gaussian dissertations with its parameters as output of a neural network, and then follows the typical message passing rules to do iterative message updates of standard BP. \cite{jitkrittum2015kernel, heess2013learning} also similarly learn a neural network to model the message update functions of expectation propagation methods.
+
+
+Note that although recent neural message passing methods are also purely neural network based models for inference tasks, these methods still do iterative message propagation analogous to standard BP.
+Neural message passing methods \cite{yoon2019inferenceGraph, pmlr-v70-gilmer17a} use a  graph network update messages and a separate network to map messages into targeted results. Training of these models have to rely on sampling methods since true messages or marginals are usually not available.
+
+Closely related to our work, Bethe free energy is directed minimized in  \cite{welling2001belief,NIPS2019_9687} instead of iterative message passing methods, which can be treated as special cases of RENN. \cite{welling2001belief} uses gradient decent method to alternative minimize single variable marginals and pairwise marginals. \cite{NIPS2019_9687} parameterizes marginals directly by a neural network and minimizes Bethe free energy. 
+
+
+
+\section{Conclusion}
+We presented a neural network based model, RENN, to do inference in MRFs and also learning of MRFs. The proposed model is verified via experiments and is shown to outperform the benchmark methods. It would be interesting to investigate the applications of RENN to variants of conditional random fields in future work.
+
+
+
+
 
 \section{Region-based graph and energy}
 
