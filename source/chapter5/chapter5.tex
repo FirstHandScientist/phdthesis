@@ -6,6 +6,28 @@ move the MRF learning by using RENN here
 
 I should read lecture note 7 of 10-708 again when writing this seciton.
 
+\section{Model Learning with Inference of RENN}
+\label{sec:model-learning-with-renn}
+In section~\ref{sec:infer-renn}, we explained how to do inference with RENN when parameter $\bm{\theta}$ of $p(\bm{x}; \bm{\theta})$ is assumed to be known. In this section, we would consider the case of learning parameter $\bm{\theta}$ of $p(\bm{x}; \bm{\theta})$ with inference by RENN.
+
+When we are given a dataset $\{\bm{x}\}$ and we want to learn the model of $p(\bm{x}; \bm{\omega})$ by maximizing the log-likelihood, it requires to
+\begin{equation}\label{eq:maximizing-likelihood}
+  \umin{\bm{\theta}}{ -\log{\tilde{p}(\bm{x}; \bm{\theta})} + \log{Z(\bm{\theta})}},
+\end{equation}
+where $\tilde{p}(\bm{x}; \bm{\theta}) =  \prod_{a} \psi_a(\bm{x}_a; \bm{\theta}_a)$. Due to the intractability of $\log{Z(\bm{\theta})}$, it is expensive or prohibitive to solve \eqref{eq:maximizing-likelihood} directly. The region-based free energy $F_R(\Bb;\bm{\theta})$ would exactly be negative partition function of $p(\bm{x};\bm{\theta})$, i.e. $-Z(\bm{\theta})$, if each belief is exactly the corresponding marginalization, $b_R(\bm{x}_R)=p(\bm{x}_{R})$, $\forall~R\in \Rr$. Otherwise, $F_R(\Bb^{\ast};\bm{\theta})$ can always be an approximation of $-Z(\bm{\theta})$, where $\Bb^{\ast}= \{b_R(\bm{x}_R; \bm{\omega}^{\ast}), R\in \Rr\}$ with $\bm{\omega}^{\ast}$ being the solution to problem \eqref{eq:infer-F-all-belief}.
+
+Combining the model learning and inference, we have
+\begin{align}\label{eq:learning-min-max}
+  \!\!\!\!\!\!\!\!\!\!&\min_{\bm{\theta}}\max_{\bm{\omega}} -\log{\tilde{p}(\bm{x}; \bm{\theta})} - F_R(\Bb; \bm{\theta}) \nonumber \\
+  &-\lambda \!\!\!\!\! \sum_{R\in \Rr \backslash \Rr_0} \sum_{R_p \in \Pp(R)}\!\!\!\!\!d( b_R, \!\!\!\!\! \sum_{\Ss(R_p)\backslash \Ss(R)}\!\!\!\!\! b_{R_p}(\bm{x}_{R_p}; \bm{\omega})).
+\end{align}
+Then the difficulty of computing $Z(\bm{\theta})$ is dealt with by joint learning and inference of RENN in \eqref{eq:learning-min-max}.
+
+Note that model learning with RENN inference does not need to do sampling to estimate gradient of the objective. The gradients in \eqref{eq:learning-min-max} can be directly computed with autodiff functions in modern toolboxs such as PyTorch or TensorFlow. {Also, since RENN don't need iterative message propagation, model learning with inference by RENN can be faster.}
+
+Last but not the least, our method can be extended to learn models where there are both observable variable $\bm{x}$ and hidden variable $\bm{z}$ that we do not have observations for. Please refer to section~\ref{apdix:sec:crf-learning} in supplementary file for detail.
+
+
 \section{Amortized/Neural Variational Learning and Inference of partial observed MRF}
 1. TRW as upper bound to partition function
 

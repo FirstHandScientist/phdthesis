@@ -9,17 +9,6 @@ Another limitation lies on the Bethe approximation itself. When representing Bet
 
 In this chapter, we seek to use larger clusters in graphical representation to overcome the above mentioned limitation. Along with that, we would bring the concept of inference as optimization into the alternative representation.
 
-\section{Introduction}
-Probabilistic graphical models offer natural ways to encode the conditional dependence of random variables. Message-passing algorithms are practical and powerful methods to solve probabilistic inference problems on graphical models, including obtaining the overall state of a system or marginal probabilities of subset of nodes in the system. The well-known standard belief propagation (BP) algorithm \cite{Pearl1982reverend,kschischang2001factor_graph} has been popularly used in exact inference problems of tree-structures graphs and approximate inference in general graphs (loopy BP), which was explained by the Bethe free energy minimization later on \cite{yedidia2003understanding}. The approximate inference of BP was then improved by the generalized BP (GBP, also known as parent-to-child algorithm) that is also an iterative message-passing algorithm on a constructed region graph \cite{Yedidia:2000:GBP:3008751.3008848, yedida2005constucting}. GBP propagates messages between regions (clusters of nodes), is generally more accurate than loopy BP but is more complex than BP. Fix points of GBP that operate on regions graphs, correspond to stationary points of region-based free energy of the region graphs. Depending on the graph size and potential functions, the iterative message-passing algorithms can take long time to converge (if they can converge) before returning inference results. Also, inference of these message-passing methods can degenerate significantly in dense graphs (graphs with too many circles).
-
-Recent deep generative models, such as auto-encoders \cite{DBLP:journals/corr/KingmaW13,2017arXiv170104722M, 2017arXiv171101558T} show promising results on data generating and latent variable estimations. Also in the generative probabilistic model framework, \cite{li2018graphical, johansonNIPS2016_6379} combines deep neural networks with directed graphical models to represent the dependency structures of random variables.
-These models are advantageously fast on modern GPU devices.
-These work mainly do directed graphical modeling, and usually do not explicitly model the structure dependency of random variables fully. End-to-end training is used to learn a generative network and also a separate neural network to perform approximate inference. Sampling is usually used to perform neural network training when cost function is based on a probability distribution that is not modeled explicitly.
-
-We proposed a model to conjoin the benefits of both and avoid the drawbacks of each. Specifically, we use a neural network to directly minimize the region-based free energy for approximate probabilistic inference in general Markov random fields (MRFs), without iterative message-passing as belief propagation methods do. We term the region-based energy neural network as RENN for short. RENN allows quick approximate inference, and outperforms loopy BP, GBP and state-of-the-art neural network based inference model. The advantage of RENN remains even in challenging complete graphs (every two nodes are connected).
-
-We also consider learning MRFs with use of inference by RENN. Learning with RENN outperforms benchmark methods.
-In both learning MRFs with RENN and employing RENN for inference only, no sampling is required. 
 
 
 
@@ -151,13 +140,11 @@ In both learning MRFs with RENN and employing RENN for inference only, no sampli
       \draw[->] (r17.south) -- (r26.north);
     \end{scope}
   \end{tikzpicture}
-  \vskip -0.15in
   \caption{Illustration of a factor graph for 2-by-3 grid (top left, variable nodes are indexed by number and factor nodes by letters), and two alternative regions graphs (two levels for the top right one and three levels for bottom one) constructed from the factor graph.}
   \label{fig:factor-region-graphs}
-  \vskip -0.2in
 \end{figure}
 
-\section{Preliminary}
+\section{Region Graph}
 
 Let $\left\{X_1, X_2, \cdots, X_N\right\}$ be a set of N discrete-valued random variables and $x_i$ represent the possible realization of of $X_i$. We denote the joint probability function $p(X_1=x_1, X_2=x_2, \cdots, X_N=x_N; \bm{\theta})$ that is parameterized by $\bm{\theta}$, by $p(\bm{x}; \bm{\theta})$. For notation simplicity, we define that each variable has $K$ states, i.e. $|x_i|=K$, where $|\cdot|$ denotes the cardinality.
 
@@ -178,7 +165,7 @@ Loopy BP as a message-passing algorithm operates on factor graphs (as the top-le
   A \textit{region} $R$ is a set $V_R$ of variables nodes and a set $A_R$ of factor nodes, such that if a factor node $a$ belong to $A_R$, all the variables nodes neighboring $a$ are in $V_R$.
 \end{definition}
 
-
+\subsection{Region-based free energy}
 
 \begin{definition}\label{def:region-graph}
   A \textit{region graph} is  a directed graph $\Gg_R(\Rr, \Ee)$, where each vertex $R \in \Rr$ is defined as the joint set of variable and factor nodes in this region, i.e. $R = \left\{ i \in V_R, a \in A_R | i \in \Vv, a \in \Ff \right\}$. Each edge $e \in \Ee$ in $\Gg_R$ is directed from $R_p$ to $R_c$ such that $R_c \subset R_p$. 
@@ -204,6 +191,68 @@ Loopy BP as a message-passing algorithm operates on factor graphs (as the top-le
 
 We define some notations that are going to be used in our paper. Since $\Gg_R$ is a hierarchical directed graph, $\Rr_l$ denotes regions in level $l$, and 
 $R^{[l]}_i\in \Rr_l$ denotes $R^{[l]}_i$ is the $i$-th region node in level $l$. This means $\Rr_0$ is set of the top root regions that have no parents, i.e. the level $0$ regions. Also, $R^{[l]}$ means it can be any node in $\Rr_l$ and $R$ denotes a region node when it is not clear or doesn't matter which level it locates. Lastly, we define the scope of $R$ by $\Ss(R)$, i.e. $\Ss(R) = \left\{ x_i| i \in R \right\}$.
+
+
+
+
+\section{Recover Bethe Free Energy from Region-based Free Energy}
+\label{apdix:sec:get-bethe-from-region-energy}
+Region-based free energy is known to generalize the Bethe free energy. In another word, Bethe free energy defined in \eqref{apdix:bethe-free-energy} can be directly constructed
+from the Definition~\ref{def:region-free-energy} in our paper, with
+specific choice of regions. As shown in \cite{yedida2005constucting},
+if we define two types of regions (large regions and small
+regions) directly from a factor graph $\Gg_F(\Vv \cup \Ff, \Ee_F)$, by defining the large regions and small regions as
+\begin{align}
+  \Rr_{L} &= \left\{ a, \Ss(a)| a\in \Ff \right\}, \nonumber \\
+  \Rr_{S} &= \left\{ i | i \in \Vv \right\}.
+\end{align}
+According to subsection~\ref{subsec:count-number} in our paper, the large regions always have counting number $c_{R,a}=1$ and for small regions each node $i$ always has counting number $c_{R,i}=1-|\mathrm{ne}_i|$. Then we can recover the Bethe free energy from region-based free energy defined in 
+\eqref{eq:def-region-free-energy} in our paper. To be specific, for
+large regions,
+\begin{align}\label{apdix:eq:large-region}
+  F_{R,L}(\Bb; \bm{\theta}) &=\sum_{R\in \Rr_{L}} c_{R,a}
+                              \sum_{\bm{x}_a}b_a(\bm{x}_a) (E_a(\bm{x}_a) + \ln{b_a}(\bm{x}_a))
+                              \nonumber \\
+                            & =\sum_{a} \sum_{\bm{x}_a} b_a(\bm{x}_a)\ln{\frac{b_a(\bm{x}_a)}{\psi_a(\bm{x}_a)}}.
+\end{align}
+And for the small regions, the free energy can be similarly obtained as
+\begin{equation}\label{apdix:eq:small-region}
+  F_{R,S}  =  \sum_{i=1}^{N} (1- |\mathrm{ne}_i|) \sum_{x_i} b_i(x_i) \ln{b_i(x_i)}.
+\end{equation}
+Putting \eqref{apdix:eq:large-region} and \eqref{apdix:eq:small-region} together gives the Bethe free energy in \eqref{apdix:bethe-free-energy}.
+
+
+\section{Generalize Belief Propagation}
+\label{apdix:sec:gbp}
+The region graph was original proposed for the generalized belief propagation (GBP) message-passing algorithm\cite{Yedidia:2000:GBP:3008751.3008848,yedida2005constucting,DBLP:journals/corr/abs-1207-4158}. We give the message-passing rules of GBP here since it is used as a benchmark comparison method in our paper.
+
+GBP operates on a directed region graph $\Gg_R(\Rr,\Ee)$. A message is always sent from a parent region $P$ to a child region $R$, i.e. directed edge $(P, R)\in \Ee$. Let us define the factors in region $R$ as $A_R = \left\{ a | a \in R \right\}$.
+The same as notation in paper, $\Pp(R)$ denotes the set of parent regions of $R$. The descendants of $R$ is denoted by $\Dd(R)$ (excluding $R$). The descendants of $R$ including $R$ is denoted by $\hat{\Dd}(R) = \Dd(R) \cup R$. The message update rule from the parent region $P$ to the child region $R$ is
+\begin{align}
+  &m_{P\rightarrow R} \sim \nonumber \\
+  &\frac{\sum_{\Ss(P)\backslash
+    \Ss(R)}\prod_{a\in A_P\backslash A_R}\psi_a(\bm{x}_a)\prod_{(I,J)
+    \in \Nn(P, R)}m_{I\rightarrow J}(\bm{x}_J)}{\prod_{(I,J)
+    \in \Hh(P, R)}m_{I\rightarrow J}(\bm{x}_J)},
+\end{align}
+where
+\begin{align}
+  \Nn(P, R) &= \left\{ (I,J)\in \Ee | J \in \hat{\Dd}(P) \backslash \hat{\Dd}(R), I \not\in \hat{\Dd}(P)\right\},\nonumber \\
+  \Hh(P, R) &= \left\{ (I,J) \in \Ee | J \in \hat{\Dd}(R), I \in \hat{\Dd}(P) \backslash \hat{\Dd}(R) \right\}.
+\end{align}
+
+The belief for each region $R$ is given by
+\begin{align}
+  b_R(\bm{x}_R) \sim &\prod_{a\in A_R} \psi_a(\bm{x}_a) \prod_{P\in
+                       \Pp(R)} m_{P\rightarrow R}(\bm{x}_R) \nonumber \\
+                     & \prod_{D\in \Dd(R)} \prod_{P^{\prime} \in \Pp(D) \backslash \hat{\Dd}(R)} m_{P^{\prime}\rightarrow D}(\bm{x}_D).
+\end{align}
+
+
+
+
+
+\section{Region-based Energy Neural Network}
 
 \begin{figure}[!t]
   \centering
@@ -292,7 +341,6 @@ $R^{[l]}_i\in \Rr_l$ denotes $R^{[l]}_i$ is the $i$-th region node in level $l$.
 \end{figure}
 
 
-\section{Region-based Energy Neural Network}
 In this section, we explain how the proposed region-based energy neural network (RENN) works.
 We are interested in finding marginal probabilities such as $p(\bm{x}_R)$. The belief $b_R(\bm{x}_R)$ can be understood as the estimation to $p(\bm{x}_R)$.
 Instead of directly optimize w.r.t. variables ${b_R(\bm{x}_R)}$ of interests, we use the reparameterization technique that are also used by recent works \cite{DBLP:journals/corr/KingmaW13, srikumar-etal-2012-amortizing, NIPS2019_9687, akbayrak2019reparameterization}, to model the values of interests to be the output of a neural network. We then optimize w.r.t. the parameters of the neural network.
@@ -387,27 +435,63 @@ To maintain the consistency of our paper, we cite two important theorems from \c
 
 Tree-robust root regions can also be constructed for general graphs, which can be seen as an extension from Theorem~\ref{thm:planar-tree-robust} and \ref{thm:complete-tree-robust}. Please refer to Algorithm~\ref{apdix:alg:root-region-general-graph} in section~\ref{apdix:sec:root-region-construct} in supplementary file for detail.
 
+\section{Constructing the Root Regions from General Graphs}
+\label{apdix:sec:root-region-construct}
+To explain the concept of \textit{tree-robust} in
+\cite{gelfand2012generalized}, we need explain the concepts of \textit{cycle basis} and \textit{tree exact}, based on which the tree-robust is defined.
+\begin{definition}\label{apdix:def:cycle-basis}
+  A \textit{cycle basis} of the cycle space of a graph $\Gg$ is a
+  set of simple cycles $\Cc\Bb =\left\{ C_1, C_2, \cdots, C_{\mu}
+  \right\}$ such that for every cycle $C$ in graph $\Gg$, there
+  exists a unique subset $\Cc\Bb_{C} \subseteq \Cc\Bb$ such that the
+  set of edges appearing an odd number of times in $\Cc\Bb_C$ comprise the cycle $C$.
+\end{definition}
 
-\section{Model Learning with Inference of RENN}
-\label{sec:model-learning-with-renn}
-In section~\ref{sec:infer-renn}, we explained how to do inference with RENN when parameter $\bm{\theta}$ of $p(\bm{x}; \bm{\theta})$ is assumed to be known. In this section, we would consider the case of learning parameter $\bm{\theta}$ of $p(\bm{x}; \bm{\theta})$ with inference by RENN.
+\begin{definition}\label{apdix:def:tree-exact}
+  Let $T$ be a spanning tree of graph $\Gg$. A cycle basis $\Cc\Bb$ is
+  \textit{tree exact} w.r.t. $T$ if there exists an ordering $\pi$ of
+  the cycles in $\Cc\Bb$ such that $\left\{ C_{\pi(i)} \backslash C_{\pi(1)} \cup C_{\pi(2)} \cup \cdots \cup C_{\pi(i-1)} \right\} \neq \emptyset$ for $i=2,\cdots, \mu$.
+\end{definition}
+Definition~\ref{apdix:def:tree-exact} tells us that if a cycle basis is tree exact w.r.t. $T$ and ordered properly, there is at least one edge of $C_{\pi}$ that has not appeared in any cycles preceding it, and meanwhile this edge does not appear in the spanning tree $T$.
 
-When we are given a dataset $\{\bm{x}\}$ and we want to learn the model of $p(\bm{x}; \bm{\omega})$ by maximizing the log-likelihood, it requires to
-\begin{equation}\label{eq:maximizing-likelihood}
-  \umin{\bm{\theta}}{ -\log{\tilde{p}(\bm{x}; \bm{\theta})} + \log{Z(\bm{\theta})}},
-\end{equation}
-where $\tilde{p}(\bm{x}; \bm{\theta}) =  \prod_{a} \psi_a(\bm{x}_a; \bm{\theta}_a)$. Due to the intractability of $\log{Z(\bm{\theta})}$, it is expensive or prohibitive to solve \eqref{eq:maximizing-likelihood} directly. The region-based free energy $F_R(\Bb;\bm{\theta})$ would exactly be negative partition function of $p(\bm{x};\bm{\theta})$, i.e. $-Z(\bm{\theta})$, if each belief is exactly the corresponding marginalization, $b_R(\bm{x}_R)=p(\bm{x}_{R})$, $\forall~R\in \Rr$. Otherwise, $F_R(\Bb^{\ast};\bm{\theta})$ can always be an approximation of $-Z(\bm{\theta})$, where $\Bb^{\ast}= \{b_R(\bm{x}_R; \bm{\omega}^{\ast}), R\in \Rr\}$ with $\bm{\omega}^{\ast}$ being the solution to problem \eqref{eq:infer-F-all-belief}.
+With the above concepts, we are ready to give the definition of tree-robust.
 
-Combining the model learning and inference, we have
-\begin{align}\label{eq:learning-min-max}
-  \!\!\!\!\!\!\!\!\!\!&\min_{\bm{\theta}}\max_{\bm{\omega}} -\log{\tilde{p}(\bm{x}; \bm{\theta})} - F_R(\Bb; \bm{\theta}) \nonumber \\
-  &-\lambda \!\!\!\!\! \sum_{R\in \Rr \backslash \Rr_0} \sum_{R_p \in \Pp(R)}\!\!\!\!\!d( b_R, \!\!\!\!\! \sum_{\Ss(R_p)\backslash \Ss(R)}\!\!\!\!\! b_{R_p}(\bm{x}_{R_p}; \bm{\omega})).
-\end{align}
-Then the difficulty of computing $Z(\bm{\theta})$ is dealt with by joint learning and inference of RENN in \eqref{eq:learning-min-max}.
+\begin{definition}
+  A cycle basis $\Cc\Bb$ is tree-robust if it is tree exact w.r.t. all spanning trees of $\Gg$.
+\end{definition}
 
-Note that model learning with RENN inference does not need to do sampling to estimate gradient of the objective. The gradients in \eqref{eq:learning-min-max} can be directly computed with autodiff functions in modern toolboxs such as PyTorch or TensorFlow. {Also, since RENN don't need iterative message propagation, model learning with inference by RENN can be faster.}
+Root regions of region graph $\Gg_R$ from planar and compete graphs are explained in subsection~\ref{sec:criteria-root-regions}. For general graph case, it basically is to find a subgraph that is planar or compote graph, and then extract the corresponding tree-robust basis, after which extra cycles are added in by following Algorithm~\ref{apdix:alg:root-region-general-graph}.
+\begin{algorithm}[tb]
+  \caption{Construct Root Regions from General Graphs.}
+  \label{apdix:alg:root-region-general-graph}
+  \begin{algorithmic}
+    \STATE {\bfseries Input:} Pairwise Markov random field $p(\bm{x})$
+    \STATE Draw the factor graph $\Gg_F$ of $p(\bm{x})$
+    \STATE Obtain graph $\Gg$ by preserving the variable nodes as they are and converting the factor nodes of $\Gg_F$ into edges
+    \STATE Find the subgraph $\Gg_s$ of $\Gg$, such that $\Gg_s$ is planar or complete graph
+    \STATE Add the tree-robust basis $\Cc\Bb(\Gg_s)$ of $\Gg_s$ into $\Rr_0$
+    \STATE Marked all nodes as \textit{visited} and edged as \textit{used} in $\Gg_s$
+    \REPEAT
+    \STATE Choose an \textit{unused} edge $e = (s,t)$ from a \textit{visited} node $s$
+    \IF{$t$ is visited}
+    \STATE Set $\mathrm{path1} = e$
+    \STATE Find the shortest path $\mathrm{path}_2$ from $s$ to $t$
+    via \textit{used} edges
+    \ELSE
+    \STATE Find path from $s$ to a \textit{visited} $u$ that
+    contains edge $e$, this path is set as $\mathrm{path1}$.
+    \STATE Find the shortest path $\mathrm{path}_2$ from $s$ to $u$
+    via \textit{used} edges
+    \ENDIF
+    \STATE Add cycle $C$ consisting of $\mathrm{path1}$ and
+    $\mathrm{path2}$ to $\Rr_0$.
+    \STATE Mark all nodes as \textit{visited} and edges as
+    \textit{used} in $C$
+    \UNTIL{$\nexists$ \textit{unused} edge $e = (s,t)$ from a
+      \textit{visited} node $s$}
+  \end{algorithmic}
+\end{algorithm}
 
-Last but not the least, our method can be extended to learn models where there are both observable variable $\bm{x}$ and hidden variable $\bm{z}$ that we do not have observations for. Please refer to section~\ref{apdix:sec:crf-learning} in supplementary file for detail.
 
 
 \section{Experimental Results}
@@ -886,22 +970,23 @@ Closely related to our work, Bethe free energy is directed minimized in  \cite{w
 
 
 
-\section{Conclusion}
+\section{Discussion}
 We presented a neural network based model, RENN, to do inference in MRFs and also learning of MRFs. The proposed model is verified via experiments and is shown to outperform the benchmark methods. It would be interesting to investigate the applications of RENN to variants of conditional random fields in future work.
 
 
+\section{raw materials}
+\subsection{Introduction}
+Probabilistic graphical models offer natural ways to encode the conditional dependence of random variables. Message-passing algorithms are practical and powerful methods to solve probabilistic inference problems on graphical models, including obtaining the overall state of a system or marginal probabilities of subset of nodes in the system. The well-known standard belief propagation (BP) algorithm \cite{Pearl1982reverend,kschischang2001factor_graph} has been popularly used in exact inference problems of tree-structures graphs and approximate inference in general graphs (loopy BP), which was explained by the Bethe free energy minimization later on \cite{yedidia2003understanding}. The approximate inference of BP was then improved by the generalized BP (GBP, also known as parent-to-child algorithm) that is also an iterative message-passing algorithm on a constructed region graph \cite{Yedidia:2000:GBP:3008751.3008848, yedida2005constucting}. GBP propagates messages between regions (clusters of nodes), is generally more accurate than loopy BP but is more complex than BP. Fix points of GBP that operate on regions graphs, correspond to stationary points of region-based free energy of the region graphs. Depending on the graph size and potential functions, the iterative message-passing algorithms can take long time to converge (if they can converge) before returning inference results. Also, inference of these message-passing methods can degenerate significantly in dense graphs (graphs with too many circles).
 
+Recent deep generative models, such as auto-encoders \cite{DBLP:journals/corr/KingmaW13,2017arXiv170104722M, 2017arXiv171101558T} show promising results on data generating and latent variable estimations. Also in the generative probabilistic model framework, \cite{li2018graphical, johansonNIPS2016_6379} combines deep neural networks with directed graphical models to represent the dependency structures of random variables.
+These models are advantageously fast on modern GPU devices.
+These work mainly do directed graphical modeling, and usually do not explicitly model the structure dependency of random variables fully. End-to-end training is used to learn a generative network and also a separate neural network to perform approximate inference. Sampling is usually used to perform neural network training when cost function is based on a probability distribution that is not modeled explicitly.
 
+We proposed a model to conjoin the benefits of both and avoid the drawbacks of each. Specifically, we use a neural network to directly minimize the region-based free energy for approximate probabilistic inference in general Markov random fields (MRFs), without iterative message-passing as belief propagation methods do. We term the region-based energy neural network as RENN for short. RENN allows quick approximate inference, and outperforms loopy BP, GBP and state-of-the-art neural network based inference model. The advantage of RENN remains even in challenging complete graphs (every two nodes are connected).
 
-\section{Region-based graph and energy}
+We also consider learning MRFs with use of inference by RENN. Learning with RENN outperforms benchmark methods.
+In both learning MRFs with RENN and employing RENN for inference only, no sampling is required. 
 
-\section{RENN model for Approximate Inference}
-
-\section{RENN model for markov random field training}
-
-\section{Experimental results}
-
-\section{Summary}
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "../../main"
