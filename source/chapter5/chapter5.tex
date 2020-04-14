@@ -128,6 +128,124 @@ Note $p(\bm{h}|\bm{h})$ is exactly independent, and thus the $A_{M}(\theta) = A(
 
 This is also closely connected to variational see Section 6.2, Wainwright, Graphical Models, Exponential Families, and Variational Inference.
 \section{Experiment}
+
+
+
+\subsection{Model Learning with Inference of RENN}
+
+
+\begin{table*}[t]
+  \caption{NLL of grid graphical models training using different inference methods.}
+  \label{tab:nll-training-grid-n5n10}
+  \begin{center}
+    \begin{small}
+      
+        \begin{tabular}{lcccccccc}
+          % std=1.0
+          \toprule
+          $n$ & True & Exact & Mean Field & Loopy BP & Damped BP & GBP & Inference Net & RENN \\
+          25  &  9.000  &  9.004  &  9.811  &  {9.139}  &  9.196  &  10.56  &  9.252  &  \textbf{9.048}  \\
+          100 &  19.34  &  19.38  &  23.48  &  {19.92}  &  20.02  &  28.61  &  20. 29  &  \textbf{19.76} \\
+          225 &  63.90  &  63.97  &  69.01  &  66.44    &  66.25  &  92.62  &  68.15  &  \textbf{64.79}  \\
+          \bottomrule
+        \end{tabular}
+      
+    \end{small}
+  \end{center}
+\end{table*}
+
+
+\begin{table*}[t]
+  \caption{NLL of complete graphical models training using different inference methods.}
+  \label{tab:nll-training-full-n3n4}
+  \begin{center}
+    \begin{small}
+      
+        \begin{tabular}{lcccccccc}
+          \toprule
+          % std=1.0
+          $n$ & True & Exact & Mean Field & Loopy BP & Damped BP & GBP & Inference Net & RENN \\
+          \midrule
+          9  &  3.276  &  3.286  &  9.558  &  5.201  &  5.880  &  10.06  &  5.262  & \textbf{3.414}  \\
+          16  &  4.883  &  4.934  &  28.74  &  13.64  &  18.95  &  24.45  &  13.77  &  \textbf{5.178}  \\
+          
+          \bottomrule
+        \end{tabular}
+      
+    \end{small}
+  \end{center}
+\end{table*}
+
+% \begin{table}[t]
+%   \caption{Consumed time per epoch (unit second).}
+%   \label{tab:time-training}
+%   \begin{center}
+%     \begin{small}
+%       \begin{sc}
+%         \begin{tabular}{lcc}
+%           \toprule
+%           $n$ & 25 & 100 \\
+%           \midrule
+%           Mean Field & 8.850 & 24.36 \\
+%           Loopy BP &  41.58 & 94.97 \\
+%           Damped BP & 35.85 & 156.8 \\
+%           GBP &  1.466 & 9.245  \\
+%           Inference Net & 1.466 & 5.314 \\
+%           RENN &  2.329 & 10.98\\
+
+%           \bottomrule
+%         \end{tabular}
+%       \end{sc}
+%     \end{small}
+%   \end{center}
+%   \vskip -0.2in
+% \end{table}
+
+\begin{table}[h]
+  
+  \caption{Average consumed time per epoch (unit: second) for two training cases in Table~\ref{tab:nll-training-grid-n5n10} and \ref{tab:nll-training-full-n3n4}.}
+  \label{tab:time-training}
+  
+  \begin{center}
+    \begin{small}
+      
+        \begin{tabular}{lcc}
+          \toprule
+          {} & \begin{tabular}[x]{@{}c@{}} Grid Graph\\ $n=225$\end{tabular}
+             & \begin{tabular}[x]{@{}c@{}} Complete Graph\\ $n=16$\end{tabular}  \\
+          \midrule
+          Mean Field & 40.09 & 2.499 \\
+          Loopy BP &  335.1 & 12.40\\
+          Damped BP & 525.1 & 5.431\\
+          GBP &   12.37    & 1.387\\
+          Inference Net & 19.49 & 0.882 \\
+          RENN & 16.03  & 2.262\\
+
+          \bottomrule
+        \end{tabular}
+      
+    \end{small}
+  \end{center}
+  
+\end{table}
+
+
+In this subsection, we report the results of training MRFs, i.e. learning the model parameter $\bm{\theta}$ as discussed in section~\ref{sec:model-learning-with-renn}, by using inference of RENN.
+
+
+
+We do training on two types of graphs, grid (Table~\ref{tab:nll-training-grid-n5n10}) and complete graphs (Table~\ref{tab:nll-training-full-n3n4}). For both cases, we firstly sample the parameter set $\bm{\theta}^{\prime}$, then sample training and testing dataset from $p(\bm{x}; \bm{\theta}^{\prime})$. The true NLL of sampled datasets can be computed by $p(\bm{x}; \bm{\theta}^{\prime})$. We then train a randomly-initialized model with the obtained training dataset by using RENN (section~\ref{sec:model-learning-with-renn}). The trained model by RENN is evaluated with testing dataset w.r.t. NLL value, which is compared with trained models by other methods. We also include the comparison with exact inference where $Z(\bm{\theta})$ is computed exactly.
+In the grid graphs, there are $4000$ samples for training and $1000$ for testing. In the complete graph case, there are $2000$ samples for training and $1000$ samples for testing. 
+
+In the cases of grid graphs, the NLLs of most methods are close to the true NLL for small-sized graphs ($n=25,100$), with RENN reaching the lowest NNL. At case of $n=255$, RENN outperforms all other methods significantly. Additionally, RENN is much faster. As shown in Table~\ref{tab:time-training}, loopy BP needs almost $335$s and damped BP needs about $525$s per epoch iteration, while RENN takes $16$s per epoch. Please refer to section~\ref{apdx:sec:extrx-exp} for computation time of other cases in the supplementary file.
+Neural network based methods parameterize the beliefs or marginal distributions and thus can do new inference estimations much faster when model parameter $\bm{\theta}$ is updated in optimization steps. % When the learning step of $\bm{\theta}$ is small, multiple steps of update of $\bm{\theta}$ can share one inference estimation of marginals without degenerating performance.
+
+
+
+In the cases of complete graph, the advantage of RENN is significant, compared with other methods as shown in Table~\ref{tab:nll-training-full-n3n4}. Other benchmark methods fall behind RENN by a distinct difference, given the size of graph is relatively small. The results here actually agree with inference experiments shown in Table~\ref{tab:infer-full-n9} and \ref{tab:infer-full-n16}, where partition function estimations of other benchmark methods have much larger errors. As for the average time per epoch, neural network based models still are faster than iterative message passing methods in general.
+
+
+
 \begin{itemize}
 \item Start with standard RBM \href{https://papers.nips.cc/paper/9687-amortized-bethe-free-energy-minimization-for-learning-mrfs.pdf}{section 4.2 in Amortized learning of MRFs}
   \begin{itemize}
