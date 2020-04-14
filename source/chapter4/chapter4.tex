@@ -144,32 +144,50 @@ In this chapter, we seek to use larger clusters in graphical representation to o
   \label{fig:factor-region-graphs}
 \end{figure}
 
-\section{Region Graph}
+\section{Region Graph and Generalized Belief Propagation}
 
-Let $\left\{X_1, X_2, \cdots, X_N\right\}$ be a set of N discrete-valued random variables and $x_i$ represent the possible realization of of $X_i$. We denote the joint probability function $p(X_1=x_1, X_2=x_2, \cdots, X_N=x_N; \bm{\theta})$ that is parameterized by $\bm{\theta}$, by $p(\bm{x}; \bm{\theta})$. For notation simplicity, we define that each variable has $K$ states, i.e. $|x_i|=K$, where $|\cdot|$ denotes the cardinality.
-
-
-In a MRF, the joint probability distribution of $\bm{x}$ can be written as
+In a MRF, the underlining probability distribution of its $N$-dimensional random vector $\bm{x}=(x_1, x_2, \cdots, x_N)$ can be written as
 \begin{equation}\label{eq:joint-px}
-  p(\bm{x}; \bm{\theta}) = \frac{1}{Z(\bm{\theta})} \prod_{a} \psi_a(\bm{x}_a; \bm{\theta}_a),
+  p(\bm{x}; \bm{\theta}) = \frac{1}{Z(\bm{\theta})} \prod_{a \in \Ff} \psi_{a}(\bm{x}_{a}; \bm{\theta}),
 \end{equation}
-where $a$ is an index labeling $M$ potential functions $\psi_A, \psi_B, \cdots, \psi_M$. Also, the potential function $\psi_a(\bm{x}_a;\bm{\theta}_a)$ is nonnegative, parameterized by $\bm{\theta}_a$, and has arguments $\bm{x}_a$ that are some subset of $\left\{ x_1, x_2, \cdots, x_N \right\}$. $Z(\bm{\theta})$ is the partition function of $p(\bm{x}; \bm{\theta})$, i.e. $Z(\bm{\theta}) = \sum_{\bm{x}}\prod_{a} \psi_a(\bm{x}_a;\bm{\theta}_a)$.
+where potential functions' index set is instantiated as $\Ff = \left\{ A, B, \cdots, M \right\}$. For notation simplicity, we define that each variable has $K$ states, i.e. $x_i \in \Xx_i$ with $|\Xx_i|=K$, where $|\cdot|$ denotes the cardinality.
 
-\begin{definition}\label{def:factor-graph}
-A factor graph $\Gg_F$, is a bipartite graph that represents the factorization structure of \eqref{eq:joint-px}. A factor graph has two types of nodes: i) a variable node for each variable $x_i$; ii) a factor node for each potential function $\psi_a$. An edge between a variable node $i$ and factor node $a$ if and only if $x_i$ is argument of $\psi_a$. We would denote a factor graph by $\Gg_F(\Vv \cup \Ff, \Ee_F)$ with $\Vv$ as the set of variable nodes, $\Ff$ as the set of factor nodes, and $\Ee_F$ the set of undirected edges.
-\end{definition}
+We have discussed that loopy BP as a message-passing algorithm operates on factor graphs (as the top-left example in Figure~\ref{fig:factor-region-graphs}) in section~\ref{chpt2:sec:variational-inference}. We then can compute the marginal distributions or most likely $\bm{x}$ of \eqref{eq:joint-px} with collection of messages after their propagation under rule \eqref{chpt2:eq:loopy-bp} or its variants discussed in chapter~\ref{chapter3}. The fundamental limitation of methods in this family that a message over a single variable is communicated instead of over pairs of variables or multiple variables (as stated at the beginning of this chapter). This issue can be relieved by using hyper-graph or cluster graph where a node is associated with multiple variables. Region graph is such kind of graphs, which was proposed by \cite{yedida2005constucting, DBLP:journals/corr/abs-1207-4158} in assistance of scheduling messages for generalized belief propagation (GBP). For illustration purpose, two alternative region graphs constructed from the same factor graph are shown in Figure~\ref{fig:factor-region-graphs}.
 
-Loopy BP as a message-passing algorithm operates on factor graphs (as the top-left example in Figure~\ref{fig:factor-region-graphs}) and computes the marginal distributions or most likely $\bm{x}$ of \eqref{eq:joint-px}. These estimations are done by iteratively exchanging messages between factor and variable nodes in a factor graph ({see \ref{apdix:sec:bethe-lBP} in supplementary file for detailed discussions and message update rules}). GBP was later developed to improve the performance of loopy BP, in which the messages are propagated among sets of nodes, or regions (see \ref{apdix:sec:gbp} in supplementary file). A region graph is a structured graph that originally proposed to organize the computation of GBP messages. Two alternative region graphs constructed from the same factor graph are shown in Figure~\ref{fig:factor-region-graphs}.
-
+Before giving definition of region graph, we need to define \textit{region} first, which is on the basis of factor graph $\Gg_{\Ff}(\Vv \cup \Ff, \Ee)$ (definition~\ref{chpt2:def:factor-graph}).
 \begin{definition}
   A \textit{region} $R$ is a set $V_R$ of variables nodes and a set $A_R$ of factor nodes, such that if a factor node $a$ belong to $A_R$, all the variables nodes neighboring $a$ are in $V_R$.
 \end{definition}
-
-\subsection{Region-based free energy}
-
+Then, a region graph is defined as bellow.
 \begin{definition}\label{def:region-graph}
   A \textit{region graph} is  a directed graph $\Gg_R(\Rr, \Ee)$, where each vertex $R \in \Rr$ is defined as the joint set of variable and factor nodes in this region, i.e. $R = \left\{ i \in V_R, a \in A_R | i \in \Vv, a \in \Ff \right\}$. Each edge $e \in \Ee$ in $\Gg_R$ is directed from $R_p$ to $R_c$ such that $R_c \subset R_p$. 
 \end{definition}
+
+GBP operates on region graph $\Gg_R(\Rr,\Ee)$. A message is always sent from a parent region $P$ to a child region $R$, i.e. directed edge $(P, R)\in \Ee$. Let us define the factors in region $R$ as $A_R = \left\{ a | a \in R \right\}$.
+The same as notation in paper, $\Pp(R)$ denotes the set of parent regions of $R$. The descendants of $R$ is denoted by $\Dd(R)$ (excluding $R$). The descendants of $R$ including $R$ is denoted by $\hat{\Dd}(R) = \Dd(R) \cup R$. The message update rule from the parent region $P$ to the child region $R$ is
+\begin{align}
+  m_{P\rightarrow R} \sim \frac{\sum_{\Ss(P)\backslash
+    \Ss(R)}\prod_{a\in A_P\backslash A_R}\psi_a(\bm{x}_a)\prod_{(I,J)
+    \in \Nn(P, R)}m_{I\rightarrow J}(\bm{x}_J)}{\prod_{(I,J)
+    \in \Hh(P, R)}m_{I\rightarrow J}(\bm{x}_J)},
+\end{align}
+where
+\begin{align}
+  \Nn(P, R) &= \left\{ (I,J)\in \Ee | J \in \hat{\Dd}(P) \backslash \hat{\Dd}(R), I \not\in \hat{\Dd}(P)\right\},\nonumber \\
+  \Hh(P, R) &= \left\{ (I,J) \in \Ee | J \in \hat{\Dd}(R), I \in \hat{\Dd}(P) \backslash \hat{\Dd}(R) \right\}.
+\end{align}
+
+The belief for each region $R$ is given by
+\begin{align}
+  b_R(\bm{x}_R) \sim \prod_{a\in A_R} \psi_a(\bm{x}_a) \prod_{P\in
+                       \Pp(R)} m_{P\rightarrow R}(\bm{x}_R) \prod_{D\in \Dd(R)} \prod_{P^{\prime} \in \Pp(D) \backslash \hat{\Dd}(R)} m_{P^{\prime}\rightarrow D}(\bm{x}_D).
+\end{align}
+
+
+
+
+
+\section{Region-based free energy}
 
 \begin{definition}
   Given a region $R$ in $\Gg$ and $\bm{\theta}_R=\{\bm{\theta}_a, a\in A_R\}$, the region energy is defined to be
@@ -190,12 +208,10 @@ Loopy BP as a message-passing algorithm operates on factor graphs (as the top-le
 
 
 We define some notations that are going to be used in our paper. Since $\Gg_R$ is a hierarchical directed graph, $\Rr_l$ denotes regions in level $l$, and 
-$R^{[l]}_i\in \Rr_l$ denotes $R^{[l]}_i$ is the $i$-th region node in level $l$. This means $\Rr_0$ is set of the top root regions that have no parents, i.e. the level $0$ regions. Also, $R^{[l]}$ means it can be any node in $\Rr_l$ and $R$ denotes a region node when it is not clear or doesn't matter which level it locates. Lastly, we define the scope of $R$ by $\Ss(R)$, i.e. $\Ss(R) = \left\{ x_i| i \in R \right\}$.
+$R^{[l]}_i\in \Rr_l$ denotes $R^{[l]}_i$ is the $i$-th region node in level $l$. This means $\Rr_0$ is set of the top root regions that have no parents, i.e. the level $0$ regions. Also, $R^{[l]}$ means it can be any node in $\Rr_l$ and $R$ denotes a region node when it is not clear or doesn't matter which level it locates. Lastly, due to a region may be associated with both variable and factor, we explicitly define the scope of $R$ by $\Ss(R)$, i.e. $\Ss(R) = \left\{ x_i| i \in R \right\}$.
 
 
-
-
-\section{Recover Bethe Free Energy from Region-based Free Energy}
+\subsection{Recover Bethe Free Energy from Region-based Free Energy}
 \label{apdix:sec:get-bethe-from-region-energy}
 Region-based free energy is known to generalize the Bethe free energy. In another word, Bethe free energy defined in \eqref{apdix:bethe-free-energy} can be directly constructed
 from the Definition~\ref{def:region-free-energy} in our paper, with
@@ -221,32 +237,6 @@ And for the small regions, the free energy can be similarly obtained as
 \end{equation}
 Putting \eqref{apdix:eq:large-region} and \eqref{apdix:eq:small-region} together gives the Bethe free energy in \eqref{apdix:bethe-free-energy}.
 
-
-\section{Generalize Belief Propagation}
-\label{apdix:sec:gbp}
-The region graph was original proposed for the generalized belief propagation (GBP) message-passing algorithm\cite{Yedidia:2000:GBP:3008751.3008848,yedida2005constucting,DBLP:journals/corr/abs-1207-4158}. We give the message-passing rules of GBP here since it is used as a benchmark comparison method in our paper.
-
-GBP operates on a directed region graph $\Gg_R(\Rr,\Ee)$. A message is always sent from a parent region $P$ to a child region $R$, i.e. directed edge $(P, R)\in \Ee$. Let us define the factors in region $R$ as $A_R = \left\{ a | a \in R \right\}$.
-The same as notation in paper, $\Pp(R)$ denotes the set of parent regions of $R$. The descendants of $R$ is denoted by $\Dd(R)$ (excluding $R$). The descendants of $R$ including $R$ is denoted by $\hat{\Dd}(R) = \Dd(R) \cup R$. The message update rule from the parent region $P$ to the child region $R$ is
-\begin{align}
-  &m_{P\rightarrow R} \sim \nonumber \\
-  &\frac{\sum_{\Ss(P)\backslash
-    \Ss(R)}\prod_{a\in A_P\backslash A_R}\psi_a(\bm{x}_a)\prod_{(I,J)
-    \in \Nn(P, R)}m_{I\rightarrow J}(\bm{x}_J)}{\prod_{(I,J)
-    \in \Hh(P, R)}m_{I\rightarrow J}(\bm{x}_J)},
-\end{align}
-where
-\begin{align}
-  \Nn(P, R) &= \left\{ (I,J)\in \Ee | J \in \hat{\Dd}(P) \backslash \hat{\Dd}(R), I \not\in \hat{\Dd}(P)\right\},\nonumber \\
-  \Hh(P, R) &= \left\{ (I,J) \in \Ee | J \in \hat{\Dd}(R), I \in \hat{\Dd}(P) \backslash \hat{\Dd}(R) \right\}.
-\end{align}
-
-The belief for each region $R$ is given by
-\begin{align}
-  b_R(\bm{x}_R) \sim &\prod_{a\in A_R} \psi_a(\bm{x}_a) \prod_{P\in
-                       \Pp(R)} m_{P\rightarrow R}(\bm{x}_R) \nonumber \\
-                     & \prod_{D\in \Dd(R)} \prod_{P^{\prime} \in \Pp(D) \backslash \hat{\Dd}(R)} m_{P^{\prime}\rightarrow D}(\bm{x}_D).
-\end{align}
 
 
 
