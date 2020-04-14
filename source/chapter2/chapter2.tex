@@ -343,7 +343,7 @@ Due to the  non-single-node beliefs, there are consistency constrains $\sum_{\bm
 where $\Vv$ and $\Ff$ are the set of variable nodes and the set of
 factor nodes in factor graph as defined in
 Definition~\ref{chpt2:def:factor-graph}, gives the (loopy) BP message-passing rule
-\begin{equation}
+\begin{equation}\label{chpt2:eq:loopy-bp}
   m_{a\rightarrow i}(x_i) \propto \sum_{\bm{x}_{\alpha} \backslash x_i}
   \phi_{\alpha}(\bm{x}_{\alpha}) \prod_{j \in \alpha \backslash i} \prod_{\alpha^{\prime} \in \mathrm{ne}_j
     \backslash \alpha} m_{\alpha^{\prime}\rightarrow j}(x_j).
