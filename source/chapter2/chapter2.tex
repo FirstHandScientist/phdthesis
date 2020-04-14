@@ -76,11 +76,11 @@ A Bayesian network (generative model) is usually easier to be interpreted due to
 
 From the above example to a formal statement, a MRF over random vector $\bm{x}$ can be represented by a undirected graph $\Gg(\Vv, \Ee)$, with each node $i \in \Vv$ is associated with a random variable $x_i$ and undirected edge set $\Ee \subset \Vv \times \Vv$. This MRF encodes a collection of distributions that factorize as
 \begin{equation}\label{chp2:eq:mrf-definition}
-  p(\bm{x};\bm{\theta}) = \frac{1}{Z(\bm{\theta})} \prod_{\alpha \in \Ii} \phi_{\alpha}(\bm{x}_{\alpha};\bm{\theta}),
+  p(\bm{x};\bm{\theta}) = \frac{1}{Z(\bm{\theta})} \prod_{a \in \Ff} \phi_{a}(\bm{x}_{a};\bm{\theta}),
 \end{equation}
-where $\Ii$ is the set of indexes of potential factors, and each factor $\phi_{\alpha}$ for $\alpha\in \Ii$ is defined on subset of $\bm{x}$, i.e. $\phi_{\alpha}: \Xx_{\alpha} \rightarrow \RR^{+} \cup \{0\}$, where $\Xx_{\alpha} = \prod_{i\in \alpha}\Xx_i$ is the domain of potential factor $\phi_{\alpha}$. The scope of factor $\alpha$ is $\bm{x}_{\alpha} = \left\{ x_i| i\in \alpha \right\}$ where $i \in \alpha$ stands for that the variable $x_i$ associated with node $i$ is an argument of potential factor $\phi_{\alpha}$. In \eqref{chp2:eq:mrf-definition},
+where $\Ff$ is the set of indexes of potential factors, and each factor $\phi_{a}$ for $a\in \Ff$ is defined on subset of $\bm{x}$, i.e. $\phi_{a}: \Xx_{a} \rightarrow \RR^{+} \cup \{0\}$, where $\Xx_{a} = \prod_{i\in a}\Xx_i$ is the domain of potential factor $\phi_{a}$. The scope of factor $a$ is $\bm{x}_{a} = \left\{ x_i| i\in a \right\}$ where $i \in a$ stands for that the variable $x_i$ associated with node $i$ is an argument of potential factor $\phi_{a}$. In \eqref{chp2:eq:mrf-definition},
 \begin{equation}
-  Z(\bm{\theta}) = \sum_{\bm{x}} \prod_{\alpha \in \Ii} \phi_{\alpha}(\bm{x}_{\alpha};\bm{\theta})
+  Z(\bm{\theta}) = \sum_{\bm{x}} \prod_{a \in \Ff} \phi_{a}(\bm{x}_{a};\bm{\theta})
 \end{equation}
 is the \textit{partition function}. Apparently, the partition function normalizes the potential factors such that $p(\bm{x}; \bm{\theta})$ is a proper probability.
 
@@ -205,7 +205,7 @@ is the \textit{partition function}. Apparently, the partition function normalize
 The representation of a MRF by $\Gg(\Vv, \Ee)$ as explained above is compact, but the potential factors are not present in the graphical representation. An alternative representation to MRF is \textit{factor graph} \cite{kschischang2001factor_graph},
 which is a bipartite graph topology. In a factor graph, a potential factor is explicitly represented as a factor node, as counterpart of variable node associated with a random variable.
 \begin{definition}\label{chpt2:def:factor-graph}
-  A factor graph $\Gg_F$, is a bipartite graph that represents the factorization structure of \eqref{chp2:eq:mrf-definition}. A factor graph has two types of nodes: i) a variable node for each variable $x_i$; ii) a factor node for each potential function $\phi_{\alpha}$. An edge between a variable node $i$ and factor node $\alpha$ if and only if $x_i$ is argument of $\phi_{\alpha}$. We would denote a factor graph by $\Gg_F(\Vv \cup \Ff, \Ee_F)$ with $\Vv$ as the set of variable nodes, $\Ff$ as the set of factor nodes, and $\Ee_F$ the set of undirected edges.
+  A factor graph $\Gg_F$, is a bipartite graph that represents the factorization structure of \eqref{chp2:eq:mrf-definition}. A factor graph has two types of nodes: i) a variable node for each variable $x_i$; ii) a factor node for each potential function $\phi_{a}$. An edge between a variable node $i$ and factor node $a$ if and only if $x_i$ is argument of $\phi_{a}$. We would denote a factor graph by $\Gg_F(\Vv \cup \Ff, \Ee_F)$ with $\Vv$ as the set of variable nodes, $\Ff$ as the set of factor nodes, and $\Ee_F$ the set of undirected edges.
 \end{definition}
 \begin{example}
   Let us represent the Example~\ref{chpt2:fig:factor-graph-3node-example} by a factor graph, which is shown in Figure~\ref{chpt2:fig:factor-graph-3node-example}. Different from the representation by $\Gg(\Vv, \Ee)$ in Figure~\ref{chp2:fig:toy_mrf}, factor nodes are explicitly represented by square nodes.
@@ -219,7 +219,7 @@ It is not rare that a graphical model may contain observed variable. The node se
 \end{equation}
 where 
 \begin{align}
-  \tilde{p}(\bm{x}; \bm{\theta}) &= \prod_{\alpha \in \Ii} \phi_{\alpha}(\bm{x}_{\alpha};\bm{\theta}), \nonumber \\
+  \tilde{p}(\bm{x}; \bm{\theta}) &= \prod_{a \in \Ff} \phi_{a}(\bm{x}_{a};\bm{\theta}), \nonumber \\
   Z(\bm{x}_O, \bm{\theta}) &= \sum_{\bm{x}_U} \tilde{p}(\bm{x}; \bm{\theta}), \nonumber \\
   Z(\bm{\theta}) &= \sum_{\bm{x}_O}\sum_{\bm{x}_U} \tilde{p}(\bm{x}; \bm{\theta}).
 \end{align}
@@ -264,12 +264,12 @@ KL divergence is not symmetric. In another word, there is no equivalence between
 Given a probability distribution $p(\bm{x})$ as the underline distribution of a graphical model, inference in general can be divided into four kinds of tasks, as brought up in Chapter~\ref{chpt1:sec:scope-outline}. Our work in this thesis would be closely involved with the problems
 \begin{itemize}
 \item computing the likelihood of observed data or unobserved random variable;
-\item computing the marginals distribution over a particular subset of nodes, i.e. $p(\bm{x}_A)$ for $A \in \Vv$. Note that single-node marginal distribution $p(x_i)$ also belongs to this case;
+\item computing the marginals distribution over a particular subset of nodes, i.e. $p(\bm{x}_A)$ for $A \subset \Vv$. Note that single-node marginal distribution $p(x_i)$ also belongs to this case;
 \item computing the conditional distribution a subset of nodes given the configuration of another subset of nodes, i.e. $p(\bm{x}_A| \bm{x}_B)$ for $A, B \in \Vv$ and $A \cap B = \emptyset$;
 \end{itemize}
 in MRFs. The above tasks are also close related with the inference of partition function
 \begin{itemize}
-\item Computation of $Z(\bm{\theta}) = \sum_{\bm{x}} \prod_{\alpha \in \Ii} \phi_{\alpha}(\bm{x}_{\alpha};\bm{\theta})$, or sub-partition functions.
+\item Computation of $Z(\bm{\theta}) = \sum_{\bm{x}} \prod_{a \in \Ff} \phi_{a}(\bm{x}_{a};\bm{\theta})$, or sub-partition functions.
 \end{itemize}
 
 In the following section, we would introduce the variational methods for the above tasks in high-level.
@@ -284,12 +284,12 @@ In solving inference tasks, one important technique is based on a variational ap
          &= \sum_{\bm{x}}b(\bm{x}) \log{\frac{b(\bm{x})}{{p}(\bm{x}; \bm{\theta})}} - \log{Z(\bm{\theta})} \nonumber \\
          & = \sum_{\bm{x}}b(\bm{x}) \log{\frac{b(\bm{x})}{\tilde{p}(\bm{x}; \bm{\theta})}},
 \end{align}
-where $\tilde{p}(\bm{x}; \bm{\theta}) =  \prod_{\alpha \in \Ii} \psi_{\alpha}(\bm{x}_{\alpha}; \bm{\theta}_{\alpha})$. Since $\mathrm{KL}(b(\bm{x})\|p(\bm{x};\bm{\theta}))$ is always non-negative and is zero if and only if $b(\bm{x}) = p(\bm{x};\bm{\theta})$, we have $F_V(b) \geq - \log{Z(\bm{\theta})}$, with equality when $b(\bm{x}) = p(\bm{x};\bm{\theta})$.
+where $\tilde{p}(\bm{x}; \bm{\theta}) =  \prod_{a \in \Ff} \psi_{a}(\bm{x}_{a}; \bm{\theta}_{a})$. Since $\mathrm{KL}(b(\bm{x})\|p(\bm{x};\bm{\theta}))$ is always non-negative and is zero if and only if $b(\bm{x}) = p(\bm{x};\bm{\theta})$, we have $F_V(b) \geq - \log{Z(\bm{\theta})}$, with equality when $b(\bm{x}) = p(\bm{x};\bm{\theta})$.
 
 \begin{remark}
   Note from \ref{chpt2:eq:variational-free-energy}, the minimization w.r.t. $b$ of variational free energy is equivalent to the divergence minimization, i.e. $\mathrm{KL}(b( \bm{x}) || p(\bm{x}; \bm{\theta}))$, since $\log{Z(\bm{\theta})}$ does not depend on $b$. By observing $F_V(b) = \sum_{\bm{x}}b(\bm{x}) \log{\frac{b(\bm{x})}{\tilde{p}(\bm{x}; \bm{\theta})}}$, the free energy minimization guides the choice of $b$ such that $b$ is close to an unnormalized measure $\tilde{p}(\bm{x}; \bm{\theta})$ in its space.
 
-  Another benefit of \ref{chpt2:eq:variational-free-energy} is that we are able to approximate $p(\bm{x}; \bm{\theta})$ without inference of the true marginal distributions $\{p(\bm{x}_{\alpha};\bm{\theta}), \alpha \in \Ii\}$. Since $\log\tilde{p}(\bm{x}; \bm{\theta})$ can be formulated as sum of log-potential-factors that are all local functions, the computation of $F_V(v)$ can be done by inference of marginals $\left\{ b_{\alpha}(\bm{x}_{\alpha}), \alpha \in \Ii \right\}$ of the approximate distribution, which are tractable.
+  Another benefit of \ref{chpt2:eq:variational-free-energy} is that we are able to approximate $p(\bm{x}; \bm{\theta})$ without inference of the true marginal distributions $\{p(\bm{x}_{a};\bm{\theta}), a \in \Ff\}$. Since $\log\tilde{p}(\bm{x}; \bm{\theta})$ can be formulated as sum of log-potential-factors that are all local functions, the computation of $F_V(v)$ can be done by inference of marginals $\left\{ b_{a}(\bm{x}_{a}), a \in \Ff \right\}$ of the approximate distribution, which are tractable.
 \end{remark}
 
 \begin{remark}
@@ -308,34 +308,34 @@ In mean field approach, a fully-factorized approximation is used,
 \end{equation}
 Substituting \eqref{eq:mf-factorization} into the variational free energy gives
 \begin{align}
-  F_{MF}(b) =  - \sum_{\alpha \in \Ii}\sum_{\bm{x}_{\alpha}} \log{\phi_{\alpha}(\bm{x}_{a};\bm{\theta})}
-  \prod_{i\in \alpha}b_i(x_i) + \sum_{i \in \Vv} \sum_{x_i} b_i(x_i) \log{b_i(x_i)},
+  F_{MF}(b) =  - \sum_{a \in \Ff}\sum_{\bm{x}_{a}} \log{\phi_{a}(\bm{x}_{a};\bm{\theta})}
+  \prod_{i\in a}b_i(x_i) + \sum_{i \in \Vv} \sum_{x_i} b_i(x_i) \log{b_i(x_i)},
 \end{align}
-where $i \in \alpha$ stands for the node $i$'s associated $x_i$ is argument of $\phi_{\alpha}$.
+where $i \in a$ stands for the node $i$'s associated $x_i$ is argument of $\phi_{a}$.
 Solving the minimization of $F_{MF}$ w.r.t. $b_{MF}(\bm{x})$ gives the
 update rule of mean field
 \begin{equation}
-  \log{b_i(x_i)} \propto \sum_{\alpha \in \mathrm{ne}_i} \sum_{\bm{x}_{\alpha} \backslash x_i} \log{\phi_{\alpha}}(\bm{x}_{\alpha};\bm{\theta}_{\alpha}) \prod_{j\in {\alpha}\backslash i} b_j(x_j),
+  \log{b_i(x_i)} \propto \sum_{a \in \mathrm{ne}_i} \sum_{\bm{x}_{a} \backslash x_i} \log{\phi_{a}}(\bm{x}_{a};\bm{\theta}_{a}) \prod_{j\in {a}\backslash i} b_j(x_j),
 \end{equation}
-where $\mathrm{ne}_i = \left\{ \alpha | i \in \alpha, a \in \Ff \right\}$, i.e. the
+where $\mathrm{ne}_i = \left\{ a | i \in a, a \in \Ff \right\}$, i.e. the
 potential factors that has $x_i$ as argument.
 
 \subsection{Bethe Free Energy and (Loopy) Belief Propagation}
 
 
-Different from the mean field approximation, Bethe approximation also includes the non-single-node beliefs $\{b_{\alpha}(\bm{x}_{\alpha})\}$ apart from the single-node beliefs $\{b_i(x_i)\}$\cite{yedidia2003understanding}. In this case, the Bethe free energy is given by
+Different from the mean field approximation, Bethe approximation also includes the non-single-node beliefs $\{b_{a}(\bm{x}_{a})\}$ apart from the single-node beliefs $\{b_i(x_i)\}$\cite{yedidia2003understanding}. In this case, the Bethe free energy is given by
 \begin{align}\label{chpt2:bethe-free-energy}
-  F_{Bethe}(b) = \sum_{\alpha} \sum_{\bm{x}_{\alpha}}
-  b_{\alpha}(\bm{x}_{\alpha})\log{\frac{b_{\alpha}(\bm{x}_{\alpha})}{\phi_{\alpha}(\bm{x}_{\alpha})}
+  F_{Bethe}(b) = \sum_{a} \sum_{\bm{x}_{a}}
+  b_{a}(\bm{x}_{a})\log{\frac{b_{a}(\bm{x}_{a})}{\phi_{a}(\bm{x}_{a})}
   } -  \sum_{i=1}^{N} (|\mathrm{ne}_i| - 1) \sum_{x_i} b_i(x_i) \log{b_i(x_i)},
 \end{align}
 where $|\cdot|$ stands for carnality.
-Due to the  non-single-node beliefs, there are consistency constrains $\sum_{\bm{x}_{\alpha}} b_{\alpha}(\bm{x}_{\alpha}) = \sum_{ x_i} b_i({x}_i) =1$, $\forall~ i \in \alpha$ to obey. Then, solving the Bethe free energy minimization problem
+Due to the  non-single-node beliefs, there are consistency constrains $\sum_{\bm{x}_{a}} b_{a}(\bm{x}_{a}) = \sum_{ x_i} b_i({x}_i) =1$, $\forall~ i \in a$ to obey. Then, solving the Bethe free energy minimization problem
 \begin{align}
-  \min_{\{b_{\alpha}(\bm{x}_{\alpha})\}, \{b_i(x_i)\}}& F_{Bethe}(b) \nonumber \\
-  \mathrm{s.t.}~~ & \sum_{\bm{x}_{\alpha} \backslash x_i} b_{\alpha}(\bm{x}_{\alpha})  =
+  \min_{\{b_{a}(\bm{x}_{a})\}, \{b_i(x_i)\}}& F_{Bethe}(b) \nonumber \\
+  \mathrm{s.t.}~~ & \sum_{\bm{x}_{a} \backslash x_i} b_{a}(\bm{x}_{a})  =
                     b_i(x_i), \nonumber \\
-                                                      & \sum_{\bm{x}_{\alpha}} b_{\alpha}(\bm{x}_{\alpha}) = \sum_{ x_i} b_i({x}_i) =1,
+                                                      & \sum_{\bm{x}_{a}} b_{a}(\bm{x}_{a}) = \sum_{ x_i} b_i({x}_i) =1,
                                                         \nonumber \\
                                                       &  0 \leq b_i(x_i) \leq 1,  \nonumber \\
                                                       & i \in \Vv , a \in \Ff,
@@ -344,9 +344,9 @@ where $\Vv$ and $\Ff$ are the set of variable nodes and the set of
 factor nodes in factor graph as defined in
 Definition~\ref{chpt2:def:factor-graph}, gives the (loopy) BP message-passing rule
 \begin{equation}\label{chpt2:eq:loopy-bp}
-  m_{a\rightarrow i}(x_i) \propto \sum_{\bm{x}_{\alpha} \backslash x_i}
-  \phi_{\alpha}(\bm{x}_{\alpha}) \prod_{j \in \alpha \backslash i} \prod_{\alpha^{\prime} \in \mathrm{ne}_j
-    \backslash \alpha} m_{\alpha^{\prime}\rightarrow j}(x_j).
+  m_{a\rightarrow i}(x_i) \propto \sum_{\bm{x}_{a} \backslash x_i}
+  \phi_{a}(\bm{x}_{a}) \prod_{j \in a \backslash i} \prod_{a^{\prime} \in \mathrm{ne}_j
+    \backslash a} m_{a^{\prime}\rightarrow j}(x_j).
 \end{equation}
 
 
