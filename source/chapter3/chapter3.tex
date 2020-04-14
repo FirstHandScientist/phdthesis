@@ -46,9 +46,9 @@ where the $\int q(\bm{x}) - p(\bm{x}) d\bm{x}$ is a correction factor to accommo
 
 Denote KL-projection by
 \begin{equation}
-  \text{proj}[p] = \uargmin{q \in \Ff} KL(p\|q),
+  \text{proj}[p] = \uargmin{q \in \Qq} KL(p\|q),
 \end{equation}
-where $\Ff$ is a family of distribution $q$.
+where $\Qq$ is a family of distribution $q$.
 According to the stationary point equivalence Theorem in \cite{divergence-measures-and-message-passing}, $\text{proj}[p^{\alpha}q^{1- \alpha}]$ and $\Dd_{\alpha}(p\|q)$ have same stationary points (gradient is zero). This equivalence holds by assuming $\theta$ is parameter of $q(x)$ and observing
 \begin{align}
   \pd{\mathrm{KL}(p\|q)}{\theta} &= \int \pd{q(\bm{x})}{\theta} - \int \frac{p(\bm{x})}{q(\bm{x})} \pd{q(\bm{x})}{\theta} d\bm{x}, \nonumber \\
@@ -56,7 +56,7 @@ According to the stationary point equivalence Theorem in \cite{divergence-measur
 \end{align}
 with $p^{\prime}(\bm{x}) = p^{\alpha}(\bm{x})q^{1-\alpha}(\bm{x})$. Then it gives $\pd{\mathrm{\Dd_{\alpha}}(p\|q)}{\theta}  = \frac{1}{\alpha}\pd{\mathrm{KL}(p\|q)}{\theta}|_{p=p^{\prime}}$.
 
-A heuristic scheme to find $q^{\ast}$ minimizing $\Dd_{\alpha}(p\|q)$ starts with an initial $q$, and repeatedly updates $q$ via the projection on $\Ff$
+A heuristic scheme to find $q^{\ast}$ minimizing $\Dd_{\alpha}(p\|q)$ starts with an initial $q$, and repeatedly updates $q$ via the projection on $\Qq$
 \begin{equation}\label{eq:fixed-point-iter}
   q(\bm{x})^{\text{new}}  = \text{proj}[p(\bm{x})^{\alpha}q(\bm{x})^{1-\alpha}].
 \end{equation}
@@ -116,7 +116,7 @@ The joint distribution of $\bm{x}$ can be formulated into a pairwise factorizati
 \begin{equation}\label{eq:mrf}
   p(\bm{x}) \propto \prod_{{s\in \Vv}} \phi_s(x_s) \prod_{(s,t) \in \Ee} \phi_{st}(x_s, x_t),
 \end{equation}
-where $\phi_{s}: \Aa \rightarrow (0, \infty)$ and $\phi_{st}: \Aa \times \Aa \rightarrow (0, \infty)$ are factor potentials. Relation $\propto$ in \eqref{eq:mrf} indicates that a normalized factor is needed to turn the right-hand side into a distribution. Here the normalization is omitted. Note the joint of node set and edge set, i.e. $\Vv \cup \Ee$, instantiates the factor index set $\Ii$ of a general MRF in \eqref{chp2:eq:mrf-definition}.
+where $\phi_{s}: \Aa \rightarrow (0, \infty)$ and $\phi_{st}: \Aa \times \Aa \rightarrow (0, \infty)$ are factor potentials. Relation $\propto$ in \eqref{eq:mrf} indicates that a normalized factor is needed to turn the right-hand side into a distribution. Here the normalization is omitted. Note the joint of node set and edge set, i.e. $\Vv \cup \Ee$, instantiates the factor index set $\Ff$ of a general MRF in \eqref{chp2:eq:mrf-definition} here.
 
 The factor graph representation of \eqref{eq:mrf} is shown in
 Figure~\ref{fig:factor-graph}. In the figure, $\Nn(s)$ is the set of variable nodes neighboring $x_s$ via
