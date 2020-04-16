@@ -362,7 +362,7 @@ Considering the region belief consistency, we summarize the cost function of REN
 \end{equation}
 where $d(\cdot, \cdot)$ is distance metric or divergence to measure the mismatch between the beliefs ($L_2$ distance is used in our experiments), $\lambda$ is the regulation parameter.
 
-As shown in Figure~\ref{fig:renn-illustration}, a RENN takes embedding vectors as input and outputs the beliefs on $\Rr_0$ directly (embedding vectors would be explained in subsection~\ref{subsec:exp-setting}, although not explicitly included in the objective function \eqref{eq:infer-F-all-belief}). The beliefs in other levels $\{\Rr_1$, $\Rr_2\}$ are computed as in \eqref{eq:l-level-beliefs}. Then the region-based free energy along with the penalty of region belief consistency is minimized w.r.t. $\bm{\omega}$.
+As shown in Figure~\ref{fig:renn-illustration}, a three-level RENN takes embedding vectors as input and outputs the beliefs on $\Rr_0$ directly (embedding vectors would be explained in subsection~\ref{subsec:exp-setting}, although not explicitly included in the objective function \eqref{eq:infer-F-all-belief}). The beliefs in other levels $\{\Rr_1$, $\Rr_2\}$ are computed as in \eqref{eq:l-level-beliefs}. Then the region-based free energy along with the penalty of region belief consistency is minimized w.r.t. $\bm{\omega}$.
 
 \subsection{Region Graph Construction for RENN}
 In this section we would detail how to construct the region graph $\Gg_R$ for RENN.
@@ -403,16 +403,39 @@ With the hierarchical region sets built, we need to draw the edges. The directed
 
 
 
-\subsubsection{Selection criteria for Root Regions $\Rr_{0}$}
+\subsubsection{Root Region Construction}
 \label{sec:criteria-root-regions}
-In subsection~\ref{sec:cluster-variation-method}, we detailed the region graph construction steps by cluster variation method, starting from $\Rr_0$. In this subsection, we detail how to build the root region set $\Rr_0$. This is important since it totally decides from which we start building region graph.
+In section~\ref{sec:cluster-variation-method}, we detailed the region graph construction steps by cluster variation method, starting from $\Rr_0$. In this section, we explain how to build the root region set $\Rr_0$. This is important since it totally decides from which we start building region graph.
 We take the path of \cite{welling2005structured, gelfand2012generalized} for this issue.
 
-Specifically, we use the \textit{tree-robust} condition \cite{gelfand2012generalized} to build the root regions for our RENN. These root regions are then used to grow the other hierarchical levels of region graphs by cluster variation method in subsection~\ref{sec:cluster-variation-method}. Tree-robust condition was developed original for GBP to gain better approximations. GBP has better accuracy on tree-robust graphs than on non-tree-robust graphs. We would show in our experiment section that RENN outperforms GBP even in tree-robust graphs. For the formal definition of tree-robust condition, please refer to section~\ref{apdix:sec:root-region-construct} in the supplementary file.
+Specifically, we use the \textit{tree-robust} condition \cite{gelfand2012generalized} to build the root regions for our RENN. These root regions are then used to grow the other hierarchical levels of region graphs by cluster variation method in subsection~\ref{sec:cluster-variation-method}. Tree-robust condition was developed original for GBP to gain better approximations. GBP has better accuracy on tree-robust graphs than on non-tree-robust graphs. We would show in our experiment section that RENN outperforms GBP even in tree-robust graphs. 
 
-Although each root region of $\Gg_R$ can be any set of nodes clustered in any way, we restrict ourselves to construct root regions that are cycles of factor graph $\Gg_F$. Then constructing root regions for $\Gg_R$ becomes to construct a cycle-structured region sets. A cycle-structured region set becomes a cycle basis when it fulfills certain conditions (see Definition~\ref{apdix:def:cycle-basis} in supplementary file).
 
-To maintain the consistency of our paper, we cite two important theorems from \cite{gelfand2012generalized} for choosing cycle basis in two specific graph cases, i.e. planar graphs and complete graphs. A planar graph is a graph that can be embedded in the two-dimensional plain (it can be drawn on the plane in such a way that its edges intersect only at their nodes). In a complete graph, every pair of distinct nodes is connected by an unique edge.
+To explain the concept of \textit{tree-robust}, we need explain the concepts of \textit{cycle basis} and \textit{tree exact}, based on which the tree-robust is defined.
+\begin{definition}\label{apdix:def:cycle-basis}
+  A \textit{cycle basis} of the cycle space of a graph $\Gg$ is a
+  set of simple cycles $\Cc\Bb =\left\{ C_1, C_2, \cdots, C_{\mu}
+  \right\}$ such that for every cycle $C$ in graph $\Gg$, there
+  exists a unique subset $\Cc\Bb_{C} \subseteq \Cc\Bb$ such that the
+  set of edges appearing an odd number of times in $\Cc\Bb_C$ comprise the cycle $C$.
+\end{definition}
+\begin{definition}\label{apdix:def:tree-exact}
+  Let $T$ be a spanning tree of graph $\Gg$. A cycle basis $\Cc\Bb$ is \textit{tree exact} w.r.t. $T$ if there exists an ordering $\pi$ of the cycles in $\Cc\Bb$ such that
+\begin{equation*}
+  \left\{ C_{\pi(i)} \backslash C_{\pi(1)} \cup C_{\pi(2)} \cup \cdots \cup C_{\pi(i-1)} \right\} \neq \emptyset~~\mathrm{for}~~ i=2,\cdots, \mu.
+  \end{equation*}
+\end{definition}
+Definition~\ref{apdix:def:tree-exact} tells us that if a cycle basis is tree exact w.r.t. $T$ and ordered properly, there is at least one edge of $C_{\pi}$ that has not appeared in any cycles preceding it, and meanwhile this edge does not appear in the spanning tree $T$.
+With the above concepts, we are ready to give the definition of tree-robust.
+\begin{definition}
+  A cycle basis $\Cc\Bb$ is tree-robust if it is tree exact w.r.t. all spanning trees of $\Gg$.
+\end{definition}
+
+
+
+% Although each root region of $\Gg_R$ can be any set of nodes clustered in any way, we restrict ourselves to construct root regions that are cycles of factor graph $\Gg_F$. Then constructing root regions for $\Gg_R$ becomes to construct a cycle-structured region sets. A cycle-structured region set becomes a cycle basis when it fulfills certain conditions (see Definition~\ref{apdix:def:cycle-basis} in supplementary file).
+
+We use two important theorems from \cite{gelfand2012generalized} for choosing cycle basis in two specific graph cases, i.e. planar graphs and complete graphs. A planar graph is a graph that can be embedded in the two-dimensional plain (it can be drawn on the plane in such a way that its edges intersect only at their nodes). In a complete graph, every pair of distinct nodes is connected by an unique edge.
 
 \begin{theorem}\label{thm:planar-tree-robust}
   In a planar graph $\Gg$, the cycle basis comprised of the faces of graph $\Gg$ is tree-robust.
@@ -422,32 +445,7 @@ To maintain the consistency of our paper, we cite two important theorems from \c
   In a complete graph $\Gg$, construct a cycle basis as follows. Choose a node $i$ as the root. Create a 'star' spanning tree rooted at $i$. Then construct cycles of form $(i,j,k)$ from each off-tree edge $(j,k)$. The constructed basis is tree-robust.
 \end{theorem}
 
-Tree-robust root regions can also be constructed for general graphs, which can be seen as an extension from Theorem~\ref{thm:planar-tree-robust} and \ref{thm:complete-tree-robust}. We detail the construction method in the following section.
-
-\section{Constructing the Root Regions from General Graphs}
-\label{apdix:sec:root-region-construct}
-To explain the concept of \textit{tree-robust} in
-\cite{gelfand2012generalized}, we need explain the concepts of \textit{cycle basis} and \textit{tree exact}, based on which the tree-robust is defined.
-\begin{definition}\label{apdix:def:cycle-basis}
-  A \textit{cycle basis} of the cycle space of a graph $\Gg$ is a
-  set of simple cycles $\Cc\Bb =\left\{ C_1, C_2, \cdots, C_{\mu}
-  \right\}$ such that for every cycle $C$ in graph $\Gg$, there
-  exists a unique subset $\Cc\Bb_{C} \subseteq \Cc\Bb$ such that the
-  set of edges appearing an odd number of times in $\Cc\Bb_C$ comprise the cycle $C$.
-\end{definition}
-
-\begin{definition}\label{apdix:def:tree-exact}
-  Let $T$ be a spanning tree of graph $\Gg$. A cycle basis $\Cc\Bb$ is
-  \textit{tree exact} w.r.t. $T$ if there exists an ordering $\pi$ of
-  the cycles in $\Cc\Bb$ such that $\left\{ C_{\pi(i)} \backslash C_{\pi(1)} \cup C_{\pi(2)} \cup \cdots \cup C_{\pi(i-1)} \right\} \neq \emptyset$ for $i=2,\cdots, \mu$.
-\end{definition}
-Definition~\ref{apdix:def:tree-exact} tells us that if a cycle basis is tree exact w.r.t. $T$ and ordered properly, there is at least one edge of $C_{\pi}$ that has not appeared in any cycles preceding it, and meanwhile this edge does not appear in the spanning tree $T$.
-
-With the above concepts, we are ready to give the definition of tree-robust.
-
-\begin{definition}
-  A cycle basis $\Cc\Bb$ is tree-robust if it is tree exact w.r.t. all spanning trees of $\Gg$.
-\end{definition}
+Tree-robust root regions can also be constructed for general graphs, which can be seen as an extension from Theorem~\ref{thm:planar-tree-robust} and \ref{thm:complete-tree-robust}.
 
 Root regions of region graph $\Gg_R$ from planar and compete graphs are explained in section~\ref{sec:criteria-root-regions}. For general graph case, it basically is to find a subgraph that is planar or compote graph, and then extract the corresponding tree-robust basis, after which extra cycles are added in by following Algorithm~\ref{apdix:alg:root-region-general-graph}.
 \begin{algorithm}[tb]
@@ -483,9 +481,11 @@ Root regions of region graph $\Gg_R$ from planar and compete graphs are explaine
 
 
 
+
+
 \section{Experimental Results}
 
-We conducted a series of experiments to validate the proposed RENN model. The experiments are designed to verify RENN in both inference and model learning problems. Experiment code is attached in submission.
+We conducted a series of experiments to validate the proposed RENN model. The experiments are designed to verify RENN in inference problems. Analysis and experiments on MRF learning would be reserved to explain in Part learning.
 
 
 
@@ -806,7 +806,7 @@ Marginal approximation can be reflected by $\ell_1$ error and correlation coeffi
 
 As for the error of partition function values, GBP gets the most accurate estimations when $\gamma=0.1$. $\log{Z}$ estimated by loopy BP and damped BP is better for $\gamma=1$. Partition function estimation by RENN is acceptable at different considered cases.
 
-Note the region graphs in this set of experiments uses all faces of grid graph but the \textit{infinite face} (the perimeter circle). {For instance, the region $\{1, 2, 3, 4, 5, 6, A, B, C ,E, F, G\}$ is obtained from the infinite face in the 2-by-3 grid in Figure~\ref{fig:factor-region-graphs}}. By comparing Table~\ref{tab:infer-infinite-face} with the $n=25$ cases of Table~\ref{table:infer-grid-gamma0.1} and \ref{table:infer-grid-gamma1.0}, performance of RENN can be further better when we include the infinite face in building region graphs from grid. On the contrary, performance of GBP drops slightly after including the infinite face. But number of nodes in the region built from the infinite face would scale with the perimeter of grid graph. Since RENN already has reasonable good accuracy outperforming benchmark methods as shown in Table~\ref{table:infer-grid-gamma0.1} and \ref{table:infer-grid-gamma1.0}, we suggest to drop the infinite face in constructing region graphs from grids.
+\sloppy Note the region graphs in this set of experiments uses all faces of grid graph but the \textit{infinite face} (the perimeter circle). For instance, the region $\left\{1, 2, 3, 4, 5, 6, A, B, C ,E, F, G\right\}$ is obtained from the infinite face in the 2-by-3 grid in Figure~\ref{fig:factor-region-graphs}. By comparing Table~\ref{tab:infer-infinite-face} with the $n=25$ cases of Table~\ref{table:infer-grid-gamma0.1} and \ref{table:infer-grid-gamma1.0}, performance of RENN can be further better when we include the infinite face in building region graphs from grid. On the contrary, performance of GBP drops slightly after including the infinite face. But number of nodes in the region built from the infinite face would scale with the perimeter of grid graph. Since RENN already has reasonable good accuracy outperforming benchmark methods as shown in Table~\ref{table:infer-grid-gamma0.1} and \ref{table:infer-grid-gamma1.0}, we suggest to drop the infinite face in constructing region graphs from grids.
 
 
 \subsection{Inference on Challenging Complete Graphs}
@@ -820,38 +820,30 @@ In the complete graphs, GBP does not have privilege over loopy BP and damped BP 
 As for partition function evaluations of complete graphs, the results are quite different from those of grid graphs, by observing Table~\ref{tab:infer-full-n9} and \ref{tab:infer-full-n16}. Loopy BP, damped BP, and Inference Net are getting very large error of partition function as node log-potentials are more different from each other, i.e. $\gamma$ gets larger. GBP has reasonable good estimation of $\log{Z}$ in smaller sized complete graph in Table~\ref{tab:infer-full-n9}, but gets large $\log{Z}$ error in a bit larger complete graph as in Table~\ref{tab:infer-full-n16}. Mean field methods gives much better estimation of $\log{Z}$ in compete graphs than loopy BP, damped BP and Inference Net, but it has poorer marginal distribution estimations.
 
 \section{Discussion}
-We presented a neural network based model, RENN, to do inference in MRFs and also learning of MRFs. The proposed model is verified via experiments and is shown to outperform the benchmark methods. It would be interesting to investigate the applications of RENN to variants of conditional random fields in future work.
+In this chapter, we present an alternative way to do inference in MRFs. Difference from iteratively propagating messages as classical message-passing algorithms, we directly minimize the region-based free energy defined over a region graph. We, therefore, are able to performance inference by solving the energy minimization problem.
+The region-based free energy is a function of variational distribution $b$. We amortize the distribution $b$ by a neural network in solving the energy minimization problem.
 
+A region in a region graph usually contains more than one variable, allowing the region's parental regions to enforce marginal distribution over multiple variable. This is in contrast to propagating belief of a single variable in mean field and Bethe approximations (loopy BP, damped BP and Inference Net). This advantage allows the performance gain with RENN, which we observed in experiments. Nevertheless, RENN need to handle the region graph construction. In construction of region graphs, we select the tree-robust condition that is based on cycle basis for root regions. Loops in graphs are known to be difficulty for classical message-passing methods. The construction principle of RENN gives it the chance to relieved the difficulty due conflicting potentials in a loop (such a loop may be clustered into a region).
 
+The other aspect is the feasible space of variational distribution $b$. For a general graphical model, we can rarely formulate the true feasible space. Therefore the belief consistency, also named as marginalization constraints, is used to formulate a relaxed feasible space. The belief consistency is enforced via the fixed-point update rules in message-passing methods. In RENN, this belief consistency is enforced via: i) via the average in definition of a child region's belief from the marginalization of its parental regions's beliefs; ii) the penalty cost of inconsistency in objective function. 
 
-\section{Related Work}
+In the next Part, we would discuss the topic of learning MRF via the inference methods referred to in this section.
 
+\section{Literature}
 
-Neural networks are popularly used in deep graphical generative models for structured data modeling \cite{qu2019gmnn, johansonNIPS2016_6379, li2018graphical}. Along with a neural network based generative model, a separate recognitive neural network has to be trained for inference. In these directed graphical models built on neural networks, training of inference networks need sampling which brings in the trade-off between training speed and estimation variance. These issues also lies in the autoencoders \cite{DBLP:journals/corr/KingmaW13,2017arXiv170104722M}, and other variational methods \cite{kuleshov2017neural_variational,NIPS2017_7136}.
+The well-known standard belief propagation (BP) algorithm \cite{Pearl1982reverend,kschischang2001factor_graph} has been popularly used in exact inference problems of tree-structures graphs and approximate inference in general graphs (loopy BP), which was explained by the Bethe free energy minimization later on \cite{yedidia2003understanding}. The attempts in improving the approximate inference with BP and gaining better insight has been made, where the representative works are fractional BP \cite{Wiegerinck:2002:FBP:2968618.2968673}, tree-reweighted BP \cite{wainwright2008graphical}, generalized BP (GBP, , also known as parent-to-child algorithm) \cite{Yedidia:2000:GBP:3008751.3008848, yedida2005constucting}, etc. 
+GBP propagates messages between regions (clusters of nodes), is generally more accurate than loopy BP but is more complex than BP. Fix points of GBP that operate on regions graphs, correspond to stationary points of region-based free energy of the region graphs. Depending on the graph size and potential functions, the iterative message-passing algorithms can take long time to converge (if they can converge) before returning inference results. Inference results of these message-passing methods can degenerate significantly in dense graphs (graphs with too many circles).
+
+Neural network based inference methods are getting popularly in recent years, where they have success in areas of deep graphical generative models for structured data modeling \cite{qu2019gmnn, johansonNIPS2016_6379, li2018graphical}. Along with a neural network based generative model, a separate recognitive neural network has to be trained for inference. In these directed graphical models built on neural networks, training of inference networks need sampling which brings in the trade-off between training speed and estimation variance. These issues also lies in the one of most successful model, variational autoencoders \cite{DBLP:journals/corr/KingmaW13,2017arXiv170104722M, 2017arXiv171101558T}, and other variational methods \cite{kuleshov2017neural_variational,NIPS2017_7136}.
 
 Apart from the directed graphical models, there is also a track of work on using neural network to model the message passing functions. \cite{akbayrak2019reparameterization} models the intractable message update functions by a Gaussian dissertations with its parameters as output of a neural network, and then follows the typical message passing rules to do iterative message updates of standard BP. \cite{jitkrittum2015kernel, heess2013learning} also similarly learn a neural network to model the message update functions of expectation propagation methods.
 
 
-Note that although recent neural message passing methods are also purely neural network based models for inference tasks, these methods still do iterative message propagation analogous to standard BP.
-Neural message passing methods \cite{yoon2019inferenceGraph, pmlr-v70-gilmer17a} use a  graph network update messages and a separate network to map messages into targeted results. Training of these models have to rely on sampling methods since true messages or marginals are usually not available.
+In another track, message-passing functions are implemented neural networks with parameters that need to be trained. In fact, these methods still do iterative message propagation analogous to standard BP.
+Neural message passing methods \cite{yoon2019inferenceGraph, pmlr-v70-gilmer17a} use a  graph network update messages and a separate network to map messages into targeted results. Training of these models need true marginal distributions which might be an issue for cases where it is too expensive or prohibitive to collect the ture marginals.
 
-Closely related to our work, Bethe free energy is directed minimized in  \cite{welling2001belief,NIPS2019_9687} instead of iterative message passing methods, which can be treated as special cases of RENN. \cite{welling2001belief} uses gradient decent method to alternative minimize single variable marginals and pairwise marginals. \cite{NIPS2019_9687} parameterizes marginals directly by a neural network and minimizes Bethe free energy. 
+Closely related to in this section, Bethe free energy is directed minimized in \cite{welling2001belief,NIPS2019_9687} instead of iterative message passing methods, which can be treated as special cases of RENN. \cite{welling2001belief} uses gradient decent method to alternative minimize single variable marginals. \cite{NIPS2019_9687} parameterizes marginals directly by a neural network and minimizes Bethe free energy.
 
-
-
-
-\section{raw materials}
-\subsection{Introduction}
-Probabilistic graphical models offer natural ways to encode the conditional dependence of random variables. Message-passing algorithms are practical and powerful methods to solve probabilistic inference problems on graphical models, including obtaining the overall state of a system or marginal probabilities of subset of nodes in the system. The well-known standard belief propagation (BP) algorithm \cite{Pearl1982reverend,kschischang2001factor_graph} has been popularly used in exact inference problems of tree-structures graphs and approximate inference in general graphs (loopy BP), which was explained by the Bethe free energy minimization later on \cite{yedidia2003understanding}. The approximate inference of BP was then improved by the generalized BP (GBP, also known as parent-to-child algorithm) that is also an iterative message-passing algorithm on a constructed region graph \cite{Yedidia:2000:GBP:3008751.3008848, yedida2005constucting}. GBP propagates messages between regions (clusters of nodes), is generally more accurate than loopy BP but is more complex than BP. Fix points of GBP that operate on regions graphs, correspond to stationary points of region-based free energy of the region graphs. Depending on the graph size and potential functions, the iterative message-passing algorithms can take long time to converge (if they can converge) before returning inference results. Also, inference of these message-passing methods can degenerate significantly in dense graphs (graphs with too many circles).
-
-Recent deep generative models, such as auto-encoders \cite{DBLP:journals/corr/KingmaW13,2017arXiv170104722M, 2017arXiv171101558T} show promising results on data generating and latent variable estimations. Also in the generative probabilistic model framework, \cite{li2018graphical, johansonNIPS2016_6379} combines deep neural networks with directed graphical models to represent the dependency structures of random variables.
-These models are advantageously fast on modern GPU devices.
-These work mainly do directed graphical modeling, and usually do not explicitly model the structure dependency of random variables fully. End-to-end training is used to learn a generative network and also a separate neural network to perform approximate inference. Sampling is usually used to perform neural network training when cost function is based on a probability distribution that is not modeled explicitly.
-
-We proposed a model to conjoin the benefits of both and avoid the drawbacks of each. Specifically, we use a neural network to directly minimize the region-based free energy for approximate probabilistic inference in general Markov random fields (MRFs), without iterative message-passing as belief propagation methods do. We term the region-based energy neural network as RENN for short. RENN allows quick approximate inference, and outperforms loopy BP, GBP and state-of-the-art neural network based inference model. The advantage of RENN remains even in challenging complete graphs (every two nodes are connected).
-
-We also consider learning MRFs with use of inference by RENN. Learning with RENN outperforms benchmark methods.
-In both learning MRFs with RENN and employing RENN for inference only, no sampling is required. 
 
 %%% Local Variables:
 %%% mode: latex
