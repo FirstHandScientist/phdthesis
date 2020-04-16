@@ -154,7 +154,7 @@ where potential functions' index set is instantiated as $\Ff = \left\{ A, B, \cd
 
 We have discussed that loopy BP as a message-passing algorithm operates on factor graphs (as the top-left example in Figure~\ref{fig:factor-region-graphs}) in section~\ref{chpt2:sec:variational-inference}. We then can compute the marginal distributions or most likely $\bm{x}$ of \eqref{eq:joint-px} with collection of messages after their propagation under rule \eqref{chpt2:eq:loopy-bp} or its variants discussed in chapter~\ref{chapter3}. The fundamental limitation of methods in this family that a message over a single variable is communicated instead of over pairs of variables or multiple variables (as stated at the beginning of this chapter). This issue can be relieved by using hyper-graph or cluster graph where a node is associated with multiple variables. Region graph is such kind of graphs, which was proposed by \cite{yedida2005constucting, DBLP:journals/corr/abs-1207-4158} in assistance of scheduling messages for generalized belief propagation (GBP). For illustration purpose, two alternative region graphs constructed from the same factor graph are shown in Figure~\ref{fig:factor-region-graphs}.
 
-Before giving definition of region graph, we need to define \textit{region} first, which is on the basis of factor graph $\Gg_{\Ff}(\Vv \cup \Ff, \Ee)$ (definition~\ref{chpt2:def:factor-graph}).
+Before giving definition of region graph, we need to define \textit{region} first, which is on the basis of factor graph $\Gg_{\Ff}(\Vv \cup \Ff, \Ee_{\Ff})$ (definition~\ref{chpt2:def:factor-graph}).
 \begin{definition}
   A \textit{region} $R$ is a set $V_R$ of variables nodes and a set $A_R$ of factor nodes, such that if a factor node $a$ belong to $A_R$, all the variables nodes neighboring $a$ are in $V_R$.
 \end{definition}
@@ -340,13 +340,13 @@ Note that in RENN, the neural network only need to directly model beliefs on roo
 \subsection{Inference by RENN}
 \label{sec:infer-renn}
 
-For a root region $R^{[0]}\in \Rr_0$, our RENN has a corresponding vector representing its score $\bm{f}(\Gg_R, R^{[0]}; \bm{\omega}) \in \RR^{|{\Ss(R^{[0]})}| \times K}$, where $\bm{\omega}$ is the parameter of mapping $\bm{f}$ that is modeled by a neural network. We define the predicted belief on the root region node $R^{[0]}$ as
+For a root region $R^{[0]}\in \Rr_0$, our RENN has a corresponding vector representing its score $\bm{f}(\Gg_R, R^{[0]}; \bm{\omega}) \in \RR^{|{\bm{x}_{R^{[0]}}}| \times K}$, where $\bm{\omega}$ is the parameter of mapping $\bm{f}$ that is modeled by a neural network. We define the predicted belief on the root region node $R^{[0]}$ as
 \begin{equation}
   b_{R^{[0]}}(\bm{x}_{R^{[0]}}; \bm{\omega}) = \sigma(\bm{f}(\Gg_R, R^{[0]}; \bm{\omega})), \forall~ {R^{[0]}} \in \Rr,
 \end{equation}
-where $\sigma(\cdot)$ is the softmax function. The softmax function guarantees $b_{R^{[0]}} \in (0,1)^{|{\Ss(R^{[0]})}| \times K}$.
+where $\sigma(\cdot)$ is the softmax function. The softmax function guarantees $b_{R^{[0]}} \in (0,1)^{|{\bm{x}_{R^{[0]}}}| \times K}$.
 
-The representation maping $\bm{f}$ followed by the softmax function in a RENN only needs to directly ouput the beliefs on root regions $\Rr_0$, with the dimension of $|\Rr_0| \times |\Ss(R)| \times K$ (if the number of variable nodes in each root region is the same).
+The representation maping $\bm{f}$ followed by the softmax function in a RENN only needs to directly output the beliefs on root regions $\Rr_0$.
 For the rest regions $\left\{R \in \Rr \backslash \Rr_0 \right\}$ that are not root regions in the region graph, where $\backslash$ denotes the set exclusion, the RENN computes the belief as
 \begin{equation}\label{eq:l-level-beliefs}
   b_{R^{[l]}}(\bm{x}_{R^{[l]}}; \bm{\omega}) = \frac{1}{|\Pp(R^{[l]})|} \sum_{R_p\in  \Pp(R^{[l]})}\sum_{\bm{x}_{R_p}\backslash \bm{x}_{R^{[l]}}} b_{R_p}(\bm{x}_{R_p}; \bm{\omega}),
