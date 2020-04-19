@@ -18,11 +18,10 @@ The intuition of $\alpha$-BP starts with a surrogate distribution $q(\bm{x})$, i
 
 Apart from the algorithmic perspective, another common issue of BP and its variants in general graphs is convergence. We devote \autoref{chpt3:sec:cnvg-thm} to convergence study of $\alpha$-BP. Sufficient conditions that guarantee the convergence of $\alpha$-BP to a unique fixed point, are studied and obtained. It turns out that the derived convergence conditions of $\alpha$-BP depend on both the graph and also the value of $\alpha$. This result suggests that proper choice of $\alpha$ can help to guarantee the convergence of $\alpha$-BP.
 
-\section{Preliminary}\label{chpt3:sec:preliminary}
-Before we get into the algorithmic discussion, we firstly provide some preliminaries for the algorithmic intuition. As an extended discussion to \autoref{chpt2:sec:devergence}, we firstly introduce a more generalized divergence than $\mathrm{KL}$ divergence, i.e. $\alpha$-divergence. We also introduce a widely used MRF that we are going to use in explaining $\alpha$-BP, i.e. pairwise MRF.
+\section{$\alpha$ Divergence}
+\label{chpt3:sec:alpha-divergence}
+Before we get into the algorithmic discussion, we firstly provide some preliminaries for the algorithmic intuition. As an extended discussion to \autoref{chpt2:sec:devergence}, we firstly introduce a more generalized divergence than $\mathrm{KL}$ divergence.
 
-
-\subsection{Divergence Measures}
 Apart from the KL divergence, another divergence measure that generalizes KL divergence is $\alpha$-divergence. In fact, $\alpha$-divergence appeared in literature just one year later than KL divergence when Herman Chernoff initially defined it for likelihood-ratio test \cite{Chernoff1952measure}. Around a decade later, Alfr\'ed R\'enyi proposed his version of divergence as well \cite{renyi1961entropy}. In the 80s of last century, Amari extended Chernoff's version of $\alpha$-divergence \cite{amari1982differential}, which is widely used now in study the geometry of distribution manifolds. 
 $\alpha$-divergence, similar to KL divergence, is a typical way to measure how different two measures characterized by densities $p$ and $q$ are. By following the notation \cite{Zhu95informationgeometric}, the definition of $\alpha$-divergence (Amari's version, with correction term to accommodate unnormalized measure) is as follows,
 \begin{equation}\label{chpt3:eq:alpha-divergence}
@@ -61,6 +60,9 @@ A heuristic scheme to find $q^{\ast}$ minimizing $\Dd_{\alpha}(p\|q)$ starts wit
   q(\bm{x})^{\text{new}}  = \text{proj}[p(\bm{x})^{\alpha}q(\bm{x})^{1-\alpha}].
 \end{equation}
 This heuristic scheme is a fixed-point iteration, which does not guarantee to converge.
+
+
+\section{$\alpha$ Belief Propagation Algorithm}\label{sec:alpha-bp-factor-refine}
 
 \subsection{Pairwise MRF}
 
@@ -122,8 +124,8 @@ The factor graph representation of \eqref{eq:mrf} is shown in
 Figure~\ref{fig:factor-graph}. In the figure, $\Nn(s)$ is the set of variable nodes neighboring $x_s$ via
 pairwise factors, i.e. $\Nn(s) = \left\{ t|(t,s) \in \Ee \right\}$, and $\backslash$ denotes exclusion.
 
-\section{$\alpha$ Belief Propagation Algorithm}\label{sec:alpha-bp-factor-refine}
-In this section, we detail the development of the $\alpha$-BP algorithm. We start with defining a surrogate distribution and then use the surrogate distribution to approximate a given distribution. The message passing rule of $\alpha$-BP is derived by solving the distribution approximation problem.
+\subsection{From $\alpha$-divergence minimization to $\alpha$-BP}
+We start with defining a surrogate distribution and then use the surrogate distribution to approximate a given distribution. The message passing rule of $\alpha$-BP is derived by solving the distribution approximation problem.
 
 % \subsubsection{Fully Factorized Surrogate}
 We begin with defining a distribution
@@ -210,7 +212,7 @@ In our notations, a factor potential is undirected, i.e. $\phi_{ts}(x_t, x_s)=\p
 
 \section{Remarks on $\alpha$ Belief Propagation}\label{subsec:remark}
 
-As discussed in Section~\ref{chpt3:sec:preliminary}, $\mathrm{KL}(p\|q)$ is the special case of $\Dd_{\alpha}(p\|q)$ when $\alpha \rightarrow 1$. When restricting $\alpha_{st}=1$ for all $(s,t) \in \Ee$, the message-passing rule in \eqref{eq:message-rule} becomes
+As discussed in Section~\ref{chpt3:sec:alpha-divergence}, $\mathrm{KL}(p\|q)$ is the special case of $\Dd_{\alpha}(p\|q)$ when $\alpha \rightarrow 1$. When restricting $\alpha_{st}=1$ for all $(s,t) \in \Ee$, the message-passing rule in \eqref{eq:message-rule} becomes
 \begin{equation}\label{chpt3:eq:bp-update-rule}
   {m}^{\text{new}}_{ts}(x_s) \propto 
   \sum_{x_t} \phi_{st}(x_s, x_t) {\phi}_t(x_t) \prod_{w\in \Nn(t)\backslash s}m_{wt}(x_t),
@@ -458,8 +460,8 @@ For notation simplicity, we use $\theta_{ts}=\theta_{ts}(1, 1)$ and $\theta_s = 
   From Theorem~\ref{thm:normd} we can see that, the sufficient condition for convergence of $\alpha$-BP is $\lambda^{\ast}(\bm{M}(\bm{\alpha}, \bm{\theta})) < 1$. It is interesting to notice that $\lambda^{\ast}(\bm{M}(\bm{\alpha}, \bm{\theta}))$ is a function of $\bm{\alpha}$ from $\alpha$-divergence and $\bm{\theta}$ from joint distribution $p(\bm{x})$. This means that whether $\alpha$-BP can converge depends on the graph $\Gg= (\Vv, \Ee)$ representing the problem $p(\bm{x})$ and also the choice of $\bm{\alpha}$. Therefore, proper choice of $\bm{\alpha}$ can guarantee the convergence of $\alpha$-BP if the sufficient condition can possibly be achieved for given $\bm{\theta}$.
 \end{remark}
 
-\section{Alternative Convergence Conditions for $\alpha$-BP}\label{sec:cvng-coro}
-Given the fact that $\alpha$-BP would converge if the condition in Theorem~\ref{thm:normd} is fulfilled, the largest singular value computation for large-sized graph could be nontrivial. In this section, we give alternative sufficient conditions for the convergence of $\alpha$-BP.
+
+Given the fact that $\alpha$-BP would converge if the condition in Theorem~\ref{thm:normd} is fulfilled, the largest singular value computation for large-sized graph could be nontrivial. We give alternative sufficient conditions for the convergence of $\alpha$-BP.
 
 \begin{corollary}
   $\alpha$-BP would converge to a fixed point if the condition
