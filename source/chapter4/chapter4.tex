@@ -148,7 +148,7 @@ In this chapter, we seek to use larger clusters in graphical representation to o
 
 In a MRF, the underlining probability distribution of its $N$-dimensional random vector $\bm{x}=(x_1, x_2, \cdots, x_N)$ can be written as
 \begin{equation}\label{eq:joint-px}
-  p(\bm{x}; \bm{\theta}) = \frac{1}{Z(\bm{\theta})} \prod_{a \in \Ff} \psi_{a}(\bm{x}_{a}; \bm{\theta}_a),
+  p(\bm{x}; \bm{\theta}) = \frac{1}{Z(\bm{\theta})} \prod_{a \in \Ff} \phi_{a}(\bm{x}_{a}; \bm{\theta}_a),
 \end{equation}
 where potential functions' index set is instantiated as $\Ff = \left\{ A, B, \cdots, M \right\}$. Here we explicitly denote that potential $\phi_a$ has its own parameter $\bm{\theta}_a$, and $\bm{\theta} = \{\bm{\theta}_a, a\in \Ff\}$. For notation simplicity, we define that each variable has $K$ states, i.e. $x_i \in \Xx_i$ with $|\Xx_i|=K$, where $|\cdot|$ denotes the cardinality.
 
@@ -172,7 +172,7 @@ GBP operates on region graph $\Gg_R(\Rr,\Ee)$. A message is always sent from a p
 The same as notation in paper, $\Pp(R)$ denotes the set of parent regions of $R$. The descendants of $R$ is denoted by $\Dd(R)$ (excluding $R$). The descendants of $R$ including $R$ is denoted by $\hat{\Dd}(R) = \Dd(R) \cup R$. The message update rule from the parent region $P$ to the child region $R$ is
 \begin{align}
   m_{P\rightarrow R} \propto \frac{\sum_{\bm{x}_P\backslash
-    \bm{x}_R}\prod_{a\in A_P\backslash A_R}\psi_a(\bm{x}_a)\prod_{(I,J)
+    \bm{x}_R}\prod_{a\in A_P\backslash A_R}\phi_a(\bm{x}_a)\prod_{(I,J)
     \in \Nn(P, R)}m_{I\rightarrow J}(\bm{x}_J)}{\prod_{(I,J)
     \in \Hh(P, R)}m_{I\rightarrow J}(\bm{x}_J)},
 \end{align}
@@ -184,7 +184,7 @@ where
 
 The belief for each region $R$ is given by
 \begin{align}
-  b_R(\bm{x}_R) \propto \prod_{a\in A_R} \psi_a(\bm{x}_a) \prod_{P\in
+  b_R(\bm{x}_R) \propto \prod_{a\in A_R} \phi_a(\bm{x}_a) \prod_{P\in
                        \Pp(R)} m_{P\rightarrow R}(\bm{x}_R) \prod_{D\in \Dd(R)} \prod_{P^{\prime} \in \Pp(D) \backslash \hat{\Dd}(R)} m_{P^{\prime}\rightarrow D}(\bm{x}_D).
 \end{align}
 
@@ -198,7 +198,7 @@ For each region $R$ in a region graph, it has its own region energy, defined as 
 \begin{definition}
   Given a region $R$ in $\Gg$ and $\bm{\theta}_R=\{\bm{\theta}_a, a\in A_R\}$, the region energy is defined to be
   \begin{equation}
-    E_R(\bm{x}_R; \bm{\theta}_R) = - \sum_{a\in A_R} \ln{\psi_a(\bm{x}_a; \bm{\theta}_a)}.
+    E_R(\bm{x}_R; \bm{\theta}_R) = - \sum_{a\in A_R} \ln{\phi_a(\bm{x}_a; \bm{\theta}_a)}.
   \end{equation}
 \end{definition}
 The region-based free energy is defined accordingly.
@@ -229,7 +229,7 @@ large regions,
   F_{R,L} &=\sum_{R\in \Rr_{L}} c_{R,a}
                               \sum_{\bm{x}_R}b_R(\bm{x}_R) (E_R(\bm{x}_R;\bm{\theta}_R) + \ln{b_R}(\bm{x}_R))
                               \nonumber \\
-                            & =\sum_{a\in \Ff} \sum_{\bm{x}_a} b_a(\bm{x}_a)\ln{\frac{b_a(\bm{x}_a)}{\psi_a(\bm{x}_a; \bm{\theta}_a)}}.
+                            & =\sum_{a\in \Ff} \sum_{\bm{x}_a} b_a(\bm{x}_a)\ln{\frac{b_a(\bm{x}_a)}{\phi_a(\bm{x}_a; \bm{\theta}_a)}}.
 \end{align}
 And for the small regions, the free energy can be similarly obtained as
 \begin{equation}\label{apdix:eq:small-region}
