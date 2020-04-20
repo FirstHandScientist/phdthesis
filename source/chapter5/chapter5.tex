@@ -1,134 +1,64 @@
 \chapter{Learning with inference}
+In Part~\ref{part:inference}, we have discussed different ways for inference, assuming a probabilistic graphical models is given. As introduced in chapter~\ref{chapter2}, learning graphcial models includes structure learning and parameter learning. We restrict our discussion to the parameter learning of graphical models. In another words, from this chapter onward, we would focus on answering the question of how to decide the parameters of a probabilistic graphical model.
+As the continuation of Part~\ref{part:inference}, we mainly discuss the learning of undirected graphcial models, i.e. MRFs, in this chapter and leave the learning of directed ones for coming chapters.
 
+As explained in section~\ref{chpt2:sec:learning-principles}, the most essential learning principle is \textit{maximal likelihood} that is derived from the minimization of KL-divergence. Since we do not have access to the true distribution $p^{\ast}(\bm{x})$, practical maximal likelihood learning is via tuning parameter $\bm{\theta}$ of model $p(\bm{x};\bm{\theta})$ through information of samples of $p^{\ast}(\bm{x})$, i.e. $\Dd = \left\{ \bm{x}^1, \bm{x}^2, \cdots, \bm{x}^{M}\right\}$.
 
-\section{learning Undirected graphical models/ MRF}
-move the MRF learning by using RENN here
+We would begin with the explanation of why inference is required in learning, after which MRF learning via RENN is explained. Numerical comparisons with classic message-passing methods w.r.t. learning is demonstrated afterwords. Topics on learning with hidden variables are then discussed.
 
-I should read lecture note 7 of 10-708 again when writing this seciton.
+\section{Why does learning MRF requires inference?}
+\label{chpt5:sec:learning-mrf}
+Let us continue the discussion on learning in section~\ref{chpt2:sec:learning-principles}. Given a sample $\bm{x}$, the log-likelihood of this evidence is
+\begin{align}\label{chpt5:eq:one-sample-likely}
+  l(\bm{x};\bm{\theta}) = \log{\tilde{p}(\bm{x}; \bm{\theta})} - \log{Z(\bm{\theta})}.
+\end{align}
+where $\tilde{p}(\bm{x}; \bm{\theta}) =  \prod_{a\in \Ff} \phi_a(\bm{x}_a; \bm{\theta}_a)$. 
+Without loss of generality, computing the gradient w.t.r. $\bm{\theta}_a$ gives
+\begin{align}\label{chpt5:eq:one-sample-likely-grad}
+  \pd{l(\bm{x};\bm{\theta})}{\bm{\theta}_a} = \pd{\log{{\phi}(\bm{x}_a; \bm{\theta}_a)}}{\bm{\theta}_a} - \EE_{p(\bm{x}_a; \bm{\theta})}\left[ \pd{\log{{\phi}(\bm{x}_a; \bm{\theta}_a)}}{\bm{\theta}_a} \right].
+\end{align}
+Applying all sample from dataset $\Dd$, i.e.
+\begin{equation}
+  \Ll(\bm{\theta}) = \frac{1}{|\Dd |} \sum_{\bm{x} \in \Dd} l(\bm{x}; \bm{\theta}),
+\end{equation}
+we have
+\begin{equation}\label{chpt3:eq:likely-gradient-thetaa}
+  \pd{\Ll(\bm{x};\bm{\theta})}{\bm{\theta}_a} = \frac{1}{|\Dd |} \sum_{\bm{x} \in \Dd}\pd{\log{{\phi}(\bm{x}_a; \bm{\theta}_a)}}{\bm{\theta}_a} - \EE_{p(\bm{x}_a; \bm{\theta})}\left[ \pd{\log{{\phi}(\bm{x}_a; \bm{\theta}_a)}}{\bm{\theta}_a} \right].
+\end{equation}
+In general, there is no closed-form solution in maximizing this log-likelihood $\Ll(\Dd; \bm{\theta})$. But it is intuitive to observe that the stationary point of $\pd{\Ll(\bm{x};\bm{\theta})}{\bm{\theta}_a}$ is
+\begin{equation}\label{chpt5:eq:stationary-point-likely}
+  \frac{1}{|\Dd |} \sum_{x \in \Dd}\pd{\log{{\phi}(\bm{x}_a; \bm{\theta}_a)}}{\bm{\theta}_a} = \EE_{p(\bm{x}_a; \bm{\theta})}\left[ \pd{\log{{\phi}(\bm{x}_a; \bm{\theta}_a)}}{\bm{\theta}_a} \right].
+\end{equation}
+The left-hand-side of \eqref{chpt5:eq:stationary-point-likely} is empirical expectation w.r.t. to the gradient of potential function $\phi_a$, while on the right-hand-side of \eqref{chpt5:eq:stationary-point-likely} the expectation is computed by support of the marginal distribution $p(\bm{x}_a; \bm{\theta})$. This stationary point is intuitively telling us that the maximum likelihood estimation is trying to enforce the equality of empirical expectation of gradient with each $\bm{\theta}_a$ and the model's expectation.
+
+Apart from the classical techniques such as iterative proportional fitting \cite{} and generalized iterative scaling \cite{}, the wide used approach is gradient decent method by using \eqref{chpt3:eq:likely-gradient-thetaa}, in maximizing $\Ll(\Dd; \bm{\theta})$. Either way, the inference on marginal distribution $\left\{ p(\bm{x}_a; \bm{\theta}), a \in \Ff \right\}$ is inevitable.
+
+Take the gradient decent method as example, we need to use one of the inference approaches introduced in Part~\ref{part:inference} to approximate the marginals $\left\{ p(\bm{x}_a; \bm{\theta}), a \in \Ff \right\}$, then do update of the parameter
+\begin{equation}
+  \bm{\theta}_a \leftarrow \bm{\theta}_a + r \cdot \pd{\Ll(\bm{x};\bm{\theta})}{\bm{\theta}_a}, \forall~~a~\in~\Ff.
+\end{equation}
 
 \section{Model Learning with Inference of RENN}
 \label{sec:model-learning-with-renn}
-In section~\ref{sec:infer-renn}, we explained how to do inference with RENN when parameter $\bm{\theta}$ of $p(\bm{x}; \bm{\theta})$ is assumed to be known. In this section, we would consider the case of learning parameter $\bm{\theta}$ of $p(\bm{x}; \bm{\theta})$ with inference by RENN.
+In section~\ref{sec:infer-renn}, we explained how to do inference with RENN when parameter $\bm{\theta}$ of $p(\bm{x}; \bm{\theta})$ is assumed to be known. As the continuation, we consider the case of learning parameter $\bm{\theta}$ of $p(\bm{x}; \bm{\theta})$ with inference by RENN here.
 
-When we are given a dataset $\{\bm{x}\}$ and we want to learn the model of $p(\bm{x}; \bm{\omega})$ by maximizing the log-likelihood, it requires to
+The likelihood minimization of \eqref{chpt5:eq:one-sample-likely} can be written as minimization of the negative log-likelihood
 \begin{equation}\label{eq:maximizing-likelihood}
-  \umin{\bm{\theta}}{ -\log{\tilde{p}(\bm{x}; \bm{\theta})} + \log{Z(\bm{\theta})}},
+  \umin{\bm{\theta}}{ -\log{\tilde{p}(\bm{x}; \bm{\theta})} + \log{Z(\bm{\theta})}}.
 \end{equation}
-where $\tilde{p}(\bm{x}; \bm{\theta}) =  \prod_{a} \psi_a(\bm{x}_a; \bm{\theta}_a)$. Due to the intractability of $\log{Z(\bm{\theta})}$, it is expensive or prohibitive to solve \eqref{eq:maximizing-likelihood} directly. The region-based free energy $F_R(\Bb;\bm{\theta})$ would exactly be negative partition function of $p(\bm{x};\bm{\theta})$, i.e. $-Z(\bm{\theta})$, if each belief is exactly the corresponding marginalization, $b_R(\bm{x}_R)=p(\bm{x}_{R})$, $\forall~R\in \Rr$. Otherwise, $F_R(\Bb^{\ast};\bm{\theta})$ can always be an approximation of $-Z(\bm{\theta})$, where $\Bb^{\ast}= \{b_R(\bm{x}_R; \bm{\omega}^{\ast}), R\in \Rr\}$ with $\bm{\omega}^{\ast}$ being the solution to problem \eqref{eq:infer-F-all-belief}.
+Instead of explicitly formulating gradients as in section~\ref{chpt5:sec:learning-mrf}, we can make use of the autodiff methods in PyTorch or Tensorflow and minimize the above cost directly. In this case, we need to deal with the intractability of $\log{Z(\bm{\theta})}$ instead, which is expensive or prohibitive to solve \eqref{eq:maximizing-likelihood} directly.
+
+The region-based free energy $F_R(\Bb;\bm{\theta})$ would exactly be negative partition function of $p(\bm{x};\bm{\theta})$, i.e. $-\log{Z(\bm{\theta})}$, if each belief is exactly the corresponding marginalization, $b_R(\bm{x}_R)=p(\bm{x}_{R})$, $\forall~R\in \Rr$. Otherwise, $F_R(\Bb^{\ast};\bm{\theta})$ can always be an approximation of $-\log{Z(\bm{\theta})}$, where $\Bb^{\ast}= \{b_R(\bm{x}_R; \bm{\omega}^{\ast}), R\in \Rr\}$ with $\bm{\omega}^{\ast}$ being the solution to problem \eqref{eq:infer-F-all-belief}.
 
 Combining the model learning and inference, we have
 \begin{align}\label{eq:learning-min-max}
-  \!\!\!\!\!\!\!\!\!\!&\min_{\bm{\theta}}\max_{\bm{\omega}} -\log{\tilde{p}(\bm{x}; \bm{\theta})} - F_R(\Bb; \bm{\theta}) \nonumber \\
-  &-\lambda \!\!\!\!\! \sum_{R\in \Rr \backslash \Rr_0} \sum_{R_p \in \Pp(R)}\!\!\!\!\!d( b_R, \!\!\!\!\! \sum_{\Ss(R_p)\backslash \Ss(R)}\!\!\!\!\! b_{R_p}(\bm{x}_{R_p}; \bm{\omega})).
+  \min_{\bm{\theta}}\max_{\bm{\omega}} -\log{\tilde{p}(\bm{x}; \bm{\theta})} - F_R(\Bb; \bm{\theta}) 
+  -\lambda \sum_{R\in \Rr \backslash \Rr_0} \sum_{R_p \in \Pp(R)}\!\!\!\!\!d( b_R, \!\!\!\!\! \sum_{\Ss(R_p)\backslash \Ss(R)}\!\!\!\!\! b_{R_p}(\bm{x}_{R_p}; \bm{\omega})).
 \end{align}
-Then the difficulty of computing $Z(\bm{\theta})$ is dealt with by joint learning and inference of RENN in \eqref{eq:learning-min-max}.
+Then the difficulty of computing $Z(\bm{\theta})$ is dealt with by joint learning of MRF and inference by RENN in \eqref{eq:learning-min-max}.
 
-Note that model learning with RENN inference does not need to do sampling to estimate gradient of the objective. The gradients in \eqref{eq:learning-min-max} can be directly computed with autodiff functions in modern toolboxs such as PyTorch or TensorFlow. {Also, since RENN don't need iterative message propagation, model learning with inference by RENN can be faster.}
-
-Last but not the least, our method can be extended to learn models where there are both observable variable $\bm{x}$ and hidden variable $\bm{z}$ that we do not have observations for. Please refer to section~\ref{apdix:sec:crf-learning} in supplementary file for detail.
-
-
-\section{Amortized/Neural Variational Learning and Inference of partial observed MRF}
-1. TRW as upper bound to partition function
-
-2. Mean field or negative TRW as lower bound to partition function
-
-combining above together, we can obtain two different lower bound of likelihood. Consider if worthy a paper.
-
-\begin{itemize}
-\item The log-likelihood of partial observed MRF is non-convex in general ( log-sum-exp is convex, but the difference of two log-sum-exp functions might not be). This combination convert the original non-convex learning into convex optimization with regarding to MRF parameter? should be, but need a confirmation.
-\item 1. The speed of training can be improved by directly optimizing amortized beliefs.
-\item The bound becomes tighter by using clamping of variable, clamping can be done with or without selection of variables. No sampling is needed in training or inference.
-\item If need more contribution, use tree-reweighted hyper graph to obtain tighter bound.
-  
-\item Not necessarily done here: the bound can also be further improved by important sampling.
-\end{itemize}
-
-Reference:
-\begin{itemize}
-\item 1. \href{http://ssg.mit.edu/group/willsky/publ_pdfs/166_pub_AISTATS.pdf}{Wainwright, 2003, Tree-reweighted belief propagation algorithms and approximate ML estimation by pseudo-moment matching}
-\item 2. \href{https://arxiv.org/abs/1510.00087}{Weller, 2015,Clamping Improves TRW and Mean Field Approximations}
-\item 3. \href{https://arxiv.org/pdf/1402.0030.pdf}{Mnih, 2014, Neural Variational Inference and Learning in Belief Networks}, which describes a neural variational method for belief network. The major difference is the belief network as a DAG do not have the problem of partition function difficulty as MRF or partial observed MRF.
-  
-\end{itemize}
-
-\section{Notation}
-Random variable $\bm{v} \in \Xx_v$ that can be observed.
-Random variable $\bm{h} \in \Xx_h$ that is hidden variable and can not be observed.
-
-An alternative plan:
-\begin{itemize}
-\item Training RENN with marginal-likelihood instead of joint likelihood, ref to Domke13
-\item If the above works, use Gaussian kernals to define potential, Marvin T. T. Teichmann Convolutional CRFs for Semantic Segmentation
-\end{itemize}
-
-\section{Model and Problem Definition}
-
-We define the conditional probabilistic model as
-\begin{equation}\label{eq:model}
-  p(\bm{v}, \bm{h} ; \bm{\theta}) = \frac{1}{Z(\bm{\theta})} \tilde{p}(\bm{v}, \bm{h} |\bm{\theta}),
-\end{equation}
-with
-
-\begin{align}
-  Z(\bm{\theta}) & = \sum_{\bm{v}}\sum_{\bm{h}} \tilde{p}(\bm{v}, \bm{h} |\bm{\theta})\\
-  \tilde{p}(\bm{v}, \bm{h} ; \bm{\theta}) & = \exp\left\{-E(\bm{v}, \bm{h}, \bm{\theta})\right\}
-\end{align}
-
-where $E(\bm{v}, \bm{h}; \bm{\theta})$ is the average energy: $\Xx_v \times \Xx_h \rightarrow \RR$.
-
-We want to maximize the marginal likelihood:
-\begin{equation}
-  \umax{\bm{\theta}}{\log\;\sum_{\bm{h}}p(\bm{v}, \bm{h}; \bm{\theta})} = \umax{\bm{\theta}}{\log\;Z(\bm{v}, \bm{\theta})} - \log\; Z(\bm{\theta}), 
-\end{equation}
-where $Z(\bm{v}, \bm{\theta})  = \sum_{\bm{h}}\tilde{p}(\bm{v}, \bm{h} ; \bm{\theta})$
-\section{A lower bound of the marginal likelihood}
-Denote $A(\bm{\theta}) = \log{Z(\bm{\theta})}$ and $A(\bm{v}, \bm{\theta}) = \log{Z(\bm{v}, \bm{\theta})}$
-\begin{equation}
-  E(\bm{v}, \bm{h}, \bm{\theta}) = - \langle  \bm{\theta}, \bm{\phi}(\bm{v}, \bm{h})\rangle
-\end{equation}
-and
-\begin{equation}
-  \bm{\mu} = \EE_{p(\bm{v}, \bm{h}; \bm{\theta})}[\bm{\phi}(\bm{v}, \bm{h})].
-\end{equation}
-In case of overcomplete representation of $\bm{\phi}$, $\bm{\mu}$ is the set of marginal distributions.
-
-
-With mean field approximation,
-\begin{equation}
-  A_{M}(\bm{v}, \bm{\theta}) = \umax{\bm{\mu}_{\bm{v}} \in \Mm_M}{ \langle {\bm{\theta}, \bm{\mu}_{\bm{v}}} \rangle + H_{M}(\bm{\mu}_{\bm{v}})},
-\end{equation}
-where $\Mm_M$ is the subspace of distributions where each variable is independent. And we have
-\begin{equation}
-  A_{M}(\bm{v}, \bm{\theta}) \leq A(\bm{v}, \bm{\theta}).
-\end{equation}
-
-With tree-reweighted approximation, TRW,
-\begin{equation}
-  A_{T}(\bm{\theta}) = \umax{\bm{\mu} \in \Mm_T}{ \langle {\bm{\theta}, \bm{\mu}} \rangle + H(\bm{\mu})},
-\end{equation}
-where $\Mm$ is the subspace of distributions where each variable is independent. And we have
-\begin{equation}
-  A_{T}(\bm{\theta}) \geq A( \bm{\theta}).
-\end{equation}
-
-We define the lower bound of marginal loglikelihood:
-\begin{equation}
-  \Ll(\bm{\theta}) = A_{M}(\bm{v}, \bm{\theta}) - A_{T}(\bm{\theta}) \leq \log\sum_{\bm{h}}p(\bm{v}, \bm{h}; \bm{\theta}).
-\end{equation}
-
-Connection to RBM:
-\begin{equation}
-  p(\bm{v}, \bm{h}; \bm{\theta}) = \frac{1}{Z(\bm{\theta})} \exp\{\bm{v}\bm{W}\bm{h} + \bm{v}\bm{b} + \bm{v}\bm{a}\}
-\end{equation}
-Note $p(\bm{h}|\bm{h})$ is exactly independent, and thus the $A_{M}(\theta) = A(\bm{\theta})$ can be achieved, then how tight the lower bound $\Ll(\bm{theta})$ would dependent only on the TRW bound.
-
-
-\textcolor{red}{I should also consider how to use the trained model for prediction.}
-
-This is also closely connected to variational see Section 6.2, Wainwright, Graphical Models, Exponential Families, and Variational Inference.
-\section{Experiment}
-
+Learning MRF with RENN don't need iterative message propagation. Additionally, RENN can be implemented with modern toolboxs such as PyTorch or TensorFlow that enjoys the GPU computation capacity. Consequently, learning MRF with RENN can be much faster.
+\section{Numerical Comparisons}
 
 
 \subsection{Model Learning with Inference of RENN}
@@ -256,10 +186,132 @@ In the cases of complete graph, the advantage of RENN is significant, compared w
 
 \end{itemize}
 
+\section{Discussion on Learning}
+In presence of hidden varaible
+
+\begin{remark}
+Theory interpretation of EM and variational EM, see Section 6.2, Wainwright, Graphical Models, Exponential Families, and Variational Inference.
+\end{remark}
 
 
+\begin{remark}
+  RELATIONSHIP TO K-MEANS CLUSTERING
+  Big picture: The EM algorithm for mixtures of Gaussians is like a soft version of the K-means algorithm.
+\end{remark}
 
-\chapter{Powering the expectation maximization method by neural networks}
+\begin{remark}
+  EM lower bound $+$ entropy of posterior of latent variable if a free energy. ref to 10-708 lecture6 note.
+  EM using posterior of latent variable is equivalent to fully observable MLE where statistics are replaced by their expectations w.r.t the posterior.
+\end{remark}
+
+Can be viewed as two-node graphical model learning. \href{https://sailinglab.github.io/pgm-spring-2019/notes/lecture-05/}{10-708lecture5-note}
+
+\subsection{A lower bound of the marginal likelihood}
+Denote $A(\bm{\theta}) = \log{Z(\bm{\theta})}$ and $A(\bm{v}, \bm{\theta}) = \log{Z(\bm{v}, \bm{\theta})}$
+\begin{equation}
+  E(\bm{v}, \bm{h}, \bm{\theta}) = - \langle  \bm{\theta}, \bm{\phi}(\bm{v}, \bm{h})\rangle
+\end{equation}
+and
+\begin{equation}
+  \bm{\mu} = \EE_{p(\bm{v}, \bm{h}; \bm{\theta})}[\bm{\phi}(\bm{v}, \bm{h})].
+\end{equation}
+In case of overcomplete representation of $\bm{\phi}$, $\bm{\mu}$ is the set of marginal distributions.
+
+
+With mean field approximation,
+\begin{equation}
+  A_{M}(\bm{v}, \bm{\theta}) = \umax{\bm{\mu}_{\bm{v}} \in \Mm_M}{ \langle {\bm{\theta}, \bm{\mu}_{\bm{v}}} \rangle + H_{M}(\bm{\mu}_{\bm{v}})},
+\end{equation}
+where $\Mm_M$ is the subspace of distributions where each variable is independent. And we have
+\begin{equation}
+  A_{M}(\bm{v}, \bm{\theta}) \leq A(\bm{v}, \bm{\theta}).
+\end{equation}
+
+With tree-reweighted approximation, TRW,
+\begin{equation}
+  A_{T}(\bm{\theta}) = \umax{\bm{\mu} \in \Mm_T}{ \langle {\bm{\theta}, \bm{\mu}} \rangle + H(\bm{\mu})},
+\end{equation}
+where $\Mm$ is the subspace of distributions where each variable is independent. And we have
+\begin{equation}
+  A_{T}(\bm{\theta}) \geq A( \bm{\theta}).
+\end{equation}
+
+We define the lower bound of marginal loglikelihood:
+\begin{equation}
+  \Ll(\bm{\theta}) = A_{M}(\bm{v}, \bm{\theta}) - A_{T}(\bm{\theta}) \leq \log\sum_{\bm{h}}p(\bm{v}, \bm{h}; \bm{\theta}).
+\end{equation}
+
+Connection to RBM:
+\begin{equation}
+  p(\bm{v}, \bm{h}; \bm{\theta}) = \frac{1}{Z(\bm{\theta})} \exp\{\bm{v}\bm{W}\bm{h} + \bm{v}\bm{b} + \bm{v}\bm{a}\}
+\end{equation}
+Note $p(\bm{h}|\bm{h})$ is exactly independent, and thus the $A_{M}(\theta) = A(\bm{\theta})$ can be achieved, then how tight the lower bound $\Ll(\bm{theta})$ would dependent only on the TRW bound.
+
+
+\textcolor{red}{I should also consider how to use the trained model for prediction.}
+
+This is also closely connected to variational see Section 6.2, Wainwright, Graphical Models, Exponential Families, and Variational Inference.
+
+
+\chapter{raw materials}
+
+
+\section{Amortized/Neural Variational Learning and Inference of partial observed MRF}
+1. TRW as upper bound to partition function
+
+2. Mean field or negative TRW as lower bound to partition function
+
+combining above together, we can obtain two different lower bound of likelihood. Consider if worthy a paper.
+
+\begin{itemize}
+\item The log-likelihood of partial observed MRF is non-convex in general ( log-sum-exp is convex, but the difference of two log-sum-exp functions might not be). This combination convert the original non-convex learning into convex optimization with regarding to MRF parameter? should be, but need a confirmation.
+\item 1. The speed of training can be improved by directly optimizing amortized beliefs.
+\item The bound becomes tighter by using clamping of variable, clamping can be done with or without selection of variables. No sampling is needed in training or inference.
+\item If need more contribution, use tree-reweighted hyper graph to obtain tighter bound.
+  
+\item Not necessarily done here: the bound can also be further improved by important sampling.
+\end{itemize}
+
+Reference:
+\begin{itemize}
+\item 1. \href{http://ssg.mit.edu/group/willsky/publ_pdfs/166_pub_AISTATS.pdf}{Wainwright, 2003, Tree-reweighted belief propagation algorithms and approximate ML estimation by pseudo-moment matching}
+\item 2. \href{https://arxiv.org/abs/1510.00087}{Weller, 2015,Clamping Improves TRW and Mean Field Approximations}
+\item 3. \href{https://arxiv.org/pdf/1402.0030.pdf}{Mnih, 2014, Neural Variational Inference and Learning in Belief Networks}, which describes a neural variational method for belief network. The major difference is the belief network as a DAG do not have the problem of partition function difficulty as MRF or partial observed MRF.
+  
+\end{itemize}
+
+\section{Notation}
+Random variable $\bm{v} \in \Xx_v$ that can be observed.
+Random variable $\bm{h} \in \Xx_h$ that is hidden variable and can not be observed.
+
+An alternative plan:
+\begin{itemize}
+\item Training RENN with marginal-likelihood instead of joint likelihood, ref to Domke13
+\item If the above works, use Gaussian kernals to define potential, Marvin T. T. Teichmann Convolutional CRFs for Semantic Segmentation
+\end{itemize}
+
+\section{Model and Problem Definition}
+
+We define the conditional probabilistic model as
+\begin{equation}\label{eq:model}
+  p(\bm{v}, \bm{h} ; \bm{\theta}) = \frac{1}{Z(\bm{\theta})} \tilde{p}(\bm{v}, \bm{h} |\bm{\theta}),
+\end{equation}
+with
+
+\begin{align}
+  Z(\bm{\theta}) & = \sum_{\bm{v}}\sum_{\bm{h}} \tilde{p}(\bm{v}, \bm{h} |\bm{\theta})\\
+  \tilde{p}(\bm{v}, \bm{h} ; \bm{\theta}) & = \exp\left\{-E(\bm{v}, \bm{h}, \bm{\theta})\right\}
+\end{align}
+
+where $E(\bm{v}, \bm{h}; \bm{\theta})$ is the average energy: $\Xx_v \times \Xx_h \rightarrow \RR$.
+
+We want to maximize the marginal likelihood:
+\begin{equation}
+  \umax{\bm{\theta}}{\log\;\sum_{\bm{h}}p(\bm{v}, \bm{h}; \bm{\theta})} = \umax{\bm{\theta}}{\log\;Z(\bm{v}, \bm{\theta})} - \log\; Z(\bm{\theta}), 
+\end{equation}
+where $Z(\bm{v}, \bm{\theta})  = \sum_{\bm{h}}\tilde{p}(\bm{v}, \bm{h} ; \bm{\theta})$
+
+
 content: \href{https://arxiv.org/abs/1907.13432}{Neural Network based Explicit Mixture Models and Expectation-maximization based Learning}, under review
 
 section/chapter transition text: mixture model could be obtained from clamping and condition on a discrete variable, ref to Geier, \href{http://auai.org/uai2015/proceedings/papers/158.pdf}{Locally conditional belief propagation}. \href{https://papers.nips.cc/paper/5529-clamping-variables-and-approximate-inference.pdf}{Weller, clamping variables and approximate inference}
