@@ -39,11 +39,11 @@ Take the gradient decent method as example, we need to use one of the inference 
 \end{equation}
 
 \begin{remark}
-When the MRF scales up, the number of parameters, i.e. elements of $\bm{\theta}$, could be large. To reduce overfitting, a typical trick is to add a zero-mean Gaussian prior to $\bm{\theta}$ as \textit{regularization}. Then log-likelihood of evidence $\bm{x}$ becomes 
-\begin{equation}
-  l(\bm{x};\bm{\theta}) = \log{\tilde{p}(\bm{x}; \bm{\theta})} - \log{Z(\bm{\theta})} - \frac{\norm{\bm{\theta}}^2}{2\sigma^2},
-\end{equation}
-where $\sigma^2$ is variance of the Gaussian prior, which is free to determine. The rest analysis fellows.
+  When the MRF scales up, the number of parameters, i.e. elements of $\bm{\theta}$, could be large. To reduce overfitting, a typical trick is to add a zero-mean Gaussian prior to $\bm{\theta}$ as \textit{regularization}. Then log-likelihood of evidence $\bm{x}$ becomes 
+  \begin{equation}
+    l(\bm{x};\bm{\theta}) = \log{\tilde{p}(\bm{x}; \bm{\theta})} - \log{Z(\bm{\theta})} - \frac{\norm{\bm{\theta}}^2}{2\sigma^2},
+  \end{equation}
+  where $\sigma^2$ is variance of the Gaussian prior, which is free to determine. The rest analysis fellows.
 \end{remark}
 
 
@@ -77,15 +77,15 @@ Learning MRF with RENN don't need iterative message propagation. Additionally, R
   \begin{center}
     \begin{small}
       \setlength\tabcolsep{2pt}
-        \begin{tabular}{lcccccccc}
-          % std=1.0
-          \toprule
-          $n$ & True & Exact & Mean Field & Loopy BP & Damped BP & GBP & Inference Net & RENN \\
-          25  &  9.000  &  9.004  &  9.811  &  {9.139}  &  9.196  &  10.56  &  9.252  &  \textbf{9.048}  \\
-          100 &  19.34  &  19.38  &  23.48  &  {19.92}  &  20.02  &  28.61  &  20.29  &  \textbf{19.76} \\
-          225 &  63.90  &  63.97  &  69.01  &  66.44    &  66.25  &  92.62  &  68.15  &  \textbf{64.79}  \\
-          \bottomrule
-        \end{tabular}
+      \begin{tabular}{lcccccccc}
+        % std=1.0
+        \toprule
+        $n$ & True & Exact & Mean Field & Loopy BP & Damped BP & GBP & Inference Net & RENN \\
+        25  &  9.000  &  9.004  &  9.811  &  {9.139}  &  9.196  &  10.56  &  9.252  &  \textbf{9.048}  \\
+        100 &  19.34  &  19.38  &  23.48  &  {19.92}  &  20.02  &  28.61  &  20.29  &  \textbf{19.76} \\
+        225 &  63.90  &  63.97  &  69.01  &  66.44    &  66.25  &  92.62  &  68.15  &  \textbf{64.79}  \\
+        \bottomrule
+      \end{tabular}
       
     \end{small}
   \end{center}
@@ -98,16 +98,16 @@ Learning MRF with RENN don't need iterative message propagation. Additionally, R
   \begin{center}
     \begin{small}
       \setlength\tabcolsep{2pt}
-        \begin{tabular}{lcccccccc}
-          \toprule
-          % std=1.0
-          $n$ & True & Exact & Mean Field & Loopy BP & Damped BP & GBP & Inference Net & RENN \\
-          \midrule
-          9  &  3.276  &  3.286  &  9.558  &  5.201  &  5.880  &  10.06  &  5.262  & \textbf{3.414}  \\
-          16  &  4.883  &  4.934  &  28.74  &  13.64  &  18.95  &  24.45  &  13.77  &  \textbf{5.178}  \\
-          
-          \bottomrule
-        \end{tabular}
+      \begin{tabular}{lcccccccc}
+        \toprule
+        % std=1.0
+        $n$ & True & Exact & Mean Field & Loopy BP & Damped BP & GBP & Inference Net & RENN \\
+        \midrule
+        9  &  3.276  &  3.286  &  9.558  &  5.201  &  5.880  &  10.06  &  5.262  & \textbf{3.414}  \\
+        16  &  4.883  &  4.934  &  28.74  &  13.64  &  18.95  &  24.45  &  13.77  &  \textbf{5.178}  \\
+        
+        \bottomrule
+      \end{tabular}
       
     \end{small}
   \end{center}
@@ -146,20 +146,20 @@ Learning MRF with RENN don't need iterative message propagation. Additionally, R
   \begin{center}
     \begin{small}
       
-        \begin{tabular}{lcc}
-          \toprule
-          {} & \begin{tabular}[x]{@{}c@{}} Grid Graph\\ $n=225$\end{tabular}
-             & \begin{tabular}[x]{@{}c@{}} Complete Graph\\ $n=16$\end{tabular}  \\
-          \midrule
-          Mean Field & 40.09 & 2.499 \\
-          Loopy BP &  335.1 & 12.40\\
-          Damped BP & 525.1 & 5.431\\
-          GBP &   12.37    & 1.387\\
-          Inference Net & 19.49 & 0.882 \\
-          RENN & 16.03  & 2.262\\
+      \begin{tabular}{lcc}
+        \toprule
+        {} & \begin{tabular}[x]{@{}c@{}} Grid Graph\\ $n=225$\end{tabular}
+           & \begin{tabular}[x]{@{}c@{}} Complete Graph\\ $n=16$\end{tabular}  \\
+        \midrule
+        Mean Field & 40.09 & 2.499 \\
+        Loopy BP &  335.1 & 12.40\\
+        Damped BP & 525.1 & 5.431\\
+        GBP &   12.37    & 1.387\\
+        Inference Net & 19.49 & 0.882 \\
+        RENN & 16.03  & 2.262\\
 
-          \bottomrule
-        \end{tabular}
+        \bottomrule
+      \end{tabular}
       
     \end{small}
   \end{center}
@@ -181,10 +181,66 @@ In the cases of complete graph, the advantage of RENN is significant, compared w
 
 
 \section{Discussion on Learning}
-In presence of hidden varaible
+
+The parameter learning becomes more challenge when variable vector $\bm{x}$ is \textit{partial observed}. $\bm{x} = [\bm{x}_U, \bm{x}_O]$, where $\bm{x}_O$ is the observed part and $\bm{x}_U$ is unobserved part that is also known as latent variable. Then the joint distribution becomes $p(\bm{x}; \bm{\theta}) = p(\bm{x}_U, \bm{x}_O; \bm{\theta})$. Since it is only partially observed, we can not maximize the complete evidence log-likelihood as what we did in section~\ref{chpt5:sec:learning-mrf}. Instead, we marginalize the latent variable $\bm{x}_U$ out first
+\begin{equation}\label{chpt2:eq:patial-likelihood}
+  l(\bm{x}_O; \bm{\theta}) = \log{\sum_{\bm{x}_U}p(\bm{x}_U, \bm{x}_O; \bm{\theta})} = \log{Z(\bm{x}_O;\bm{\theta})} - \log{Z(\bm{\theta})},
+\end{equation}
+where $Z(\bm{x}_O;\bm{\theta}) = \sum_{\bm{x}_O}\tilde{p}(\bm{x}; \bm{\theta})$. In general, there are general two categories of methods in dealing with learning in partial observed scenarios:
+\begin{itemize}
+\item Directly optimize $l(\bm{x}_O; \bm{\theta})$ w.r.t. $\bm{\theta}$. We need to able to compute or estimate $l(\bm{x}_O; \bm{\theta})$. Essentially, it requires the gradient of $l(\bm{x}_O; \bm{\theta})$ which a function of both $p(\bm{x}_a| \bm{x}_O; \bm{\theta})$ and $p(\bm{x}_a; \bm{\theta})$. Inference methods that we previously discussed, e.g., mean field, BP (and its variants), GBP, and RENN, would do the job.
+\item Optimize the a lower bound of $l(\bm{x}_O; \bm{\theta})$. Methods such as (variational) EM, variational Bayes and variational auto-encoder (VAE) belongs to this category.
+\end{itemize}
+
+The first track is straightforward since it is to estimate the sub-partition function $Z(\bm{x}_O; \bm{\theta})$ and partition function $Z(\bm{x}; \bm{\theta})$ as done in section~\ref{sec:model-learning-with-renn} via RENN or other inference methods. Then do the maximization step sequentially. Note different from partition function $Z(\bm{\theta})$, the sub-partition function $Z(\bm{x}_O; \bm{\theta})$ is evidence-dependent, i.e. the inference has to be done per given evidence or sample  $\bm{x}_O$. 
+
+Alternative, we may work with a lower bound of $l(\bm{x}_O; \bm{\theta})$ instead. In this track, the most classical framework is EM, which can be well explained by our target of maximizing $l(\bm{x}_O; \bm{\theta})$. The intuition can be obtained by firstly observing that
+\begin{align}
+  F_V(q(\bm{x}_U|\bm{x}_O)) & = \mathrm{KL}(q(\bm{x}_U|\bm{x}_O) || p(\bm{x}_U|\bm{x}_O; \bm{\theta})) - \log{Z(\bm{x}_O; \bm{\theta})} \nonumber \\
+                            &= \EE_{q(\bm{x}_U|\bm{x}_O)}\left[  \log{\frac{q(\bm{x}_U|\bm{x}_O)}{{p}(\bm{x}_U| \bm{x}_O; \bm{\theta})}} \right] - \log{Z(\bm{x}_O;\bm{\theta})} \nonumber \\
+                            &= \EE_{q(\bm{x}_U|\bm{x}_O)}\left[ \log{\frac{q(\bm{x}_U|\bm{x}_O)}{\tilde{p}(\bm{x}_U, \bm{x}_O; \bm{\theta})}} \right],
+\end{align}
+similar to the variational free energy \eqref{chpt2:eq:variational-free-energy}. Here $\bm{x}_O$ is the clamped value of observation. Since
+\begin{equation}
+  \EE_{q(\bm{x}_U|\bm{x}_O)}\left[ \log{\frac{q(\bm{x}_U|\bm{x}_O)}{\tilde{p}(\bm{x}_U, \bm{x}_O; \bm{\theta})}} \right] \geq - \log{Z(\bm{x}_O; \bm{\theta})}
+\end{equation}
+we have
+\begin{align}
+  l(\bm{x}_O; \bm{\theta}) &\geq \EE_{q(\bm{x}_U|\bm{x}_O)}\left[ \log{\frac{\tilde{p}(\bm{x}_U, \bm{x}_O; \bm{\theta})}{q(\bm{x}_U|\bm{x}_O)}} \right] - \log{Z(\bm{\theta})} \nonumber \\
+                           & = \EE_{q(\bm{x}_U|\bm{x}_O)}\left[ \log{\frac{{p}(\bm{x}_U, \bm{x}_O; \bm{\theta})}{q(\bm{x}_U|\bm{x}_O)}} \right] \nonumber \\
+                           & = \EE_{q(\bm{x}_U|\bm{x}_O)}\left[ \log{{p}(\bm{x}_U, \bm{x}_O; \bm{\theta})} \right] + H({q(\bm{x}_U|\bm{x}_O)}) \nonumber \\
+                           & := F(q, \bm{\theta}),
+\end{align}
+which is exactly the lower bound \eqref{chpt2:eq:llk-lower-bound}. This give the intuition of viewing EM as an coordinate ascent method:
+\begin{align}
+  \mathrm{E~step:}~~~ q^{(t+1)} &= \uargmax{q}{F(q, \bm{\theta}^{(t)})}, \\
+  \mathrm{M~step:}~~~\bm{\theta}^{(t+1)} &= \uargmax{\bm{\theta}}{F(q^{(t+1)}, \bm{\theta})}.
+\end{align}
+
+It is interesting to note that VAE maximizes the same lower bound of $l(\bm{x}_O;\bm{\theta})$ as EM and variational Bayes, by slightly rewriting the bound as
+\begin{equation}
+  F(q, \bm{\theta}) = \EE_{q(\bm{x}_U|\bm{x}_O)}\left[ \log{{p}(\bm{x}_O| \bm{x}_U; \bm{\theta})} + \log{{p}(\bm{x}_U; \bm{\theta})} \right] + H({q(\bm{x}_U|\bm{x}_O)}),
+\end{equation}
+with encoder $q(\bm{x}_U|\bm{x}_O)$ and decoder ${p}(\bm{x}_O| \bm{x}_U; \bm{\theta})$. The prior on latent variable $\bm{x}_U$, i.e. ${p}(\bm{x}_U; \bm{\theta})$ is usually assumed as a known Gaussian distribution.
+
 
 \begin{remark}
-Theory interpretation of EM and variational EM, see Section 6.2, Wainwright, Graphical Models, Exponential Families, and Variational Inference.
+  The lower bound $F(q, \bm{\theta})$ of $l(\bm{x}_O; \bm{\theta})$ can also be obtained from a importance sampling trick with Jensen's inequality.
+  \begin{align}
+    l(\bm{x}_O; \bm{\theta}) & = \log{\sum_{\bm{x}_U} {p}(\bm{x}_O, \bm{x}_U; \bm{\theta})} \nonumber \\
+                             & = \log{\sum_{\bm{x}_U} {q(\bm{x}_U|\bm{x}_O)}\frac{{p}(\bm{x}_O, \bm{x}_U; \bm{\theta})}{q(\bm{x}_U|\bm{x}_O)} } \label{chpt5:eq:important-sampling-inituition}\\
+                             & \geq \EE_{q(\bm{x}_U|\bm{x}_O)}\left[ \log{\frac{{p}(\bm{x}_O, \bm{x}_U; \bm{\theta})}{q(\bm{x}_U|\bm{x}_O)}}\right] \label{chpt5:eq:apply-jensen-ineq},
+  \end{align}
+  where \eqref{chpt5:eq:important-sampling-inituition} can be seen as an evaluation of importance sampling with proposal distribution $q$ and \eqref{chpt5:eq:apply-jensen-ineq} uses Jensen's inequality $\log{\EE_{p(x)}[f(x)] \geq \EE_{P(x)}[\log{f(x)}]}$.
+\end{remark}
+
+\begin{remark}
+  Among all the methods discussed in the section, one of the major problem is computing or estimating $p(\bm{x}_U| \bm{x}_O; \bm{\theta})$. Apart from direct optimization of $l(\bm{x}_O;\bm{\theta})$ with exact inference methods and EM method that uses exact $q(\bm{x}_U| \bm{x}_O) = p(\bm{x}_U| \bm{x}_O; \bm{\theta})$, the rest employs an approximation of the posterior, i.e. $q(\bm{x}_U| \bm{x}_O) \approx p(\bm{x}_U| \bm{x}_O; \bm{\theta})$.
+\end{remark}
+
+In presence of latent/hidden? varaible
+\begin{remark}
+  Theory interpretation of EM and variational EM, see Section 6.2, Wainwright, Graphical Models, Exponential Families, and Variational Inference.
 \end{remark}
 
 
@@ -311,7 +367,7 @@ content: \href{https://arxiv.org/abs/1907.13432}{Neural Network based Explicit M
 section/chapter transition text: mixture model could be obtained from clamping and condition on a discrete variable, ref to Geier, \href{http://auai.org/uai2015/proceedings/papers/158.pdf}{Locally conditional belief propagation}. \href{https://papers.nips.cc/paper/5529-clamping-variables-and-approximate-inference.pdf}{Weller, clamping variables and approximate inference}
 
 \begin{remark}
-Theory interpretation of EM and variational EM, see Section 6.2, Wainwright, Graphical Models, Exponential Families, and Variational Inference.
+  Theory interpretation of EM and variational EM, see Section 6.2, Wainwright, Graphical Models, Exponential Families, and Variational Inference.
 \end{remark}
 
 

@@ -394,7 +394,7 @@ In general, latent variables are commonly used to deal with partial observation 
   = & \mathrm{KL}(q(\bm{x}_U|\bm{x}_O)\|p(\bm{x}_U|\bm{x}_O;\bm{\theta})) + F(q, \bm{\theta})
 \end{align}
 with
-\begin{equation}
+\begin{equation}\label{chpt2:eq:llk-lower-bound}
   F(q, \bm{\theta}) = \EE_{q(\bm{x}_U|\bm{x}_O)}\left[ \log{p(\bm{x}_U,\bm{x}_O;\bm{\theta})} \right] + H(q(\bm{x}_U|\bm{x}_O))
 \end{equation}
 where $H(q(\bm{x}_U|\bm{x}_O))$ is the entropy of $q(\bm{x}_U|\bm{x}_O)$, and $q$ can be any distribution over $\bm{x}_U$. Due to the non-negative property of KL divergence, we have
