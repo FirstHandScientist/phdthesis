@@ -38,6 +38,15 @@ Take the gradient decent method as example, we need to use one of the inference 
   \bm{\theta}_a \leftarrow \bm{\theta}_a + r \cdot \pd{\Ll(\bm{x};\bm{\theta})}{\bm{\theta}_a}, \forall~~a~\in~\Ff.
 \end{equation}
 
+\begin{remark}
+When the MRF scales up, the number of parameters, i.e. elements of $\bm{\theta}$, could be large. To reduce overfitting, a typical trick is to add a zero-mean Gaussian prior to $\bm{\theta}$ as \textit{regularization}. Then log-likelihood of evidence $\bm{x}$ becomes 
+\begin{equation}
+  l(\bm{x};\bm{\theta}) = \log{\tilde{p}(\bm{x}; \bm{\theta})} - \log{Z(\bm{\theta})} - \frac{\norm{\bm{\theta}}^2}{2\sigma^2},
+\end{equation}
+where $\sigma^2$ is variance of the Gaussian prior, which is free to determine. The rest analysis fellows.
+\end{remark}
+
+
 \section{Model Learning with Inference of RENN}
 \label{sec:model-learning-with-renn}
 In section~\ref{sec:infer-renn}, we explained how to do inference with RENN when parameter $\bm{\theta}$ of $p(\bm{x}; \bm{\theta})$ is assumed to be known. As the continuation, we consider the case of learning parameter $\bm{\theta}$ of $p(\bm{x}; \bm{\theta})$ with inference by RENN here.
@@ -46,7 +55,7 @@ The likelihood minimization of \eqref{chpt5:eq:one-sample-likely} can be written
 \begin{equation}\label{eq:maximizing-likelihood}
   \umin{\bm{\theta}}{ -\log{\tilde{p}(\bm{x}; \bm{\theta})} + \log{Z(\bm{\theta})}}.
 \end{equation}
-Instead of explicitly formulating gradients as in section~\ref{chpt5:sec:learning-mrf}, we can make use of the autodiff methods in PyTorch or Tensorflow and minimize the above cost directly. In this case, we need to deal with the intractability of $\log{Z(\bm{\theta})}$ instead, which is expensive or prohibitive to solve \eqref{eq:maximizing-likelihood} directly.
+Instead of explicitly formulating gradients as in section~\ref{chpt5:sec:learning-mrf}, we can make use of the autodiff methods in PyTorch or Tensorflow and minimize the above cost directly. Note this does not mean that inference is not required. Instead, we need to deal with the intractability of $\log{Z(\bm{\theta})}$, which is expensive or prohibitive to solve \eqref{eq:maximizing-likelihood} directly. Approximation to $\log{Z(\bm{\theta})}$ requires inference, which can be done by RENN. 
 
 The region-based free energy $F_R(\Bb;\bm{\theta})$ would exactly be negative partition function of $p(\bm{x};\bm{\theta})$, i.e. $-\log{Z(\bm{\theta})}$, if each belief is exactly the corresponding marginalization, $b_R(\bm{x}_R)=p(\bm{x}_{R})$, $\forall~R\in \Rr$. Otherwise, $F_R(\Bb^{\ast};\bm{\theta})$ can always be an approximation of $-\log{Z(\bm{\theta})}$, where $\Bb^{\ast}= \{b_R(\bm{x}_R; \bm{\omega}^{\ast}), R\in \Rr\}$ with $\bm{\omega}^{\ast}$ being the solution to problem \eqref{eq:infer-F-all-belief}.
 
@@ -58,24 +67,22 @@ Combining the model learning and inference, we have
 Then the difficulty of computing $Z(\bm{\theta})$ is dealt with by joint learning of MRF and inference by RENN in \eqref{eq:learning-min-max}.
 
 Learning MRF with RENN don't need iterative message propagation. Additionally, RENN can be implemented with modern toolboxs such as PyTorch or TensorFlow that enjoys the GPU computation capacity. Consequently, learning MRF with RENN can be much faster.
-\section{Numerical Comparisons}
 
 
-\subsection{Model Learning with Inference of RENN}
-
+\section{Numerical Comparisons in MRF Learning}
 
 \begin{table*}[t]
   \caption{NLL of grid graphical models training using different inference methods.}
   \label{tab:nll-training-grid-n5n10}
   \begin{center}
     \begin{small}
-      
+      \setlength\tabcolsep{2pt}
         \begin{tabular}{lcccccccc}
           % std=1.0
           \toprule
           $n$ & True & Exact & Mean Field & Loopy BP & Damped BP & GBP & Inference Net & RENN \\
           25  &  9.000  &  9.004  &  9.811  &  {9.139}  &  9.196  &  10.56  &  9.252  &  \textbf{9.048}  \\
-          100 &  19.34  &  19.38  &  23.48  &  {19.92}  &  20.02  &  28.61  &  20. 29  &  \textbf{19.76} \\
+          100 &  19.34  &  19.38  &  23.48  &  {19.92}  &  20.02  &  28.61  &  20.29  &  \textbf{19.76} \\
           225 &  63.90  &  63.97  &  69.01  &  66.44    &  66.25  &  92.62  &  68.15  &  \textbf{64.79}  \\
           \bottomrule
         \end{tabular}
@@ -90,7 +97,7 @@ Learning MRF with RENN don't need iterative message propagation. Additionally, R
   \label{tab:nll-training-full-n3n4}
   \begin{center}
     \begin{small}
-      
+      \setlength\tabcolsep{2pt}
         \begin{tabular}{lcccccccc}
           \toprule
           % std=1.0
@@ -159,32 +166,19 @@ Learning MRF with RENN don't need iterative message propagation. Additionally, R
   
 \end{table}
 
-
-In this subsection, we report the results of training MRFs, i.e. learning the model parameter $\bm{\theta}$ as discussed in section~\ref{sec:model-learning-with-renn}, by using inference of RENN.
-
+To make the comparison more concrete, we do learning of MRFs, i.e. learning the model parameter $\bm{\theta}$, via difference inference methods discussed.
 
 
-We do training on two types of graphs, grid (Table~\ref{tab:nll-training-grid-n5n10}) and complete graphs (Table~\ref{tab:nll-training-full-n3n4}). For both cases, we firstly sample the parameter set $\bm{\theta}^{\prime}$, then sample training and testing dataset from $p(\bm{x}; \bm{\theta}^{\prime})$. The true NLL of sampled datasets can be computed by $p(\bm{x}; \bm{\theta}^{\prime})$. We then train a randomly-initialized model with the obtained training dataset by using RENN (section~\ref{sec:model-learning-with-renn}). The trained model by RENN is evaluated with testing dataset w.r.t. NLL value, which is compared with trained models by other methods. We also include the comparison with exact inference where $Z(\bm{\theta})$ is computed exactly.
+We do learning on two types of MRF graphs, grid (Table~\ref{tab:nll-training-grid-n5n10}) and complete graphs (Table~\ref{tab:nll-training-full-n3n4}). For both cases, we firstly sample the parameter set $\bm{\theta}^{\prime}$, then sample training and testing dataset from $p(\bm{x}; \bm{\theta}^{\prime})$. The true NLL of sampled datasets can be computed by $p(\bm{x}; \bm{\theta}^{\prime})$. We then train a randomly-initialized model with the obtained training dataset by using RENN (section~\ref{sec:model-learning-with-renn}). The trained model by RENN is evaluated with testing dataset w.r.t. NLL value, which is compared with trained models by other methods. We also include the comparison with exact inference where $Z(\bm{\theta})$ is computed exactly.
 In the grid graphs, there are $4000$ samples for training and $1000$ for testing. In the complete graph case, there are $2000$ samples for training and $1000$ samples for testing. 
 
-In the cases of grid graphs, the NLLs of most methods are close to the true NLL for small-sized graphs ($n=25,100$), with RENN reaching the lowest NNL. At case of $n=255$, RENN outperforms all other methods significantly. Additionally, RENN is much faster. As shown in Table~\ref{tab:time-training}, loopy BP needs almost $335$s and damped BP needs about $525$s per epoch iteration, while RENN takes $16$s per epoch. Please refer to section~\ref{apdx:sec:extrx-exp} for computation time of other cases in the supplementary file.
+In the cases of grid graphs, the NLLs of most methods are close to the true NLL for small-sized graphs ($n=25,100$), with RENN reaching the lowest NNL. At case of $n=255$, RENN outperforms all other methods significantly. Additionally, RENN is much faster. As shown in Table~\ref{tab:time-training}, loopy BP needs almost $335$s and damped BP needs about $525$s per epoch iteration, while RENN takes $16$s per epoch.
 Neural network based methods parameterize the beliefs or marginal distributions and thus can do new inference estimations much faster when model parameter $\bm{\theta}$ is updated in optimization steps. % When the learning step of $\bm{\theta}$ is small, multiple steps of update of $\bm{\theta}$ can share one inference estimation of marginals without degenerating performance.
 
 
 
 In the cases of complete graph, the advantage of RENN is significant, compared with other methods as shown in Table~\ref{tab:nll-training-full-n3n4}. Other benchmark methods fall behind RENN by a distinct difference, given the size of graph is relatively small. The results here actually agree with inference experiments shown in Table~\ref{tab:infer-full-n9} and \ref{tab:infer-full-n16}, where partition function estimations of other benchmark methods have much larger errors. As for the average time per epoch, neural network based models still are faster than iterative message passing methods in general.
 
-
-
-\begin{itemize}
-\item Start with standard RBM \href{https://papers.nips.cc/paper/9687-amortized-bethe-free-energy-minimization-for-learning-mrfs.pdf}{section 4.2 in Amortized learning of MRFs}
-  \begin{itemize}
-  \item Try to break the conditinal independence by connecting nodes of $\bm{h}$
-  \item Extent to conditional RBM training for denoising and data completion
-  \end{itemize}
-\item high-order HMMs
-
-\end{itemize}
 
 \section{Discussion on Learning}
 In presence of hidden varaible
