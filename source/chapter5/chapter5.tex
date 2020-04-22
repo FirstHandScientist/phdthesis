@@ -1,6 +1,6 @@
 \chapter{Learning with inference}
-In Part~\ref{part:inference}, we have discussed different ways for inference, assuming a probabilistic graphical models is given. As introduced in chapter~\ref{chapter2}, learning graphcial models includes structure learning and parameter learning. We restrict our discussion to the parameter learning of graphical models. From this chapter onward, we would focus on answering the question of how to decide the parameters of a probabilistic graphical model.
-In this chapter, we mainly discuss the learning of undirected graphcial models, and leave the learning of directed graphical models for coming chapters.
+In Part~\ref{part:inference}, we have discussed different ways for inference, assuming a probabilistic graphical model is given. As introduced in chapter~\ref{chapter2}, learning graphical models includes structure learning and parameter learning. We restrict our discussion to the parameter learning of graphical models. From this chapter onward, we would focus on answering the question of how to decide the parameters of a probabilistic graphical model.
+In this chapter, we mainly discuss the learning of undirected graphical models and leave the learning of directed graphical models for the coming chapters.
 
 As explained in section~\ref{chpt2:sec:learning-principles}, the most essential learning principle is \textit{maximal likelihood} that is derived from the minimization of KL-divergence. Since we do not have access to the true distribution $p^{\ast}(\bm{x})$, practical maximal likelihood learning is via tuning parameter $\bm{\theta}$ of model $p(\bm{x};\bm{\theta})$ using information of samples of $p^{\ast}(\bm{x})$, i.e. $\Dd = \left\{ \bm{x}^1, \bm{x}^2, \cdots, \bm{x}^{M}\right\}$.
 
@@ -69,7 +69,7 @@ Combining the model learning and inference, we have
 \end{align}
 Then the difficulty of computing $Z(\bm{\theta})$ is dealt with by joint learning of MRF and inference by RENN in \eqref{eq:learning-min-max}.
 
-Learning MRF with RENN don't need iterative message propagation. Additionally, RENN can be implemented with modern toolboxs such as PyTorch or TensorFlow that enjoys the GPU computation capacity. Consequently, learning MRF with RENN can be much faster, which would be shown in the following section.
+Learning MRF with RENN doesn't need iterative message propagation. Additionally, RENN can be implemented with modern toolboxes such as PyTorch or TensorFlow that enjoys the GPU computation capacity. Consequently, learning MRF with RENN can be much faster, which would be shown in the following section.
 
 
 \section{Numerical Comparisons in MRF Learning}
@@ -169,18 +169,18 @@ Learning MRF with RENN don't need iterative message propagation. Additionally, R
   
 \end{table}
 
-To make the comparison more concrete, we do learning of MRFs, i.e. learning the model parameter $\bm{\theta}$, via difference inference methods discussed.
+To make the comparison more concrete, we do the learning of MRFs, i.e. learning the model parameter $\bm{\theta}$, via different inference methods discussed.
 
 
 We do learning on two types of MRF graphs, grid (Table~\ref{tab:nll-training-grid-n5n10}) and complete graphs (Table~\ref{tab:nll-training-full-n3n4}). For both cases, we firstly sample the parameter set $\bm{\theta}^{\prime}$, then sample training and testing dataset from $p(\bm{x}; \bm{\theta}^{\prime})$. The true NLL of sampled datasets can be computed by $p(\bm{x}; \bm{\theta}^{\prime})$. We then train a randomly-initialized model with the obtained training dataset by using RENN (section~\ref{sec:model-learning-with-renn}). The trained model by RENN is evaluated with testing dataset w.r.t. NLL value, which is compared with trained models by other methods. We also include the comparison with exact inference where $Z(\bm{\theta})$ is computed exactly.
 In the grid graphs, there are $4000$ samples for training and $1000$ for testing. In the complete graph case, there are $2000$ samples for training and $1000$ samples for testing. 
 
-In the cases of grid graphs, the NLLs of most methods are close to the true NLL for small-sized graphs ($n=25,100$), with RENN reaching the lowest NNL. At case of $n=255$, RENN outperforms all other methods significantly. Additionally, RENN is much faster. As shown in Table~\ref{tab:time-training}, loopy BP needs almost $335$s and damped BP needs about $525$s per epoch iteration, while RENN takes $16$s per epoch.
+In the cases of grid graphs, the NLLs of most methods are close to the true NLL for small-sized graphs ($n=25,100$), with RENN reaching the lowest NNL. In the case of $n=255$, RENN outperforms all other methods significantly. Additionally, RENN is much faster. As shown in Table~\ref{tab:time-training}, loopy BP needs almost $335$s and damped BP needs about $525$s per epoch iteration, while RENN takes $16$s per epoch.
 Neural network based methods parameterize the beliefs or marginal distributions and thus can do new inference estimations much faster when model parameter $\bm{\theta}$ is updated in optimization steps. % When the learning step of $\bm{\theta}$ is small, multiple steps of update of $\bm{\theta}$ can share one inference estimation of marginals without degenerating performance.
 
 
 
-In the cases of complete graph, the advantage of RENN is significant, compared with other methods as shown in Table~\ref{tab:nll-training-full-n3n4}. Other benchmark methods fall behind RENN by a distinct difference, given the size of graph is relatively small. The results here actually agree with inference experiments shown in Table~\ref{tab:infer-full-n9} and \ref{tab:infer-full-n16}, where partition function estimations of other benchmark methods have much larger errors. As for the average time per epoch, neural network based models still are faster than iterative message passing methods in general.
+In the cases of complete graphs, the advantage of RENN is significant, compared with other methods as shown in Table~\ref{tab:nll-training-full-n3n4}. Other benchmark methods fall behind RENN by a distinct difference, given the size of graphs is relatively small. The results here actually agree with inference experiments shown in Table~\ref{tab:infer-full-n9} and \ref{tab:infer-full-n16}, where partition function estimations of other benchmark methods have much larger errors. As for the average time per epoch, neural network based models still are faster than iterative message-passing methods in general.
 
 
 \section{Discussion on Learning}
