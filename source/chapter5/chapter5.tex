@@ -34,7 +34,7 @@ The left-hand-side of \eqref{chpt5:eq:stationary-point-likely} is empirical expe
   If we instantiate $p(\bm{x};\bm{\theta})$ from exponential family and it is canonically parameterized, its potential $\phi_a(\bm{x}_a; \bm{\theta})$ is log-linear w.r.t. the sufficient statistic. The corresponding equation of \eqref{chpt5:eq:stationary-point-likely} in this case is reduced into \textit{moment matching}.
 \end{remark}
 
-Apart from the classical techniques such as iterative proportional fitting \cite{eric10-708ipf}, the wide used approach is gradient decent method by using \eqref{chpt3:eq:likely-gradient-thetaa}, in maximizing $\Ll(\Dd; \bm{\theta})$. Either way, the inference on marginal distribution $\left\{ p(\bm{x}_a; \bm{\theta}), a \in \Ff \right\}$ is inevitable.
+Apart from the classical techniques such as iterative proportional fitting \cite[section~6.1]{wainwright2008graphical}\cite{eric10-708ipf}, the wide used approach is gradient decent method by using \eqref{chpt3:eq:likely-gradient-thetaa}, in maximizing $\Ll(\Dd; \bm{\theta})$. Either way, the inference on marginal distribution $\left\{ p(\bm{x}_a; \bm{\theta}), a \in \Ff \right\}$ is inevitable.
 
 Take the gradient decent method as example, we need to use one of the inference approaches introduced in Part~\ref{part:inference} to approximate the marginals $\left\{ p(\bm{x}_a; \bm{\theta}), a \in \Ff \right\}$, then do update of the parameter
 \begin{equation}
