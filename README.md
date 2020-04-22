@@ -5,8 +5,8 @@ Schedule following: [KTH public defense of doctoral thesis](https://intra.kth.se
 - [x] **March**: Check with Ragnar about the preliminary drafting stuff. 
 - [x] **March**: ~~preliminary Content organizing~~ We decide revise content organizing while along writing content.
 - [ ] **March-May**: Finish the first complete draft of thesis.
-  -- [x] **March-April**: Introduction, Background, Inference Part finished
-  -- [ ] **April-May**: Learning Part, abstract, acknowledgements
+  - [x] **March-April**: Introduction, Background, Inference Part finished
+  - [ ] **April-May**: Learning Part, abstract, acknowledgements
 - [ ] **1st-15th, June**: **Lars and Ragnar** check availability of committee members.
 - [ ] **1st-15th, June**: **Lars and Ragnar** confirm advance reviewer of the thesis.
 - [ ] **June-August**: Improving and revising thesis.
