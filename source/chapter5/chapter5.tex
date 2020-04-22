@@ -1,8 +1,8 @@
 \chapter{Learning with inference}
-In Part~\ref{part:inference}, we have discussed different ways for inference, assuming a probabilistic graphical models is given. As introduced in chapter~\ref{chapter2}, learning graphcial models includes structure learning and parameter learning. We restrict our discussion to the parameter learning of graphical models. In another words, from this chapter onward, we would focus on answering the question of how to decide the parameters of a probabilistic graphical model.
-As the continuation of Part~\ref{part:inference}, we mainly discuss the learning of undirected graphcial models, i.e. MRFs, in this chapter and leave the learning of directed ones for coming chapters.
+In Part~\ref{part:inference}, we have discussed different ways for inference, assuming a probabilistic graphical models is given. As introduced in chapter~\ref{chapter2}, learning graphcial models includes structure learning and parameter learning. We restrict our discussion to the parameter learning of graphical models. From this chapter onward, we would focus on answering the question of how to decide the parameters of a probabilistic graphical model.
+In this chapter, we mainly discuss the learning of undirected graphcial models, and leave the learning of directed graphical models for coming chapters.
 
-As explained in section~\ref{chpt2:sec:learning-principles}, the most essential learning principle is \textit{maximal likelihood} that is derived from the minimization of KL-divergence. Since we do not have access to the true distribution $p^{\ast}(\bm{x})$, practical maximal likelihood learning is via tuning parameter $\bm{\theta}$ of model $p(\bm{x};\bm{\theta})$ through information of samples of $p^{\ast}(\bm{x})$, i.e. $\Dd = \left\{ \bm{x}^1, \bm{x}^2, \cdots, \bm{x}^{M}\right\}$.
+As explained in section~\ref{chpt2:sec:learning-principles}, the most essential learning principle is \textit{maximal likelihood} that is derived from the minimization of KL-divergence. Since we do not have access to the true distribution $p^{\ast}(\bm{x})$, practical maximal likelihood learning is via tuning parameter $\bm{\theta}$ of model $p(\bm{x};\bm{\theta})$ using information of samples of $p^{\ast}(\bm{x})$, i.e. $\Dd = \left\{ \bm{x}^1, \bm{x}^2, \cdots, \bm{x}^{M}\right\}$.
 
 We would begin with the explanation of why inference is required in learning, after which MRF learning via RENN is explained. Numerical comparisons with classic message-passing methods w.r.t. learning is demonstrated afterwords. Topics on learning with hidden variables are then discussed.
 
@@ -15,7 +15,7 @@ Let us continue the discussion on learning in section~\ref{chpt2:sec:learning-pr
 where $\tilde{p}(\bm{x}; \bm{\theta}) =  \prod_{a\in \Ff} \phi_a(\bm{x}_a; \bm{\theta}_a)$. 
 Without loss of generality, computing the gradient w.t.r. $\bm{\theta}_a$ gives
 \begin{align}\label{chpt5:eq:one-sample-likely-grad}
-  \pd{l(\bm{x};\bm{\theta})}{\bm{\theta}_a} = \pd{\log{{\phi}(\bm{x}_a; \bm{\theta}_a)}}{\bm{\theta}_a} - \EE_{p(\bm{x}_a; \bm{\theta})}\left[ \pd{\log{{\phi}(\bm{x}_a; \bm{\theta}_a)}}{\bm{\theta}_a} \right].
+  \pd{l(\bm{x};\bm{\theta})}{\bm{\theta}_a} = \pd{\log{{\phi_a}(\bm{x}_a; \bm{\theta}_a)}}{\bm{\theta}_a} - \EE_{p(\bm{x}_a; \bm{\theta})}\left[ \pd{\log{{\phi_a}(\bm{x}_a; \bm{\theta}_a)}}{\bm{\theta}_a} \right].
 \end{align}
 Applying all sample from dataset $\Dd$, i.e.
 \begin{equation}
@@ -23,15 +23,18 @@ Applying all sample from dataset $\Dd$, i.e.
 \end{equation}
 we have
 \begin{equation}\label{chpt3:eq:likely-gradient-thetaa}
-  \pd{\Ll(\bm{x};\bm{\theta})}{\bm{\theta}_a} = \frac{1}{|\Dd |} \sum_{\bm{x} \in \Dd}\pd{\log{{\phi}(\bm{x}_a; \bm{\theta}_a)}}{\bm{\theta}_a} - \EE_{p(\bm{x}_a; \bm{\theta})}\left[ \pd{\log{{\phi}(\bm{x}_a; \bm{\theta}_a)}}{\bm{\theta}_a} \right].
+  \pd{\Ll(\bm{x};\bm{\theta})}{\bm{\theta}_a} = \frac{1}{|\Dd |} \sum_{\bm{x} \in \Dd}\pd{\log{{\phi_a}(\bm{x}_a; \bm{\theta}_a)}}{\bm{\theta}_a} - \EE_{p(\bm{x}_a; \bm{\theta})}\left[ \pd{\log{{\phi_a}(\bm{x}_a; \bm{\theta}_a)}}{\bm{\theta}_a} \right].
 \end{equation}
-In general, there is no closed-form solution in maximizing this log-likelihood $\Ll(\Dd; \bm{\theta})$. But it is intuitive to observe that the stationary point of $\pd{\Ll(\bm{x};\bm{\theta})}{\bm{\theta}_a}$ is
+In general, there is no closed-form solution in maximizing this log-likelihood $\Ll(\Dd; \bm{\theta})$. But it is intuitive to observe that the stationary point of ${\Ll(\bm{x};\bm{\theta})}$ is
 \begin{equation}\label{chpt5:eq:stationary-point-likely}
-  \frac{1}{|\Dd |} \sum_{x \in \Dd}\pd{\log{{\phi}(\bm{x}_a; \bm{\theta}_a)}}{\bm{\theta}_a} = \EE_{p(\bm{x}_a; \bm{\theta})}\left[ \pd{\log{{\phi}(\bm{x}_a; \bm{\theta}_a)}}{\bm{\theta}_a} \right].
+  \frac{1}{|\Dd |} \sum_{x \in \Dd}\pd{\log{{\phi_a}(\bm{x}_a; \bm{\theta}_a)}}{\bm{\theta}_a} = \EE_{p(\bm{x}_a; \bm{\theta})}\left[ \pd{\log{{\phi_a}(\bm{x}_a; \bm{\theta}_a)}}{\bm{\theta}_a} \right].
 \end{equation}
-The left-hand-side of \eqref{chpt5:eq:stationary-point-likely} is empirical expectation w.r.t. to the gradient of potential function $\phi_a$, while on the right-hand-side of \eqref{chpt5:eq:stationary-point-likely} the expectation is computed by support of the marginal distribution $p(\bm{x}_a; \bm{\theta})$. This stationary point is intuitively telling us that the maximum likelihood estimation is trying to enforce the equality of empirical expectation of gradient with each $\bm{\theta}_a$ and the model's expectation.
+The left-hand-side of \eqref{chpt5:eq:stationary-point-likely} is empirical expectation w.r.t. to the gradient of potential function $\phi_a$, while on the right-hand-side of \eqref{chpt5:eq:stationary-point-likely} the expectation is computed by support of the marginal distribution $p(\bm{x}_a; \bm{\theta})$. This stationary point is intuitively telling us that the maximum likelihood estimation is trying to enforce the equality of empirical expectation of gradient with each $\bm{\theta}_a$ and the model's expectation of that.
+\begin{remark}
+  If we instantiate $p(\bm{x};\bm{\theta})$ from exponential family and it is canonically parameterized, its potential $\phi_a(\bm{x}_a; \bm{\theta})$ is log-linear w.r.t. the sufficient statistic. The corresponding equation of \eqref{chpt5:eq:stationary-point-likely} in this case is reduced into \textit{moment matching}.
+\end{remark}
 
-Apart from the classical techniques such as iterative proportional fitting \cite{} and generalized iterative scaling \cite{}, the wide used approach is gradient decent method by using \eqref{chpt3:eq:likely-gradient-thetaa}, in maximizing $\Ll(\Dd; \bm{\theta})$. Either way, the inference on marginal distribution $\left\{ p(\bm{x}_a; \bm{\theta}), a \in \Ff \right\}$ is inevitable.
+Apart from the classical techniques such as iterative proportional fitting \cite{eric10-708ipf}, the wide used approach is gradient decent method by using \eqref{chpt3:eq:likely-gradient-thetaa}, in maximizing $\Ll(\Dd; \bm{\theta})$. Either way, the inference on marginal distribution $\left\{ p(\bm{x}_a; \bm{\theta}), a \in \Ff \right\}$ is inevitable.
 
 Take the gradient decent method as example, we need to use one of the inference approaches introduced in Part~\ref{part:inference} to approximate the marginals $\left\{ p(\bm{x}_a; \bm{\theta}), a \in \Ff \right\}$, then do update of the parameter
 \begin{equation}
@@ -66,7 +69,7 @@ Combining the model learning and inference, we have
 \end{align}
 Then the difficulty of computing $Z(\bm{\theta})$ is dealt with by joint learning of MRF and inference by RENN in \eqref{eq:learning-min-max}.
 
-Learning MRF with RENN don't need iterative message propagation. Additionally, RENN can be implemented with modern toolboxs such as PyTorch or TensorFlow that enjoys the GPU computation capacity. Consequently, learning MRF with RENN can be much faster.
+Learning MRF with RENN don't need iterative message propagation. Additionally, RENN can be implemented with modern toolboxs such as PyTorch or TensorFlow that enjoys the GPU computation capacity. Consequently, learning MRF with RENN can be much faster, which would be shown in the following section.
 
 
 \section{Numerical Comparisons in MRF Learning}
@@ -182,13 +185,13 @@ In the cases of complete graph, the advantage of RENN is significant, compared w
 
 \section{Discussion on Learning}
 
-The parameter learning becomes more challenge when variable vector $\bm{x}$ is \textit{partial observed}. $\bm{x} = [\bm{x}_U, \bm{x}_O]$, where $\bm{x}_O$ is the observed part and $\bm{x}_U$ is unobserved part that is also known as latent variable. Then the joint distribution becomes $p(\bm{x}; \bm{\theta}) = p(\bm{x}_U, \bm{x}_O; \bm{\theta})$. Since it is only partially observed, we can not maximize the complete evidence log-likelihood as what we did in section~\ref{chpt5:sec:learning-mrf}. Instead, we marginalize the latent variable $\bm{x}_U$ out first
+The parameter learning becomes more challenge when variable vector $\bm{x}$ is \textit{partial observed}. Denote $\bm{x} = [\bm{x}_U, \bm{x}_O]$, where $\bm{x}_O$ is the observed part and $\bm{x}_U$ is unobserved part that is also known as latent variable. Then the joint distribution becomes $p(\bm{x}; \bm{\theta}) = p(\bm{x}_U, \bm{x}_O; \bm{\theta})$. Since it is only partially observed, we can not maximize the complete evidence log-likelihood as what we did in section~\ref{chpt5:sec:learning-mrf}. Instead, we marginalize the latent variable $\bm{x}_U$ out first
 \begin{equation}\label{chpt2:eq:patial-likelihood}
   l(\bm{x}_O; \bm{\theta}) = \log{\sum_{\bm{x}_U}p(\bm{x}_U, \bm{x}_O; \bm{\theta})} = \log{Z(\bm{x}_O;\bm{\theta})} - \log{Z(\bm{\theta})},
 \end{equation}
-where $Z(\bm{x}_O;\bm{\theta}) = \sum_{\bm{x}_O}\tilde{p}(\bm{x}; \bm{\theta})$. In general, there are general two categories of methods in dealing with learning in partial observed scenarios:
+where $Z(\bm{x}_O;\bm{\theta}) = \sum_{\bm{x}_O}\tilde{p}(\bm{x}; \bm{\theta})$. In general, there are two categories of methods in dealing with learning in partial observed scenarios:
 \begin{itemize}
-\item Directly optimize $l(\bm{x}_O; \bm{\theta})$ w.r.t. $\bm{\theta}$. We need to able to compute or estimate $l(\bm{x}_O; \bm{\theta})$. Essentially, it requires the gradient of $l(\bm{x}_O; \bm{\theta})$ which a function of both $p(\bm{x}_a| \bm{x}_O; \bm{\theta})$ and $p(\bm{x}_a; \bm{\theta})$. Inference methods that we previously discussed, e.g., mean field, BP (and its variants), GBP, and RENN, would do the job.
+\item Directly optimize $l(\bm{x}_O; \bm{\theta})$ w.r.t. $\bm{\theta}$. We need to be able to compute or estimate $l(\bm{x}_O; \bm{\theta})$. Essentially, it requires the gradient of $l(\bm{x}_O; \bm{\theta})$ which is a function of both $p(\bm{x}_a| \bm{x}_O; \bm{\theta})$ and $p(\bm{x}_a; \bm{\theta})$. Inference methods that we previously discussed, e.g., mean field, BP (and its variants), GBP, and RENN, would do the job.
 \item Optimize the a lower bound of $l(\bm{x}_O; \bm{\theta})$. Methods such as (variational) EM, variational Bayes and variational auto-encoder (VAE) \cite{kingma2019vae} belongs to this category.
 \end{itemize}
 
@@ -202,7 +205,7 @@ Alternative, we may work with a lower bound of $l(\bm{x}_O; \bm{\theta})$ instea
 \end{align}
 similar to the variational free energy \eqref{chpt2:eq:variational-free-energy}. Here $\bm{x}_O$ is the clamped value of observation. Since
 \begin{equation}
-  \EE_{q(\bm{x}_U|\bm{x}_O)}\left[ \log{\frac{q(\bm{x}_U|\bm{x}_O)}{\tilde{p}(\bm{x}_U, \bm{x}_O; \bm{\theta})}} \right] \geq - \log{Z(\bm{x}_O; \bm{\theta})}
+  \EE_{q(\bm{x}_U|\bm{x}_O)}\left[ \log{\frac{q(\bm{x}_U|\bm{x}_O)}{\tilde{p}(\bm{x}_U, \bm{x}_O; \bm{\theta})}} \right] \geq - \log{Z(\bm{x}_O; \bm{\theta})},
 \end{equation}
 we have
 \begin{align}
@@ -211,7 +214,7 @@ we have
                            & = \EE_{q(\bm{x}_U|\bm{x}_O)}\left[ \log{{p}(\bm{x}_U, \bm{x}_O; \bm{\theta})} \right] + H({q(\bm{x}_U|\bm{x}_O)}) \nonumber \\
                            & := F(q, \bm{\theta}),
 \end{align}
-which is exactly the lower bound \eqref{chpt2:eq:llk-lower-bound}. This give the intuition of viewing EM as an coordinate ascent method:
+which is exactly the lower bound \eqref{chpt2:eq:llk-lower-bound}. This give the intuition of viewing EM as a coordinate ascent method:
 \begin{align}
   \mathrm{E~step:}~~~ q^{(t+1)} &= \uargmax{q}{F(q, \bm{\theta}^{(t)})}, \\
   \mathrm{M~step:}~~~\bm{\theta}^{(t+1)} &= \uargmax{\bm{\theta}}{F(q^{(t+1)}, \bm{\theta})}.
@@ -235,7 +238,7 @@ with encoder $q(\bm{x}_U|\bm{x}_O)$ and decoder ${p}(\bm{x}_O| \bm{x}_U; \bm{\th
 \end{remark}
 
 \begin{remark}
-  Among all the methods discussed in the section, one of the major problem is computing or estimating $p(\bm{x}_U| \bm{x}_O; \bm{\theta})$. Apart from direct optimization of $l(\bm{x}_O;\bm{\theta})$ with exact inference methods and EM method that uses exact $q(\bm{x}_U| \bm{x}_O) = p(\bm{x}_U| \bm{x}_O; \bm{\theta})$, the rest employs an approximation of the posterior, i.e. $q(\bm{x}_U| \bm{x}_O) \approx p(\bm{x}_U| \bm{x}_O; \bm{\theta})$.
+  Among all the methods discussed in the section, a key piece of the methods is computing or estimating $p(\bm{x}_U| \bm{x}_O; \bm{\theta})$. Apart from direct optimization of $l(\bm{x}_O;\bm{\theta})$ with exact inference methods and EM method that uses exact $q(\bm{x}_U| \bm{x}_O) = p(\bm{x}_U| \bm{x}_O; \bm{\theta})$, the rest employs an approximation of the posterior, i.e. $q(\bm{x}_U| \bm{x}_O) \approx p(\bm{x}_U| \bm{x}_O; \bm{\theta})$.
 \end{remark}
 
 %%% Local Variables:
