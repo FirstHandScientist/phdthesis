@@ -4,9 +4,10 @@
 
 When learning with partial observed varaibles in graphical models, EM is one of the most widely used frameworks in practices. In directed graphical models, an immediate relieve is that we do not to deal with the partition function $Z(\bm{\theta})$ any more. However, it does not mean directed graphical models with partial observed variables are trivial to learn. The 'missing' data (corresponding to unobserved variables) still poses challenges in model learning, since we want to have the partial evidence (observed) well explained by our model while keeping its ability of tracking uncertainty of the 'unobserved' part.
 
+As discussed in section~\ref{chpt2:sec:learning-principles}, the presence of latent or hidden variables is either due to the data availability or abstraction of data generating. Once the dataset is given, the option left to us is the choice of the model that we plan to use to approximate the true distribution $p^{\ast}$ which actually generated the dataset. This process is to select one model from a set of models, i.e. hypothesis space, based on the likelihood criteria. If the hypothesis space is very limited, the ability to represent our true $p^{\ast}$ is limited, leading to inherent error. This type of inherent limitation brings learning \textit{bias} before we start to fit the parameters.
+Therefore, given that the dataset is large and representative enough, we hope that the hypothesis space is highly expressive such that we are more likely to be able to represent $p^{\ast}$ with a selected model from the hypothesis space. This naturally requires our model to be flexible and expressive.
 
-
-representation power, flexibility of pdf v.s. model learning
+Gaussian mixture model has been successfully applied widely with EM framework, which also enjoys the closed-form update rule in iterations. The advantage comes with limitation of linear dependency and free parameters that can be tuned, i.e. limitation of flexibility. To explore further, we discuss more flexible models beyond Gaussian in this chapter. We start with inducing the normalizing flows that are going to used as probabilistic models in place of Gaussian models. A normalizing flow can consist of as many non-linear transformations as needed, and thus is highly flexible. In addition, likelihood computation ability remains and it allows efficient sampling in normalizing flow. But closed-form iterative update solutions are not available any more. We therefore need to design the practical algorithms to model learning in EM framework. 
 
 
 
@@ -30,7 +31,55 @@ section/chapter transition text: mixture model could be obtained from clamping a
 \end{remark}
 
 Can be viewed as two-node graphical model learning. \href{https://sailinglab.github.io/pgm-spring-2019/notes/lecture-05/}{10-708lecture5-note}
-\section{Normalizing flow}
+\section{Normalizing Flow}
+Normalizing flow is practical approach to improve the flexibility of probabilistic model while still keeping the likelihood computation tractable and the efficiency of generating samples. The general idea is to start with an initial random variable following a relatively simple distribution with known probability density function. Then a chain of invertible parameterized transformations are applied to the initial random variable such that the output follows a more flexible distribution.
+
+Denote the chain of transformations by $\tilde{\bm{g}}$ and the output by $\tilde{\bm{x}}$. Then we have
+\begin{equation}
+  \tilde{\bm{x}}=\tilde{\bm{g}}(\bm{z})
+\end{equation}
+where $\bm{z}$ is the initial random variable with know density function $p(\bm{z})$. To explicitly denote the chain,
+\begin{equation}
+\tilde{\bm{g}}=\tilde{\bm{g}}^{[L]}\circ \tilde{\bm{g}}^{[L-1]}\circ \cdots
+\circ \tilde{\bm{g}}^{[1]},
+\end{equation}
+which is invertible $\tilde{\bm{f}}=\tilde{\bm{g}}^{-1}$. Then the signal flow can be depicted as% , illustrated in \autoref{illustation}.
+% $=\bm{h}_L(\bm{h}_{L-1}\hdots (\bm{h}_1(\bm{z})))$.
+\begin{equation*}
+  % \begin{figure}[htb]
+  \vspace{-8pt}
+  \centering
+  \begin{tikzpicture}
+    \node (z) at (0,0) {};
+    \node at ($(z)-(0.5,0)$){$\bm{z}=\bm{h}_0$};
+    \node (xi1) at (1.5,0) {$\bm{h}_1$};
+    \node (xi2) at (3,0) {};
+    \node (xi3) at (4.5,0){};
+    \node (x) at (6,0) {};
+    \node at ($(x)+(0.5,0)$){$\tilde{\bm{x}} = \bm{h}_L$};
+    \draw[->] ($(z) + (0.3,0.1)$) -- node[above]{$\tilde{\bm{g}}^{[1]}$} ($(xi1)+(-0.3,0.1)$); 
+    \draw[->] ($(xi1)-(0.3,0.1)$) -- node[below]{$\tilde{\bm{f}}^{[1]}$}($(z) - (-0.3,0.1)$);
+    \draw[->] ($(xi1) + (0.3,0.1)$) -- node[above]{$\tilde{\bm{g}}^{[2]}$} ($(xi2)+(-0.3,0.1)$); 
+    \draw[->] ($(xi2)-(0.3,0.1)$) -- node[below]{$\tilde{\bm{f}}^{[2]}$}($(xi1) - (-0.3,0.1)$);
+    \draw[->] ($(xi3) + (0.3,0.1)$) -- node[above]{$\tilde{\bm{g}}^{[L]}$} ($(x)+(-0.3,0.1)$); 
+    \draw[->] ($(x)-(0.3,0.1)$) -- node[below]{$\tilde{\bm{f}}^{[L]}$}($(xi3) - (-0.3,0.1)$);
+    \draw[dotted,line width = 0.3 mm] (xi2) -- (xi3);
+  \end{tikzpicture},
+\end{equation*}
+% \vspace{-15pt}
+% \caption{$\tilde{\bm{g}}=\tilde{\bm{g}}_L\circ \tilde{\bm{g}}_{L-1}\circ \cdots \circ \tilde{\bm{g}}_1$ and $\tilde{\bm{f}}=\tilde{\bm{g}}^{-1}$.}
+% \label{illustation}
+% \end{equation}
+% \end{figure}
+where $\tilde{\bm{g}}^{[l]}$ and $\tilde{\bm{f}}^{[l]}$ are the $l$-th transformation in $\tilde{\bm{g}}$ and $\tilde{\bm{f}}$, respectively. In practice, $\bm{\tilde}{g}$ can be implemented by feed-forward neural networks, which we will detail later. If every transformation in the chain is invertible, the full mapping is invertible.
+
+
+ The inverse function is given by $\bm{z}=\tilde{\bm{f}}(\tilde{\bm{x}})$. Flow-based network, proposed in \cite{DBLP:journals/corr/DinhKB14}, is such a feed-forward neural network, which is further improved in subsequent works \cite{2016arXiv160508803D, 2018arXiv180703039K}. It also has additional advantages as efficient Jacobian computation and low computational complexity. %Computation of inverse mapping for flow-based network and determinant of Jacobin were addressed in the literature. 
+
+
+
+Introduce different flows and give details of normalizing flows.
+
 
 \section{expectation maximization of neural network based mixture models}
 
@@ -507,38 +556,6 @@ In this section we first discuss about a suitable neural network model for $\bm{
 
 \subsubsection{Use of flow-based neural network}\label{subsec-flow-intro}
 
-We use feed-forward neural network to implement every generator. With some notational abuse, assume that $\tilde{\bm{g}}$ is a feed-forward neural network:
-$\tilde{\bm{x}}=\tilde{\bm{g}}(\bm{z})$ that has multiple hidden layers
-$\tilde{\bm{g}}=\tilde{\bm{g}}^{[L]}\circ \tilde{\bm{g}}^{[L-1]}\circ \cdots
-\circ \tilde{\bm{g}}^{[1]}$ and is invertible $\tilde{\bm{f}}=\tilde{\bm{g}}^{-1}$. Then the signal flow can be depicted as% , illustrated in \autoref{illustation}.
-% $=\bm{h}_L(\bm{h}_{L-1}\hdots (\bm{h}_1(\bm{z})))$.
-\begin{equation*}
-  % \begin{figure}[htb]
-  \vspace{-8pt}
-  \centering
-  \begin{tikzpicture}
-    \node (z) at (0,0) {};
-    \node at ($(z)-(0.5,0)$){$\bm{z}=\bm{h}_0$};
-    \node (xi1) at (1.5,0) {$\bm{h}_1$};
-    \node (xi2) at (3,0) {};
-    \node (xi3) at (4.5,0){};
-    \node (x) at (6,0) {};
-    \node at ($(x)+(0.5,0)$){$\tilde{\bm{x}} = \bm{h}_L$};
-    \draw[->] ($(z) + (0.3,0.1)$) -- node[above]{$\tilde{\bm{g}}^{[1]}$} ($(xi1)+(-0.3,0.1)$); 
-    \draw[->] ($(xi1)-(0.3,0.1)$) -- node[below]{$\tilde{\bm{f}}^{[1]}$}($(z) - (-0.3,0.1)$);
-    \draw[->] ($(xi1) + (0.3,0.1)$) -- node[above]{$\tilde{\bm{g}}^{[2]}$} ($(xi2)+(-0.3,0.1)$); 
-    \draw[->] ($(xi2)-(0.3,0.1)$) -- node[below]{$\tilde{\bm{f}}^{[2]}$}($(xi1) - (-0.3,0.1)$);
-    \draw[->] ($(xi3) + (0.3,0.1)$) -- node[above]{$\tilde{\bm{g}}^{[L]}$} ($(x)+(-0.3,0.1)$); 
-    \draw[->] ($(x)-(0.3,0.1)$) -- node[below]{$\tilde{\bm{f}}^{[L]}$}($(xi3) - (-0.3,0.1)$);
-    \draw[dotted,line width = 0.3 mm] (xi2) -- (xi3);
-  \end{tikzpicture},
-\end{equation*}
-% \vspace{-15pt}
-% \caption{$\tilde{\bm{g}}=\tilde{\bm{g}}_L\circ \tilde{\bm{g}}_{L-1}\circ \cdots \circ \tilde{\bm{g}}_1$ and $\tilde{\bm{f}}=\tilde{\bm{g}}^{-1}$.}
-% \label{illustation}
-% \end{equation}
-% \end{figure}
-where $\tilde{\bm{g}}^{[l]}$ and $\tilde{\bm{f}}^{[l]}$ are the $l$-th layer of $\tilde{\bm{g}}$ and $\tilde{\bm{f}}$, respectively. In a feed-forward neural network, if every layer is invertible, the full feed-forward neural network is invertible. The inverse function is given by $\bm{z}=\tilde{\bm{f}}(\tilde{\bm{x}})$. Flow-based network, proposed in \cite{DBLP:journals/corr/DinhKB14}, is such a feed-forward neural network, which is further improved in subsequent works \cite{2016arXiv160508803D, 2018arXiv180703039K}. It also has additional advantages as efficient Jacobian computation and low computational complexity. %Computation of inverse mapping for flow-based network and determinant of Jacobin were addressed in the literature. 
 
 For a flow-based neural network architecture, let us assume that
 the feature $\bm{h}_l$ at the $l$'th layer has two subparts as
