@@ -11,6 +11,7 @@ Gaussian mixture model has been successfully applied widely with EM framework, w
 
 
 \section{Normalizing Flow}
+\label{chpt6:sec:flow}
 Normalizing flow is a practical approach to improve the flexibility of probabilistic models while still keeping the likelihood computation tractable and the efficiency of generating samples. The general idea is to start with an initial random variable following a relatively simple distribution with known probability density function. Then a chain of invertible parameterized transformations is applied to the initial random variable such that the output follows a more flexible distribution.
 
 Denote the chain of transformations by $\tilde{\bm{g}}$ and the output by $\tilde{\bm{x}}\in \RR^{N}$. Then we have
@@ -125,6 +126,376 @@ layer signal $\bm{h}$ and model a part of it directly as standard Gaussian to re
   In contrast to the above finite-chain flow where $L$ is a discrete finite integer, the method developed in \cite{ricky2018ODE} introduced a continuous-transformation of variables by solving an ordinary differential equation (ODE). Comparing to the discrete finite chain of transformation in normalizing flow, ODE can be viewed as a continuous chain of variable transformation. The inverse mapping and Jacobian determinant are not required in ODE method. But ODE needs to solve differentiation equations which is also challenging.
 \end{remark}
 
+\section{Generator mixture model and EM training}
+
+\begin{figure}[tp!]
+  \centering
+  \begin{tikzpicture}
+    % \tikzstyle{enode} = [thick, draw=blue, circle, inner sep = 3pt,
+    % align=center]
+    \tikzstyle{enode} = [thick, draw=blue, ellipse, inner sep = 2pt,  align=center]
+    \tikzstyle{nnode} = [thick, rectangle, rounded corners = 2pt,minimum size = 0.8cm,draw,inner sep = 2pt]
+    \node[enode] (z) at (0,0) {$\bm{z}\sim p(\bm{z})$};
+    \node[enode] (x) at (5.5,0){$\bm{x}\sim p(\bm{x}; \bm{\Phi})$};
+    % \node at (5.2,-1) {$p(\bm{x};\bm{\Phi}) = \textstyle\sum_{k=1}^K \pi_k  p_k(\bm{x})$};
+    \node[nnode] (g1) at (2.6,1.8) {$\bm{g}_1$};
+    \node[nnode] (g2) at (2.6,0.5) {$\bm{g}_2$};
+    \node[nnode] (gk) at (2.6,-1.8) {$\bm{g}_K$};
+    \draw[dotted,line width=2pt] (2.6,-0.3) -- (2.6,-1.2);
+    \draw[->] (z) [in= 180, out =0] to (g1);
+    \draw[->] (z) [in= 180, out =0] to (g2);
+    \draw[->] (z) [in= 180, out =0] to (gk);
+    \filldraw[->] (3.7, 0.5)circle (2pt) -- node[above=0.2]{$\bm{s}\sim \bm{\pi}$} (x) ;
+    % \draw[->] (3,-0.8) -- (3.5, -0.8);
+    \draw[->] (g1) -- (3.5,1.8);
+    \draw[->] (g2) -- (3.5, 0.5);
+    \draw[->] (gk) -- (3.5, -1.8);
+  \end{tikzpicture}
+  \caption{Diagram of Generator Mixture Model (GenMM).}\label{dia-emgm-nm}
+\end{figure}
+
+In this section, we introduce a generative model that is a mixture of $K$ flow models. All the $K$ flow models have a common input latent variable $\bm{z} \in \mathbb{R}^N$. Here, a flow $\bm{g}_k(\bm{z}): \mathbb{R}^N
+\rightarrow \mathbb{R}^N$ is a instance of $\tilde{\bm{g}}$. $\bm{g}_k$ acts as the $k$-th generator and depends on a set of parameters $\bm{\theta}_k$ as
+$\bm{g}_k(\bm{z})=\bm{g}(\bm{z};\boldsymbol{\theta}_k)$. For
+simplicity, we assume that all $K$ generators have the same
+signal-flow structure. Furthermore, the distribution of $\bm{z}$ is fixed as Gaussian $\mathcal{N}(\bm{0},\bm{I})$.
+The induced probability density function of $\bm{x} \in \mathbb{R}^N$ of the proposed mixture model with $K$ mixture components is given as:
+\begin{align}\label{eq:FirstMixtureModel}
+  p(\bm{x};\bm{\Phi})  &= \textstyle\sum_{k=1}^K \pi_k  p_k(\bm{x}) \nonumber\\
+                       &= \textstyle \sum_{k=1}^K \pi_k  p(\bm{g}_k(\bm{z}))\nonumber\\
+                       &= \textstyle \sum_{k=1}^K \pi_k  p(\bm{g}(\bm{z};\boldsymbol{\theta}_k)).
+\end{align}
+We use $\bm{\Phi}$ to denote the set of all parameters $ \{\bm{\pi},\bm{\theta}_1, \dots, \bm{\theta}_K \}$, where $\bm{\pi} = \left\{ \pi_1, \hdots, \pi_K \right\}$ is the prior distribution of the generators. Note that $\pi_k \geq 0$ and $\sum_{k=1}^K \pi_k =1$. The mixture model
+in \eqref{eq:FirstMixtureModel} is called a generator mixture model (GenMM). \textcolor{blue}{a general graphical illustration here}. The
+diagram of GenMM is illustrated in \autoref{dia-emgm-nm}. The GenMM can be considered as a high-complexity model because each mixture component $p_k(\bm{x})$ has its own parameter set $\bm{\theta}_k$. 
+% the parameter $\boldsymbol{\theta}_k$ varies across $K$ mixture components.
+
+The maximum likelihood estimation problem is
+\begin{equation}\label{eq:max-genmm}
+  \hat{\bm{\Phi}} = \uargmax{\bm{\Phi}}{\log{\prod_{\bm{x}^{i} \in \Dd} p(\bm{x}^{i};\bm{\Phi})}},
+\end{equation}
+where the superscript $i$ corresponds to the $i$'th data sample in a given dataset.
+We address the above maximum likelihood estimation problem using EM. 
+Let us use a categorical variable $\bm{s} = [s_1, s_2, \cdots, s_K]$
+for $1$-of-$K$ representation to be a hidden variable that indicates which generator is the actual one. Elements of $\bm{s}$ follow $s_k \in \{0,1\}$, $\sum_{k=1}^K s_k =1$, and $p(s_k=1)=\pi_k$. The variable $\bm{s}$ is the hidden variable in EM. We will use $\gamma_k$ to denote the posterior probability $p(s_k =1|\bm{x})$ calculated as
+\begin{align}\label{eq-genmm-gamma}
+  \gamma_k = p(s_k =1|\bm{x};\bm{\Phi}) 
+  = \frac{\pi_k p(\bm{g}(\bm{z};\bm{\theta}_k))}{\sum_{l=1}^K\; \pi_l p(\bm{g}(\bm{z};\bm{\theta}_l))}.
+\end{align}
+Assume that a value $\bm{\Phi}^{\mathrm{old}}$ of the parameter set $\bm{\Phi}$ is given, the iterative steps in EM algorithm update $\bm{\Phi}$ as follows.
+\begin{enumerate}
+\item E-step: Evaluation of $\gamma_{k}^{i}$ is 
+  \begin{equation}\label{eq-genmm-e-step}
+    \gamma_{k}^{i}(\bm{\Phi}^{\mathrm{old}}) = \frac{\pi_k^\mathrm{{old}} p(\bm{g}(\bm{z}^{i};\bm{\theta}_k^{\mathrm{old}}))}{\sum_{l=1}^K\; \pi_l^\mathrm{{old}} p(\bm{g}(\bm{z}^{i};\bm{\theta}_l^{\mathrm{old}}))}.   
+  \end{equation}
+\item M-step: Evaluation of $\bm{\Phi}^{\mathrm{new}}$ given by
+  \begin{equation}\label{eq-genmm-opt}
+    \bm{\Phi}^{\mathrm{new}} =   \uargmax{\bm{\Phi}}{\mathcal{Q} (\bm{\Phi},\bm{\Phi}^{\mathrm{old}})}, 
+  \end{equation}
+  where the expected likelihood is
+  \begin{equation}
+    \hspace{-8pt}\mathcal{Q} (\bm{\Phi},\bm{\Phi}^{\mathrm{old}}) = \sum_{i}\sum_{k} \gamma_{k}^{i}(\bm{\Phi}^{\mathrm{old}}) \log \pi_k p_k(\bm{x}^{i}).
+  \end{equation}
+\end{enumerate}
+
+For the GenMM in \eqref{eq:FirstMixtureModel}, the main technical challenges in realizing EM are computation of $\gamma_k$ in the E-step and computation of the joint likelihood $\log{\pi_k p_k(\bm{x})}$ in the M-step. They require explicit computation of the conditional density $p_k(\bm{x}) =  p(\bm{g}_k(\bm{z})) =p(\bm{g}(\bm{z};\bm{\theta}_k))$. This is fulfilled by flow realization of generator $\bm{g}_k$. Since the chain-step transformations can be any complex mapping as discussed in section~\ref{chpt6:sec:flow}, they can be implemented by neural networks.
+
+\subsubsection{EM Learning of GenMM}
+\label{sec-algo-genmm}
+The mixture model GenMM is illustrated in \autoref{dia-emgm-nm},
+where $K$ generators with a certain prior distribution share the same
+latent distribution $p(\bm{z})$. With a neural network based flow as the generator $\bm{g}_k$ for the $k$'th mixture component in GenMM, the probability density function $p_k(\bm{x})$ for any
+$\bm{x}$ can be computed exactly. Recall that $p_k(\bm{x}) =  p(\bm{g}_k(\bm{z})) =p(\bm{g}(\bm{z};\bm{\theta}_k))$ and let $\bm{f}_k$ be the inverse of $\bm{g}_k$. Then, %
+                                                               %                                                                \begin{equation}\label{eq-nm-Q_k}
+                                                               %                                                                \begin{array}{rl}
+                                                               %                                                                  P_k(\bm{x})&= p(\bm{z})\bigg|\det\left( \pd{\bm{z}}{\bm{x}} \right)
+                                                               %                                                                  \bigg|_{\bm{z}=\bm{g}_k^{-1}(\bm{x})} \\
+                                                               %                                                                  &= p(\bm{z}) \prod_{l=1}^L\abs{\det{(\pd{\bm{h}_{k,
+                                                               %                                                                  l-1}}{\bm{h}_{k, l}})}},
+                                                               %                                                                \end{array}
+                                                               %                                                              \end{equation}
+                                                               %                                                              where $\bm{h}_{k, l}$ is the $l$-th hidden layer signal of
+                                                               %                                                              generator $\bm{g}_k$ and $\bm{z} = \bm{h}_{k,0}$,
+                                                               %                                                              $\bm{x} = \bm{h}_{k,L}$ by default.
+the posterior probability can be computed further from \eqref{eq-genmm-e-step} as
+\begin{align}\label{eq-genmm-gamma}
+  \gamma_k({\bm{\Phi}}^{\mathrm{old}}) = \frac{\pi_k^{\mathrm{old}} p(\bm{f}_k(\bm{x})) \big|\det\left( \pd{\bm{f}_k(\bm{x})}{\bm{x}} \right)\big|}{\sum_{j=1}^K\; \pi_j^{\mathrm{old}} p(\bm{f}_j(\bm{x})) \big|\det\left( \pd{\bm{f}_j(\bm{x})}{\bm{x}} \right)\big|},
+\end{align}
+and the objective function in the M-step can be written as
+\begin{align}\label{eq-genmm-obj}
+  &\Qq\left(\bm{\Phi},\bm{\Phi}^{\mathrm{old}}\right)  \nonumber\\
+  =&\sum_{i=1}^{\abs{\Dd}} \sum_{k=1}^{K}\gamma_k^{(i)}(\bm{\Phi}^{\mathrm{old}})\bigg[ \log\;\pi_k +\log\;p(\bm{f}_k(\bm{x}^{(i)})) + \log\;\bigg|\det\left(\pd{\bm{f}_k(\bm{x}^{(i)})}{\bm{x}^{(i)}} \right)\bigg|\bigg].
+\end{align}
+We usually deal with a large dataset for model learning, i.e. $\abs{\Dd}$ can be large. In that case we implement the EM algorithm in batch fashion. 
+Recall that $ \bm{\Phi}= \{\bm{\pi},\bm{\theta}_1, \dots, \bm{\theta}_K \}$ and hence the M-step optimization problem $\arg \max_{\bm{\Phi}} \mathcal{Q} (\bm{\Phi},\bm{\Phi}^{\mathrm{old}})$ is addressed in two steps: (a) optimization of $\{ \bm{\theta}_k \}_{k=1}^{K}$, and (b) optimization of $\bm{\pi}$.
+
+Finding a closed-form solution for the problem $\argmax{\{\bm{\theta}_k\}_{k=1}^{K}}{ \mathcal{Q} (\bm{\Phi},\bm{\Phi}^{\mathrm{old}})}$ is not feasible in general. Instead, we do the batch-size gradient decent to optimize w.r.t. $\{\bm{\theta}_k\}_{k=1}^{K}$.
+% due to large size of dataset we use for training.
+Further, optimization in the batch fashion leads to a practical problem as follows. 
+Since $\bm{\theta}_k$ is the parameter set of neural networks $\bm{g}_k$, one update step of gradient decent would update the generator $\bm{g}_k$ and we would lose the old mixture model parameter set $\bm{\Phi}^{\mathrm{old}}$ that is needed to compute the posteriors $\gamma_k(\bm{\Phi}^{\mathrm{old}})$ and to update $\bm{\pi}$. Thus, in learning GenMM, we maintain two such models with parameter sets $\bm{\Phi}$ and $\bm{\Phi}^{\mathrm{old}}$, respectively. At the beginning of an EM step, $\bm{\Phi} = \bm{\Phi}^{\mathrm{old}}$. While we optimize $\{\bm{\theta}_k\}_{k=1}^{K}$ of $\bm{\Phi}$ with batch-size gradient decent, we use the model with old parameter set $\bm{\Phi}^{\mathrm{old}}$ to do posterior computation and update of $\bm{\pi}$. At the end of the EM step, the old parameter set is replaced by the updated one: $\bm{\Phi}^{\mathrm{old}}\gets \bm{\Phi}$.
+
+
+% \begin{algorithm}
+%   \caption{EM for learning GenMM}\label{flow-algo-em}
+%   \begin{algorithmic}[1]
+%     \STATE {\bfseries Input:}{
+%     Latent distribution: $p(\bm{z})$\\
+%     Empirical distribution $P_d(\bm{x})$ on the input dataset; \\
+%     \STATE Set a total number of epochs $T$ for training, a prior distribution $\bm{\pi}$, an update gap $t_{\pi}$;
+%     Set a learning rate $\eta$. }
+%     \STATE Initialize the generator prior distribution $\pi_k = 1/K$;\\ Initialize $\bm{\theta}_k$ of $\bm{g}_k$, for all $k=1,\dots,K$ randomly.
+%     \FOR { {epoch} $t < T$}
+%     \FOR{iteration in epoch $t$} %\Comment{M-Step}
+%     \STATE Sample a batch of data $\left\{ \bm{x}^{(i)}
+%     \right\}_{i=1}^{n_b}$ from the dataset $P_d(\bm{x})$
+%     \STATE Compute $\gamma_k^{(i)}(\bm{\Phi}^{\mathrm{old}})$ as in \eqref{eq-genmm-gamma},
+%     for all $\bm{x}^{(i)}$ and $k=1, \dots, K$
+%     %     \Comment{Calculate posterior \autoref{eq-posterior-gamma}}
+%     \STATE Compute
+%     $\Qq\left(\bm{\Phi},\bm{\Phi}^{\mathrm{old}}\right)$ as in \eqref{eq-genmm-obj}%\Comment{Expectation}
+
+%     \STATE $\partial{g_k} \gets \nabla_{\bm{\th}_k} \frac{1}{n^{b}}\Qq\left(
+%       \bm{\Phi}, \bm{\Phi}^{\mathrm{old}}\right)$,
+%     $\forall \bm{\th}_k \in \bm{\Phi}$
+%     \STATE $\bm{\th}_k \gets \bm{\th}_k + \eta \cdot \partial{g_k}$, $\forall \bm{\th}_k \in \bm{\Phi}$
+%     \ENDFOR
+%     %     \STATE $\th_k^{t+1} \gets \th_k$, $\forall k$ %\Comment{Update new
+%     %     parameters}
+%     \IF{$(t \mod t_{\pi} ) = 0$}
+%     \STATE $\pi_k \gets \EE_{P_d}\left[ \gamma_k \right]$ %\Comment{Update perior}
+%     \ENDIF
+%     \ENDFOR
+%   \end{algorithmic}
+% \end{algorithm}
+\begin{algorithm}[t]
+  \caption{EM for learning GenMM}\label{flow-algo-em}
+  \begin{algorithmic}[1]
+    \STATE {\bfseries Input:}
+    Latent distribution: $p(\bm{z})$. Empirical distribution $P_d(\bm{x})$ of the input dataset;
+    \STATE Set a total number of epochs $T$ for training, a prior distribution $\bm{\pi}$, EM update gap $t_{\mathrm{EM}}$;
+    \STATE  Set a learning rate $\eta$. 
+    \STATE Build two models with parameter sets:
+    \STATE ${\bm{\Phi}}^{\mathrm{old}}=\{ \bm{\pi}^{\mathrm{old}},
+    \bm{\th}_1^{\mathrm{old}},\hdots,
+    \bm{\th}_K^{\mathrm{old}} \}$,
+    \STATE ${\bm{\Phi}} = \{ \bm{\pi},
+    \bm{\th}_1,\hdots, \bm{\th}_K \}$.
+    \STATE Initialize the generator prior distribution $\pi_k = 1/K$;\\ Initialize $\bm{\theta}_k$ of $\bm{g}_k$, for all $k=1,\dots,K$ randomly. 
+    \STATE $\bm{\Phi}^{\mathrm{old}} \gets \bm{\Phi}$.
+    \FOR { {epoch} $t < T$}
+    \FOR{the iteration in epoch $t$} %\Comment{M-Step}
+    \STATE Sample a batch of data $\left\{ \bm{x}^{(i)}
+    \right\}_{i=1}^{n_b}$ from the dataset $\Dd$ 
+    \STATE Compute $\gamma_k^{i}(\bm{\Phi}^{\mathrm{old}})$ as in \autoref{eq-genmm-gamma},
+    for all $\bm{x}^{i}$ and $k=1, \dots, K$
+    % \Comment{Calculate posterior \autoref{eq-posterior-gamma}}
+    \STATE Compute
+    $\Qq\left(\bm{\Phi},\bm{\Phi}^{\mathrm{old}}\right)$ as in \autoref{eq-genmm-obj}%\Comment{Expectation}
+    
+    \STATE $\partial{g_k} \gets \nabla_{\bm{\th}_k} \frac{1}{n^{b}}\Qq\left(
+      \bm{\Phi}, \bm{\Phi}^{\mathrm{old}}\right)$,
+    $\forall \bm{\th}_k \in \bm{\Phi}$
+    \STATE $\bm{\th}_k \gets \bm{\th}_k + \eta \cdot \partial{g_k}$, $\forall \bm{\th}_k \in \bm{\Phi}$
+    \ENDFOR
+    % \STATE $\th_k^{t+1} \gets \th_k$, $\forall k$ %\Comment{Update new
+    % parameters}
+    \IF{$(t \mod t_{\mathrm{EM}} ) = 0$}
+    \STATE $\pi_k \gets \EE_{\Dd}\left[ \gamma_k \right]$ %\Comment{Update perior}
+    \STATE $\bm{\Phi}^{\mathrm{old}} \gets \bm{\Phi}$.
+    \ENDIF
+    \ENDFOR
+  \end{algorithmic}
+\end{algorithm}
+
+Then we discuss the optimization of the prior distribution $\bm{\pi}$. The optimization problem is 
+\begin{equation}\label{eq-pi-update1}
+  \bm{\pi}^{\mathrm{new}} = \uargmax{\bm{\pi}}{ \mathcal{Q}
+  (\bm{\Phi},\bm{\Phi}^{\mathrm{old}})}, \,\,
+  \mathrm{s.t.} \sum_{k=1}^{K}\pi_k = 1.
+\end{equation}
+The update of prior follows the solution
+\begin{equation}\label{eq-pi-solution}
+  \pi_k^{\mathrm{new}} = \frac{1}{\abs{\Dd}}\sum_{i=1}^{\abs{\Dd}}\gamma_k^{i}(\bm{\Phi}^{\mathrm{old}}).
+\end{equation}
+The detail to get the solution is derived in the subsection~\ref{subsubsec:Proof_for_update}. For a given dataset with empirical distribution $P_d(\bm{x})$,
+$\gamma_k$ is evaluated with batch data in order to calculate the cost
+$\Qq\left(\bm{\Phi},\bm{\Phi}^{\mathrm{old}}\right)$ and to update the
+parameter $\bm{\theta}_k$ of $\bm{g}_k$. We accumulate the values of $\gamma_k$ of batches and
+average out for one epoch to update $\bm{\pi}$, {i.e.}, $\pi_k \gets \EE_{\Dd}\left[ \gamma_k \right]$.
+
+
+
+We summarize the EM algorithm for GenMM in Algorithm~\autoref{flow-algo-em}.
+In implementation, to avoid numerical computation problem, $\log{p(\bm{g}(\bm{z}; \bm{\theta}_k))}$ is
+scaled by the dimension of signal $\bm{x}$ in order to compute $\gamma_k$. 
+% We usually deal with a large dataset for model learning. In that case we implement the EM algorithm in batch fashion.
+% , {i.e.}, E-step and M-step are iterated over batch data. 
+
+
+% We train the model based on EM.
+% The convergence property of Algorithm~\autoref{flow-algo-em} follows the converge of meta EM algorithm itself. Generally, no global optimum is guaranteed.
+% While there are technical discussions on convergence properties of EM \cite{wu1983convergence}, there is no standalone proof showing the convergence of EM in general. Naturally the EM for GenMM also suffers in similar issues. In practice EM shows good performance in model fitting and we also demonstrate this by extensive experiments in the \autoref{sec:experiments}.
+
+\subsubsection{Details for Update of $\pi$}
+\label{subsubsec:Proof_for_update}
+
+The optimization of $\bm{\pi}$ is addressed in the following Lagrangian form
+\begin{equation}
+  \Ff(\bm{\Phi}) = \mathcal{Q}(\bm{\Phi},\bm{\Phi}^{\mathrm{old}}) + \lambda
+  \left( 1 - \sum_{k=1}^{K}\pi_k \right),
+\end{equation}
+where $\lambda$ is the Lagrange multiplier. Then
+\begin{align}
+  \bm{\pi}^{\mathrm{new}} =& \uargmax{\bm{\pi}}{ \Ff(\bm{\Phi})} \nonumber\\
+  =&  \uargmax{\bm{\pi}}{}\sum_{i=1}^{\abs{\Dd}}
+     \sum_{k=1}^{K}\gamma_k^{i}(\bm{\Phi}^{\mathrm{old}})\bigg[
+     \log\;\pi_k +   \log\;p(\bm{f}_k(\bm{x}^{i})) \nonumber \\
+                           &+ \log\;\bigg|\det\left(
+                             \pd{\bm{f}_k(\bm{x}^{i})}{\bm{x}^{i}}
+                             \right)\bigg|\bigg] + \lambda  \left( 1 - \sum_{k=1}^{K}\pi_k \right) \nonumber\\
+  =& \uargmax{\bm{\pi}}{} \sum_{i=1}^{\Dd}
+     \sum_{k=1}^{K}\gamma_k^{i}(\bm{\Phi}^{\mathrm{old}})
+     \log\;\pi_k+ \lambda  \left( 1 - \sum_{k=1}^{K}\pi_k \right),
+\end{align}
+where $\bm{f}_k = \bm{g}_k^{-1}$. Then solving
+\begin{equation}
+  \pd{\Ff}{\pi_k} = 0, k=1, 2, \cdots, K,
+\end{equation}
+we get 
+$
+\pi_k = \frac{1}{\lambda}
+\sum_{i=1}^{n}\gamma_k^{i}(\bm{\Phi}^{\mathrm{old}}), \forall k.
+$
+With condition $\sum_{k=1}^{K}\pi_k =1$, we have
+$
+\lambda = \sum_{k=1}^{K}\sum_{i=1}^{\abs{\Dd}}\gamma_k^{i}(\bm{\Phi}^{\mathrm{old}}) =\abs{\Dd}.
+$
+Therefore, the solution is
+$
+\pi_k = \frac{1}{\abs{\Dd}}
+\sum_{i=1}^{\abs{\Dd}}\gamma_k^{i}(\bm{\Phi}^{\mathrm{old}}), \forall k.
+$
+Note that the updated prior parameter $\pi_k$
+is non-negative due to the non-negativity of the posterior $\gamma_k^{i}$.
+
+\subsection{On Convergence of GenMM}
+     %      The prior distribution $\bm{\pi}$ update rule for LatMM can be similarly obtained.
+
+     %      \textcolor{blue}{Where did you call Algorithm 1? Further, we do not need to show remark 1 as a separate remark. Just include it in text.}
+
+     %      \textcolor{blue}{Technique to speed up this problem: Use K-mean
+     %      algorithm to find the K centroids. Then initial EM method from that
+     %      point on. We have not tried this yet.}
+
+
+
+     %      Recently machine learning community has given significant attention for neural network based distribution modeling. Prominent examples are generative adversarial network (GANs) \cite{} and its derivatives and further improvements \cite{}. The main objective of neural network based distribution modelling is generation of data samples
+
+     %      Recently machine learning community has given significant attention for neural network based distribution modeling. Prominent examples are generative adversarial network (GANs) \cite{} and its derivatives and further improvements \cite{}. The main objective of Neural network based distribution modelling is generation of data samples.
+     %      typically do not have computable analytical expressions.
+     %      \hline
+
+
+     %      Generalization, the ability to adapt to unseen dataset, is one of the major problems in machine learning. Generative models, as a promising branch of machine learning, deal
+     %      with challenging tasks in unsupervised problems. Similar to representation
+     %      learning where there problem is usually formulated as a learning of joint distribution,
+     %      generative models learn distributions of meaningful features with no
+     %      labeling or human supervision. Generative models
+     %      allow an agent to plan ahead with generated data before the agent
+     %      actually interacting with the real world. 
+
+     %      Generative Adversarial Networks (GANs) have gain a lot attention for their success in image
+     %      synthesis. Training a GAN is formulated an adversarial game between two players: a generator network produces synthetic
+     %      samples, and a discriminator network distinguishes the real empirical
+     %      samples from the synthetic ones\cite{2017arXiv170100160G}. 
+
+
+
+     %      \subsection{Introduce the flow NN}\label{sub-into-flow}
+     %      In a flow-based neural
+     %      network\cite{2018arXiv180703039K}\cite{2016arXiv160508803D}, coupling layer is designed such that the inverse mapping and Jacobin
+     %      matrix of this layer of neural network can be easily calculated.
+     %      Assume that the overall network is the concatenation of these coupling
+     %      layers: $g_l$: $g = g_{L} \circ g_{L-1} \circ \cdots \circ g_{1}$. Assume that $\bm{z}$ is the latent source signal, the the generated output x can be written as  $\bm{x}= g(\bm{z})$. The relation is illustrated in the following,
+     %      \begin{equation}
+     %      \bm{z} \xleftrightarrow[f_{1}]{g_{1}} \bm{h}_{1}
+     %      \xleftrightarrow[f_{2}]{g_{2}} \bm{h}_{2} \cdots
+     %      \xleftrightarrow[f_{L}]{g_{L}} \bm{x},
+     %      \end{equation}
+     %      where $f_l = g_l^{-1}$ is the inverse of $g_l$, $l=1, 2, \cdots, L$,
+     %      and we have the notation setting $\bm{h}_0= \bm{z}$ and $\bm{h}_{L} = \bm{x}$.
+
+     %      To make $f_l: \bm{h}_l \rightarrow \bm{h}_{l-1}$ exist and $\pd{\bm{h}_{l-1}}{\bm{h}_l} = \pd{f_{l}(\bm{h}_l)}{\bm{h}_l}$
+     %      computable, $f_l$ is defined via the following set of relations.
+     %      \begin{equation}\label{eq-fl}
+     %      \bm{h}_{l-1} =
+     %      \begin{bmatrix}
+     %      \bm{h}_{l-1,a}\\
+        %         \bm{h}_{l-1,b}
+        %         \end{bmatrix}
+        %         =
+        %         \begin{bmatrix}
+        %         \bm{h}_{l,a}\\
+        %         m_a(\bm{h}_{l,a})\odot \bm{h}_{l,b} + m_b(\bm{h}_{l,a})
+        %         \end{bmatrix},
+        %         \end{equation}
+        %         where $\odot$ is element-wise product and $m_a, m_b \in \Mm$ can be
+        %         any complex mappings or neural networks. It can be seen that the
+        %         inverse of $f_l$, $g_l$, is given as follows.
+        %         \begin{equation}\label{eq-gl}
+        %         \bm{h}_{l} =
+        %         \begin{bmatrix}
+        %         \bm{h}_{l,a}\\
+        %         \bm{h}_{l,b}
+        %         \end{bmatrix}
+        %         =
+        %         \begin{bmatrix}
+        %         \bm{h}_{l-1,a}\\
+        %         \left(  \bm{h}_{l-1,b} - m_b(\bm{h}_{l-1,a}) \right)\oslash m_a(\bm{h}_{l-1,a}) 
+        %         \end{bmatrix}
+        %         \end{equation}
+        %         where $\oslash$ is element-wise division. And the determinate of the
+        %         Jacobian matrix is calculated as
+        %         \begin{equation}\label{eq-hl-determinate}
+        %         \begin{array}{rl}
+        %         \det \left(  \pd{\bm{h}_{l-1}}{\bm{h}_l}\right) &= \det
+                                                                    %                                                                     \begin{bmatrix}
+                                                                    %                                                                     \mathbb{1}_a & 0\\
+        %         \pd{\bm{h}_{l-1,b}}{\bm{h}_{l-1,a}} & diag(m_a).
+                                                        %                                                         \end{bmatrix}  \\
+        %                                                                          &= \abs{diag(m_a(\bm{h}_{l-1,a}))}
+                                                                                     %       \end{array}
+                                                                                     %                                                                                      \end{equation}
+                                                                                     %                                                                                      , where $l = 1, 2, \cdots, L+1$.
+
+                                                                                     %                                                                                      Since the coupling layer denoted $f_l$ or $g_l$ in \autoref{eq-fl} and
+                                                                                     %                                                                                      \autoref{eq-gl} is has partial identity mapping. This problem is treated
+                                                                                     %                                                                                      by alternating the identity mapping position
+                                                                                     %                                                                                      \cite{2016arXiv160508803D} or $1\times1$ convolution operation \cite{2018arXiv180703039K} when
+                                                                                     %                                                                                      concatenating multiple layers together. Also, applying affine mapping
+                                                                                     %                                                                                      at each layer does not affect the easy inverse and determinate computation.
+                                                                                     %                                                                                      The convergence property of Algorithm~\autoref{flow-algo-em} follows the converge of meta EM algorithm itself. Generally, no global optimum is guaranteed.
+                                                                                     %                                                                                      While there are technical discussions on convergence properties of EM \cite{wu1983convergence}, there is no standalone proof showing the convergence of EM in general. Naturally the EM for GenMM also suffers in similar issues. In practice EM shows good performance in model fitting and we also demonstrate this by extensive experiments in the \autoref{sec:experiments}.
+{In general the convergence of EM is guaranteed only in some cases, cf. \cite{wu1983convergence}. However, under some conditions our GenMM converges. In what follows we present the convergence arguments. 
+}
+
+\begin{proposition}
+  Assume that for all $k$, the parameters $\bm{\theta}_k$ are in a compact set such that the corresponding mapping $\bm{g}_k$ is invertible. Assume further that all generator mappings fulfill that $\bm{f}_k$ and $\frac{\partial \bm{f}_k}{\partial \bm{x}}$ are continuous functions of $\bm{\theta}_k$. Then GenMM converges. 
+  % Suppose that all the generator mappings $\bm{g}_k$ are such that $\bm{f}_k$ and $\frac{\partial \bm{f}_k}{\partial \bm{x}}$ are continuous functions of $\bm{\theta}_k$. Assume further that for all $k$, the parameters $\bm{\theta}_k$ are in a compact set such that the corresponding mapping $\bm{g}_k$ is invertible. Then GenMM converges. 
+  % \textcolor{red}{Do you think it is possible to say: The GenMM converges to a saddle point. In that case the confusion about usual understanding on convergence to local minima does not arise.}
+\end{proposition}
+\begin{proof}
+  Assume that the assumption holds. Then the determinant term $\det(\bm{J})$ in \eqref{chpt6:eq:change-var} is a continuous function of $\bm{\theta}_k$. Due to \eqref{chpt6:eq:change-var} and the continuity of Gaussian density $p(\bm{z})$, the probability density function $p_k(\bm{x})$ is a continuous function of $\bm{\theta}_k$. Therefore, $p(\bm{x})$ given in \eqref{eq:FirstMixtureModel} is a continuous function of $\bm{\Phi}$. Denote the likelihood in \eqref{eq:max-genmm} as $\Ll(\bm{\Phi})=\log \textstyle\prod_{i} p(\bm{x}^{(i)};\bm{\Phi})$. The maximum value of $\Ll(\bm{\Phi})$ is bounded due to continuity of $p(\bm{x})$ w.r.t. $\bm{\Phi}$.
+  Define $\Bb(\bm{\Phi}) = \Qq\left(\bm{\Phi},\bm{\Phi}^{\mathrm{old}}\right) - \sum_{i=1}^{\abs{\Dd}}\sum_{k=1}^{K}\gamma_k^{i}(\bm{\Phi}^{\mathrm{old}}) \log\gamma_k^{(i)}(\bm{\Phi}^{\mathrm{old}})$. It is well known that $\Bb(\bm{\Phi})$ is a lower bound on the likelihood function $\Ll(\bm{\Phi})$, i.e. $\Ll(\bm{\Phi}) \geq \Bb(\bm{\Phi})$. Note that the essence of EM algorithm is that the likelihood function value is elevated by increasing the value of its lower bound $\Bb(\bm{\Phi})$. Since the maximum value of the log-likelihood $\Ll(\bm{\Phi})$ is finite, $\Bb(\bm{\Phi})$ can not grow unbounded.
+  % Actually the maximization of $\Ll(\bm{\Phi})$ solved by EM is done by keeping increasing a lower bound of likelihood $\Ll(\bm{\Phi})$: 
+  % .
+  % The inequality  always holds.
+  % $\mathcal{Q}(\cdot,\bm{\Phi}^{\mathrm{old}})$ can not grow unbounded, i.e., the EM converges under the %assumption as $\mathcal{Q}(\bm{\Phi}^{\mathrm{new}},\bm{\Phi}^{\mathrm{new}})\geq %\mathcal{Q}(\bm{\Phi}^{\mathrm{old}},\bm{\Phi}^{\mathrm{old}})$ after each iteration.
+
+  % \textcolor{red}{Therefore an important issue is that the log-likelihood is finite. But, is there any chance that it can not hold? Means somehow it goes unbounded. What is the condition that likelihhod function is guaranteed to be finite with its parameters?}
+\end{proof}
+                                                                                     %                                                                                      \textcolor{red}{This is a very small paragraph. Can you please absorb in the proof.}
+                                                                                     %                                                                                      The assumption on GenMM can be fulfilled easily by the architecture explained in \autoref{sub:exp-setup} with suitable activation functions.
 
 
 \section{expectation maximization of neural network based mixture models}
@@ -435,497 +806,10 @@ of dataset quantitatively is a nontrivial task. In addition, since incremental b
 % % of Gaussian mixture model and finds that the Gaussian mixture model
 % % can generate samples with higher diversity but sample quality is not
 % % as good as that of GANs.
-\begin{figure}
-  \begin{tikzpicture}
-    % \tikzstyle{enode} = [thick, draw=blue, circle, inner sep = 3pt,
-    % align=center]
-    \tikzstyle{enode} = [thick, draw=blue, ellipse, inner sep = 2pt,  align=center]
-    \tikzstyle{nnode} = [thick, rectangle, rounded corners = 2pt,minimum size = 0.8cm,draw,inner sep = 2pt]
-    \node[enode] (z) at (0,0) {$\bm{z}\sim p(\bm{z})$};
-    \node[enode] (x) at (5.5,0){$\bm{x}\sim p(\bm{x}; \bm{\Phi})$};
-    % \node at (5.2,-1) {$p(\bm{x};\bm{\Phi}) = \textstyle\sum_{k=1}^K \pi_k  p_k(\bm{x})$};
-    \node[nnode] (g1) at (2.6,1.8) {$\bm{g}_1$};
-    \node[nnode] (g2) at (2.6,0.5) {$\bm{g}_2$};
-    \node[nnode] (gk) at (2.6,-1.8) {$\bm{g}_K$};
-    \draw[dotted,line width=2pt] (2.6,-0.3) -- (2.6,-1.2);
-    \draw[->] (z) [in= 180, out =0] to (g1);
-    \draw[->] (z) [in= 180, out =0] to (g2);
-    \draw[->] (z) [in= 180, out =0] to (gk);
-    \filldraw[->] (3.7, 0.5)circle (2pt) -- node[above=0.2]{$\bm{s}\sim \bm{\pi}$} (x) ;
-    % \draw[->] (3,-0.8) -- (3.5, -0.8);
-    \draw[->] (g1) -- (3.5,1.8);
-    \draw[->] (g2) -- (3.5, 0.5);
-    \draw[->] (gk) -- (3.5, -1.8);
-  \end{tikzpicture}
-  \caption{Diagram of Generator Mixture Model (GenMM).}\label{dia-emgm-nm}
-  \vspace{0.1cm}
-\end{figure}
 
 
 
 
-\section{Generator mixture model and EM}
-% \begin{figure}
-%   \centering
-%   \begin{tikzpicture}
-%     \node (z) at (0,0) {$\bm{z}$};
-%     \node (xi1) at (1.5,0) {$\bm{\xi}_1$};
-%     \node (xi2) at (3,0) {};
-%     \node (xi3) at (4.5,0){};
-%     \node (x) at (6,0) {$\bm{x}$};
-%     \draw[->] ($(z) + (0.3,0.1)$) -- node[above]{$\bm{h}_1$} ($(xi1)+(-0.3,0.1)$); 
-%     \draw[->] ($(xi1)-(0.3,0.1)$) -- node[below]{$\bm{h}_1^{-1}$}($(z) - (-0.3,0.1)$);
-%     \draw[->] ($(xi1) + (0.3,0.1)$) -- node[above]{$\bm{h}_2$} ($(xi2)+(-0.3,0.1)$); 
-%     \draw[->] ($(xi2)-(0.3,0.1)$) -- node[below]{$\bm{h}_2^{-1}$}($(xi1) - (-0.3,0.1)$);
-%     \draw[->] ($(xi3) + (0.3,0.1)$) -- node[above]{$\bm{h}_L$} ($(x)+(-0.3,0.1)$); 
-%     \draw[->] ($(x)-(0.3,0.1)$) -- node[below]{$\bm{h}_L^{-1}$}($(xi3) - (-0.3,0.1)$);
-%     \draw[dotted,line width = 0.3 mm] (xi2) -- (xi3);
-%   \end{tikzpicture}
-% \end{figure}
-
-% \begin{figure}
-%   \begin{tikzpicture}
-%     \tikzstyle{enode} = [thick, draw=blue, circle, inner sep = 3pt,  align=center]
-%     \tikzstyle{nnode} = [thick, rectangle, rounded corners = 2pt,minimum size = 1.2cm,draw,inner sep = 2pt]
-%     \node[enode] (z1) at (0,2) {$\bm{z}\sim p_1(\bm(z))$};
-%     \node[enode] (z2) at (0,0){$z_2\sim p_{2}(\bm(z))$};
-%     \node[enode] (zK) at (0,-3) {$z_K\sim p_{K}(\bm(z))$}; 
-%     \node[enode] (x) at (6,0){$\bm{x}\sim p(\bm{x};\underset{\bar{}}{\bm{\Phi}})$};
-%     \node[nnode] (g) at (3,0) {$\bm{g}$};
-%     \draw[dotted,line width=2pt] (0,-1) -- (0,-2);
-%     \draw[->,dashed] (z1) [in=180,out=0]  to node[right]{$\pi_1$} (g);
-%     \draw[->] (z2) [in=180,out=0]  to node[above]{$\pi_2$} (g);
-%     \draw[->,dashed] (zK) [in=180,out=0]  to node[right]{$\pi_K$} (g);
-%     \draw[->] (g) to (x);
-%   \end{tikzpicture}
-%   \caption{Diagram of LatMM}\label{dia-emgm-sm}
-% \end{figure}
-% \begin{figure}
-%   \centering
-%   \input{images/diagram/emgm-nm.tex}
-%   \caption{GenMM}\label{dia-emgm-nm}
-% \end{figu
-
-In this proposed generative model, we have $K$ separate neural networks. All the $K$ neural networks have a common input latent variable $\bm{z} \in \mathbb{R}^M$. Here, a neural network $\bm{g}_k(\bm{z}): \mathbb{R}^M
-\rightarrow \mathbb{R}^N$ acts as the $k$-th generator and depends on a set of parameters $\bm{\theta}_k$ as
-$\bm{g}_k(\bm{z})=\bm{g}(\bm{z};\boldsymbol{\theta}_k)$. For
-simplicity, we assume that all $K$ neural networks have the same
-signal-flow structure. Furthermore, the distribution of $\bm{z}$ is fixed as Gaussian $\mathcal{N}(\bm{0},\bm{I})$.
-The induced probability density function (pdf) of $\bm{x} \in \mathbb{R}^N$ of the proposed mixture model with $K$ mixture components is given as:
-\begin{align}\label{eq:FirstMixtureModel}
-  p(\bm{x};\bm{\Phi})  &= \textstyle\sum_{k=1}^K \pi_k  p_k(\bm{x}) \nonumber\\
-                       &= \textstyle \sum_{k=1}^K \pi_k  p(\bm{g}_k(\bm{z}))\nonumber\\
-                       &= \textstyle \sum_{k=1}^K \pi_k  p(\bm{g}(\bm{z};\boldsymbol{\theta}_k)).
-\end{align}
-Their parameters $\boldsymbol{\theta}_k$, however,
-are different. We use $\bm{\Phi}$ to denote the set of all parameters $ \{\bm{\pi},\bm{\theta}_1, \dots, \bm{\theta}_K \}$, where $\bm{\pi} = \left[\pi_1, \hdots, \pi_K\right]^{T}$is the prior distribution of the generators. Note that $\pi_k \geq 0$ and $\sum_{k=1}^K \pi_k =1$. The mixture model
-in \eqref{eq:FirstMixtureModel} is called a generator mixture model (GenMM). The
-diagram of GenMM is illustrated in \autoref{dia-emgm-nm}. The GenMM can be considered as a high-complexity model because each mixture component $p_k(\bm{x})$ has its own parameter set $\bm{\theta}_k$. 
-% the parameter $\boldsymbol{\theta}_k$ varies across $K$ mixture components.
-
-The maximum likelihood estimation problem is
-\begin{equation}\label{eq:max-genmm}
-  \hat{\bm{\Phi}} =    \arg \max_{\bm{\Phi}} \log \textstyle\prod_{i} p(\bm{x}^{(i)};\bm{\Phi}),
-\end{equation}
-where the superscript $(i)$ corresponds to the $i$'th data sample in a given dataset.
-We address the above maximum likelihood estimation problem using EM. 
-Let us use a categorical variable $\bm{s} = [s_1, s_2, \cdots, s_K]$
-for $1$-of-$K$ representation to be a hidden variable that indicates which generator is the actual one. Elements of $\bm{s}$ follow $s_k \in \{0,1\}$, $\sum_{k=1}^K s_k =1$, and $\PP\{s_k=1\}=\pi_k$. The variable $\bm{s}$ is the hidden variable in EM. We will use $\gamma_k$ to denote the posterior probability $\PP\{s_k =1|\bm{x}\}$ calculated as
-\begin{align}\label{eq-genmm-gamma}
-  \gamma_k = \PP\{s_k =1|\bm{x};\bm{\Phi}\}  
-  = \frac{\pi_k p(\bm{g}(\bm{z};\bm{\theta}_k))}{\sum_{l=1}^K\; \pi_l p(\bm{g}(\bm{z};\bm{\theta}_l))}.
-\end{align}
-The posterior probability $\gamma_k$ is also known as responsibility in the EM literature.
-Assume that a value $\bm{\Phi}^{\mathrm{old}}$ of the parameter set $\bm{\Phi}$ is given, the iterative steps in EM algorithm update $\bm{\Phi}$ as follows.
-\begin{enumerate}
-\item E-step: Evaluation of $\gamma_{k}^{(i)}$ is 
-  \begin{equation}\label{eq-genmm-e-step}
-    \gamma_{k}^{(i)}(\bm{\Phi}^{\mathrm{old}}) = \frac{\pi_k^\mathrm{{old}} p(\bm{g}(\bm{z}^{(i)};\bm{\theta}_k^{\mathrm{old}}))}{\sum_{l=1}^K\; \pi_l^\mathrm{{old}} p(\bm{g}(\bm{z}^{(i)};\bm{\theta}_l^{\mathrm{old}}))}.   
-  \end{equation}
-\item M-step: Evaluation of $\bm{\Phi}^{\mathrm{new}}$ given by
-  \begin{equation}\label{eq-genmm-opt}
-    \bm{\Phi}^{\mathrm{new}} =   \arg \max_{\bm{\Phi}} \mathcal{Q} (\bm{\Phi},\bm{\Phi}^{\mathrm{old}}),  
-  \end{equation}
-  where the expected likelihood is
-  \begin{equation}
-    \hspace{-8pt}\mathcal{Q} (\bm{\Phi},\bm{\Phi}^{\mathrm{old}}) = \sum_{i}\sum_{k} \gamma_{k}^{(i)}(\bm{\Phi}^{\mathrm{old}}) \log \pi_k p_k(\bm{x}^{(i)}).
-  \end{equation}
-\end{enumerate}
-
-For the GenMM in \eqref{eq:FirstMixtureModel}, the main technical challenges in realizing EM are computation of $\gamma_k$ in the E-step and computation of the joint likelihood $\log{\pi_k p_k(\bm{x})}$ in the M-step. They require explicit computation of the conditional density $p_k(\bm{x}) =  p(\bm{g}_k(\bm{z})) =p(\bm{g}(\bm{z};\bm{\theta}_k))$. Thus, the problem statement is how to design the neural network $\bm{g}_k(\cdot) = \bm{g}(\cdot;\bm{\theta}_k)$ such that $p_k(\bm{x})=p(\bm{g}(\bm{z};\bm{\theta}_k))$ can be computed.
-
-
-
-
-
-
-
-\subsection{On Theoretical Requirement}
-
-We provide sufficient conditions for realizing EM algorithm associated with learning parameters of GenMM.  
-
-\begin{proposition}[Sufficient conditions]
-  EM algorithm for GenMM distribution~\eqref{eq:FirstMixtureModel} is realizable if every generator neural network is an one-to-one mapping function and $M=N$. That means $\bm{g}_k(\bm{z}): \mathbb{R}^N \rightarrow \mathbb{R}^N, \forall k$ are invertible.
-\end{proposition}
-
-\noindent \emph{\textbf{Proof:}} We use the multivariate transformation method to prove the proposition. To realize EM for GenMM, it is required to compute $p_k(\bm{x}),\forall k$. Without loss of generality we consider computation of $\gamma_k  = \PP(s_k =1|\bm{x};\bm{\Phi})$ and $p_k(\bm{x}) =  p(\bm{g}_k(\bm{z})) =p(\bm{g}(\bm{z};\bm{\theta}_k))$. 
-Let us denote the output of the $k$-th generator by $\tilde{\bm{x}}$ %, i.e. $\tilde{\bm{x}} \triangleq \bm{x} |_{s_k =1}$
-and $\tilde{\bm{g}}(\bm{z})% \triangleq \bm{g}_k(\bm{z})
-= \bm{g}(\bm{z};\bm{\theta}_k)$. We have $\tilde{\bm{x}} = \tilde{\bm{g}}(\bm{z})$. Under the conditions $M=N$ and invertible $\bm{g}_k(\bm{z}) = \tilde{\bm{g}}(\bm{z})$, there exists an inverse function $\tilde{\bm{g}}^{-1}(\tilde{\bm{x}})=[\tilde{g}_1^{-1}(\tilde{\bm{x}}), \, \tilde{g}_2^{-1}(\tilde{\bm{x}}), \hdots, \tilde{g}_N^{-1}(\tilde{\bm{x}})]^{\top}=\bm{z}$. Then, the Jacobian of this multivariate transformation is
-% \begin{equation}
-%   \bm{J} = \left[
-%     \begin{array}{ccc}
-        %         \frac{\partial \tilde{g}_1^{-1}}{\partial \tilde{x}_1} & \hdots & \frac{\partial \tilde{g}_1^{-1}}{\partial \tilde{x}_N} \\
-        %         \vdots & \hdots & \vdots \\
-        %         \frac{\partial \tilde{g}_N^{-1}}{\partial \tilde{x}_1} & \hdots & \frac{\partial \tilde{g}_N^{-1}}{\partial \tilde{x}_N}
-                                                                                    %       \end{array}
-                                                                                    %                                                                                     \right].
-                                                                                    %                                                                                     \end{equation}
-
-                                                                                    %                                                                                     Assume that $\bm{x}$ is generated from the first generator ($s_1 =1$), i.e. $\bm{x}=\bm{g}(\bm{z};\bm{\theta}_1)$. Let us use notations $\tilde{\bm{x}} \triangleq \bm{x} |_{s_1 =1}$ and $\tilde{\bm{g}}(\bm{z}) \triangleq \bm{g}_1(\bm{z}) = \bm{g}(\bm{z};\bm{\theta}_1)$.We have $\tilde{\bm{x}} = \tilde{\bm{g}}(\bm{z})$.
-                                                                                    %                                                                                     Under the conditions that $M=N$ and $\bm{g}(\cdot,\bm{\theta}_1)$ is invertible, there exists an inverse function $\bm{f}\colon\mathbb{R}^N\to\mathbb{R}^N$ such that $\bm{f}(\bm{x}) = \bm{z}$. Then the Jacobian of this multivariate transformation is
-                                                                                    %                                                                                     \begin{equation}
-                                                                                    %                                                                                     \bm{J} = \left[
-                                                                                    %                                                                                     \begin{array}{ccc}
-                                                                                    %                                                                                     \frac{\partial f_1}{\partial x_1} & \hdots & \frac{\partial f_1}{\partial x_N} \\
-        %         \vdots & \hdots & \vdots \\
-        %         \frac{\partial f_N}{\partial x_1} & \hdots & \frac{\partial f_N}{\partial x_N} 
-                                                               %       \end{array}
-                                                               %                                                                \right].
-                                                               %                                                                \end{equation}
-Let $\mathrm{det}(\bm{J})$ denotes the determinant of $\bm{J}$. Then, the pdf is
-\begin{equation}\label{eq:sufficient-change-var}
-  p_k(\bm{x}) = p(\tilde{\bm{x}}) =  p(\bm{z}) \bigg| \mathrm{det}(\bm{J}) \big|_{\bm{z}=\tilde{\bm{g}}^{-1}(\tilde{\bm{x}})}\bigg|.
-\end{equation}
-Similarly, we can compute the pdf of other mixture components.
-
-\subsection{Algorithm for Learning}
-In this section we first discuss about a suitable neural network model for $\bm{g}_k(\bm{z})$ in GenMM and then design the EM algorithm for GenMM. 
-
-\subsubsection{Use of flow-based neural network}\label{subsec-flow-intro}
-
-
-
-\subsubsection{EM Algorithm for GenMM}
-\label{sec-algo-genmm}
-The mixture model GenMM is illustrated in \autoref{dia-emgm-nm},
-where $K$ generators with a certain prior distribution share the same
-latent distribution $p(\bm{z})$. With a flow-based neural network used as the generator $\bm{g}_k$ for the $k$'th mixture component in GenMM, the pdf $p_k(\bm{x})$ for any
-$\bm{x}$ can be computed exactly. Recall that $p_k(\bm{x}) =  p(\bm{g}_k(\bm{z})) =p(\bm{g}(\bm{z};\bm{\theta}_k))$. Let $\bm{f}_k$ be the inverse of $\bm{g}_k$. Then, %
-                                                               %                                                                \begin{equation}\label{eq-nm-Q_k}
-                                                               %                                                                \begin{array}{rl}
-                                                               %                                                                  P_k(\bm{x})&= p(\bm{z})\bigg|\det\left( \pd{\bm{z}}{\bm{x}} \right)
-                                                               %                                                                  \bigg|_{\bm{z}=\bm{g}_k^{-1}(\bm{x})} \\
-                                                               %                                                                  &= p(\bm{z}) \prod_{l=1}^L\abs{\det{(\pd{\bm{h}_{k,
-                                                               %                                                                  l-1}}{\bm{h}_{k, l}})}},
-                                                               %                                                                \end{array}
-                                                               %                                                              \end{equation}
-                                                               %                                                              where $\bm{h}_{k, l}$ is the $l$-th hidden layer signal of
-                                                               %                                                              generator $\bm{g}_k$ and $\bm{z} = \bm{h}_{k,0}$,
-                                                               %                                                              $\bm{x} = \bm{h}_{k,L}$ by default.
-the posterior probability can be computed further from \autoref{eq-genmm-e-step} as
-\begin{align}\label{eq-genmm-gamma}
-  \gamma_k({\bm{\Phi}}^{\mathrm{old}}) %= \Pp(k|x; \left\{
-  % \th_k^{t}\right\}_{k=1}^{K})
-  = & \frac{\pi_k^{\mathrm{old}} p(\bm{g}(\bm{z};\bm{\theta}_k))}{\sum_{j=1}^K\;
-      \pi_j^{\mathrm{old}} p(\bm{g}(\bm{z};\bm{\theta}_j))} \nonumber\\
-  = &\frac{\pi_k^{\mathrm{old}} p(\bm{f}_k(\bm{x})) \big|\det\left( \pd{\bm{f}_k(\bm{x})}{\bm{x}} \right)\big|}{\sum_{j=1}^K\; \pi_j^{\mathrm{old}} p(\bm{f}_j(\bm{x})) \big|\det\left( \pd{\bm{f}_j(\bm{x})}{\bm{x}} \right)\big|},
-\end{align}
-and the objective function in the M-step can be written as
-\begin{align}\label{eq-genmm-obj}
-  &\Qq\left(\bm{\Phi},\bm{\Phi}^{\mathrm{old}}\right)  =\sum_{i=1}^n \sum_{k=1}^{K}\gamma_k^{(i)}(\bm{\Phi}^{\mathrm{old}})\bigg[ \log\;\pi_k 
-    \nonumber\\ &+\log\;p(\bm{f}_k(\bm{x}^{(i)})) 
-                  + \log\;\bigg|\det\left(\pd{\bm{f}_k(\bm{x}^{(i)})}{\bm{x}^{(i)}} \right)\bigg|\bigg],
-\end{align}
-where $n$ denotes the number of data samples. We usually deal with a large dataset for model learning, i.e. $n$ is large. In that case we implement the EM algorithm in batch fashion. 
-Recall that $ \bm{\Phi}= \{\bm{\pi},\bm{\theta}_1, \dots, \bm{\theta}_K \}$ and hence the M-step optimization problem $\arg \max_{\bm{\Phi}} \mathcal{Q} (\bm{\Phi},\bm{\Phi}^{\mathrm{old}})$ is addressed in two steps: (a) optimization of $\{ \bm{\theta}_k \}_{k=1}^{K}$, and (b) optimization of $\bm{\pi}$.
-
-
-% Dong: can you write here about the gradient search based optimization of Q function for $\{ \bm{\theta}_k \}$? Talk about challenges, embedding gradient search, how do you overcome the challenge. Mainly to address the line no 14 of the algorithm 1. Optimization
-% w.r.t. $\bm{\Phi}$ via objective function
-% $\Qq\left(\bm{\Phi},\bm{\Phi}^{\mathrm{old}}\right)$ is by
-% back-propagation through flow-based generators and their parameters are optimized by ADAM \cite{DBLP:journals/corr/KingmaB14}.\newline
-
-Finding a closed-form solution for the problem $\arg \max_{\{\bm{\theta}_k\}_{k=1}^{K}} \mathcal{Q} (\bm{\Phi},\bm{\Phi}^{\mathrm{old}})$ is challenging. Instead, we do the batch-size gradient decent to optimize w.r.t. $\{\bm{\theta}_k\}_{k=1}^{K}$.
-% due to large size of dataset we use for training.
-Further, optimization in the batch fashion leads to a practical problem as follows. 
-Since $\bm{\theta}_k$ is the parameter set of neural networks $\bm{g}_k$, one update step of gradient decent would update the generator $\bm{g}_k$ and we would lose the old mixture model parameter set $\bm{\Phi}^{\mathrm{old}}$ that is needed to compute the posteriors $\gamma_k(\bm{\Phi}^{\mathrm{old}})$ and to update $\bm{\pi}$. Thus, in learning GenMM, we maintain two such models with parameter sets $\bm{\Phi}$ and $\bm{\Phi}^{\mathrm{old}}$, respectively. At the beginning of an EM step, $\bm{\Phi} = \bm{\Phi}^{\mathrm{old}}$. While we optimize $\{\bm{\theta}_k\}_{k=1}^{K}$ of $\bm{\Phi}$ with batch-size gradient decent, we use the model with old parameter set $\bm{\Phi}^{\mathrm{old}}$ to do posterior computation and update of $\bm{\pi}$. At the end of the EM step, the old parameter set is replaced by the updated one: $\bm{\Phi}^{\mathrm{old}}\gets \bm{\Phi}$.
-
-
-% \begin{algorithm}
-%   \caption{EM for learning GenMM}\label{flow-algo-em}
-%   \begin{algorithmic}[1]
-%     \STATE {\bfseries Input:}{
-%     Latent distribution: $p(\bm{z})$\\
-%     Empirical distribution $P_d(\bm{x})$ on the input dataset; \\
-%     \STATE Set a total number of epochs $T$ for training, a prior distribution $\bm{\pi}$, an update gap $t_{\pi}$;
-%     Set a learning rate $\eta$. }
-%     \STATE Initialize the generator prior distribution $\pi_k = 1/K$;\\ Initialize $\bm{\theta}_k$ of $\bm{g}_k$, for all $k=1,\dots,K$ randomly.
-%     \FOR { {epoch} $t < T$}
-%     \FOR{iteration in epoch $t$} %\Comment{M-Step}
-%     \STATE Sample a batch of data $\left\{ \bm{x}^{(i)}
-%     \right\}_{i=1}^{n_b}$ from the dataset $P_d(\bm{x})$
-%     \STATE Compute $\gamma_k^{(i)}(\bm{\Phi}^{\mathrm{old}})$ as in \eqref{eq-genmm-gamma},
-%     for all $\bm{x}^{(i)}$ and $k=1, \dots, K$
-%     %     \Comment{Calculate posterior \autoref{eq-posterior-gamma}}
-%     \STATE Compute
-%     $\Qq\left(\bm{\Phi},\bm{\Phi}^{\mathrm{old}}\right)$ as in \eqref{eq-genmm-obj}%\Comment{Expectation}
-
-%     \STATE $\partial{g_k} \gets \nabla_{\bm{\th}_k} \frac{1}{n^{b}}\Qq\left(
-%       \bm{\Phi}, \bm{\Phi}^{\mathrm{old}}\right)$,
-%     $\forall \bm{\th}_k \in \bm{\Phi}$
-%     \STATE $\bm{\th}_k \gets \bm{\th}_k + \eta \cdot \partial{g_k}$, $\forall \bm{\th}_k \in \bm{\Phi}$
-%     \ENDFOR
-%     %     \STATE $\th_k^{t+1} \gets \th_k$, $\forall k$ %\Comment{Update new
-%     %     parameters}
-%     \IF{$(t \mod t_{\pi} ) = 0$}
-%     \STATE $\pi_k \gets \EE_{P_d}\left[ \gamma_k \right]$ %\Comment{Update perior}
-%     \ENDIF
-%     \ENDFOR
-%   \end{algorithmic}
-% \end{algorithm}
-\begin{algorithm}[t]
-  \caption{EM for learning GenMM}\label{flow-algo-em}
-  \begin{algorithmic}[1]
-    \STATE {\bfseries Input:}
-    Latent distribution: $p(\bm{z})$. Empirical distribution $P_d(\bm{x})$ of the input dataset;
-    \STATE Set a total number of epochs $T$ for training, a prior distribution $\bm{\pi}$, EM update gap $t_{\mathrm{EM}}$;
-    \STATE  Set a learning rate $\eta$. 
-    \STATE Build two models with parameter sets:
-    \STATE ${\bm{\Phi}}^{\mathrm{old}}=\{ \bm{\pi}^{\mathrm{old}},
-    \bm{\th}_1^{\mathrm{old}},\hdots,
-    \bm{\th}_K^{\mathrm{old}} \}$,
-    \STATE ${\bm{\Phi}} = \{ \bm{\pi},
-    \bm{\th}_1,\hdots, \bm{\th}_K \}$.
-    \STATE Initialize the generator prior distribution $\pi_k = 1/K$;\\ Initialize $\bm{\theta}_k$ of $\bm{g}_k$, for all $k=1,\dots,K$ randomly. 
-    \STATE $\bm{\Phi}^{\mathrm{old}} \gets \bm{\Phi}$.
-    \FOR { {epoch} $t < T$}
-    \FOR{the iteration in epoch $t$} %\Comment{M-Step}
-    \STATE Sample a batch of data $\left\{ \bm{x}^{(i)}
-    \right\}_{i=1}^{n_b}$ from the dataset $P_d(\bm{x})$
-    \STATE Compute $\gamma_k^{(i)}(\bm{\Phi}^{\mathrm{old}})$ as in \autoref{eq-genmm-gamma},
-    for all $\bm{x}^{(i)}$ and $k=1, \dots, K$
-    % \Comment{Calculate posterior \autoref{eq-posterior-gamma}}
-    \STATE Compute
-    $\Qq\left(\bm{\Phi},\bm{\Phi}^{\mathrm{old}}\right)$ as in \autoref{eq-genmm-obj}%\Comment{Expectation}
-    
-    \STATE $\partial{g_k} \gets \nabla_{\bm{\th}_k} \frac{1}{n^{b}}\Qq\left(
-      \bm{\Phi}, \bm{\Phi}^{\mathrm{old}}\right)$,
-    $\forall \bm{\th}_k \in \bm{\Phi}$
-    \STATE $\bm{\th}_k \gets \bm{\th}_k + \eta \cdot \partial{g_k}$, $\forall \bm{\th}_k \in \bm{\Phi}$
-    \ENDFOR
-    % \STATE $\th_k^{t+1} \gets \th_k$, $\forall k$ %\Comment{Update new
-    % parameters}
-    \IF{$(t \mod t_{\mathrm{EM}} ) = 0$}
-    \STATE $\pi_k \gets \EE_{P_d}\left[ \gamma_k \right]$ %\Comment{Update perior}
-    \STATE $\bm{\Phi}^{\mathrm{old}} \gets \bm{\Phi}$.
-    \ENDIF
-    \ENDFOR
-  \end{algorithmic}
-\end{algorithm}
-
-Then we discuss the optimization of the prior distribution $\bm{\pi}$. The optimization problem is 
-\begin{equation}\label{eq-pi-update1}
-  \bm{\pi}^{\mathrm{new}} = \displaystyle \arg \max_{\bm{\pi}} \mathcal{Q}
-  (\bm{\Phi},\bm{\Phi}^{\mathrm{old}}), \,\,
-  \mathrm{s.t.} \sum_{k=1}^{K}\pi_k = 1.
-\end{equation}
-The update of prior follows the solution
-\begin{equation}\label{eq-pi-solution}
-  \pi_k^{\mathrm{new}} = \frac{1}{n}\sum_{i=1}^{n}\gamma_k^{(i)}(\bm{\Phi}^{\mathrm{old}}).
-\end{equation}
-The detail to get the solution is derived in the subsection~\ref{subsubsec:Proof_for_update}. For a given dataset with empirical distribution $P_d(\bm{x})$,
-$\gamma_k$ is evaluated with batch data in order to calculate the cost
-$\Qq\left(\bm{\Phi},\bm{\Phi}^{\mathrm{old}}\right)$ and to update the
-parameter $\bm{\theta}_k$ of $\bm{g}_k$. We accumulate the values of $\gamma_k$ of batches and
-average out for one epoch to update $\bm{\pi}$, {i.e.}, $\pi_k \gets \EE_{P_d}\left[ \gamma_k \right]$.
-
-
-
-We summarize the EM algorithm for GenMM in Algorithm~\autoref{flow-algo-em}.
-In implementation, to avoid numerical computation problem, $\log{p(\bm{g}(\bm{z}; \bm{\theta}_k))}$ is
-scaled by the dimension of signal $\bm{x}$ in order to compute $\gamma_k$. 
-% We usually deal with a large dataset for model learning. In that case we implement the EM algorithm in batch fashion.
-% , {i.e.}, E-step and M-step are iterated over batch data. 
-
-
-% We train the model based on EM.
-% The convergence property of Algorithm~\autoref{flow-algo-em} follows the converge of meta EM algorithm itself. Generally, no global optimum is guaranteed.
-% While there are technical discussions on convergence properties of EM \cite{wu1983convergence}, there is no standalone proof showing the convergence of EM in general. Naturally the EM for GenMM also suffers in similar issues. In practice EM shows good performance in model fitting and we also demonstrate this by extensive experiments in the \autoref{sec:experiments}.
-
-\subsubsection{Proof for update of $\pi$}
-\label{subsubsec:Proof_for_update}
-
-% In this section, we detail the update rule for prior distribution
-% $\bm{\pi}$. We will show the solution for the case in GenMM first,
-% then the prior update of LatMM follows similarly. We relax the
-% non-negativity constraint on the prior parameters first. Then this
-% constraint is shown to be satisfied automatically when the solution is derived.
-% As shown in the M-step of
-% GenMM, update of $\bm{\pi}$ should follow:
-% \begin{align}
-%   \bm{\pi}^{\mathrm{new}} &= \arg \max_{\bm{\pi}} \mathcal{Q}
-%   (\bm{\Phi},\bm{\Phi}^{\mathrm{old}}), \nonumber \\
-%   &\mathrm{s.t.} \sum_{k=1}^{K}\pi_k = 1
-% \end{align}
-
-The optimization of $\bm{\pi}$ is addressed in the following Lagrangian form
-\begin{equation}
-  \Ff(\bm{\Phi}) = \mathcal{Q}(\bm{\Phi},\bm{\Phi}^{\mathrm{old}}) + \lambda
-  \left( 1 - \sum_{k=1}^{K}\pi_k \right),
-\end{equation}
-where $\lambda$ is the Lagrange multiplier. Then
-\begin{align}
-  \bm{\pi}^{\mathrm{new}} =& \arg \max_{\bm{\pi}} \Ff(\bm{\Phi}) \nonumber\\
-  =&  \arg \max_{\bm{\pi}}\sum_{i=1}^n
-     \sum_{k=1}^{K}\gamma_k^{(i)}(\bm{\Phi}^{\mathrm{old}})\bigg[
-     \log\;\pi_k +   \log\;p(\bm{f}_k(\bm{x}^{(i)})) \nonumber \\
-                           &+ \log\;\bigg|\det\left(
-                             \pd{\bm{f}_k(\bm{x}^{(i)})}{\bm{x}^{(i)}}
-                             \right)\bigg|\bigg] + \lambda  \left( 1 - \sum_{k=1}^{K}\pi_k \right) \nonumber\\
-  =& \arg \max_{\bm{\pi}} \sum_{i=1}^n
-     \sum_{k=1}^{K}\gamma_k^{(i)}(\bm{\Phi}^{\mathrm{old}})
-     \log\;\pi_k+ \lambda  \left( 1 - \sum_{k=1}^{K}\pi_k \right),
-\end{align}
-where $\bm{f}_k = \bm{g}_k^{-1}$. Then solving
-\begin{equation}
-  \pd{\Ff}{\pi_k} = 0, k=1, 2, \cdots, K,
-\end{equation}
-we get 
-$
-\pi_k = \frac{1}{\lambda}
-\sum_{i=1}^{n}\gamma_k^{(i)}(\bm{\Phi}^{\mathrm{old}}), \forall k.
-$
-With condition $\sum_{k=1}^{K}\pi_k =1$, we have
-$
-\lambda = \sum_{k=1}^{K}\sum_{i=1}^{n}\gamma_k^{(i)}(\bm{\Phi}^{\mathrm{old}}) =n.
-$
-Therefore, the solution is
-$
-\pi_k = \frac{1}{n}
-\sum_{i=1}^{n}\gamma_k^{(i)}(\bm{\Phi}^{\mathrm{old}}), \forall k.
-$
-Note that the updated prior parameter $\pi_k$
-is non-negative due to the non-negativity of the posterior $\gamma_k{(i)}$.
-
-\subsection{On Convergence of GenMM}
-     %      The prior distribution $\bm{\pi}$ update rule for LatMM can be similarly obtained.
-
-     %      \textcolor{blue}{Where did you call Algorithm 1? Further, we do not need to show remark 1 as a separate remark. Just include it in text.}
-
-     %      \textcolor{blue}{Technique to speed up this problem: Use K-mean
-     %      algorithm to find the K centroids. Then initial EM method from that
-     %      point on. We have not tried this yet.}
-
-
-
-     %      Recently machine learning community has given significant attention for neural network based distribution modeling. Prominent examples are generative adversarial network (GANs) \cite{} and its derivatives and further improvements \cite{}. The main objective of neural network based distribution modelling is generation of data samples
-
-     %      Recently machine learning community has given significant attention for neural network based distribution modeling. Prominent examples are generative adversarial network (GANs) \cite{} and its derivatives and further improvements \cite{}. The main objective of Neural network based distribution modelling is generation of data samples.
-     %      typically do not have computable analytical expressions.
-     %      \hline
-
-
-     %      Generalization, the ability to adapt to unseen dataset, is one of the major problems in machine learning. Generative models, as a promising branch of machine learning, deal
-     %      with challenging tasks in unsupervised problems. Similar to representation
-     %      learning where there problem is usually formulated as a learning of joint distribution,
-     %      generative models learn distributions of meaningful features with no
-     %      labeling or human supervision. Generative models
-     %      allow an agent to plan ahead with generated data before the agent
-     %      actually interacting with the real world. 
-
-     %      Generative Adversarial Networks (GANs) have gain a lot attention for their success in image
-     %      synthesis. Training a GAN is formulated an adversarial game between two players: a generator network produces synthetic
-     %      samples, and a discriminator network distinguishes the real empirical
-     %      samples from the synthetic ones\cite{2017arXiv170100160G}. 
-
-
-
-     %      \subsection{Introduce the flow NN}\label{sub-into-flow}
-     %      In a flow-based neural
-     %      network\cite{2018arXiv180703039K}\cite{2016arXiv160508803D}, coupling layer is designed such that the inverse mapping and Jacobin
-     %      matrix of this layer of neural network can be easily calculated.
-     %      Assume that the overall network is the concatenation of these coupling
-     %      layers: $g_l$: $g = g_{L} \circ g_{L-1} \circ \cdots \circ g_{1}$. Assume that $\bm{z}$ is the latent source signal, the the generated output x can be written as  $\bm{x}= g(\bm{z})$. The relation is illustrated in the following,
-     %      \begin{equation}
-     %      \bm{z} \xleftrightarrow[f_{1}]{g_{1}} \bm{h}_{1}
-     %      \xleftrightarrow[f_{2}]{g_{2}} \bm{h}_{2} \cdots
-     %      \xleftrightarrow[f_{L}]{g_{L}} \bm{x},
-     %      \end{equation}
-     %      where $f_l = g_l^{-1}$ is the inverse of $g_l$, $l=1, 2, \cdots, L$,
-     %      and we have the notation setting $\bm{h}_0= \bm{z}$ and $\bm{h}_{L} = \bm{x}$.
-
-     %      To make $f_l: \bm{h}_l \rightarrow \bm{h}_{l-1}$ exist and $\pd{\bm{h}_{l-1}}{\bm{h}_l} = \pd{f_{l}(\bm{h}_l)}{\bm{h}_l}$
-     %      computable, $f_l$ is defined via the following set of relations.
-     %      \begin{equation}\label{eq-fl}
-     %      \bm{h}_{l-1} =
-     %      \begin{bmatrix}
-     %      \bm{h}_{l-1,a}\\
-        %         \bm{h}_{l-1,b}
-        %         \end{bmatrix}
-        %         =
-        %         \begin{bmatrix}
-        %         \bm{h}_{l,a}\\
-        %         m_a(\bm{h}_{l,a})\odot \bm{h}_{l,b} + m_b(\bm{h}_{l,a})
-        %         \end{bmatrix},
-        %         \end{equation}
-        %         where $\odot$ is element-wise product and $m_a, m_b \in \Mm$ can be
-        %         any complex mappings or neural networks. It can be seen that the
-        %         inverse of $f_l$, $g_l$, is given as follows.
-        %         \begin{equation}\label{eq-gl}
-        %         \bm{h}_{l} =
-        %         \begin{bmatrix}
-        %         \bm{h}_{l,a}\\
-        %         \bm{h}_{l,b}
-        %         \end{bmatrix}
-        %         =
-        %         \begin{bmatrix}
-        %         \bm{h}_{l-1,a}\\
-        %         \left(  \bm{h}_{l-1,b} - m_b(\bm{h}_{l-1,a}) \right)\oslash m_a(\bm{h}_{l-1,a}) 
-        %         \end{bmatrix}
-        %         \end{equation}
-        %         where $\oslash$ is element-wise division. And the determinate of the
-        %         Jacobian matrix is calculated as
-        %         \begin{equation}\label{eq-hl-determinate}
-        %         \begin{array}{rl}
-        %         \det \left(  \pd{\bm{h}_{l-1}}{\bm{h}_l}\right) &= \det
-                                                                    %                                                                     \begin{bmatrix}
-                                                                    %                                                                     \mathbb{1}_a & 0\\
-        %         \pd{\bm{h}_{l-1,b}}{\bm{h}_{l-1,a}} & diag(m_a).
-                                                        %                                                         \end{bmatrix}  \\
-        %                                                                          &= \abs{diag(m_a(\bm{h}_{l-1,a}))}
-                                                                                     %       \end{array}
-                                                                                     %                                                                                      \end{equation}
-                                                                                     %                                                                                      , where $l = 1, 2, \cdots, L+1$.
-
-                                                                                     %                                                                                      Since the coupling layer denoted $f_l$ or $g_l$ in \autoref{eq-fl} and
-                                                                                     %                                                                                      \autoref{eq-gl} is has partial identity mapping. This problem is treated
-                                                                                     %                                                                                      by alternating the identity mapping position
-                                                                                     %                                                                                      \cite{2016arXiv160508803D} or $1\times1$ convolution operation \cite{2018arXiv180703039K} when
-                                                                                     %                                                                                      concatenating multiple layers together. Also, applying affine mapping
-                                                                                     %                                                                                      at each layer does not affect the easy inverse and determinate computation.
-                                                                                     %                                                                                      The convergence property of Algorithm~\autoref{flow-algo-em} follows the converge of meta EM algorithm itself. Generally, no global optimum is guaranteed.
-                                                                                     %                                                                                      While there are technical discussions on convergence properties of EM \cite{wu1983convergence}, there is no standalone proof showing the convergence of EM in general. Naturally the EM for GenMM also suffers in similar issues. In practice EM shows good performance in model fitting and we also demonstrate this by extensive experiments in the \autoref{sec:experiments}.
-{In general the convergence of EM is guaranteed only in some cases, cf. \cite{wu1983convergence}. However, under some conditions our GenMM converges. In what follows we present the convergence arguments. 
-}
-
-\begin{proposition}
-  Assume that for all $k$, the parameters $\bm{\theta}_k$ are in a compact set such that the corresponding mapping $\bm{g}_k$ is invertible. Assume further that all generator mappings fulfill that $\bm{f}_k$ and $\frac{\partial \bm{f}_k}{\partial \bm{x}}$ are continuous functions of $\bm{\theta}_k$. Then GenMM converges. 
-  % Suppose that all the generator mappings $\bm{g}_k$ are such that $\bm{f}_k$ and $\frac{\partial \bm{f}_k}{\partial \bm{x}}$ are continuous functions of $\bm{\theta}_k$. Assume further that for all $k$, the parameters $\bm{\theta}_k$ are in a compact set such that the corresponding mapping $\bm{g}_k$ is invertible. Then GenMM converges. 
-  % \textcolor{red}{Do you think it is possible to say: The GenMM converges to a saddle point. In that case the confusion about usual understanding on convergence to local minima does not arise.}
-\end{proposition}
-\begin{proof}
-  Assume that the assumption holds. Then the determinant term $\det(\bm{J})$ in \autoref{eq:sufficient-change-var} is a continuous function of $\bm{\theta}_k$. Due to \autoref{eq:sufficient-change-var} and the continuity of Gaussian density $p(\bm{z})$, the pdf $p_k(\bm{x})$ is a continuous function of $\bm{\theta}_k$. Therefore, $p(\bm{x})$ given in \autoref{eq:FirstMixtureModel} is a continuous function of $\bm{\Phi}$. Denote the likelihood in \autoref{eq:max-genmm} as $\Ll(\bm{\Phi})=\log \textstyle\prod_{i} p(\bm{x}^{(i)};\bm{\Phi})$. The maximum value of $\Ll(\bm{\Phi})$ is bounded due to continuity of $p(\bm{x})$ w.r.t. $\bm{\Phi}$.
-  Define $\Bb(\bm{\Phi}) = \Qq\left(\bm{\Phi},\bm{\Phi}^{\mathrm{old}}\right) - \sum_{i=1}^n\sum_{k=1}^{K}\gamma_k^{(i)}(\bm{\Phi}^{\mathrm{old}}) \log\gamma_k^{(i)}(\bm{\Phi}^{\mathrm{old}})$. It is well known that $\Bb(\bm{\Phi})$ is a lower bound on the likelihood function $\Ll(\bm{\Phi})$, i.e. $\Ll(\bm{\Phi}) \geq \Bb(\bm{\Phi})$. Note that the essence of EM algorithm is that the likelihood function value is elevated by increasing the value of its lower bound $\Bb(\bm{\Phi})$. Since the maximum value of the log-likelihood $\Ll(\bm{\Phi})$ is finite, $\Bb(\bm{\Phi})$ can not grow unbounded.
-  % Actually the maximization of $\Ll(\bm{\Phi})$ solved by EM is done by keeping increasing a lower bound of likelihood $\Ll(\bm{\Phi})$: 
-  % .
-  % The inequality  always holds.
-  % $\mathcal{Q}(\cdot,\bm{\Phi}^{\mathrm{old}})$ can not grow unbounded, i.e., the EM converges under the %assumption as $\mathcal{Q}(\bm{\Phi}^{\mathrm{new}},\bm{\Phi}^{\mathrm{new}})\geq %\mathcal{Q}(\bm{\Phi}^{\mathrm{old}},\bm{\Phi}^{\mathrm{old}})$ after each iteration.
-
-  % \textcolor{red}{Therefore an important issue is that the log-likelihood is finite. But, is there any chance that it can not hold? Means somehow it goes unbounded. What is the condition that likelihhod function is guaranteed to be finite with its parameters?}
-\end{proof}
-                                                                                     %                                                                                      \textcolor{red}{This is a very small paragraph. Can you please absorb in the proof.}
-                                                                                     %                                                                                      The assumption on GenMM can be fulfilled easily by the architecture explained in \autoref{sub:exp-setup} with suitable activation functions.
 
 \section{A low-complexity model}
 There are $K$ neural networks in GenMM, which makes GenMM a high-complexity model.
