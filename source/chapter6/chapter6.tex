@@ -2,52 +2,28 @@
 \label{chpt6:em-flow}
 \graphicspath{{source/chapter6/}}
 
-When learning with partial observed varaibles in graphical models, EM is one of the most widely used frameworks in practices. In directed graphical models, an immediate relieve is that we do not to deal with the partition function $Z(\bm{\theta})$ any more. However, it does not mean directed graphical models with partial observed variables are trivial to learn. The 'missing' data (corresponding to unobserved variables) still poses challenges in model learning, since we want to have the partial evidence (observed) well explained by our model while keeping its ability of tracking uncertainty of the 'unobserved' part.
+When learning with partially observed variables in graphical models, EM is one of the most widely used frameworks in practices. In directed graphical models, immediate relief is that we do not need to deal with the partition function $Z(\bm{\theta})$ anymore. However, it does not mean directed graphical models with partially observed variables are trivial to learn. The 'missing' data (corresponding to unobserved variables) still poses challenges in model learning, since we want to have the partial evidence (observed) well explained by our model while keeping its ability to track uncertainty of the 'unobserved' part.
 
-As discussed in section~\ref{chpt2:sec:learning-principles}, the presence of latent or hidden variables is either due to the data availability or abstraction of data generating. Once the dataset is given, the option left to us is the choice of the model that we plan to use to approximate the true distribution $p^{\ast}$ which actually generated the dataset. This process is to select one model from a set of models, i.e. hypothesis space, based on the likelihood criteria. If the hypothesis space is very limited, the ability to represent our true $p^{\ast}$ is limited, leading to inherent error. This type of inherent limitation brings learning \textit{bias} before we start to fit the parameters.
+As discussed in section~\ref{chpt2:sec:learning-principles}, the presence of latent or hidden variables is either due to the data availability or abstraction of data generating. Once the dataset is given, the option left to us is the choice of the model that we plan to use to approximate the true distribution $p^{\ast}$ which actually generated the dataset. This process is to select one model from a set of models, i.e. hypothesis space, based on the likelihood criteria. If the hypothesis space is very limited, the ability to represent our true $p^{\ast}$ is limited, leading to the inherent error. This type of inherent limitation brings learning \textit{bias} before we start to fit the parameters.
 Therefore, given that the dataset is large and representative enough, we hope that the hypothesis space is highly expressive such that we are more likely to be able to represent $p^{\ast}$ with a selected model from the hypothesis space. This naturally requires our model to be flexible and expressive.
 
-Gaussian mixture model has been successfully applied widely with EM framework, which also enjoys the closed-form update rule in iterations. The advantage comes with limitation of linear dependency and free parameters that can be tuned, i.e. limitation of flexibility. To explore further, we discuss more flexible models beyond Gaussian in this chapter. We start with inducing the normalizing flows that are going to used as probabilistic models in place of Gaussian models. A normalizing flow can consist of as many non-linear transformations as needed, and thus is highly flexible. In addition, likelihood computation ability remains and it allows efficient sampling in normalizing flow. But closed-form iterative update solutions are not available any more. We therefore need to design the practical algorithms to model learning in EM framework. 
+Gaussian mixture model has been successfully applied widely with EM framework, which also enjoys the closed-form update rule in iterations. The advantage comes with the limitation of linear dependency and free parameters that can be tuned, i.e. limitation of flexibility. To explore further, we discuss more flexible models beyond Gaussian in this chapter. We start by inducing the normalizing flows that are going to be used as probabilistic models in place of Gaussian models. A normalizing flow can consist of as many non-linear transformations as needed, and thus is highly flexible. Besides, likelihood computation ability remains and it allows efficient sampling in normalizing flow. But closed-form iterative update solutions are not available anymore. We, therefore, need to design the practical algorithms to model learning in EM framework.
 
 
-
-content: \href{https://arxiv.org/abs/1907.13432}{Neural Network based Explicit Mixture Models and Expectation-maximization based Learning}, under review
-
-section/chapter transition text: mixture model could be obtained from clamping and condition on a discrete variable, ref to Geier, \href{http://auai.org/uai2015/proceedings/papers/158.pdf}{Locally conditional belief propagation}. \href{https://papers.nips.cc/paper/5529-clamping-variables-and-approximate-inference.pdf}{Weller, clamping variables and approximate inference}
-
-\begin{remark}
-  Theory interpretation of EM and variational EM, see Section 6.2, Wainwright, Graphical Models, Exponential Families, and Variational Inference.
-\end{remark}
-
-
-\begin{remark}
-  RELATIONSHIP TO K-MEANS CLUSTERING
-  Big picture: The EM algorithm for mixtures of Gaussians is like a soft version of the K-means algorithm.
-\end{remark}
-
-\begin{remark}
-  EM lower bound $+$ entropy of posterior of latent variable if a free energy. ref to 10-708 lecture6 note.
-  EM using posterior of latent variable is equivalent to fully observable MLE where statistics are replaced by their expectations w.r.t the posterior.
-\end{remark}
-
-Can be viewed as two-node graphical model learning. \href{https://sailinglab.github.io/pgm-spring-2019/notes/lecture-05/}{10-708lecture5-note}
 \section{Normalizing Flow}
-Normalizing flow is practical approach to improve the flexibility of probabilistic model while still keeping the likelihood computation tractable and the efficiency of generating samples. The general idea is to start with an initial random variable following a relatively simple distribution with known probability density function. Then a chain of invertible parameterized transformations are applied to the initial random variable such that the output follows a more flexible distribution.
+Normalizing flow is a practical approach to improve the flexibility of probabilistic models while still keeping the likelihood computation tractable and the efficiency of generating samples. The general idea is to start with an initial random variable following a relatively simple distribution with known probability density function. Then a chain of invertible parameterized transformations is applied to the initial random variable such that the output follows a more flexible distribution.
 
-Denote the chain of transformations by $\tilde{\bm{g}}$ and the output by $\tilde{\bm{x}}$. Then we have
+Denote the chain of transformations by $\tilde{\bm{g}}$ and the output by $\tilde{\bm{x}}\in \RR^{N}$. Then we have
 \begin{equation}
   \tilde{\bm{x}}=\tilde{\bm{g}}(\bm{z})
 \end{equation}
-where $\bm{z}$ is the initial random variable with know density function $p(\bm{z})$. To explicitly denote the chain,
+where $\bm{z}\in \RR^{N}$ is the initial random variable with know density function $p(\bm{z})$. To explicitly denote the chain,
 \begin{equation}
-\tilde{\bm{g}}=\tilde{\bm{g}}^{[L]}\circ \tilde{\bm{g}}^{[L-1]}\circ \cdots
-\circ \tilde{\bm{g}}^{[1]},
+  \tilde{\bm{g}}=\tilde{\bm{g}}^{[L]}\circ \tilde{\bm{g}}^{[L-1]}\circ \cdots
+  \circ \tilde{\bm{g}}^{[1]},
 \end{equation}
 which is invertible $\tilde{\bm{f}}=\tilde{\bm{g}}^{-1}$. Then the signal flow can be depicted as% , illustrated in \autoref{illustation}.
-% $=\bm{h}_L(\bm{h}_{L-1}\hdots (\bm{h}_1(\bm{z})))$.
 \begin{equation*}
-  % \begin{figure}[htb]
-  \vspace{-8pt}
   \centering
   \begin{tikzpicture}
     \node (z) at (0,0) {};
@@ -64,21 +40,91 @@ which is invertible $\tilde{\bm{f}}=\tilde{\bm{g}}^{-1}$. Then the signal flow c
     \draw[->] ($(xi3) + (0.3,0.1)$) -- node[above]{$\tilde{\bm{g}}^{[L]}$} ($(x)+(-0.3,0.1)$); 
     \draw[->] ($(x)-(0.3,0.1)$) -- node[below]{$\tilde{\bm{f}}^{[L]}$}($(xi3) - (-0.3,0.1)$);
     \draw[dotted,line width = 0.3 mm] (xi2) -- (xi3);
-  \end{tikzpicture},
+  \end{tikzpicture}
 \end{equation*}
-% \vspace{-15pt}
-% \caption{$\tilde{\bm{g}}=\tilde{\bm{g}}_L\circ \tilde{\bm{g}}_{L-1}\circ \cdots \circ \tilde{\bm{g}}_1$ and $\tilde{\bm{f}}=\tilde{\bm{g}}^{-1}$.}
-% \label{illustation}
-% \end{equation}
-% \end{figure}
-where $\tilde{\bm{g}}^{[l]}$ and $\tilde{\bm{f}}^{[l]}$ are the $l$-th transformation in $\tilde{\bm{g}}$ and $\tilde{\bm{f}}$, respectively. In practice, $\bm{\tilde}{g}$ can be implemented by feed-forward neural networks, which we will detail later. If every transformation in the chain is invertible, the full mapping is invertible.
+where $\tilde{\bm{g}}^{[l]}$ and $\tilde{\bm{f}}^{[l]}$ are the $l$-th transformation in $\tilde{\bm{g}}$ and $\tilde{\bm{f}}$, respectively. In practice, $\bm{\tilde}{g}$ can be implemented by feed-forward neural networks, which we will detail later.
 
+If every transformation in the chain of the flow is invertible, the full mapping is invertible.
+Then, the probability density function relation between $p(\bm{z})$ and $p(\tilde{\bm{x}})$ follows the change of variable formula
+\begin{equation}\label{chpt6:eq:change-var}
+  p(\tilde{\bm{x}}) =  p(\bm{z}) \bigg| \mathrm{det}(\bm{J}) \big|_{\bm{z}=\tilde{\bm{f}}(\tilde{\bm{x}})}\bigg|,
+\end{equation}
+where $\mathrm{det}(\bm{J})$ denotes the determinant of Jacobian $\bm{J}$
+\begin{equation}
+  \bm{J} = \left[
+    \begin{array}{ccc}
+      \frac{\partial \tilde{f}_1}{\partial \tilde{x}_1} & \hdots & \frac{\partial \tilde{f}_1}{\partial \tilde{x}_N} \\
+      \vdots & \hdots & \vdots \\
+      \frac{\partial \tilde{f}_N}{\partial \tilde{x}_1} & \hdots & \frac{\partial \tilde{f}_N}{\partial \tilde{x}_N}
+    \end{array}
+  \right].
+\end{equation}
+The challenge lies at the determinant computation of Jacobian $\bm{J}$, or equivalently that of each transformation $\tilde{\bm{g}}^{[l]}$. \cite{DBLP:journals/corr/DinhKB14} introduced the model NICE to transform only half of the variables at a chain step, which results in triangular Jacobian of the transformation. If each transformation has a triangular Jacobian, determinant computation would be efficient in \eqref{chpt6:eq:change-var}.
+This flow architecture divides the feature $\bm{h}_l$ at the $l$'th layer into two subparts as
+$\bm{h}_l = [\bm{h}_{l,a}^{\intercal} \, , \, \bm{h}_{l,b}^{\intercal}]^{\intercal}$ where
+$(\cdot)^{\intercal}$ denotes transpose operation. Then considering $\bm{h}_0 = \bm{z}$, we have the following forward and inverse relations between $(l-1)$'th and $l$'th layers:
+\begin{equation}\label{eq-gl}
+  \begin{array}{l}
+    \bm{h}_{l-1} =
+    \begin{bmatrix}
+      \bm{h}_{l-1,a}\\
+      \bm{h}_{l-1,b}
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+      \bm{h}_{l,a}\\
+      \bm{m}_a(\bm{h}_{l,a})\odot \bm{h}_{l,b} + \bm{m}_b(\bm{h}_{l,a})
+    \end{bmatrix},\vspace{10pt}\\
+    \bm{h}_{l} =
+    \begin{bmatrix}
+      \bm{h}_{l,a}\\
+      \bm{h}_{l,b}
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+      \bm{h}_{l-1,a}\\
+      \left(  \bm{h}_{l-1,b} - \bm{m}_b(\bm{h}_{l-1,a}) \right)\oslash \bm{m}_a(\bm{h}_{l-1,a}) 
+    \end{bmatrix}, \\
+  \end{array}  
+\end{equation}
+where $\odot$ denotes element-wise product, $\oslash$ denotes
+element-wise division, and $\bm{m}_a(\cdot), \bm{m}_b(\cdot)$ can be
+complex non-linear mappings (implemented by neural networks).
+For the flow model, the determinant of Jacobian matrix is
+\begin{equation}
+  \begin{array}{rl}
+    \mathrm{det}(\bm{J}) |_{\bm{z}=\tilde{\bm{f}}(\tilde{\bm{x}})} & = \prod_{l=1}^L \det (\bm{J}_l) |_{\bm{h}_{l}},
+  \end{array}
+\end{equation}
+where $\bm{J}_l$ is the Jacobian of the transformation from the $l$-th layer to the $(l-1)$-th layer, i.e., the inverse transformation. We compute the determinate of the Jacobian matrix as
+\begin{align}\label{eq-hl-determinate}
+  \det (\bm{J}_l)|_{\bm{h}_{l}}& = \det \left[  \pd{\bm{h}_{l-1}}{\bm{h}_l} \right] \nonumber\\
+                               & = \det
+                                 \begin{bmatrix}
+                                   \bm{I}_a & \mathbf{0} \nonumber\\
+                                   \pd{\bm{h}_{l-1,b}}{\bm{h}_{l,a}} & \mathrm{diag}(\bm{m}_a(\bm{h}_{l,a}))
+                                 \end{bmatrix}\nonumber\\
+                               &= \det \left( \mathrm{diag}(\bm{m}_a(\bm{h}_{l,a})) \right),
+\end{align}
+where $\bm{I}_a$ is identity matrix and $\mathrm{diag}(\cdot)$ returns a square matrix with the elements of $(\cdot)$ on the main diagnal. Then the pdf is
+\begin{align}
+  p(\tilde{\bm{x}}) & =  p(\bm{z}) \big| \mathrm{det}(\bm{J}) |_{\bm{z}=\tilde{\bm{f}}(\tilde{\bm{x}})}\big| \nonumber\\
+                    &  = p(\bm{z}) \prod_{l=1}^L \abs{\det\left( \mathrm{diag}(\bm{m}_a(\bm{h}_{l,a}))]  \right)}.
+\end{align}
+\eqref{eq-gl} describes a \textit{coupling} mapping between layers. Since the coupling has a partial identity mapping, direct concatenation of multiple such coupling mappings would result in a partial identity mapping of the overall mapping $\tilde{\bm{g}}$. Therefore, techniques such as alternating the positions of identity mapping \cite{2016arXiv160508803D} or using $1\times1$ convolution operations \cite{2018arXiv180703039K} before each coupling mapping are used to treat the issue.
+Sometimes, it may not be necessary to carry all features thorough all $L$ chain steps. For instance, \cite{2016arXiv160508803D}\cite{2018arXiv180703039K} split some hidden
+layer signal $\bm{h}$ and model a part of it directly as standard Gaussian to reduce computation and memory burden.
 
- The inverse function is given by $\bm{z}=\tilde{\bm{f}}(\tilde{\bm{x}})$. Flow-based network, proposed in \cite{DBLP:journals/corr/DinhKB14}, is such a feed-forward neural network, which is further improved in subsequent works \cite{2016arXiv160508803D, 2018arXiv180703039K}. It also has additional advantages as efficient Jacobian computation and low computational complexity. %Computation of inverse mapping for flow-based network and determinant of Jacobin were addressed in the literature. 
+\begin{remark}
+  There are alternative ways of formulating the transformation of variable changing while maintaining efficient computation of the Jacobian determinant. Inverse autoregreeesive flow (IAF) was proposed in \cite{rezende2015variational}. In the IAF model, a chain step of transformation is
+  \begin{equation*}
+    \bm{h}_l = \bm{h}_{l-1} + \bm{u} \cdot {m}(\bm{w}^{\intercal} \cdot \bm{h}_{l-1} + b)
+  \end{equation*}
+  where $m$ is non-linear mapping, $\bm{w}, \bm{u}~\in \RR^{N}$ and $b\in \RR$. IAF does no use partial identity mapping as NICE. Its Jacobian is not triangular and thus determinant computation is more expensive. The followed work by \cite{kingma2016IVF} created element-wise transformation in a customized way to improve IAF such the Jacobian becomes a triangular matrix. 
+  
+  In contrast to the above finite-chain flow where $L$ is a discrete finite integer, the method developed in \cite{ricky2018ODE} introduced a continuous-transformation of variables by solving an ordinary differential equation (ODE). Comparing to the discrete finite chain of transformation in normalizing flow, ODE can be viewed as a continuous chain of variable transformation. The inverse mapping and Jacobian determinant are not required in ODE method. But ODE needs to solve differentiation equations which is also challenging.
+\end{remark}
 
-
-
-Introduce different flows and give details of normalizing flows.
 
 
 \section{expectation maximization of neural network based mixture models}
@@ -512,6 +558,8 @@ For the GenMM in \eqref{eq:FirstMixtureModel}, the main technical challenges in 
 
 
 
+
+
 \subsection{On Theoretical Requirement}
 
 We provide sufficient conditions for realizing EM algorithm associated with learning parameters of GenMM.  
@@ -539,12 +587,12 @@ and $\tilde{\bm{g}}(\bm{z})% \triangleq \bm{g}_k(\bm{z})
                                                                                     %                                                                                     \begin{equation}
                                                                                     %                                                                                     \bm{J} = \left[
                                                                                     %                                                                                     \begin{array}{ccc}
-                                                                                    %                                                                                       \frac{\partial f_1}{\partial x_1} & \hdots & \frac{\partial f_1}{\partial x_N} \\
-                                                                                    %                                                                                       \vdots & \hdots & \vdots \\
-                                                                                    %                                                                                       \frac{\partial f_N}{\partial x_1} & \hdots & \frac{\partial f_N}{\partial x_N} 
-                                                                                    %                                                                                     \end{array}
-                                                                                    %                                                                                   \right].
-                                                                                    %                                                                                 \end{equation}
+                                                                                    %                                                                                     \frac{\partial f_1}{\partial x_1} & \hdots & \frac{\partial f_1}{\partial x_N} \\
+        %         \vdots & \hdots & \vdots \\
+        %         \frac{\partial f_N}{\partial x_1} & \hdots & \frac{\partial f_N}{\partial x_N} 
+                                                               %       \end{array}
+                                                               %                                                                \right].
+                                                               %                                                                \end{equation}
 Let $\mathrm{det}(\bm{J})$ denotes the determinant of $\bm{J}$. Then, the pdf is
 \begin{equation}\label{eq:sufficient-change-var}
   p_k(\bm{x}) = p(\tilde{\bm{x}}) =  p(\bm{z}) \bigg| \mathrm{det}(\bm{J}) \big|_{\bm{z}=\tilde{\bm{g}}^{-1}(\tilde{\bm{x}})}\bigg|.
@@ -557,66 +605,6 @@ In this section we first discuss about a suitable neural network model for $\bm{
 \subsubsection{Use of flow-based neural network}\label{subsec-flow-intro}
 
 
-For a flow-based neural network architecture, let us assume that
-the feature $\bm{h}_l$ at the $l$'th layer has two subparts as
-$\bm{h}_l = [\bm{h}_{l,a}^{T} \, , \, \bm{h}_{l,b}^{T}]^{T}$ where
-$(\cdot)^{T}$ denotes transpose operation. Then considering $\bm{h}_0 = \bm{z}$, we have the following forward and inverse relations between $(l-1)$'th and $l$'th layers:
-\begin{equation}\label{eq-gl}
-  \begin{array}{l}
-    \bm{h}_{l-1} =
-    \begin{bmatrix}
-      \bm{h}_{l-1,a}\\
-      \bm{h}_{l-1,b}
-    \end{bmatrix}
-    =
-    \begin{bmatrix}
-      \bm{h}_{l,a}\\
-      \bm{m}_a(\bm{h}_{l,a})\odot \bm{h}_{l,b} + \bm{m}_b(\bm{h}_{l,a})
-    \end{bmatrix},\vspace{10pt}\\
-    \bm{h}_{l} =
-    \begin{bmatrix}
-      \bm{h}_{l,a}\\
-      \bm{h}_{l,b}
-    \end{bmatrix}
-    =
-    \begin{bmatrix}
-      \bm{h}_{l-1,a}\\
-      \left(  \bm{h}_{l-1,b} - \bm{m}_b(\bm{h}_{l-1,a}) \right)\oslash \bm{m}_a(\bm{h}_{l-1,a}) 
-    \end{bmatrix}, \\
-  \end{array}  
-\end{equation}
-where $\odot$ denotes element-wise product, $\oslash$ denotes
-element-wise division, and $\bm{m}_a(\cdot), \bm{m}_b(\cdot)$ can be
-complex non-linear mappings (implemented by neural networks).
-For the flow-based neural network, the determinant of Jacobian matrix is
-\begin{equation}
-  \begin{array}{rl}
-    \mathrm{det}(\bm{J}) |_{\bm{z}=\tilde{\bm{f}}(\tilde{\bm{x}})} & = \prod_{l=1}^L \det (\bm{J}_l) |_{\bm{h}_{l}},
-  \end{array}
-\end{equation}
-where $\bm{J}_l$ is the Jacobian of the transformation from the $l$-th layer to the $(l-1)$-th layer, i.e., the inverse transformation. We compute the determinate of the Jacobian matrix as
-\begin{align}\label{eq-hl-determinate}
-  \det (\bm{J}_l)|_{\bm{h}_{l}}& = \det \left[  \pd{\bm{h}_{l-1}}{\bm{h}_l} \right] \nonumber\\
-                               & = \det
-                                 \begin{bmatrix}
-                                   \bm{I}_a & \mathbf{0} \nonumber\\
-                                   \pd{\bm{h}_{l-1,b}}{\bm{h}_{l,a}} & \mathrm{diag}(\bm{m}_a(\bm{h}_{l,a}))
-                                 \end{bmatrix}\nonumber\\
-                               &= \det \left( \mathrm{diag}(\bm{m}_a(\bm{h}_{l,a})) \right),
-\end{align}
-where $\bm{I}_a$ is identity matrix and $\mathrm{diag}(\cdot)$ returns a square matrix with the elements of $(\cdot)$ on the main diagnal. Then the pdf is
-\begin{align}
-  p(\tilde{\bm{x}}) & =  p(\bm{z}) \big| \mathrm{det}(\bm{J}) |_{\bm{z}=\tilde{\bm{f}}(\tilde{\bm{x}})}\big| \nonumber\\
-                    &  = p(\bm{z}) \prod_{l=1}^L \abs{\det\left( \mathrm{diag}(\bm{m}_a(\bm{h}_{l,a}))]  \right)}.
-\end{align}
-\autoref{eq-gl} describes a \textit{coupling} mapping between layers. Since the coupling has a partial identity mapping, direct concatenation of multiple such coupling mappings would result in a partial identity mapping of the whole neural network $\tilde{\bm{g}}$. Alternating the positions of identity mapping \cite{2016arXiv160508803D} or using $1\times1$ convolution operations \cite{2018arXiv180703039K} before each coupling mapping is used to treat the issue.
-% \textcolor{blue}{Some reading problem in this sentence: Since the coupling has a partial identity mapping, alternating the positions of identity mapping \cite{2016arXiv160508803D} or using $1\times1$ convolution operations \cite{2018arXiv180703039K} when
-% concatenating multiple layers together were proposed to avoid the situation that a part of the output is equal to a part of the input.} %In addition, applying affine mapping does not affect its advantage of trivial inverse and determinate computation.
-Furthermore, \cite{2016arXiv160508803D}\cite{2018arXiv180703039K} split some hidden
-layer signal $\bm{h}$ and model a part of it directly as standard Gaussian to reduce computation and memory burden.
-% % \textcolor{blue}{Therefore the dimension
-% of latent signal $\bm{z}$ to model can be smaller than $N$.}
-
 
 \subsubsection{EM Algorithm for GenMM}
 \label{sec-algo-genmm}
@@ -624,17 +612,17 @@ The mixture model GenMM is illustrated in \autoref{dia-emgm-nm},
 where $K$ generators with a certain prior distribution share the same
 latent distribution $p(\bm{z})$. With a flow-based neural network used as the generator $\bm{g}_k$ for the $k$'th mixture component in GenMM, the pdf $p_k(\bm{x})$ for any
 $\bm{x}$ can be computed exactly. Recall that $p_k(\bm{x}) =  p(\bm{g}_k(\bm{z})) =p(\bm{g}(\bm{z};\bm{\theta}_k))$. Let $\bm{f}_k$ be the inverse of $\bm{g}_k$. Then, %
-% \begin{equation}\label{eq-nm-Q_k}
-%   \begin{array}{rl}
-%     P_k(\bm{x})&= p(\bm{z})\bigg|\det\left( \pd{\bm{z}}{\bm{x}} \right)
-%     \bigg|_{\bm{z}=\bm{g}_k^{-1}(\bm{x})} \\
-%     &= p(\bm{z}) \prod_{l=1}^L\abs{\det{(\pd{\bm{h}_{k,
-%     l-1}}{\bm{h}_{k, l}})}},
-%   \end{array}
-% \end{equation}
-% where $\bm{h}_{k, l}$ is the $l$-th hidden layer signal of
-% generator $\bm{g}_k$ and $\bm{z} = \bm{h}_{k,0}$,
-% $\bm{x} = \bm{h}_{k,L}$ by default.
+                                                               %                                                                \begin{equation}\label{eq-nm-Q_k}
+                                                               %                                                                \begin{array}{rl}
+                                                               %                                                                  P_k(\bm{x})&= p(\bm{z})\bigg|\det\left( \pd{\bm{z}}{\bm{x}} \right)
+                                                               %                                                                  \bigg|_{\bm{z}=\bm{g}_k^{-1}(\bm{x})} \\
+                                                               %                                                                  &= p(\bm{z}) \prod_{l=1}^L\abs{\det{(\pd{\bm{h}_{k,
+                                                               %                                                                  l-1}}{\bm{h}_{k, l}})}},
+                                                               %                                                                \end{array}
+                                                               %                                                              \end{equation}
+                                                               %                                                              where $\bm{h}_{k, l}$ is the $l$-th hidden layer signal of
+                                                               %                                                              generator $\bm{g}_k$ and $\bm{z} = \bm{h}_{k,0}$,
+                                                               %                                                              $\bm{x} = \bm{h}_{k,L}$ by default.
 the posterior probability can be computed further from \autoref{eq-genmm-e-step} as
 \begin{align}\label{eq-genmm-gamma}
   \gamma_k({\bm{\Phi}}^{\mathrm{old}}) %= \Pp(k|x; \left\{
@@ -776,10 +764,10 @@ scaled by the dimension of signal $\bm{x}$ in order to compute $\gamma_k$.
 % As shown in the M-step of
 % GenMM, update of $\bm{\pi}$ should follow:
 % \begin{align}
-    %     \bm{\pi}^{\mathrm{new}} &= \arg \max_{\bm{\pi}} \mathcal{Q}
-                                    %                                     (\bm{\Phi},\bm{\Phi}^{\mathrm{old}}), \nonumber \\
-    %                                   &\mathrm{s.t.} \sum_{k=1}^{K}\pi_k = 1
-                                          %   \end{align}
+%   \bm{\pi}^{\mathrm{new}} &= \arg \max_{\bm{\pi}} \mathcal{Q}
+%   (\bm{\Phi},\bm{\Phi}^{\mathrm{old}}), \nonumber \\
+%   &\mathrm{s.t.} \sum_{k=1}^{K}\pi_k = 1
+% \end{align}
 
 The optimization of $\bm{\pi}$ is addressed in the following Lagrangian form
 \begin{equation}
@@ -860,9 +848,9 @@ is non-negative due to the non-negativity of the posterior $\gamma_k{(i)}$.
      %      Assume that the overall network is the concatenation of these coupling
      %      layers: $g_l$: $g = g_{L} \circ g_{L-1} \circ \cdots \circ g_{1}$. Assume that $\bm{z}$ is the latent source signal, the the generated output x can be written as  $\bm{x}= g(\bm{z})$. The relation is illustrated in the following,
      %      \begin{equation}
-     %        \bm{z} \xleftrightarrow[f_{1}]{g_{1}} \bm{h}_{1}
-     %        \xleftrightarrow[f_{2}]{g_{2}} \bm{h}_{2} \cdots
-     %        \xleftrightarrow[f_{L}]{g_{L}} \bm{x},
+     %      \bm{z} \xleftrightarrow[f_{1}]{g_{1}} \bm{h}_{1}
+     %      \xleftrightarrow[f_{2}]{g_{2}} \bm{h}_{2} \cdots
+     %      \xleftrightarrow[f_{L}]{g_{L}} \bm{x},
      %      \end{equation}
      %      where $f_l = g_l^{-1}$ is the inverse of $g_l$, $l=1, 2, \cdots, L$,
      %      and we have the notation setting $\bm{h}_0= \bm{z}$ and $\bm{h}_{L} = \bm{x}$.
@@ -870,128 +858,128 @@ is non-negative due to the non-negativity of the posterior $\gamma_k{(i)}$.
      %      To make $f_l: \bm{h}_l \rightarrow \bm{h}_{l-1}$ exist and $\pd{\bm{h}_{l-1}}{\bm{h}_l} = \pd{f_{l}(\bm{h}_l)}{\bm{h}_l}$
      %      computable, $f_l$ is defined via the following set of relations.
      %      \begin{equation}\label{eq-fl}
-     %        \bm{h}_{l-1} =
-     %        \begin{bmatrix}
-     %          \bm{h}_{l-1,a}\\
-     %          \bm{h}_{l-1,b}
-     %        \end{bmatrix}
-     %        =
-     %        \begin{bmatrix}
-     %          \bm{h}_{l,a}\\
-     %          m_a(\bm{h}_{l,a})\odot \bm{h}_{l,b} + m_b(\bm{h}_{l,a})
-     %        \end{bmatrix},
-     %      \end{equation}
-     %      where $\odot$ is element-wise product and $m_a, m_b \in \Mm$ can be
-     %      any complex mappings or neural networks. It can be seen that the
-     %      inverse of $f_l$, $g_l$, is given as follows.
-     %      \begin{equation}\label{eq-gl}
-     %        \bm{h}_{l} =
-     %        \begin{bmatrix}
-     %          \bm{h}_{l,a}\\
-     %          \bm{h}_{l,b}
-     %        \end{bmatrix}
-     %        =
-     %        \begin{bmatrix}
-     %          \bm{h}_{l-1,a}\\
-     %          \left(  \bm{h}_{l-1,b} - m_b(\bm{h}_{l-1,a}) \right)\oslash m_a(\bm{h}_{l-1,a}) 
-     %        \end{bmatrix}
-     %      \end{equation}
-     %      where $\oslash$ is element-wise division. And the determinate of the
-     %      Jacobian matrix is calculated as
-     %      \begin{equation}\label{eq-hl-determinate}
-     %        \begin{array}{rl}
-     %          \det \left(  \pd{\bm{h}_{l-1}}{\bm{h}_l}\right) &= \det
-     %          \begin{bmatrix}
-     %            \mathbb{1}_a & 0\\
-     %            \pd{\bm{h}_{l-1,b}}{\bm{h}_{l-1,a}} & diag(m_a).
-     %          \end{bmatrix}  \\
-     %          &= \abs{diag(m_a(\bm{h}_{l-1,a}))}
-     %        \end{array}
-     %      \end{equation}
-     %      , where $l = 1, 2, \cdots, L+1$.
+     %      \bm{h}_{l-1} =
+     %      \begin{bmatrix}
+     %      \bm{h}_{l-1,a}\\
+        %         \bm{h}_{l-1,b}
+        %         \end{bmatrix}
+        %         =
+        %         \begin{bmatrix}
+        %         \bm{h}_{l,a}\\
+        %         m_a(\bm{h}_{l,a})\odot \bm{h}_{l,b} + m_b(\bm{h}_{l,a})
+        %         \end{bmatrix},
+        %         \end{equation}
+        %         where $\odot$ is element-wise product and $m_a, m_b \in \Mm$ can be
+        %         any complex mappings or neural networks. It can be seen that the
+        %         inverse of $f_l$, $g_l$, is given as follows.
+        %         \begin{equation}\label{eq-gl}
+        %         \bm{h}_{l} =
+        %         \begin{bmatrix}
+        %         \bm{h}_{l,a}\\
+        %         \bm{h}_{l,b}
+        %         \end{bmatrix}
+        %         =
+        %         \begin{bmatrix}
+        %         \bm{h}_{l-1,a}\\
+        %         \left(  \bm{h}_{l-1,b} - m_b(\bm{h}_{l-1,a}) \right)\oslash m_a(\bm{h}_{l-1,a}) 
+        %         \end{bmatrix}
+        %         \end{equation}
+        %         where $\oslash$ is element-wise division. And the determinate of the
+        %         Jacobian matrix is calculated as
+        %         \begin{equation}\label{eq-hl-determinate}
+        %         \begin{array}{rl}
+        %         \det \left(  \pd{\bm{h}_{l-1}}{\bm{h}_l}\right) &= \det
+                                                                    %                                                                     \begin{bmatrix}
+                                                                    %                                                                     \mathbb{1}_a & 0\\
+        %         \pd{\bm{h}_{l-1,b}}{\bm{h}_{l-1,a}} & diag(m_a).
+                                                        %                                                         \end{bmatrix}  \\
+        %                                                                          &= \abs{diag(m_a(\bm{h}_{l-1,a}))}
+                                                                                     %       \end{array}
+                                                                                     %                                                                                      \end{equation}
+                                                                                     %                                                                                      , where $l = 1, 2, \cdots, L+1$.
 
-     %      Since the coupling layer denoted $f_l$ or $g_l$ in \autoref{eq-fl} and
-     %      \autoref{eq-gl} is has partial identity mapping. This problem is treated
-     %      by alternating the identity mapping position
-     %      \cite{2016arXiv160508803D} or $1\times1$ convolution operation \cite{2018arXiv180703039K} when
-     %      concatenating multiple layers together. Also, applying affine mapping
-     %      at each layer does not affect the easy inverse and determinate computation.
-                  %                   The convergence property of Algorithm~\autoref{flow-algo-em} follows the converge of meta EM algorithm itself. Generally, no global optimum is guaranteed.
-                  %                   While there are technical discussions on convergence properties of EM \cite{wu1983convergence}, there is no standalone proof showing the convergence of EM in general. Naturally the EM for GenMM also suffers in similar issues. In practice EM shows good performance in model fitting and we also demonstrate this by extensive experiments in the \autoref{sec:experiments}.
+                                                                                     %                                                                                      Since the coupling layer denoted $f_l$ or $g_l$ in \autoref{eq-fl} and
+                                                                                     %                                                                                      \autoref{eq-gl} is has partial identity mapping. This problem is treated
+                                                                                     %                                                                                      by alternating the identity mapping position
+                                                                                     %                                                                                      \cite{2016arXiv160508803D} or $1\times1$ convolution operation \cite{2018arXiv180703039K} when
+                                                                                     %                                                                                      concatenating multiple layers together. Also, applying affine mapping
+                                                                                     %                                                                                      at each layer does not affect the easy inverse and determinate computation.
+                                                                                     %                                                                                      The convergence property of Algorithm~\autoref{flow-algo-em} follows the converge of meta EM algorithm itself. Generally, no global optimum is guaranteed.
+                                                                                     %                                                                                      While there are technical discussions on convergence properties of EM \cite{wu1983convergence}, there is no standalone proof showing the convergence of EM in general. Naturally the EM for GenMM also suffers in similar issues. In practice EM shows good performance in model fitting and we also demonstrate this by extensive experiments in the \autoref{sec:experiments}.
 {In general the convergence of EM is guaranteed only in some cases, cf. \cite{wu1983convergence}. However, under some conditions our GenMM converges. In what follows we present the convergence arguments. 
 }
 
 \begin{proposition}
   Assume that for all $k$, the parameters $\bm{\theta}_k$ are in a compact set such that the corresponding mapping $\bm{g}_k$ is invertible. Assume further that all generator mappings fulfill that $\bm{f}_k$ and $\frac{\partial \bm{f}_k}{\partial \bm{x}}$ are continuous functions of $\bm{\theta}_k$. Then GenMM converges. 
   % Suppose that all the generator mappings $\bm{g}_k$ are such that $\bm{f}_k$ and $\frac{\partial \bm{f}_k}{\partial \bm{x}}$ are continuous functions of $\bm{\theta}_k$. Assume further that for all $k$, the parameters $\bm{\theta}_k$ are in a compact set such that the corresponding mapping $\bm{g}_k$ is invertible. Then GenMM converges. 
-                  %                   \textcolor{red}{Do you think it is possible to say: The GenMM converges to a saddle point. In that case the confusion about usual understanding on convergence to local minima does not arise.}
+  % \textcolor{red}{Do you think it is possible to say: The GenMM converges to a saddle point. In that case the confusion about usual understanding on convergence to local minima does not arise.}
 \end{proposition}
 \begin{proof}
   Assume that the assumption holds. Then the determinant term $\det(\bm{J})$ in \autoref{eq:sufficient-change-var} is a continuous function of $\bm{\theta}_k$. Due to \autoref{eq:sufficient-change-var} and the continuity of Gaussian density $p(\bm{z})$, the pdf $p_k(\bm{x})$ is a continuous function of $\bm{\theta}_k$. Therefore, $p(\bm{x})$ given in \autoref{eq:FirstMixtureModel} is a continuous function of $\bm{\Phi}$. Denote the likelihood in \autoref{eq:max-genmm} as $\Ll(\bm{\Phi})=\log \textstyle\prod_{i} p(\bm{x}^{(i)};\bm{\Phi})$. The maximum value of $\Ll(\bm{\Phi})$ is bounded due to continuity of $p(\bm{x})$ w.r.t. $\bm{\Phi}$.
   Define $\Bb(\bm{\Phi}) = \Qq\left(\bm{\Phi},\bm{\Phi}^{\mathrm{old}}\right) - \sum_{i=1}^n\sum_{k=1}^{K}\gamma_k^{(i)}(\bm{\Phi}^{\mathrm{old}}) \log\gamma_k^{(i)}(\bm{\Phi}^{\mathrm{old}})$. It is well known that $\Bb(\bm{\Phi})$ is a lower bound on the likelihood function $\Ll(\bm{\Phi})$, i.e. $\Ll(\bm{\Phi}) \geq \Bb(\bm{\Phi})$. Note that the essence of EM algorithm is that the likelihood function value is elevated by increasing the value of its lower bound $\Bb(\bm{\Phi})$. Since the maximum value of the log-likelihood $\Ll(\bm{\Phi})$ is finite, $\Bb(\bm{\Phi})$ can not grow unbounded.
-                  %                   Actually the maximization of $\Ll(\bm{\Phi})$ solved by EM is done by keeping increasing a lower bound of likelihood $\Ll(\bm{\Phi})$: 
-                  %                   .
-                  %                   The inequality  always holds.
-                  %                   $\mathcal{Q}(\cdot,\bm{\Phi}^{\mathrm{old}})$ can not grow unbounded, i.e., the EM converges under the %assumption as $\mathcal{Q}(\bm{\Phi}^{\mathrm{new}},\bm{\Phi}^{\mathrm{new}})\geq %\mathcal{Q}(\bm{\Phi}^{\mathrm{old}},\bm{\Phi}^{\mathrm{old}})$ after each iteration.
+  % Actually the maximization of $\Ll(\bm{\Phi})$ solved by EM is done by keeping increasing a lower bound of likelihood $\Ll(\bm{\Phi})$: 
+  % .
+  % The inequality  always holds.
+  % $\mathcal{Q}(\cdot,\bm{\Phi}^{\mathrm{old}})$ can not grow unbounded, i.e., the EM converges under the %assumption as $\mathcal{Q}(\bm{\Phi}^{\mathrm{new}},\bm{\Phi}^{\mathrm{new}})\geq %\mathcal{Q}(\bm{\Phi}^{\mathrm{old}},\bm{\Phi}^{\mathrm{old}})$ after each iteration.
 
-                  %                   \textcolor{red}{Therefore an important issue is that the log-likelihood is finite. But, is there any chance that it can not hold? Means somehow it goes unbounded. What is the condition that likelihhod function is guaranteed to be finite with its parameters?}
+  % \textcolor{red}{Therefore an important issue is that the log-likelihood is finite. But, is there any chance that it can not hold? Means somehow it goes unbounded. What is the condition that likelihhod function is guaranteed to be finite with its parameters?}
 \end{proof}
-                  %                   \textcolor{red}{This is a very small paragraph. Can you please absorb in the proof.}
-                  %                   The assumption on GenMM can be fulfilled easily by the architecture explained in \autoref{sub:exp-setup} with suitable activation functions.
+                                                                                     %                                                                                      \textcolor{red}{This is a very small paragraph. Can you please absorb in the proof.}
+                                                                                     %                                                                                      The assumption on GenMM can be fulfilled easily by the architecture explained in \autoref{sub:exp-setup} with suitable activation functions.
 
 \section{A low-complexity model}
 There are $K$ neural networks in GenMM, which makes GenMM a high-complexity model.
 We now propose a low-complexity model where parameters are shared. This is motivated by many machine learning setups where model parameters are shared across model components. For example, this techniques is applied as use of shared covariance matrices in a tied Gaussian mixture model, in linear discriminant analysis \cite{bellegarda1990tiedmixture, Kimball:1993:UTD:1075671.1075694, Bishop:2006:PRM:1162264}, and use of common subspace in non-negative matrix factorization \cite{Gupta2013}. Based on the idea of sharing parameters, we propose a low-complexity model which we refer to as latent mixture model as follow.
 
 \subsection{Latent mixture model}\label{subsec-latmm}
-                  %                   \begin{figure}
-                  %                   \centering
-                  %                   \input{images/diagram/emgm-sm.tex}
-                  %                   \caption{LatMM}\label{dia-emgm-sm}
-                  %                   \end{figure}
-                  %                   \begin{tikzpicture}
-                  %                   \tikzstyle{enode} = [thick, draw=blue, circle, inner sep = 3pt,  align=center]
-                  %                   \tikzstyle{nnode} = [thick, rectangle, rounded corners = 2pt,minimum size = 1.2cm,draw,inner sep = 2pt]
-                  %                   \node[enode] (z1) at (0,2) {$z_1\sim P_{Z_1}$};
-                  %                   \node[enode] (z2) at (0,0){$z_2\sim P_{Z_2}$};
-                  %                   \node[enode] (zK) at (0,-3) {$z_K\sim P_{Z_K}$};
-                  %                   \node[enode] (x) at (6,0){$x\sim P_X$};
-                  %                   \node[nnode] (g) at (3,0) {$g$};
-                  %                   \draw[dotted,line width=2pt] (0,-1) -- (0,-2);
-                  %                   \draw[->,dashed] (z1) [in=180,out=0]  to node[right]{$\pi_1$} (g);
-                  %                   \draw[->] (z2) [in=180,out=0]  to node[above]{$\pi_2$} (g);
-                  %                   \draw[->,dashed] (zK) [in=180,out=0]  to node[right]{$\pi_K$} (g);
-                  %                   \draw[->] (g) to (x);
-                  %                   \end{tikzpicture}
-                  %                   \begin{figure}
-                  %                   \begin{tikzpicture}
-                  %                   \tikzstyle{enode} = [thick, draw=blue, ellipse, inner sep = 1pt,  align=center]
-                  % %                   \tikzstyle{nnode} = [thick, rectangle, rounded corners = 1pt,minimum size = 1.2cm,draw,inner sep = 2pt]
-                  %                   \tikzstyle{nnode} = [thick, rectangle, rounded corners = 2pt,minimum size = 0.8cm,draw,inner sep = 2pt]
-                  %                   \node[enode] (z1) at (0,1.8) {$\bm{z}\sim p_1(\bm{z})$};
-                  %                   \node[enode] (z2) at (0,0.5){$\bm{z}\sim p_{2}(\bm{z})$};
-                  %                   \node[enode] (zK) at (0,-1.8) {$\bm{z}\sim p_{K}(\bm{z})$}; 
-                  %                   \node[enode] (x) at (5.5,0){$\bm{x}\sim p(\bm{x};\underset{\bar{}}{\bm{\Phi}})$};
-                  %                   \node[nnode] (g) at (3.2,0) {$\bm{g}$};
-                  %                   \draw[dotted,line width=2pt] (0,-0.3) -- (0,-1.2);
-                  %                   \draw[->,dashed] (z1) [in=180,out=0]  to node[right]{$\pi_1$} (g);
-                  %                   \draw[->] (z2) [in=180,out=0]  to node[above]{$\pi_2$} (g);
-                  %                   \draw[->,dashed] (zK) [in=180,out=0]  to node[right]{$\pi_K$} (g);
-                  %                   \draw[->] (g) to (x);
-                  %                   \end{tikzpicture}
-                  %                   \caption{Diagram of LatMM}\label{dia-emgm-sm}
-                  %                   \end{figure}
+                                                                                     %                                                                                      \begin{figure}
+                                                                                     %                                                                                      \centering
+                                                                                     %                                                                                      \input{images/diagram/emgm-sm.tex}
+                                                                                     %                                                                                      \caption{LatMM}\label{dia-emgm-sm}
+                                                                                     %                                                                                      \end{figure}
+                                                                                     %                                                                                      \begin{tikzpicture}
+                                                                                     %                                                                                      \tikzstyle{enode} = [thick, draw=blue, circle, inner sep = 3pt,  align=center]
+                                                                                     %                                                                                      \tikzstyle{nnode} = [thick, rectangle, rounded corners = 2pt,minimum size = 1.2cm,draw,inner sep = 2pt]
+                                                                                     %                                                                                      \node[enode] (z1) at (0,2) {$z_1\sim P_{Z_1}$};
+                                                                                     %                                                                                      \node[enode] (z2) at (0,0){$z_2\sim P_{Z_2}$};
+                                                                                     %                                                                                      \node[enode] (zK) at (0,-3) {$z_K\sim P_{Z_K}$};
+                                                                                     %                                                                                      \node[enode] (x) at (6,0){$x\sim P_X$};
+                                                                                     %                                                                                      \node[nnode] (g) at (3,0) {$g$};
+                                                                                     %                                                                                      \draw[dotted,line width=2pt] (0,-1) -- (0,-2);
+                                                                                     %                                                                                      \draw[->,dashed] (z1) [in=180,out=0]  to node[right]{$\pi_1$} (g);
+                                                                                     %                                                                                      \draw[->] (z2) [in=180,out=0]  to node[above]{$\pi_2$} (g);
+                                                                                     %                                                                                      \draw[->,dashed] (zK) [in=180,out=0]  to node[right]{$\pi_K$} (g);
+                                                                                     %                                                                                      \draw[->] (g) to (x);
+                                                                                     %                                                                                      \end{tikzpicture}
+                                                                                     %                                                                                      \begin{figure}
+                                                                                     %                                                                                      \begin{tikzpicture}
+                                                                                     %                                                                                      \tikzstyle{enode} = [thick, draw=blue, ellipse, inner sep = 1pt,  align=center]
+                                                                                     % %                                                                                      \tikzstyle{nnode} = [thick, rectangle, rounded corners = 1pt,minimum size = 1.2cm,draw,inner sep = 2pt]
+                                                                                     %                                                                                      \tikzstyle{nnode} = [thick, rectangle, rounded corners = 2pt,minimum size = 0.8cm,draw,inner sep = 2pt]
+                                                                                     %                                                                                      \node[enode] (z1) at (0,1.8) {$\bm{z}\sim p_1(\bm{z})$};
+                                                                                     %                                                                                      \node[enode] (z2) at (0,0.5){$\bm{z}\sim p_{2}(\bm{z})$};
+                                                                                     %                                                                                      \node[enode] (zK) at (0,-1.8) {$\bm{z}\sim p_{K}(\bm{z})$}; 
+                                                                                     %                                                                                      \node[enode] (x) at (5.5,0){$\bm{x}\sim p(\bm{x};\underset{\bar{}}{\bm{\Phi}})$};
+                                                                                     %                                                                                      \node[nnode] (g) at (3.2,0) {$\bm{g}$};
+                                                                                     %                                                                                      \draw[dotted,line width=2pt] (0,-0.3) -- (0,-1.2);
+                                                                                     %                                                                                      \draw[->,dashed] (z1) [in=180,out=0]  to node[right]{$\pi_1$} (g);
+                                                                                     %                                                                                      \draw[->] (z2) [in=180,out=0]  to node[above]{$\pi_2$} (g);
+                                                                                     %                                                                                      \draw[->,dashed] (zK) [in=180,out=0]  to node[right]{$\pi_K$} (g);
+                                                                                     %                                                                                      \draw[->] (g) to (x);
+                                                                                     %                                                                                      \end{tikzpicture}
+                                                                                     %                                                                                      \caption{Diagram of LatMM}\label{dia-emgm-sm}
+                                                                                     %                                                                                      \end{figure}
 
 In this generative model, we use a latent variable $\bm{z}$ that has the following Gaussian mixture distribution
 \begin{equation}
   p(\bm{z}) = \sum_{k=1}^K \pi_k p_k(\bm{z}), % = \sum_{k=1}^K \pi_k \mathcal{N}(\bm{z};\bm{\mu}_k,\bm{C}_k),
 \end{equation}
-                  %                   \begin{equation}
-                  %                   \bm{z}\sim\sum_{k=1}^K \pi_k \mathcal{N}(\bm{z};\bm{\mu}_k,\bm{C}_k),
-                  %                   \end{equation}
+                                                                                     %                                                                                      \begin{equation}
+                                                                                     %                                                                                      \bm{z}\sim\sum_{k=1}^K \pi_k \mathcal{N}(\bm{z};\bm{\mu}_k,\bm{C}_k),
+                                                                                     %                                                                                      \end{equation}
 where $p_k(\bm{z})$ is pdf of Gaussian distribution $\mathcal{N}(\bm{z};\bm{\mu}_k,\bm{C}_k)$ with mean $\bm{\mu}_k$ and covariance $\bm{C}_k$.
-                  %                   and $\bm{C}_k = \mathrm{diag}(\bm{\sigma}_k^2)$ is a
-                  %                   diagonal covariance matrix for simplicity.
+                                                                                     %                                                                                      and $\bm{C}_k = \mathrm{diag}(\bm{\sigma}_k^2)$ is a
+                                                                                     %                                                                                      diagonal covariance matrix for simplicity.
 The data $\bm{x}$ is
 assumed to be generated in the model using a single neural network
 $\bm{g}(\bm{z}): \mathbb{R}^M \rightarrow \mathbb{R}^N$ as
@@ -1111,77 +1099,77 @@ Then, the problem is how to learn the parameters of LatMM.
                                %                                \begin{algorithmic}[1]
                                %                                \State {\bfseries Input:}
                                %                                Latent mixture distribution: \\$\sum_{k=1}^{K}\pi_k \Nn\left(\bm{z}; \bm{\mu}_k, \mathrm{diag}(\bm{\sigma}_k^2)\right)$\\
-    %     Empirical distribution $P_d(\bm{x})$ of dataset; \\
-    %     \State Set a total number of epochs $T$ of training, prior $\bm{\pi}$ update gap $t_{\pi}$, 
-    %     a learning rate $\eta$; Set hyperparameter $a$ , $b$ for prior of
-    %     $\bm{\sigma}_k^{-1}, \forall k$.
-    %     \State Initialize the generator prior distribution $\pi_k = 1/K$; \\
-    %     Initialize $\bm{\theta}$ for $\bm{g}$, $\bm{\mu}_k$, $\bm{\sigma}_k$, $\forall k$ randomly.
-    %     %     \STATE 
-    %     \For {epoch $t < T$}
-    %     \For{iteration in epoch $t$}
-    %     \State Sample a batch of data $\left\{ \bm{x}^{(i)}
-    %     \right\}_{i=1}^{n_b}$ from dataset $P_d(\bm{x})$
-    %     \State Computer $\ubar{\gamma}_k(\ubar{\bm{\Phi}}^{\mathrm{old}})$ by
-    %     \autoref{em-latmm-gamma}, $\forall \bm{x}^{(i)}$ and $k=1, 2, \cdots, K$ %= \frac{\pi_k \Nn\left(f(X); \bm{\mu}_k^{t},\bm{\sigma}_k^{t}\right)}{\sum_{k=1}^K\; \pi_k\Nn\left(f(X); \bm{\mu}_k^{t},\bm{\sigma}_k^{t}\right) }, \forall \left\{ x^{(i)}\right\}_{i=1}^{n_b}$
-    %     %     \Comment{Calculate posterior \autoref{eq-posterior-gamma}}
-    %     \State Compute
-    %     $\ubar{\Qq}\left(\ubar{\bm{\Phi}},\ubar{\bm{\Phi}}^{\mathrm{old}}\right)$ in \autoref{eq-latmm-obj}%\Comment{Expectation}
+        %         Empirical distribution $P_d(\bm{x})$ of dataset; \\
+        %         \State Set a total number of epochs $T$ of training, prior $\bm{\pi}$ update gap $t_{\pi}$, 
+        %         a learning rate $\eta$; Set hyperparameter $a$ , $b$ for prior of
+        %         $\bm{\sigma}_k^{-1}, \forall k$.
+        %         \State Initialize the generator prior distribution $\pi_k = 1/K$; \\
+        %         Initialize $\bm{\theta}$ for $\bm{g}$, $\bm{\mu}_k$, $\bm{\sigma}_k$, $\forall k$ randomly.
+        %     %         \STATE 
+        %         \For {epoch $t < T$}
+        %         \For{iteration in epoch $t$}
+        %         \State Sample a batch of data $\left\{ \bm{x}^{(i)}
+        %         \right\}_{i=1}^{n_b}$ from dataset $P_d(\bm{x})$
+        %         \State Computer $\ubar{\gamma}_k(\ubar{\bm{\Phi}}^{\mathrm{old}})$ by
+        %         \autoref{em-latmm-gamma}, $\forall \bm{x}^{(i)}$ and $k=1, 2, \cdots, K$ %= \frac{\pi_k \Nn\left(f(X); \bm{\mu}_k^{t},\bm{\sigma}_k^{t}\right)}{\sum_{k=1}^K\; \pi_k\Nn\left(f(X); \bm{\mu}_k^{t},\bm{\sigma}_k^{t}\right) }, \forall \left\{ x^{(i)}\right\}_{i=1}^{n_b}$
+        %     %         \Comment{Calculate posterior \autoref{eq-posterior-gamma}}
+        %         \State Compute
+        %         $\ubar{\Qq}\left(\ubar{\bm{\Phi}},\ubar{\bm{\Phi}}^{\mathrm{old}}\right)$ in \autoref{eq-latmm-obj}%\Comment{Expectation}
 
-    %     \State $\partial{\bm{\th}}, \partial{\bm{\mu}_k}, \partial{\bm{\sigma}_k}\gets 
-    %     \nabla_{\bm{\theta}, \bm{\mu}_k, \bm{\sigma}_k} -
-    %     \frac{1}{n^{b}}\ubar{\Qq}\left(\ubar{\bm{\Phi}},\ubar{\bm{\Phi}}^{\mathrm{old}}\right)
-    %     -\frac{1}{K}
-    %     \log\prod_{k=1}^K
-    %     \Gamma(\bm{\sigma}_k^{-1};
-    %     a, b)$ %\Comment{E-step}
-    %     %     \STATE $\partial{g_k} \gets \nabla_{\th_k}\widetilde{\Qq}\left(\left\{ \th_k
-    %     %       \right\}_{k=1}^{K};\left\{ \th_k^t\right\}_{k=1}^{K}\right)$,
-    %     %     $\forall \th_k \in\left\{ \th_k\right\}_{k=1}^{K}$
-    %     \State $\bm{\th} \gets \bm{\th} - \eta \cdot \partial{\bm{\theta}}$
-    %     \State $\bm{\mu}_k \gets \bm{\mu}_k - \eta \cdot \partial{\bm{\mu}_k}, \forall k$
-    %     \State $\bm{\sigma}_k \gets \bm{\sigma}_k - \eta \cdot \partial{\bm{\sigma}_k},
-    %     \forall k$
-    %     \EndFor
-    %     \If{$(t \mod t_{\pi} )=0$} %\Comment{M-Step}
-    %     \State $\pi_k \gets \EE_{P_d}\left[ \ubar{\gamma}_k \right]$%\Comment{Update perior}
-    %     \EndIf
-    %     %     \STATE $\left\{ \mu_k^t, \sigma_k^t \right\}_{k=1}^{K}, \theta^{t}
-    %     %     \gets \left\{ \mu_k, \sigma_k \right\}_{k=1}^{K}, \theta$ %\Comment{Update new parameters}
+        %         \State $\partial{\bm{\th}}, \partial{\bm{\mu}_k}, \partial{\bm{\sigma}_k}\gets 
+        %         \nabla_{\bm{\theta}, \bm{\mu}_k, \bm{\sigma}_k} -
+        %         \frac{1}{n^{b}}\ubar{\Qq}\left(\ubar{\bm{\Phi}},\ubar{\bm{\Phi}}^{\mathrm{old}}\right)
+        %         -\frac{1}{K}
+        %         \log\prod_{k=1}^K
+        %         \Gamma(\bm{\sigma}_k^{-1};
+        %         a, b)$ %\Comment{E-step}
+        %     %         \STATE $\partial{g_k} \gets \nabla_{\th_k}\widetilde{\Qq}\left(\left\{ \th_k
+        %     %           \right\}_{k=1}^{K};\left\{ \th_k^t\right\}_{k=1}^{K}\right)$,
+        %     %         $\forall \th_k \in\left\{ \th_k\right\}_{k=1}^{K}$
+        %         \State $\bm{\th} \gets \bm{\th} - \eta \cdot \partial{\bm{\theta}}$
+        %         \State $\bm{\mu}_k \gets \bm{\mu}_k - \eta \cdot \partial{\bm{\mu}_k}, \forall k$
+        %         \State $\bm{\sigma}_k \gets \bm{\sigma}_k - \eta \cdot \partial{\bm{\sigma}_k},
+        %         \forall k$
+        %         \EndFor
+        %         \If{$(t \mod t_{\pi} )=0$} %\Comment{M-Step}
+        %         \State $\pi_k \gets \EE_{P_d}\left[ \ubar{\gamma}_k \right]$%\Comment{Update perior}
+        %         \EndIf
+        %     %         \STATE $\left\{ \mu_k^t, \sigma_k^t \right\}_{k=1}^{K}, \theta^{t}
+        %     %         \gets \left\{ \mu_k, \sigma_k \right\}_{k=1}^{K}, \theta$ %\Comment{Update new parameters}
 
-    %     \EndFor
-    %     \end{algorithmic}
-    %     \end{algorithm}
+        %         \EndFor
+        %         \end{algorithmic}
+        %         \end{algorithm}
 
 
 
-    %     \begin{figure}
-    %       \centering
-    %       \begin{tikzpicture}
-    % %         \tikzstyle{enode} = [thick, draw=blue, circle, inner sep = 3pt,
-    % %         align=center]
-    %         \tikzstyle{enode} = [thick, draw=blue, ellipse, inner sep = 0.1pt,  align=center]
-    %         \tikzstyle{nnode} = [thick, rectangle, rounded corners = 2pt,minimum size = 0.8cm,draw,inner sep = 2pt]
-    %         \node[enode] (iz) at (0,0) {$\bm{z}\sim \Nn(\bm{0},\bm{I})$};
-    % %         \node[enode] (z) at (6,0){$\bm{x}\sim p(\bm{x}; \bm{\Phi})$};
-    %         \node[enode] (x) at (6,0){$\bm{x}\sim p(\bm{x}; \bm{\Phi})$};
-    %         \node[nnode] (af1) at (2.2,2) {$\bm{af}_1$};
-    %         \node[nnode] (g1) at (3.5,2) {$\bm{g}_1$};
-    %         \node[nnode] (af2) at (3,0.5) {$\bm{g}_2$};
-    %         \node[nnode] (afk) at (3,-2) {$\bm{g}_K$};
-    %         \draw[dotted,line width=2pt] (3,-0.3) -- (3,-1.2);
-    %         \draw[->] (iz) [in= 180, out =0] to (af1);
-    %         \draw[->] (iz) [in= 180, out =0] to (af2);
-    %         \draw[->] (iz) [in= 180, out =0] to (afk);
-    %         \draw[->,dashed] (af1) -- node[right]{$\pi_1$} (x);
-    %         \draw[->,thin] (af2) -- node[above]{$\pi_2$} (x);
-    %         \draw[->,dashed] (afk) -- node[below]{$\pi_K$} (x);
-    %       \end{tikzpicture}
-    %   %       \input{images/diagram/emgm-sm-gaussian.tex}
-    %   %       \vspace{-5pt}
-    %       \caption{EMGM-SM with Gaussian Mixture source.}\label{fig-emgm-nm-gaussian}
-    %     \end{figure}
-    %     \textcolor{red}{drawing here}\\
+        %         \begin{figure}
+        %         \centering
+        %         \begin{tikzpicture}
+        % %           \tikzstyle{enode} = [thick, draw=blue, circle, inner sep = 3pt,
+        % %           align=center]
+        %         \tikzstyle{enode} = [thick, draw=blue, ellipse, inner sep = 0.1pt,  align=center]
+        %         \tikzstyle{nnode} = [thick, rectangle, rounded corners = 2pt,minimum size = 0.8cm,draw,inner sep = 2pt]
+        %         \node[enode] (iz) at (0,0) {$\bm{z}\sim \Nn(\bm{0},\bm{I})$};
+        % %         \node[enode] (z) at (6,0){$\bm{x}\sim p(\bm{x}; \bm{\Phi})$};
+        %         \node[enode] (x) at (6,0){$\bm{x}\sim p(\bm{x}; \bm{\Phi})$};
+        %         \node[nnode] (af1) at (2.2,2) {$\bm{af}_1$};
+        %         \node[nnode] (g1) at (3.5,2) {$\bm{g}_1$};
+        %         \node[nnode] (af2) at (3,0.5) {$\bm{g}_2$};
+        %         \node[nnode] (afk) at (3,-2) {$\bm{g}_K$};
+        %         \draw[dotted,line width=2pt] (3,-0.3) -- (3,-1.2);
+        %         \draw[->] (iz) [in= 180, out =0] to (af1);
+        %         \draw[->] (iz) [in= 180, out =0] to (af2);
+        %         \draw[->] (iz) [in= 180, out =0] to (afk);
+        %         \draw[->,dashed] (af1) -- node[right]{$\pi_1$} (x);
+        %         \draw[->,thin] (af2) -- node[above]{$\pi_2$} (x);
+        %         \draw[->,dashed] (afk) -- node[below]{$\pi_K$} (x);
+        %         \end{tikzpicture}
+        %   %         \input{images/diagram/emgm-sm-gaussian.tex}
+        %   %         \vspace{-5pt}
+        %         \caption{EMGM-SM with Gaussian Mixture source.}\label{fig-emgm-nm-gaussian}
+        %         \end{figure}
+        %         \textcolor{red}{drawing here}\\
 
 Algorithm~\ref{flow-algo-sem} summarizes the EM algorithm for LatMM.
 LatMM is used to
@@ -1744,14 +1732,14 @@ we train a ResNet on datasets MNIST and Fashion-MNIST, respectively, as the feat
 %   \caption{The lowest NLL value of LatMM for curves in \autoref{fig:latmm-nll} (nat/pixel).}
 %   \label{tab:lowestNLLlatMM}
 %   \begin{tabular}{l|c|c|c|c}\toprule
-      %       \toprule
-      %       {Dataset} &  K=1 &  K=3 &  K=5 &  K=7 \\
-      %       \midrule
-      %       MNIST &   1.9450 &   1.9384 &    1.9379 &    1.9341 \\ \midrule
-      %       Fashion-MNIST &   2.6091 &   2.4405 &   2.4385 &   2.4157 \\
-      %       \bottomrule
-      %     \end{tabular}
-      %       \end{table}
+%     \toprule
+%     {Dataset} &  K=1 &  K=3 &  K=5 &  K=7 \\
+%     \midrule
+%     MNIST &   1.9450 &   1.9384 &    1.9379 &    1.9341 \\ \midrule
+%     Fashion-MNIST &   2.6091 &   2.4405 &   2.4385 &   2.4157 \\
+%     \bottomrule
+%   \end{tabular}
+% \end{table}
 
 
 \begin{table}
@@ -1838,8 +1826,8 @@ The NLL curves of GenMM and LatMM models during model training phase are shown i
   \vspace{0.22cm}
   % \label{fig-app-interpolation}
   % \vspace{0.2cm}
-      %       \end{figure*}
-      %       \begin{figure*}[!ht]
+  % \end{figure*}
+  % \begin{figure*}[!ht]
   \centering
   \captionsetup[subfigure]{justification=centering}
   \begin{subfigure}[b]{0.3\textwidth}
@@ -1883,34 +1871,34 @@ trends obey a statistical knowledge that performance improves with
 increase in the model complexity, and then deteriorates if the model
 complexity continues to increase. As that in \autoref{fig-scores-k}, similar trends are also observed in \autoref{fig-scores-k-FashionMNIST}. In some cases, performance for $K=3$ is poorer than $K=1$. We assume that the random initialization of parameters in mixture models has a high influence in this regard. 
 Considering the trends in all the scores for both the figures, we can conclude that GenMM and LatMM can model the underlying distributions of data and the mixture models are good.
-      %       Therefore, if we want to model a datset's distribution using our proposed GenMM or LatMM models with large modeling capacity, it can be done by using large number of mixture components. When increasing $K$ from $1$ to $3$, $5$, $7$, the comparison between GenMM's NLL curves in \autoref{fig:genmm-nll} and LatMM's NLL curves in \autoref{fig:latmm-nll} shows that the NLL curve gap (the gain) of GenMM is larger than that of LatMM. This is consistent with our discussion about the model complexity of GenMM and LatMM in \autoref{sec:complexity}, i.e. GenMM is more complex than LatMM and we can expect GenMM has better modeling capacity than LatMM when generator networks are similarly complex. One exception happens between curve of $K=1$ and that of $K=3$ for LatMM in \autoref{fig-latmm-fsh-nll-curve}. This could be due to totally random initialization of all neural networks parameters.
+% Therefore, if we want to model a datset's distribution using our proposed GenMM or LatMM models with large modeling capacity, it can be done by using large number of mixture components. When increasing $K$ from $1$ to $3$, $5$, $7$, the comparison between GenMM's NLL curves in \autoref{fig:genmm-nll} and LatMM's NLL curves in \autoref{fig:latmm-nll} shows that the NLL curve gap (the gain) of GenMM is larger than that of LatMM. This is consistent with our discussion about the model complexity of GenMM and LatMM in \autoref{sec:complexity}, i.e. GenMM is more complex than LatMM and we can expect GenMM has better modeling capacity than LatMM when generator networks are similarly complex. One exception happens between curve of $K=1$ and that of $K=3$ for LatMM in \autoref{fig-latmm-fsh-nll-curve}. This could be due to totally random initialization of all neural networks parameters.
 
-      %       We also list the lowest NLL value observed in each curve of \autoref{fig-genmm-mnist-nll-curve}, \autoref{fig-genmm-fsh-nll-curve}, \autoref{fig-latmm-mnist-nll-curve}, and \autoref{fig-latmm-mnist-nll-curve}. They are shown in \autoref{tab:lowestNLLgenMM} and \autoref{tab:lowestNLLlatMM}. As expected, the lowest NLL value decreases as $K$ increases for both GenMM and LatMM trained on two datasets. Again, the NLL value dropping gap for GenMM is larger than that for LatMM in general sense.
+% We also list the lowest NLL value observed in each curve of \autoref{fig-genmm-mnist-nll-curve}, \autoref{fig-genmm-fsh-nll-curve}, \autoref{fig-latmm-mnist-nll-curve}, and \autoref{fig-latmm-mnist-nll-curve}. They are shown in \autoref{tab:lowestNLLgenMM} and \autoref{tab:lowestNLLlatMM}. As expected, the lowest NLL value decreases as $K$ increases for both GenMM and LatMM trained on two datasets. Again, the NLL value dropping gap for GenMM is larger than that for LatMM in general sense.
 
-      %       We report NLL versus number of mixture omponents ($K$). To
-      %       avoid numerical computation problem of log-sum for high-dimension
-      %       signal, the $\log{P_k(\bm{x})}$ is scaled 
-      %       \footnote{Direct computation of log-likelihood
-      %       $\log{\sum_{k=1}^{K}\;\pi_k P_k(\bm{x})}$ for high dimensional
-      %       signal $\bm{x}$ is numerically problematic. Then the scaled NLL is
-      %       actually reported as $\log{\sum_{k=1}^{K}\pi_k
-      %       \left(P_k(\bm{x})\right)^{1/\mathrm{dim}(\bm{x})}}$.} by dimension of $\bm{x}$,
-      %       \emph{i.e.} $\mathrm{dim}(\bm{x})$, and we report NLL via unit of nat
-      %       per dimension (nat/dim).
-
-
+% We report NLL versus number of mixture omponents ($K$). To
+% avoid numerical computation problem of log-sum for high-dimension
+% signal, the $\log{P_k(\bm{x})}$ is scaled 
+% \footnote{Direct computation of log-likelihood
+% $\log{\sum_{k=1}^{K}\;\pi_k P_k(\bm{x})}$ for high dimensional
+% signal $\bm{x}$ is numerically problematic. Then the scaled NLL is
+% actually reported as $\log{\sum_{k=1}^{K}\pi_k
+% \left(P_k(\bm{x})\right)^{1/\mathrm{dim}(\bm{x})}}$.} by dimension of $\bm{x}$,
+% \emph{i.e.} $\mathrm{dim}(\bm{x})$, and we report NLL via unit of nat
+% per dimension (nat/dim).
 
 
-      %       The tables 1 and 2 show the NLL where we use MNIST dataset. The training dataset of MNIST is used for learning the model parameters. The testing dataset of MNIST is used to verify how the trained models fit for unseen test dataset. We observe from the tables that the NLL decreases with increase in $K$ and then shows a timid upward trend. This NLL behaviour is consistent with a usual statistical knowledge that performance improves with increase in model complexity and then deteriorates if model complexity continues to increase. Also, we observe that NLL for testing dataset is close to the NLL for training dataset. This shows that our proposed models and developments of EM algorithms are able to address generalization property.
 
-      %       Using the trained models for the first experiment, we report four more
-      %       scores to show performance versus model complexity. The IS, FID, MMD
-      %       and INN scores are shown in \autoref{fig-scores-k}. For this figure,
-      %       we did a random selection of 1000 data samples from training dataset;
-      %       this is true data. Then we generated 1000 data samples using trained
-      %       models. We used 1000 (true) real data and 1000 generated data to
-      %       compute the scores. The scores are computed for several trials. In the
-      %       \autoref{fig-scores-k}, a solid line is the average of trials and the shaded region shows the range of scores across the average score.       
+
+% The tables 1 and 2 show the NLL where we use MNIST dataset. The training dataset of MNIST is used for learning the model parameters. The testing dataset of MNIST is used to verify how the trained models fit for unseen test dataset. We observe from the tables that the NLL decreases with increase in $K$ and then shows a timid upward trend. This NLL behaviour is consistent with a usual statistical knowledge that performance improves with increase in model complexity and then deteriorates if model complexity continues to increase. Also, we observe that NLL for testing dataset is close to the NLL for training dataset. This shows that our proposed models and developments of EM algorithms are able to address generalization property.
+
+% Using the trained models for the first experiment, we report four more
+% scores to show performance versus model complexity. The IS, FID, MMD
+% and INN scores are shown in \autoref{fig-scores-k}. For this figure,
+% we did a random selection of 1000 data samples from training dataset;
+% this is true data. Then we generated 1000 data samples using trained
+% models. We used 1000 (true) real data and 1000 generated data to
+% compute the scores. The scores are computed for several trials. In the
+% \autoref{fig-scores-k}, a solid line is the average of trials and the shaded region shows the range of scores across the average score.       
 
 
 \subsection{Sample Generating and Interpolation}
@@ -1927,18 +1915,18 @@ Considering the trends in all the scores for both the figures, we can conclude t
     Norb & 0.9184 & 0.9257 & 0.9406 & 0.9459 & 0.9538 & \textbf{0.9542} & 0.8920 \cite{pmlr-v5-salakhutdinov09a}  \\
     % \bottomrule
   \end{tabular}
-      %       \centering
-      %       \subcaption{Accuracy Table of LatMM}
-      %       \centering  
-      %       \begin{tabular}{l|c|c|c|c|c}
-      %       \toprule
-      %       {Dataset} &  K=1 &  K=2 &  K=3 &  K=4 &  State of Art \\
-      %       \midrule
-      %       Letter & 0.9453 &  0.9421 &  0.9462 &   0.9469 &  0.9582 \cite{tang2016extreme} \\ \midrule
-      %       Satimage & 0.8855 & 0.8895 & 0.8730 & 0.8895 & 0.9090 \cite{jiang2013k-svd} \\ \midrule
-      %       Norb & 0.9315 & 0.9221 & 0.9151 & 0.9274 & 0.8920 \cite{pmlr-v5-salakhutdinov09a} \\
-      %       \bottomrule                                                                  
-      %     \end{tabular}                                                                
+  % \centering
+  % \subcaption{Accuracy Table of LatMM}
+  % \centering  
+  % \begin{tabular}{l|c|c|c|c|c}
+  %   \toprule
+  %   {Dataset} &  K=1 &  K=2 &  K=3 &  K=4 &  State of Art \\
+  %   \midrule
+  %   Letter & 0.9453 &  0.9421 &  0.9462 &   0.9469 &  0.9582 \cite{tang2016extreme} \\ \midrule
+  %   Satimage & 0.8855 & 0.8895 & 0.8730 & 0.8895 & 0.9090 \cite{jiang2013k-svd} \\ \midrule
+  %   Norb & 0.9315 & 0.9221 & 0.9151 & 0.9274 & 0.8920 \cite{pmlr-v5-salakhutdinov09a} \\
+  %   \bottomrule                                                                  
+  % \end{tabular}                                                                
 \end{table*}
 \begin{figure*}[!ht]
   \captionsetup[subfigure]{justification=centering}
@@ -2155,7 +2143,7 @@ In this subsection, we apply our proposed mixture models to classification tasks
 For a given dataset with $Y$ classes, we divide the dataset by sample labels and each subset has the same label $y$. Then we train one GenMM model per class of data, i.e. $p(\bm{x};\bm{\Phi}_{y})$ is trained with the $y$-th class's data. After we have all $p(\bm{x};\bm{\Phi}_y)$, $\forall y = 1, 2, \cdots, Y$ trained, a new sample $\bm{x}$ is predicted by $\argmax_{y} p(\bm{x};\bm{\Phi}_y)$.
 
 The maximum likelihood based classification experiment as described above is carried out in three different datasets: Letter, Satimage, and Norb. For each dataset, we train our models for $300$ epoches on the training data of the corresponding dataset, and the test accuracy is reported in \autoref{tab:acc-classification}. The state-of-art accuracy of each dataset in literature is also listed in this table for comparison. For each dataset, we increase the total number of mixture components $K$ and the neural network generators have the same structure. The table shows that the classification accuracy on each dataset is increased as we increase the number of generators in GenMM. When $K$ is $10$ or $20$, maximum likelihood based classification by GenMM outperforms the state-of-art accuracy. The state-of-art accuracy results are obtained by using discriminative learning approaches. For dataset Norb, more significant performance gain is observed. Our classification accuracy is boosted from $0.9184$ to $0.9542$ when $K$ is increased from $1$ to $20$ and a large improvement margin is obtained over reference accuracy. We also test LatMM on classification task, but its accuracy is more or less around the accuracy of GenMM with $K=1$. Note that LatMM is a relatively low-complexity model than GenMM. 
-      %       The latent source mixture strategy of LatMM is not as powerful as GenMM to model multi-modal data.
+% The latent source mixture strategy of LatMM is not as powerful as GenMM to model multi-modal data.
 
 \autoref{fig:class-letter} \autoref{fig:class-satimage} and \autoref{fig:class-norb} show the train and test accuracy changing along with the training epoch on dataset Letter and Satimage, respectively. For each dataset, the accuracy curves versus epoch trained with GenMM at different value of $K$ are shown. In these sets of figures, all accuracy curves climbs and flattens around some value, as training epoch increases. Train accuracy is either coincident with, or above test accuracy curve at different training phases. For each set of figures on a given dataset, the gap between train and test curve is smaller as a larger number of mixture components is used. As $K$ increases, test curve flattens at a larger accuracy value. This again speaks for validation of our proposed models and also the advantage of using our mixture models for practical tasks.
 
