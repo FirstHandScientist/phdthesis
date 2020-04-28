@@ -32,6 +32,9 @@ In general, there is no closed-form solution in maximizing this log-likelihood $
 The left-hand-side of \eqref{chpt5:eq:stationary-point-likely} is empirical expectation w.r.t. to the gradient of potential function $\phi_a$, while on the right-hand-side of \eqref{chpt5:eq:stationary-point-likely} the expectation is computed by support of the marginal distribution $p(\bm{x}_a; \bm{\theta})$. This stationary point is intuitively telling us that the maximum likelihood estimation is trying to enforce the equality of empirical expectation of gradient with each $\bm{\theta}_a$ and the model's expectation of that.
 \begin{remark}
   If we instantiate $p(\bm{x};\bm{\theta})$ from exponential family and it is canonically parameterized, its potential $\phi_a(\bm{x}_a; \bm{\theta})$ is log-linear w.r.t. the sufficient statistic. The corresponding equation of \eqref{chpt5:eq:stationary-point-likely} in this case is reduced into \textit{moment matching}.
+
+  \textcolor{blue}{In addition, for log-linear form of potential function $\phi_a$ for all $a \in \Ff$, the first term of $l(\bm{x}; \bm{\theta})$ is linear w.r.t. $\bm{\theta}$ and the second term, i.e. $-\log{Z(\bm{\theta})}$, is concave. Thus the log-likelihood is concave and there is a unique globally optimal log-likelihood value. But this does not necessarily mean that there is always an unique globally optima $\bm{\theta}^{\ast}$, since the parameterization of the MRF can be redundant.}
+  
 \end{remark}
 
 Apart from the classical techniques such as iterative proportional fitting \cite[section~6.1]{wainwright2008graphical}\cite{eric10-708ipf}, the wide used approach is gradient decent method by using \eqref{chpt3:eq:likely-gradient-thetaa}, in maximizing $\Ll(\Dd; \bm{\theta})$. Either way, the inference on marginal distribution $\left\{ p(\bm{x}_a; \bm{\theta}), a \in \Ff \right\}$ is inevitable.
