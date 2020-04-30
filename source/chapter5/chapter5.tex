@@ -31,9 +31,9 @@ In general, there is no closed-form solution in maximizing this log-likelihood $
 \end{equation}
 The left-hand-side of \eqref{chpt5:eq:stationary-point-likely} is empirical expectation w.r.t. to the gradient of potential function $\phi_a$, while on the right-hand-side of \eqref{chpt5:eq:stationary-point-likely} the expectation is computed by support of the marginal distribution $p(\bm{x}_a; \bm{\theta})$. This stationary point is intuitively telling us that the maximum likelihood estimation is trying to enforce the equality of empirical expectation of gradient with each $\bm{\theta}_a$ and the model's expectation of that.
 \begin{remark}
-  If we instantiate $p(\bm{x};\bm{\theta})$ from exponential family and it is canonically parameterized, its potential $\phi_a(\bm{x}_a; \bm{\theta})$ is log-linear w.r.t. the sufficient statistic. The corresponding equation of \eqref{chpt5:eq:stationary-point-likely} in this case is reduced into \textit{moment matching}.
+  If we instantiate $p(\bm{x};\bm{\theta})$ from exponential family and it is canonically parameterized, its potential $\phi_a(\bm{x}_a; \bm{\theta})$ is log-linear w.r.t. the sufficient statistics. The corresponding equation of \eqref{chpt5:eq:stationary-point-likely} in this case is reduced into \textit{moment matching}.
 
-  \textcolor{blue}{In addition, for log-linear form of potential function $\phi_a$ for all $a \in \Ff$, the first term of $l(\bm{x}; \bm{\theta})$ is linear w.r.t. $\bm{\theta}$ and the second term, i.e. $-\log{Z(\bm{\theta})}$, is concave. Thus the log-likelihood is concave and there is a unique globally optimal log-likelihood value. But this does not necessarily mean that there is always an unique globally optima $\bm{\theta}^{\ast}$, since the parameterization of the MRF can be redundant.}
+  {For log-linear potential function $\phi_a$, $\forall ~a \in \Ff$, the first term of $l(\bm{x}; \bm{\theta})$ is linear w.r.t. $\bm{\theta}$ and the second term, i.e. $-\log{Z(\bm{\theta})}$, is concave. Thus the log-likelihood is concave and there is a unique globally optimal log-likelihood value. But this does not necessarily mean that there is always an unique globally optimum $\bm{\theta}^{\ast}$, since the parameterization of a MRF can be redundant.}
   
 \end{remark}
 
@@ -45,11 +45,14 @@ Take the gradient decent method as example, we need to use one of the inference 
 \end{equation}
 
 \begin{remark}
-  When the MRF scales up, the number of parameters, i.e. elements of $\bm{\theta}$, could be large. To reduce overfitting, a typical trick is to add a zero-mean Gaussian prior to $\bm{\theta}$ as \textit{regularization}. Then log-likelihood of evidence $\bm{x}$ becomes 
+  When a MRF scales up, the number of parameters, i.e. elements of $\bm{\theta}$, could be large. If training data is limited, it may lead to overfitting. To address this issue, a typical trick is to add a zero-mean Gaussian prior to $\bm{\theta}$ as \textit{regularization}. Then log-likelihood of evidence $\bm{x}$ becomes 
   \begin{equation}
     l(\bm{x};\bm{\theta}) = \log{\tilde{p}(\bm{x}; \bm{\theta})} - \log{Z(\bm{\theta})} - \frac{\norm{\bm{\theta}}^2}{2\sigma^2},
   \end{equation}
   where $\sigma^2$ is variance of the Gaussian prior, which is free to determine. The rest analysis fellows.
+
+  {Alternatively, Laplacian prior is also commonly used. This bring a $\ell_1$-norm regularization over $\bm{\theta}$, which encourages sparsity.}
+
 \end{remark}
 
 
@@ -211,7 +214,7 @@ similar to the variational free energy \eqref{chpt2:eq:variational-free-energy}.
   \EE_{q(\bm{x}_U|\bm{x}_O)}\left[ \log{\frac{q(\bm{x}_U|\bm{x}_O)}{\tilde{p}(\bm{x}_U, \bm{x}_O; \bm{\theta})}} \right] \geq - \log{Z(\bm{x}_O; \bm{\theta})},
 \end{equation}
 we have
-\begin{align}
+\begin{align}\label{chpt5:eq:lower-bound-F}
   l(\bm{x}_O; \bm{\theta}) &\geq \EE_{q(\bm{x}_U|\bm{x}_O)}\left[ \log{\frac{\tilde{p}(\bm{x}_U, \bm{x}_O; \bm{\theta})}{q(\bm{x}_U|\bm{x}_O)}} \right] - \log{Z(\bm{\theta})} \nonumber \\
                            & = \EE_{q(\bm{x}_U|\bm{x}_O)}\left[ \log{\frac{{p}(\bm{x}_U, \bm{x}_O; \bm{\theta})}{q(\bm{x}_U|\bm{x}_O)}} \right] \nonumber \\
                            & = \EE_{q(\bm{x}_U|\bm{x}_O)}\left[ \log{{p}(\bm{x}_U, \bm{x}_O; \bm{\theta})} \right] + H({q(\bm{x}_U|\bm{x}_O)}) \nonumber \\
