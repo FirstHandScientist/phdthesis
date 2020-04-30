@@ -114,7 +114,7 @@ Sometimes, it may not be necessary to carry all features thorough all $L$ chain 
 layer signal $\bm{h}$ and model a part of it directly as standard Gaussian to reduce computation and memory burden.
 
 \begin{remark}
-  There are alternative ways of formulating the transformation of variable changing. A popular one is the Inverse autoregreeesive flow (IAF) proposed in \cite{rezende2015variational}. In the IAF model, a chain step of transformation is formulated
+  There are alternative ways of formulating the transformation of variable changing. A popular one is the Inverse autoregreeesive flow (IAF) proposed in \cite{rezende2015variational}. In the IAF model, a chain step of transformation is formulated as
   \begin{equation*}
     \bm{h}_l = \bm{h}_{l-1} + \bm{u} \cdot {m}(\bm{w}^{\intercal} \cdot \bm{h}_{l-1} + b)
   \end{equation*}
@@ -189,7 +189,7 @@ The induced probability density function of $\bm{x} \in \mathbb{R}^N$ of the pro
 \end{align}
 We use $\bm{\Theta}$ to denote the set of all parameters $ \{\bm{\pi},\bm{\theta}_1, \dots, \bm{\theta}_K \}$, where $\bm{\pi} = \left\{ \pi_1, \hdots, \pi_K \right\}$ is the prior distribution of the generators. Note that $\pi_k \geq 0$ and $\sum_{k=1}^K \pi_k =1$. The mixture model
 in \eqref{eq:FirstMixtureModel} is called a generator mixture model (GenMM). The graphical model of GenMM is illustrated in Figure~\ref{chpt6:fig:genmm-graph}. The plate in this figure is common notation in template models (see \cite[section~6]{koller2009pgm}), denoting we can instantiate multiple tuple $(\bm{z}, \bm{x}, \bm{s})$ instances having dependency as illustrated. Furthermore, the
-signal diagram of GenMM is illustrated in \autoref{dia-emgm-nm}. The GenMM can be considered as a high-complexity model because each mixture component $p_k(\bm{x})$ has its own parameter set $\bm{\theta}_k$. 
+signal diagram of GenMM is illustrated in Figure~\ref{dia-emgm-nm}. The GenMM can be considered as a high-complexity model because each mixture component $p_k(\bm{x})$ has its own parameter set $\bm{\theta}_k$. 
 % the parameter $\boldsymbol{\theta}_k$ varies across $K$ mixture components.
 
 The maximum likelihood estimation problem is
@@ -224,7 +224,7 @@ For the GenMM in \eqref{eq:FirstMixtureModel}, realizing EM requires computation
 
 \subsubsection{EM Learning of GenMM}
 \label{sec-algo-genmm}
-The mixture model GenMM is illustrated in \autoref{dia-emgm-nm},
+The mixture model GenMM is illustrated in Figure~\ref{dia-emgm-nm},
 where $K$ generators with a certain prior distribution share the same
 latent distribution $p(\bm{z})$. With a neural network based flow as the generator $\bm{g}_k$ for the $k$'th mixture component in GenMM, the probability density function $p_k(\bm{x})$ for any
 $\bm{x}$ can be computed exactly. Recall that $p_k(\bm{x}) =  p(\bm{g}_k(\bm{z})) =p(\bm{g}(\bm{z};\bm{\theta}_k))$ and let $\bm{f}_k$ be the inverse of $\bm{g}_k$. Then, the posterior probability can be computed further from \eqref{eq-genmm-e-step} as
@@ -239,8 +239,8 @@ and the objective function in the M-step can be written as
 We usually deal with a large dataset for model learning, i.e. $\abs{\Dd}$ can be large. In that case we implement the EM algorithm in batch fashion. 
 Recall that $ \bm{\Theta}= \{\bm{\pi},\bm{\theta}_1, \dots, \bm{\theta}_K \}$ and hence the M-step optimization problem $\argmax_{\bm{\Theta}} \mathcal{Q} (\bm{\Theta},\bm{\Theta}^{\mathrm{old}})$ is addressed in two steps:
 \begin{itemize}
-\item[(a)] optimization of $\{ \bm{\theta}_k \}_{k=1}^{K}$,
-\item[(b)] optimization of $\bm{\pi}$.
+\item[(a)] optimizing w.r.t. $\{ \bm{\theta}_k \}_{k=1}^{K}$,
+\item[(b)] optimizing w.r.t. $\bm{\pi}$.
 \end{itemize}
 
 Finding a closed-form solution for the problem $\argmax{\{\bm{\theta}_k\}_{k=1}^{K}}{ \mathcal{Q} (\bm{\Theta},\bm{\Theta}^{\mathrm{old}})}$ is not feasible in general. Instead, we do the batch-size gradient decent to optimize w.r.t. $\{\bm{\theta}_k\}_{k=1}^{K}$.
@@ -298,7 +298,7 @@ The update of prior follows the solution
 \begin{equation}\label{eq-pi-solution}
   \pi_k^{\mathrm{new}} = \frac{1}{\abs{\Dd}}\sum_{i=1}^{\abs{\Dd}}\gamma_k^{i}(\bm{\Theta}^{\mathrm{old}}).
 \end{equation}
-The detail to get the solution is derived in the subsection~\ref{subsubsec:Proof_for_update}. For a given dataset with empirical distribution $P_d(\bm{x})$,
+The detail to get the solution is derived in the section~\ref{subsubsec:Proof_for_update}. For a given dataset with empirical distribution $P_d(\bm{x})$,
 $\gamma_k$ is evaluated with batch data in order to calculate the cost
 $\Qq\left(\bm{\Theta},\bm{\Theta}^{\mathrm{old}}\right)$ and to update the
 parameter $\bm{\theta}_k$ of $\bm{g}_k$. We accumulate the values of $\gamma_k$ of batches and
@@ -362,7 +362,7 @@ Now we analysis the convergence behaviour of GenMM. Under some conditions, GenMM
 \end{proposition}
 \begin{proof}
   Assume that the assumption holds. Then the determinant term $\det(\bm{J})$ in \eqref{chpt6:eq:change-var} is a continuous function of $\bm{\theta}_k$. Due to \eqref{chpt6:eq:change-var} and the continuity of Gaussian density $p(\bm{z})$, the probability density function $p_k(\bm{x})$ is a continuous function of $\bm{\theta}_k$. Therefore, $p(\bm{x})$ given in \eqref{eq:FirstMixtureModel} is a continuous function of $\bm{\Theta}$. Denote the likelihood in \eqref{eq:max-genmm} as $\Ll(\bm{\Theta})=\log \textstyle\prod_{i} p(\bm{x}^{(i)};\bm{\Theta})$. The maximum value of $\Ll(\bm{\Theta})$ is bounded due to continuity of $p(\bm{x})$ w.r.t. $\bm{\Theta}$.
-  Define $\Bb(\bm{\Theta}) = \Qq\left(\bm{\Theta},\bm{\Theta}^{\mathrm{old}}\right) - \sum_{i=1}^{\abs{\Dd}}\sum_{k=1}^{K}\gamma_k^{i}(\bm{\Theta}^{\mathrm{old}}) \log\gamma_k^{(i)}(\bm{\Theta}^{\mathrm{old}})$. It is well known that $\Bb(\bm{\Theta})$ is a lower bound on the likelihood function $\Ll(\bm{\Theta})$, i.e. $\Ll(\bm{\Theta}) \geq \Bb(\bm{\Theta})$. Note that the essence of EM algorithm is that the likelihood function value is elevated by increasing the value of its lower bound $\Bb(\bm{\Theta})$. Since the maximum value of the log-likelihood $\Ll(\bm{\Theta})$ is finite, $\Bb(\bm{\Theta})$ can not grow unbounded.
+  Define $\hat{F}(\bm{\Theta}) = \Qq\left(\bm{\Theta},\bm{\Theta}^{\mathrm{old}}\right) - \sum_{i=1}^{\abs{\Dd}}\sum_{k=1}^{K}\gamma_k^{i}(\bm{\Theta}^{\mathrm{old}}) \log\gamma_k^{(i)}(\bm{\Theta}^{\mathrm{old}})$ (note $\hat{F}$ is the empirical version of lower bound in \eqref{chpt5:eq:lower-bound-F}). It is well known that $\hat{F}(\bm{\Theta})$ is a lower bound on the likelihood function $\Ll(\bm{\Theta})$, i.e. $\Ll(\bm{\Theta}) \geq \hat{F}(\bm{\Theta})$. Note that the essence of EM algorithm is that the likelihood function value is elevated by increasing the value of its lower bound $\hat{F}(\bm{\Theta})$. Since the maximum value of the log-likelihood $\Ll(\bm{\Theta})$ is finite, $\hat{F}(\bm{\Theta})$ can not grow unbounded.
   % Actually the maximization of $\Ll(\bm{\Phi})$ solved by EM is done by keeping increasing a lower bound of likelihood $\Ll(\bm{\Phi})$: 
   % .
   % The inequality  always holds.
@@ -408,12 +408,13 @@ We have
 \end{align}
 
 Similar to the case of GenMM, realization of the corresponding EM
-algorithm associated with LatMM in \autoref{eq:SecondMixtureModel}
+algorithm associated with LatMM in Figure~\ref{eq:SecondMixtureModel}
 also requires computing the posterior distribution $\ubar{\gamma}_k$ and the joint likelihood $\log{\pi_k p_k(\bm{x})}$. They require explicit computation of the conditional density function $p_k(\bm{x}) = p(\bm{g}(\bm{z};\bm{\theta})| s_k=1) = p(\bm{g}(\bm{z};\bm{\theta});\bm{\mu}_k, \bm{C}_k) $. In LatMM, $\bm{g}(\bm{z}): \mathbb{R}^N \rightarrow \mathbb{R}^N$ is also required to be invertible. Again $\bm{g}$ is instantiated from flow $\tilde{\bm{g}}$ in section~\ref{chpt6:sec:flow}. Then, the problem is how to learn the parameters of LatMM.
 
 \begin{figure}
+  \centering
   \begin{tikzpicture}
-    \tikzstyle{enode} = [thick, draw=blue, ellipse, inner sep = 1pt,  align=center]
+    \tikzstyle{enode} = [thick, draw=black, ellipse, inner sep = 1pt,  align=center]
     % \tikzstyle{nnode} = [thick, rectangle, rounded corners = 1pt,minimum size = 1.2cm,draw,inner sep = 2pt]
     \tikzstyle{nnode} = [thick, rectangle, rounded corners = 2pt,minimum size = 0.8cm,draw,inner sep = 2pt]
     \node[enode] (z1) at (0,1.8) {$\bm{z}_1\sim p_1(\bm{z})$};
@@ -459,10 +460,10 @@ also requires computing the posterior distribution $\ubar{\gamma}_k$ and the joi
     \FOR{the iteration in epoch $t$}
     \STATE Sample a batch of data $\left\{ \bm{x}^{(i)}
     \right\}_{i=1}^{n_b}$ from dataset
-    \STATE Compute $\ubar{\gamma}_k(\ubar{\bm{\Theta}}^{\mathrm{old}})$ by \autoref{em-latmm-gamma}, $\forall \bm{x}^{(i)}$ and $k=1, 2, \cdots, K$ %= \frac{\pi_k \Nn\left(f(X); \bm{\mu}_k^{t},\bm{\sigma}_k^{t}\right)}{\sum_{k=1}^K\; \pi_k\Nn\left(f(X); \bm{\mu}_k^{t},\bm{\sigma}_k^{t}\right) }, \forall \left\{ x^{(i)}\right\}_{i=1}^{n_b}$
+    \STATE Compute $\ubar{\gamma}_k(\ubar{\bm{\Theta}}^{\mathrm{old}})$ by \ref{em-latmm-gamma}, $\forall \bm{x}^{(i)}$ and $k=1, 2, \cdots, K$ %= \frac{\pi_k \Nn\left(f(X); \bm{\mu}_k^{t},\bm{\sigma}_k^{t}\right)}{\sum_{k=1}^K\; \pi_k\Nn\left(f(X); \bm{\mu}_k^{t},\bm{\sigma}_k^{t}\right) }, \forall \left\{ x^{(i)}\right\}_{i=1}^{n_b}$
     % \Comment{Calculate posterior \autoref{eq-posterior-gamma}}
     \STATE Compute
-    $\ubar{\Qq}\left(\ubar{\bm{\Theta}},\ubar{\bm{\Theta}}^{\mathrm{old}}\right)$ in \autoref{eq-latmm-obj}%\Comment{Expectation}
+    $\ubar{\Qq}\left(\ubar{\bm{\Theta}},\ubar{\bm{\Theta}}^{\mathrm{old}}\right)$ by \ref{eq-latmm-obj}%\Comment{Expectation}
 
     \STATE $\partial{\bm{\th}}, \partial{\bm{\mu}_k}, \partial{\bm{\sigma}_k}\gets 
     \nabla_{\bm{\theta}, \bm{\mu}_k, \bm{\sigma}_k} 
@@ -501,7 +502,7 @@ the latent source $p(\bm{z})$ can be obtained by an affine transform from
 the standard Gaussian, {i.e.}, $\bm{z}_k \sim p_k(\bm{z})$ can be
 obtained by a linear layer of neural network with $\bm{z}_k = \bm{\mu}_k
 + \bm{\sigma}_k \bm{\epsilon}, \bm{\epsilon} \sim \mathsf{N}(\bm{0}, \bm{I})$.
-According to \autoref{subsec-latmm}, the posterior and objective function in M-step of LatMM can be computed as
+According to section~\ref{subsec-latmm}, the posterior and objective function in M-step of LatMM can be computed as
 \begin{align}\label{em-latmm-gamma}
   \ubar{\gamma}_k(\ubar{\bm{\Theta}}^{\mathrm{old}}) = \frac{\pi_k^{\mathrm{old}} p_k\left(\bm{z}\right)}{\sum_{j=1}^K\;\pi_j^{\mathrm{old}} p_j\left(\bm{z}\right)}\bigg|_{\bm{z}=\bm{f}(\bm{x})},
 \end{align}
@@ -513,7 +514,7 @@ According to \autoref{subsec-latmm}, the posterior and objective function in M-s
     +\log{p_k\left(\bm{f}(\bm{x}^{(i)}); \bm{\mu}_k, \bm{\sigma}_k^2\right)}\bigg], 
 \end{align}
 where $\bm{f}$ is the inverse of $\bm{g}$.
-Similar to \autoref{sec-algo-genmm}, update of prior $\bm{\pi}$
+Similar to section~\ref{sec-algo-genmm}, update of prior $\bm{\pi}$
 follows $\pi_k \leftarrow \EE_{\Dd}[ \ubar{\gamma}_k(\bm{x})
 ]$. However, we need to consider the following issue when learning the parameters of
 Gaussian mixture source $p(\bm{z}) = \sum_{k=1}^K \pi p_k(\bm{z})$. If a component of the mixture source overfits and collapses onto a data sample, the likelihood can be large but the parameter learning can be problematic. This problem is known as the singularity problem of Gaussian mixture \cite{Bishop:2006:PRM:1162264}.
@@ -550,6 +551,715 @@ To get a less complex model than GenMM, another new model can be derived by modi
 
 Therefore several new models can be derived using our proposed models, GenMM and LatMM. In spite of the scope and potential, development of analytical methodology to derive new model architectures turns out to be challenging. Traditionally the development is trial-and-error driven. Development of new model architectures by combining GenMM and LatMM will be investigated in future, and not to be pursued in this article.   
 
+
+\section{Experiments Results}\label{sec:experiments}
+% \begin{figure*}[!ht]
+%   \captionsetup[subfigure]{justification=centering}
+%   \centering
+%   \begin{subfigure}{.24\textwidth}
+%     \centering
+%     \includegraphics[width=1\linewidth]{images/mnist/scores/EMGM-NM/EMGM-NM-IS-K.pdf}
+% %     \caption{IS score}
+%     %     \label{fig-nm-isk}
+%   \end{subfigure}
+%   \vspace{-2pt}
+%   \begin{subfigure}{.24\textwidth}
+%     \centering
+%     \includegraphics[width=1\linewidth]{images/mnist/scores/EMGM-NM/EMGM-NM-FID-K.pdf}
+%     %     \caption{FID score}
+%     %     \label{fig-nm-fidk}
+%   \end{subfigure}
+%   \centering
+%   \begin{subfigure}{.24\textwidth}
+%     \centering
+%     \includegraphics[width=1\linewidth]{images/mnist/scores/EMGM-NM/EMGM-NM-MMD-K.pdf}
+%     %     \caption{MMD score}
+%     %     \label{fig-nm-mmdk}
+%   \end{subfigure}
+%   \centering
+%   \begin{subfigure}{0.24\textwidth}
+%     \centering
+%     \includegraphics[width=1\linewidth]{images/mnist/scores/EMGM-NM/EMGM-NM-1NN-K.pdf}
+%     %     \caption{1NN score}
+%     %     \label{fig-nm-1nnk}
+%   \end{subfigure}
+%   \centering
+%   \begin{subfigure}{.24\textwidth}
+%     \centering
+%     \includegraphics[width=1\linewidth]{images/mnist/scores/EMGM-SM/EMGM-SM-IS-K.pdf}
+%     %     \caption{IS score}
+%     %     \label{fig-sm-is}
+%   \end{subfigure}
+%   \centering
+%   \begin{subfigure}{.24\textwidth}
+%     \centering
+%     \includegraphics[width=1\linewidth]{images/mnist/scores/EMGM-SM/EMGM-SM-FID-K.pdf}
+%     %     \caption{FID score}
+%     %     \label{fig-sm-fid}
+%   \end{subfigure}
+%   \centering
+%   \begin{subfigure}{.24\textwidth}
+%     \centering
+%     \includegraphics[width=1\linewidth]{images/mnist/scores/EMGM-SM/EMGM-SM-MMD-K.pdf}
+%     %     \caption{MMD score}
+%     %     \label{fig-sm-mmd}
+%   \end{subfigure}
+%   \begin{subfigure}{0.24\textwidth}
+%     \centering
+%     \includegraphics[width=1.\linewidth]{images/mnist/scores/EMGM-SM/EMGM-SM-1NN-K.pdf}
+%     %     \caption{1NN score}
+%     %     \label{fig-sm-1nn}
+%   \end{subfigure}
+%   \caption{IS, FID, MMD and 1NN scores of GenMM and LatMM. Evaluated
+%   on $2000$ samples ($1000$ samples generated by GenMM or LatMM for
+%   corresponding $K$, $1000$ samples from MNIST). $5$ experiments are
+%   carried out for each assessed score at each setting of $K$. Curve
+%   with marker stands for mean score and shaded area stands for the range of corresponding score. \textcolor{green}{This experiments is rechecked. Reproduced results are similar to what is shown here. (Latent standard Gaussian use standard deviation std =0.8) }}
+%   \vspace{10pt}
+% \end{figure*}
+
+% \begin{figure*}[!ht]
+%   \captionsetup[subfigure]{justification=centering}
+%   \centering
+%   \begin{subfigure}{.24\textwidth}
+%     \centering
+%     \includegraphics[width=1\linewidth]{images/fashion-mnist/scores/EMGM-NM/EMGM-NM-IS-K.pdf}
+% %     \caption{IS score}
+%     %     \label{fig-nm-isk}
+%   \end{subfigure}
+%   \vspace{-2pt}
+%   \begin{subfigure}{.24\textwidth}
+%     \centering
+%     \includegraphics[width=1\linewidth]{images/fashion-mnist/scores/EMGM-NM/EMGM-NM-FID-K.pdf}
+%     %     \caption{FID score}
+%     %     \label{fig-nm-fidk}
+%   \end{subfigure}
+%   \centering
+%   \begin{subfigure}{.24\textwidth}
+%     \centering
+%     \includegraphics[width=1\linewidth]{images/fashion-mnist/scores/EMGM-NM/EMGM-NM-MMD-K.pdf}
+%     %     \caption{MMD score}
+%     %     \label{fig-nm-mmdk}
+%   \end{subfigure}
+%   \centering
+%   \begin{subfigure}{0.24\textwidth}
+%     \centering
+%     \includegraphics[width=1\linewidth]{images/fashion-mnist/scores/EMGM-NM/EMGM-NM-1NN-K.pdf}
+%     %     \caption{1NN score}
+%     %     \label{fig-nm-1nnk}
+%   \end{subfigure}
+%   \centering
+%   \begin{subfigure}{.24\textwidth}
+%     \centering
+%     \includegraphics[width=1\linewidth]{images/fashion-mnist/scores/EMGM-SM/EMGM-SM-IS-K.pdf}
+%     %     \caption{IS score}
+%     %     \label{fig-sm-is}
+%   \end{subfigure}
+%   \centering
+%   \begin{subfigure}{.24\textwidth}
+%     \centering
+%     \includegraphics[width=1\linewidth]{images/fashion-mnist/scores/EMGM-SM/EMGM-SM-FID-K.pdf}
+%     %     \caption{FID score}
+%     %     \label{fig-sm-fid}
+%   \end{subfigure}
+%   \centering
+%   \begin{subfigure}{.24\textwidth}
+%     \centering
+%     \includegraphics[width=1\linewidth]{images/fashion-mnist/scores/EMGM-SM/EMGM-SM-MMD-K.pdf}
+%     %     \caption{MMD score}
+%     %     \label{fig-sm-mmd}
+%   \end{subfigure}
+%   \begin{subfigure}{0.24\textwidth}
+%     \centering
+%     \includegraphics[width=1.\linewidth]{images/fashion-mnist/scores/EMGM-SM/EMGM-SM-1NN-K.pdf}
+%     %     \caption{1NN score}
+%     %     \label{fig-sm-1nn}
+%   \end{subfigure}
+%   \caption{ GenMM and LatMM evaluated on Fashion-MNIST (std =0.8) }
+%   \vspace{10pt}
+% \end{figure*}
+
+
+
+In this section, we evaluate our proposed mixture models for generating samples and maximum likelihood classification. We will show encouraging results.
+
+% under different metrics firstly. Then demos of sample generating and interpolation are shown. Lastly, we apply our model to classification tasks based on maximum likelihood criterion.
+
+\begin{figure*}[!t]
+  \captionsetup[subfigure]{justification=centering}
+  \centering
+  \begin{subfigure}{.4\textwidth}
+    \centering
+    \includegraphics[width=1\linewidth]{images/supply/mnist_GenMM_nll_curves-crop.pdf}
+    
+    \caption{Dataset MNIST}
+    \label{fig-genmm-mnist-nll-curve}
+  \end{subfigure}\hspace{1cm}
+  \begin{subfigure}{.4\textwidth}
+    \centering
+    \includegraphics[width=1\linewidth]{images/supply/fashion_GenMM_nll_curves-crop.pdf}
+    
+    \caption{Dataset Fashion-MNIST}
+    \label{fig-genmm-fsh-nll-curve}
+  \end{subfigure}
+  \caption{NLL (Unit: nat/pixel) of GenMM versus training epochs with different number of mixture component $k$. (a) $10000$ images from MNIST is used for training, (b) $10000$ images from Fashion-MNIST is used for training.}
+  \label{fig:genmm-nll}
+\end{figure*}
+
+\begin{figure*}[!tp]
+  \captionsetup[subfigure]{justification=centering}
+  \centering
+  \begin{subfigure}{.4\textwidth}
+    \centering
+    \includegraphics[width=1\linewidth]{images/supply/mnist_LatMM_nll_curves-crop.pdf}
+    
+    \caption{Dataset of MNIST}
+    \label{fig-latmm-mnist-nll-curve}
+  \end{subfigure}\hspace{1cm}
+  \begin{subfigure}{.4\textwidth}
+    \centering
+    \includegraphics[width=1\linewidth]{images/supply/fashion_LatMM_nll_curves-crop.pdf}
+    
+    \caption{Dataset Fashion-MNIST}
+    \label{fig-latmm-fsh-nll-curve}
+  \end{subfigure}
+  
+  \caption{NLL (Unit: nat/pixel) of LatMM versus training epochs with different number of mixture component $k$. (a) $10000$ images from MNIST is used for training, (b) $10000$ images from Fashion-MNIST is used for training.}
+  \label{fig:latmm-nll}
+\end{figure*}
+
+
+\subsection{Experimental setup}\label{sub:exp-setup}
+
+We use the flow-based neural network for implementing generators $\{\bm{g}_k\}_{k=1}^{K}$ in GenMM and $\bm{g}$ in LatMM. Specifically, we use the Glow structure \cite{2018arXiv180703039K} that is developed based on RealNVP \cite{2016arXiv160508803D} and NICE \cite{DBLP:journals/corr/DinhKB14}. As introduced in section~\ref{chpt6:sec:flow}, the operation in \eqref{eq-gl} is a coupling
+layer. Since only a part of the input is mapped non-linearly after a coupling
+layer and the rest part remains the same, permutation \cite{2016arXiv160508803D} or $1\times 1$ convolution operation \cite{2018arXiv180703039K} is used to alternate the part of signal that goes through identity mapping. In Glow structure, a basic \textit{flow step} is the concatenation of three layers: Actnorm (element-wise affine mapping)
+$\rightarrow$ $1\times 1$ Convolution (for permutation purpose)
+$\rightarrow$ Coupling layer. A \textit{flow block} consists of: a squeeze layer,
+several flow steps, a split layer. A squeeze layer reshapes
+signal. A split layer allows
+flow model to split some elements of hidden layers out and model them
+directly as standard Gaussian, which relieves computation burden. In our experiments, there are also split layers that make dimension of $\bm{z}$ one fourth of dimension $\bm{x}$, and split signal in hidden layers are modeled as standard Gaussian. 
+
+% In all of our experiments, the generators $\bm{g}_k, \forall k$, in
+% GenMM and $\bm{g}$ of LatMM use the same structure: \textit{three} flow blocks with
+% each flow block consisting of \textit{four} coupling layers.  
+All generators used in our experiments are randomly initialized before training. 
+% In order to make comparison fair, our models with different configuration of $K$ are all trained for $30$ epochs on both datasets. Comparison are made with the trained models.  
+In addition, the prior distribution $\bm{\pi}$ update in both GenMM and LatMM is every $5$ epochs, {i.e.},  $t_{\pi} = 5$. For the training of LatMM, we adopt the Gamma distribution $\Gamma(\bm{\sigma}_k^{-1}; a, b)$ as the parameter prior for $\bm{\sigma}_k^{-1}, \forall k$, with shape parameter $a=2$ and rate parameter $b = 1$.
+
+\begin{figure*}[!tp]
+  \captionsetup[subfigure]{justification=centering}
+  \centering
+  \begin{subfigure}{.24\textwidth}
+    \centering
+    \includegraphics[width=1\linewidth]{images/mnist/scores/std1EMGM-NM/EMGM-NM-IS-K.pdf}
+    % \caption{IS score}
+    % \label{fig-nm-isk}
+  \end{subfigure}
+  \vspace{-2pt}
+  \begin{subfigure}{.24\textwidth}
+    \centering
+    \includegraphics[width=1\linewidth]{images/mnist/scores/std1EMGM-NM/EMGM-NM-FID-K.pdf}
+    % \caption{FID score}
+    % \label{fig-nm-fidk}
+  \end{subfigure}
+  \centering
+  \begin{subfigure}{.24\textwidth}
+    \centering
+    \includegraphics[width=1\linewidth]{images/mnist/scores/std1EMGM-NM/EMGM-NM-MMD-K.pdf}
+    % \caption{MMD score}
+    % \label{fig-nm-mmdk}
+  \end{subfigure}
+  \centering
+  \begin{subfigure}{0.24\textwidth}
+    \centering
+    \includegraphics[width=1\linewidth]{images/mnist/scores/std1EMGM-NM/EMGM-NM-1NN-K.pdf}
+    % \caption{1NN score}
+    % \label{fig-nm-1nnk}
+  \end{subfigure}
+  \centering
+  \begin{subfigure}{.24\textwidth}
+    \centering
+    \includegraphics[width=1\linewidth]{images/mnist/scores/std1EMGM-SM/EMGM-SM-IS-K.pdf}
+    % \caption{IS score}
+    % \label{fig-sm-is}
+  \end{subfigure}
+  \centering
+  \begin{subfigure}{.24\textwidth}
+    \centering
+    \includegraphics[width=1\linewidth]{images/mnist/scores/std1EMGM-SM/EMGM-SM-FID-K.pdf}
+    % \caption{FID score}
+    % \label{fig-sm-fid}
+  \end{subfigure}
+  \centering
+  \begin{subfigure}{.24\textwidth}
+    \centering
+    \includegraphics[width=1\linewidth]{images/mnist/scores/std1EMGM-SM/EMGM-SM-MMD-K.pdf}
+    % \caption{MMD score}
+    % \label{fig-sm-mmd}
+  \end{subfigure}
+  \begin{subfigure}{0.24\textwidth}
+    \centering
+    \includegraphics[width=1.\linewidth]{images/mnist/scores/std1EMGM-SM/EMGM-SM-1NN-K.pdf}
+    % \caption{1NN score}
+    % \label{fig-sm-1nn}
+  \end{subfigure}
+  \caption{IS, FID, MMD and 1NN of GenMM and LatMM for MNIST dataset. GenMM and LatMM are trained on $60000$ images of MNIST. The results are evaluated on $2000$ samples per simulation point ($1000$ samples generated by GenMM or LatMM for corresponding $K$, $1000$ samples from MNIST). $5$ experiments are carried out for each assessed score at each setting of $K$. Curve with marker denotes mean score and shaded area denotes the range of corresponding score.}\label{fig-scores-k}
+\end{figure*}
+
+\begin{figure*}[!ht]
+  \captionsetup[subfigure]{justification=centering}
+  \centering
+  \begin{subfigure}{.24\textwidth}
+    \centering
+    \includegraphics[width=1.0\linewidth]{images/fashion-mnist/scores/std1EMGM-NM/EMGM-NM-IS-K.pdf}
+    % \caption{IS score}
+    % \label{fig-nm-isk}
+  \end{subfigure}
+  \vspace{-2pt}
+  \begin{subfigure}{.24\textwidth}
+    \centering
+    \includegraphics[width=1.0\linewidth]{images/fashion-mnist/scores/std1EMGM-NM/EMGM-NM-FID-K.pdf}
+    % \caption{FID score}
+    % \label{fig-nm-fidk}
+  \end{subfigure}
+  \centering
+  \begin{subfigure}{.24\textwidth}
+    \centering
+    \includegraphics[width=1\linewidth]{images/fashion-mnist/scores/std1EMGM-NM/EMGM-NM-MMD-K.pdf}
+    % \caption{MMD score}
+    % \label{fig-nm-mmdk}
+  \end{subfigure}
+  \centering
+  \begin{subfigure}{0.24\textwidth}
+    \centering
+    \includegraphics[width=1\linewidth]{images/fashion-mnist/scores/std1EMGM-NM/EMGM-NM-1NN-K.pdf}
+    % \caption{1NN score}
+    % \label{fig-nm-1nnk}
+  \end{subfigure}
+  \centering
+  \begin{subfigure}{.24\textwidth}
+    \centering
+    \includegraphics[width=1\linewidth]{images/fashion-mnist/scores/std1EMGM-SM/EMGM-SM-IS-K.pdf}
+    % \caption{IS score}
+    % \label{fig-sm-is}
+  \end{subfigure}
+  \centering
+  \begin{subfigure}{.24\textwidth}
+    \centering
+    \includegraphics[width=1\linewidth]{images/fashion-mnist/scores/std1EMGM-SM/EMGM-SM-FID-K.pdf}
+    % \caption{FID score}
+    % \label{fig-sm-fid}
+  \end{subfigure}
+  \centering
+  \begin{subfigure}{.24\textwidth}
+    \centering
+    \includegraphics[width=1\linewidth]{images/fashion-mnist/scores/std1EMGM-SM/EMGM-SM-MMD-K.pdf}
+    % \caption{MMD score}
+    % \label{fig-sm-mmd}
+  \end{subfigure}
+  \begin{subfigure}{0.24\textwidth}
+    \centering
+    \includegraphics[width=1.\linewidth]{images/fashion-mnist/scores/std1EMGM-SM/EMGM-SM-1NN-K.pdf}
+    % \caption{1NN score}
+    % \label{fig-sm-1nn}
+  \end{subfigure}
+  \caption{IS, FID, MMD and 1NN of GenMM and LatMM for
+    Fashion-MNIST dataset. GenMM and LatMM are trained on $60000$ images of Fashion-MNIST. The results are evaluated on $2000$ samples
+    per simulation point ($1000$ samples generated by GenMM or LatMM
+    for corresponding $K$, $1000$ samples from Fashion-MNIST). $5$
+    experiments are carried out for each assessed score at each
+    setting of $K$. Curve with marker denotes mean score and shaded
+    area denotes the range of corresponding
+    score.}\label{fig-scores-k-FashionMNIST}
+\end{figure*}
+
+\subsection{Evaluation of Proposed Models}
+In order to see if the proposed algorithms of GenMM and LatMM help to improve probability distribution modeling capacity, we assess our proposed algorithms with varying number of mixtures ($K$). Since our models are explicit models, the negative log likelihood (NLL) is used for comparison of our models. Apart from NLL, another four different metrics are used in assessment of models.
+The metrics are Inception Score (IS) \cite{NIPS2016_6125,2018arXiv180101973B,2018arXiv180607755X}, Frechet
+Inception Distance (FID) \cite{2017arXiv170608500H}, Maximum Mean
+Discrepancy (MMD) \cite{2018arXiv180607755X} and two-sample test based 1-Nearest
+Neighbor (1NN) score \cite{2016arXiv161006545L}. IS measures statistically if a given sample can be recognized by a classifier with high confidence. A high IS stands for high quality for generated samples. FID measures a divergence between two distributions under testing by assuming these two distribution are both Gaussian. We also use MMD with Gaussian kernel to test how dissimilar two distributions are.
+Small values of FID and MMD mean that the mixture distribution model
+is close to the underlying distribution of dataset. 1NN score measures
+if two given distributions are empirically close by computing 1NN accuracy
+on samples from two distributions under testing. The closer 1NN score is to $0.5$, the more likely 
+two distributions under testing are the same. Therefore, a high IS is good, low FID and MMD scores, and 1NN score close to 0.5 are good. We use the evaluation
+framework of \cite{2018arXiv180607755X} to compute these metrics scores, where
+we train a ResNet on datasets MNIST and Fashion-MNIST, respectively, as the feature extractor for evaluation of the four performance metrics.
+
+
+
+\begin{table}
+  \caption{The lowest NLL value of GenMM for curves in Figure~\ref{fig:genmm-nll} (nat/pixel).}
+  \label{tab:lowestNLLgenMM}
+   \centering
+  \begin{tabular}{lcccc}
+    \toprule
+    {Dataset} & K=1 &  K=3 &  K=5 &  K=7 \\                                         
+    \midrule                                                                                          MNIST &     1.8929 &    1.8797 &    1.8719 &    1.8579 \\
+    FashionMNIST &   2.3571 &   2.3429 &   2.3353 &   2.3323 \\
+    \bottomrule
+  \end{tabular} 
+\end{table}
+
+The NLL curves of GenMM and LatMM models during model training phase are shown in Figure~\ref{fig:genmm-nll} and Figure~\ref{fig:latmm-nll}, respectively. Subsets of MNIST and Fashion-MNIST are used to train our mixture models in order to assess their performance w.r.t. NLL when different number of mixture components $K$ is used. All the curves in Figure~\ref{fig:genmm-nll} and Figure~\ref{fig:latmm-nll} show that NLL decreases as training epoch number increases in general. There is fluctuation of these decreasing NLL curves due to: (a) the iteration of E-step and M-step of EM, and (b) the use of batch-size gradient in optimization at M-step. In each figure of Figure~\ref{fig:genmm-nll} and Figure~\ref{fig:latmm-nll}, NLL curve corresponding to larger total number of mixture components, $K$, reaches smaller NLL value after traning for same number of epochs. The results are consistent since as $K$ increases, both GenMM and LatMM have smaller NLL. These results confirm our hypothesis that mixture models fit real data better. The lowest NLL values of curves in Figure~\ref{fig:genmm-nll} in training GenMM models are reported in Figure~\ref{tab:lowestNLLgenMM}.
+
+\begin{figure*}[!t]
+  \captionsetup[subfigure]{justification=centering}
+  \centering
+  \begin{subfigure}[b]{0.24\textwidth}
+    \centering
+    % \includegraphics[width=1\linewidth]{images/mnist/samples/gen_c12_std08.png}
+    \includegraphics[width=1\linewidth]{images/mnist/samples/genMNIST_GenMM_K7_std089.png}
+    \caption{Generated Samples. (GenMM, K=7)}
+  \end{subfigure}
+  % \begin{subfigure}[b]{0.19\textwidth}
+  %   \centering
+  %   \includegraphics[width=1\linewidth]{images/mnist/interpolation/interpo_c12_mnist_std07.png}
+  %   \caption{Interpolation. (GenMM, K=12)}\label{fig-interpo}
+  % \end{subfigure}
+  \centering
+  \begin{subfigure}[b]{0.24\textwidth}
+    \centering
+    \includegraphics[width=1\linewidth]{images/fashion-mnist/samples/gene_c3_std1_samples.png}
+    \caption{Generated samples. (GenMM, K=3)}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.24\textwidth}
+    \centering
+    % \includegraphics[width=1\linewidth]{images/fashion-mnist/samples/gen_s5_std1.png}
+    \includegraphics[width=1\linewidth]{images/mnist/samples/gen_LatMM_K3_std088.png}
+    \caption{Generated samples. (LatMM, K=3)}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.24\textwidth}
+    \centering
+    \includegraphics[width=1\linewidth]{images/fashion-mnist/samples/gen_s7_std1.png}
+    \caption{Generated samples. (LatMM, K=7)}
+  \end{subfigure}
+  % \begin{subfigure}[b]{0.23\textwidth}
+  %   \centering
+  %   \includegraphics[width=1\linewidth]{images/fashion-mnist/samples/gene_c7_std1_samples.png}
+  %   \caption{Generated samples. (EMGM-NM, K=7)}
+  % \end{subfigure}
+  \caption{Generated samples by GenMM and LatMM for MNIST and Fashion-MNIST datasets.}\label{fig-demo-samples}
+\end{figure*}
+      
+\begin{figure*}[!t]
+  \centering
+  \captionsetup[subfigure]{justification=centering}
+  \begin{subfigure}[b]{0.3\textwidth}
+    \centering
+    \includegraphics[width=1\linewidth]{images/mnist/interpolation/interpoMNIST_homo_GenMM_K7_map_grid.png}
+    \caption{Interpolation by GenMM, K=7. Identity of $\bm{g}_k$ is chosen by $\argmax_{k}\; \gamma_k$.}\label{fig-interpo-genmm1}
+  \end{subfigure}
+  \hspace{10pt}
+  \begin{subfigure}[b]{0.3\textwidth}
+    \centering
+    \includegraphics[width=1\linewidth]{images/mnist/interpolation/interpoMNIST_GenMM_K7_random_grid.png}
+    \caption{Interpolation by GenMM, K=7. Identity of $\bm{g}_k$ is randomly chosen.~~~~~~~~~}\label{fig-interpo-genmm2}
+  \end{subfigure}
+  \hspace{10pt}
+  \begin{subfigure}[b]{0.3\textwidth}
+    \centering
+    \includegraphics[width=1\linewidth]{images/fashion-mnist/interpolation/interpoFashion_homo_GenMM_K9_map_grid.png}
+    \caption{Interpolation by GenMM, K=9. Identity of $\bm{g}_k$ is chosen by $\argmax_{k}\; \gamma_k$.}\label{fig-interpo-genmm3}
+  \end{subfigure}
+  % \caption{Interpolation in latent space to generate samples . GenMM}\label{fig-interpo}
+  \vspace{0.22cm}
+  % \label{fig-app-interpolation}
+  % \vspace{0.2cm}
+  % \end{figure*}
+  % \begin{figure*}[!ht]
+  \centering
+  \captionsetup[subfigure]{justification=centering}
+  \begin{subfigure}[b]{0.3\textwidth}
+    \centering
+    \includegraphics[width=1\linewidth]{images/mnist/interpolation/LatMMK9interpo_sample_grid.png}
+    \caption{Interpolation by LatMM, K=9.}\label{fig-interpo-latmm1}
+  \end{subfigure}
+  \hspace{10pt}
+  \begin{subfigure}[b]{0.3\textwidth}
+    \centering
+    \includegraphics[width=1\linewidth]{images/mnist/interpolation/interpoMNIST_heter_LatMM_K9_sample_grid.png}
+    \caption{Interpolation by LatMM, K=9.}\label{fig-interpo-latmm2}
+  \end{subfigure}
+  \hspace{10pt}
+  \begin{subfigure}[b]{0.3\textwidth}
+    \centering
+    \includegraphics[width=1\linewidth]{images/fashion-mnist/interpolation/interpoFashion_heter_LatMM_K9_grid.png}
+    \caption{Interpolation by LatMM, K=9.}\label{fig-interpo-latmm3}
+  \end{subfigure}
+  \caption{Interpolation in latent space to generate samples . First
+    and last rows are real samples from MNIST. For each row, images
+    are generated by interpolating latent variables of empirical
+    images in first and last rows.}\label{fig-interpo}
+  \label{fig-app-interpolation}
+\end{figure*}
+
+
+As for the scores of IS, FID, MMD, and 1NN, we increase $K$ for the proposed models and check
+how the four metrics vary. We do several trials of evaluation and
+report the results. The results are shown in
+Figure~\ref{fig-scores-k} for MNIST datset and
+Figure~\ref{fig-scores-k-FashionMNIST} for Fashio-MNIST dataset. Let us
+first address the results in Figure~\ref{fig-scores-k}. It can be
+observed that IS increases with number of mixtures $K$. The IS
+improvement shows a saturation and decreasing trend for GenMM when
+$K=9$. The FID, MMD and 1NN scores show a decreasing trend with
+increase in $K$. Their trends also saturate with increase in $K$. The
+trends obey a statistical knowledge that performance improves with
+increase in the model complexity, and then deteriorates if the model
+complexity continues to increase. As that in Figure~\ref{fig-scores-k}, similar trends are also observed in Figure~\ref{fig-scores-k-FashionMNIST}. In some cases, performance for $K=3$ is poorer than $K=1$. We assume that the random initialization of parameters in mixture models has a high influence in this regard. 
+Considering the trends in all the scores for both the figures, we can conclude that GenMM and LatMM can model the underlying distributions of data and the mixture models are good.
+
+\subsection{Sample Generating and Interpolation}
+
+
+\begin{figure*}[!ht]
+  \captionsetup[subfigure]{justification=centering}
+  \centering
+  \begin{subfigure}{.31\textwidth}
+    \centering
+    \includegraphics[width=1\linewidth]{images/supply/train_curves/letter_1.pdf}
+    \vspace{-0.8cm}
+    \caption{K=1}
+    % \label{fig-nm-isk}
+  \end{subfigure}
+  \begin{subfigure}{.31\textwidth}
+    \centering
+    \includegraphics[width=1\linewidth]{images/supply/train_curves/letter_2.pdf}
+    \vspace{-0.8cm}
+    \caption{K=2}
+    % \caption{FID score}
+    % \label{fig-nm-fidk}
+  \end{subfigure}
+  \centering
+  \begin{subfigure}{.31\textwidth}
+    \centering
+    \includegraphics[width=1\linewidth]{images/supply/train_curves/letter_3.pdf}
+    \vspace{-0.8cm}
+    \caption{K=3}
+    % \caption{MMD score}
+    % \label{fig-nm-mmdk}
+  \end{subfigure}
+  \centering
+  \begin{subfigure}{0.31\textwidth}
+    \centering
+    \includegraphics[width=1\linewidth]{images/supply/train_curves/letter_4.pdf}
+    \vspace{-0.8cm}
+    \caption{K=4}
+    % \caption{1NN score}
+    % \label{fig-nm-1nnk}
+  \end{subfigure}
+  \centering
+  \begin{subfigure}{.31\textwidth}
+    \centering
+    \includegraphics[width=1\linewidth]{images/supply/train_curves/letter_10.pdf}
+    \vspace{-0.8cm}
+    \caption{K=10}
+    % \caption{IS score}
+    % \label{fig-sm-is}
+  \end{subfigure}
+  \centering
+  \begin{subfigure}{.31\textwidth}
+    \centering
+    \includegraphics[width=1\linewidth]{images/supply/train_curves/letter_20.pdf}
+    \vspace{-0.8cm}
+    \caption{K=20}
+    % \caption{FID score}
+    % \label{fig-sm-fid}
+  \end{subfigure}
+  \vspace{-0.3cm}
+  \caption{Train and Test Accuracy Curves versus Epochs on Dataset Letter.}
+  \label{fig:class-letter}
+  \vspace{0.2cm}
+\end{figure*}
+
+
+
+
+Next we show generated samples from the proposed models trained with MNIST and Fashion-MNIST in \autoref{fig-demo-samples}. In the figure, we show generated samples from GenMM and LatMM for MNIST and Fashion-MNIST datasets. We use different value of $K$ to generate images. It can be observed that LatMM is able to produce good quality image samples as GenMM. While we argue that LatMM has a lower level of complexity than GenMM, it is seen that LatMM works good in practice.    
+
+In the second experiment, we explore power of invertibility for interpolation in the latent domain. We use samples from MNIST and Fashion-MNIST datasets for this `interpolation' experiment. In \autoref{fig-interpo}, we have six subfigures. For each subfigure, the first row and the last row are comprised of the real (true) data samples from MNIST and Fashion-MNIST dataset. In each column, we find latent codes corresponding to the real samples of the first row and the last row, $\bm{z}_1, \bm{z}_2$. This is possible as the neural networks are invertible. Then, we perform a convex combination of the two latent codes as $\alpha \bm{z}_1 + (1- \alpha)\bm{z}_2$, where $0 < \alpha <1$. The latent code produced by the convex combination is used to generate a new sample using the trained models. All other rows except the first and the last rows of the figure are the generated samples by varying $\alpha$. In \autoref{fig-interpo}, we observe the change visually from the first row to last row - how the first row slowly changes to the last row. We use GenMM for \autoref{fig-interpo-genmm1}, \autoref{fig-interpo-genmm2}, \autoref{fig-interpo-genmm3}, and LatMM for \autoref{fig-interpo-latmm1}, \autoref{fig-interpo-latmm2}, \autoref{fig-interpo-latmm3}. Interpolation experiment for LatMM is easier than GenMM. GenMM has a set of neural network generators $\{ \bm{g}_k(\bm{z}) \}_{k=1}^K$ and a fixed Gaussian distribution for latent variable $\bm{z}$. We compute $\gamma_k$ for a real image $\bm{x}$, and then find the latent code $\bm{z}$ of $\bm{x}$ using $\bm{g}_{k^{*}}^{-1}(\bm{x})=\bm{f}_{k^{*}}(\bm{x})$, where $k^{*} = \arg \max_{k} \gamma_k$. For two real images (one image is in the first row and the second image in the last row), we find the corresponding latent codes, compute their convex combination as interpolation, and then pass the computed latent code through a generator $\bm{g}_k(\bm{z})$ to produce a generated sample $\bm{x}$. Identity of the generator of GenMM is chosen as $k^{*}$ corresponding to the image of the first row if $\alpha < 0.5$, or to the image of the last row if $\alpha \geq 0.5$.
+
+\begin{figure*}[!ht]
+  \captionsetup[subfigure]{justification=centering}
+  \centering
+  \begin{subfigure}{.31\textwidth}
+    \centering
+    \includegraphics[width=1\linewidth]{images/supply/train_curves/norb_1.pdf}
+    \vspace{-0.8cm}
+    \caption{K=1}
+    % \caption{IS score}
+    % \label{fig-nm-isk}
+  \end{subfigure}
+  \vspace{-2pt}
+  \begin{subfigure}{.31\textwidth}
+    \centering
+    \includegraphics[width=1\linewidth]{images/supply/train_curves/norb_2.pdf}
+    \vspace{-0.8cm}
+    \caption{K=2}
+    % \caption{FID score}
+    % \label{fig-nm-fidk}
+  \end{subfigure}
+  \centering
+  \begin{subfigure}{.31\textwidth}
+    \centering
+    \includegraphics[width=1\linewidth]{images/supply/train_curves/norb_3.pdf}
+    \vspace{-0.8cm}
+    \caption{K=3}
+    % \caption{MMD score}
+    % \label{fig-nm-mmdk}
+  \end{subfigure}
+  \centering
+  \begin{subfigure}{0.31\textwidth}
+    \centering
+    \includegraphics[width=1\linewidth]{images/supply/train_curves/norb_4.pdf}
+    \vspace{-0.8cm}
+    \caption{K=4}
+    % \caption{1NN score}
+    % \label{fig-nm-1nnk}
+  \end{subfigure}
+  \centering
+  \begin{subfigure}{.31\textwidth}
+    \centering
+    \includegraphics[width=1\linewidth]{images/supply/train_curves/norb_10.pdf}
+    \vspace{-0.8cm}
+    \caption{K=10}
+    % \caption{IS score}
+    % \label{fig-sm-is}
+  \end{subfigure}
+  \centering
+  \begin{subfigure}{.31\textwidth}
+    \centering
+    \includegraphics[width=1\linewidth]{images/supply/train_curves/norb_20.pdf}
+    \vspace{-0.8cm}
+    \caption{K=20}
+    % \caption{FID score}
+    % \label{fig-sm-fid}
+  \end{subfigure}
+  \vspace{-0.3cm}
+  \caption{Train and Test Accuracy Curves versus Epochs on Dataset Norb}
+  \label{fig:class-norb}
+\end{figure*}
+
+
+The second experiment on interpolation shows interesting result for
+modeling multi-modal data. The distribution of ten digits together in
+MNIST dataset is expected to be multi-modal. The aspect of multi-modal
+distribution is addressed using the experimental result shown in
+\autoref{fig-interpo-genmm2}. We use similar experimental steps
+as that in \autoref{fig-interpo-genmm1} but with modifications. It
+is evident that the generated digit images do not correspond well to
+the real images of the first row and the last row. For example, in the
+first column of \autoref{fig-interpo-genmm2}, we observe
+presence of digits two and eight, while we expect that the
+column should be comprised of only images of digit zero. Natural
+question is why interpolation leads to generation of digits that are
+unexpected. The answer lies in the procedure of performing our
+experiment. The key difference for this experiment compared to the
+experiment in \autoref{fig-interpo-genmm1} is that a sample is
+produced by a randomly selected generator $\bm{g}_k(\bm{z})$ from $K$
+possible choices. We compute interpolated latent code using the same
+procedure as that in \autoref{fig-interpo-genmm1}, but use the generator where its identity $k$ is randomly sampled from the prior $\bm{\pi}$ directly. The generated images in this interpolation experiment reveals a clue that each generator models a subset of the whole training dataset. We can qualitatively argue that use of multiple generators helps for modeling the multi-modal distribution.  
+
+\subsection{Application to Classification Task}
+\begin{table*}[!t]
+  \caption{Test Accuracy Table of GenMM for Classification Task}\label{tab:acc-classification}
+  % \centering
+  % \subcaption{Accuracy Table of GenMM on Test Data}
+  % \centering  
+  \begin{tabular}{l|c|c|c|c|c|c|c} \toprule
+    {Dataset} &  K=1 &  K=2 &  K=3 &  K=4 & K=10 & K=20 & State Of Art \\ \midrule
+    Letter & 0.9459 &  0.9513 & 0.9578  & 0.9581 & 0.9657 & \textbf{0.9674} & {0.9582} \cite{tang2016extreme} \\ \midrule
+    Satimage & 0.8900 & 0.8975 & 0.9045 & 0.9085 & 0.9105 & \textbf{0.9160} & 0.9090 \cite{jiang2013k-svd}   \\ \midrule
+    Norb & 0.9184 & 0.9257 & 0.9406 & 0.9459 & 0.9538 & \textbf{0.9542} & 0.8920 \cite{pmlr-v5-salakhutdinov09a}  \\
+    % \bottomrule
+  \end{tabular}
+  % \centering
+  % \subcaption{Accuracy Table of LatMM}
+  % \centering  
+  % \begin{tabular}{l|c|c|c|c|c}
+      %       \toprule
+      %       {Dataset} &  K=1 &  K=2 &  K=3 &  K=4 &  State of Art \\
+      %       \midrule
+      %       Letter & 0.9453 &  0.9421 &  0.9462 &   0.9469 &  0.9582 \cite{tang2016extreme} \\ \midrule
+      %       Satimage & 0.8855 & 0.8895 & 0.8730 & 0.8895 & 0.9090 \cite{jiang2013k-svd} \\ \midrule
+      %       Norb & 0.9315 & 0.9221 & 0.9151 & 0.9274 & 0.8920 \cite{pmlr-v5-salakhutdinov09a} \\
+      %       \bottomrule                                                                  
+      %     \end{tabular}                                                                
+\end{table*}
+
+\begin{figure*}[!t]
+  \captionsetup[subfigure]{justification=centering}
+  \centering
+  \begin{subfigure}{.31\textwidth}
+    \centering
+    \includegraphics[width=1\linewidth]{images/supply/train_curves/satimage_1.pdf}
+    \vspace{-0.8cm}
+    \caption{K=1}
+    % \caption{IS score}
+    % \label{fig-nm-isk}
+  \end{subfigure}
+  \vspace{-2pt}
+  \begin{subfigure}{.31\textwidth}
+    \centering
+    \includegraphics[width=1\linewidth]{images/supply/train_curves/satimage_2.pdf}
+    \vspace{-0.8cm}
+    \caption{K=2}
+    % \caption{FID score}
+    % \label{fig-nm-fidk}
+  \end{subfigure}
+  \centering
+  \begin{subfigure}{.31\textwidth}
+    \centering
+    \includegraphics[width=1\linewidth]{images/supply/train_curves/satimage_3.pdf}
+    \vspace{-0.8cm}
+    \caption{K=3}
+    % \caption{MMD score}
+    % \label{fig-nm-mmdk}
+  \end{subfigure}
+  \centering
+  \begin{subfigure}{0.31\textwidth}
+    \centering
+    \includegraphics[width=1\linewidth]{images/supply/train_curves/satimage_4.pdf}
+    \vspace{-0.8cm}
+    \caption{K=4}
+    % \caption{1NN score}
+    % \label{fig-nm-1nnk}
+  \end{subfigure}
+  \centering
+  \begin{subfigure}{.31\textwidth}
+    \centering
+    \includegraphics[width=1\linewidth]{images/supply/train_curves/satimage_10.pdf}
+    \vspace{-0.8cm}
+    \caption{K=10}
+    % \caption{IS score}
+    % \label{fig-sm-is}
+  \end{subfigure}
+  \centering
+  \begin{subfigure}{.31\textwidth}
+    \centering
+    \includegraphics[width=1\linewidth]{images/supply/train_curves/satimage_20.pdf}
+    \vspace{-0.8cm}
+    \caption{K=20}
+    % \caption{FID score}
+    % \label{fig-sm-fid}
+  \end{subfigure}
+  \vspace{-0.3cm}
+  \caption{Train and Test Accuracy Curves versus Epochs on Dataset Satimage.}
+  \vspace{0.3cm}
+  \label{fig:class-satimage}
+\end{figure*}
+In this section, we apply our proposed mixture models to classification tasks using the maximum likelihood criterion. We compare classification performance with the state-of-art results. The state-of-art results are produced by discriminative learning approaches. The major advantage of maximum likelihood based classification is that any new class can be accommodated on-the-fly. On the contrary a discriminative learning approach requires retraining whenever new classes appear. 
+
+For a given dataset with $Y$ classes, we divide the dataset by sample labels and each subset has the same label $y$. Then we train one GenMM model per class of data, i.e. $p(\bm{x};\bm{\Theta}_{y})$ is trained with the $y$-th class's data. After we have all $p(\bm{x};\bm{\Theta}_y)$, $\forall y = 1, 2, \cdots, Y$ trained, a new sample $\bm{x}$ is predicted by $\argmax_{y} p(\bm{x};\bm{\Theta}_y)$.
+
+The maximum likelihood based classification experiment as described above is carried out in three different datasets: Letter, Satimage, and Norb. For each dataset, we train our models for $300$ epoches on the training data of the corresponding dataset, and the test accuracy is reported in \autoref{tab:acc-classification}. The state-of-art accuracy of each dataset in literature is also listed in this table for comparison. For each dataset, we increase the total number of mixture components $K$ and the neural network generators have the same structure. The table shows that the classification accuracy on each dataset is increased as we increase the number of generators in GenMM. When $K$ is $10$ or $20$, maximum likelihood based classification by GenMM outperforms the state-of-art accuracy. The state-of-art accuracy results are obtained by using discriminative learning approaches. For dataset Norb, more significant performance gain is observed. Our classification accuracy is boosted from $0.9184$ to $0.9542$ when $K$ is increased from $1$ to $20$ and a large improvement margin is obtained over reference accuracy. We also test LatMM on classification task, but its accuracy is more or less around the accuracy of GenMM with $K=1$. Note that LatMM is a relatively low-complexity model than GenMM. 
+      %       The latent source mixture strategy of LatMM is not as powerful as GenMM to model multi-modal data.
+
+\autoref{fig:class-letter} \autoref{fig:class-satimage} and \autoref{fig:class-norb} show the train and test accuracy changing along with the training epoch on dataset Letter and Satimage, respectively. For each dataset, the accuracy curves versus epoch trained with GenMM at different value of $K$ are shown. In these sets of figures, all accuracy curves climbs and flattens around some value, as training epoch increases. Train accuracy is either coincident with, or above test accuracy curve at different training phases. For each set of figures on a given dataset, the gap between train and test curve is smaller as a larger number of mixture components is used. As $K$ increases, test curve flattens at a larger accuracy value. This again speaks for validation of our proposed models and also the advantage of using our mixture models for practical tasks.
 
 
 \section{expectation maximization of neural network based mixture models}
@@ -866,900 +1576,6 @@ of dataset quantitatively is a nontrivial task. In addition, since incremental b
 
 
 
-\section{Experiments Results}\label{sec:experiments}
-% \begin{figure*}[!ht]
-%   \captionsetup[subfigure]{justification=centering}
-%   \centering
-%   \begin{subfigure}{.24\textwidth}
-%     \centering
-%     \includegraphics[width=1\linewidth]{images/mnist/scores/EMGM-NM/EMGM-NM-IS-K.pdf}
-% %     \caption{IS score}
-%     %     \label{fig-nm-isk}
-%   \end{subfigure}
-%   \vspace{-2pt}
-%   \begin{subfigure}{.24\textwidth}
-%     \centering
-%     \includegraphics[width=1\linewidth]{images/mnist/scores/EMGM-NM/EMGM-NM-FID-K.pdf}
-%     %     \caption{FID score}
-%     %     \label{fig-nm-fidk}
-%   \end{subfigure}
-%   \centering
-%   \begin{subfigure}{.24\textwidth}
-%     \centering
-%     \includegraphics[width=1\linewidth]{images/mnist/scores/EMGM-NM/EMGM-NM-MMD-K.pdf}
-%     %     \caption{MMD score}
-%     %     \label{fig-nm-mmdk}
-%   \end{subfigure}
-%   \centering
-%   \begin{subfigure}{0.24\textwidth}
-%     \centering
-%     \includegraphics[width=1\linewidth]{images/mnist/scores/EMGM-NM/EMGM-NM-1NN-K.pdf}
-%     %     \caption{1NN score}
-%     %     \label{fig-nm-1nnk}
-%   \end{subfigure}
-%   \centering
-%   \begin{subfigure}{.24\textwidth}
-%     \centering
-%     \includegraphics[width=1\linewidth]{images/mnist/scores/EMGM-SM/EMGM-SM-IS-K.pdf}
-%     %     \caption{IS score}
-%     %     \label{fig-sm-is}
-%   \end{subfigure}
-%   \centering
-%   \begin{subfigure}{.24\textwidth}
-%     \centering
-%     \includegraphics[width=1\linewidth]{images/mnist/scores/EMGM-SM/EMGM-SM-FID-K.pdf}
-%     %     \caption{FID score}
-%     %     \label{fig-sm-fid}
-%   \end{subfigure}
-%   \centering
-%   \begin{subfigure}{.24\textwidth}
-%     \centering
-%     \includegraphics[width=1\linewidth]{images/mnist/scores/EMGM-SM/EMGM-SM-MMD-K.pdf}
-%     %     \caption{MMD score}
-%     %     \label{fig-sm-mmd}
-%   \end{subfigure}
-%   \begin{subfigure}{0.24\textwidth}
-%     \centering
-%     \includegraphics[width=1.\linewidth]{images/mnist/scores/EMGM-SM/EMGM-SM-1NN-K.pdf}
-%     %     \caption{1NN score}
-%     %     \label{fig-sm-1nn}
-%   \end{subfigure}
-%   \caption{IS, FID, MMD and 1NN scores of GenMM and LatMM. Evaluated
-%   on $2000$ samples ($1000$ samples generated by GenMM or LatMM for
-%   corresponding $K$, $1000$ samples from MNIST). $5$ experiments are
-%   carried out for each assessed score at each setting of $K$. Curve
-%   with marker stands for mean score and shaded area stands for the range of corresponding score. \textcolor{green}{This experiments is rechecked. Reproduced results are similar to what is shown here. (Latent standard Gaussian use standard deviation std =0.8) }}
-%   \vspace{10pt}
-% \end{figure*}
-
-% \begin{figure*}[!ht]
-%   \captionsetup[subfigure]{justification=centering}
-%   \centering
-%   \begin{subfigure}{.24\textwidth}
-%     \centering
-%     \includegraphics[width=1\linewidth]{images/fashion-mnist/scores/EMGM-NM/EMGM-NM-IS-K.pdf}
-% %     \caption{IS score}
-%     %     \label{fig-nm-isk}
-%   \end{subfigure}
-%   \vspace{-2pt}
-%   \begin{subfigure}{.24\textwidth}
-%     \centering
-%     \includegraphics[width=1\linewidth]{images/fashion-mnist/scores/EMGM-NM/EMGM-NM-FID-K.pdf}
-%     %     \caption{FID score}
-%     %     \label{fig-nm-fidk}
-%   \end{subfigure}
-%   \centering
-%   \begin{subfigure}{.24\textwidth}
-%     \centering
-%     \includegraphics[width=1\linewidth]{images/fashion-mnist/scores/EMGM-NM/EMGM-NM-MMD-K.pdf}
-%     %     \caption{MMD score}
-%     %     \label{fig-nm-mmdk}
-%   \end{subfigure}
-%   \centering
-%   \begin{subfigure}{0.24\textwidth}
-%     \centering
-%     \includegraphics[width=1\linewidth]{images/fashion-mnist/scores/EMGM-NM/EMGM-NM-1NN-K.pdf}
-%     %     \caption{1NN score}
-%     %     \label{fig-nm-1nnk}
-%   \end{subfigure}
-%   \centering
-%   \begin{subfigure}{.24\textwidth}
-%     \centering
-%     \includegraphics[width=1\linewidth]{images/fashion-mnist/scores/EMGM-SM/EMGM-SM-IS-K.pdf}
-%     %     \caption{IS score}
-%     %     \label{fig-sm-is}
-%   \end{subfigure}
-%   \centering
-%   \begin{subfigure}{.24\textwidth}
-%     \centering
-%     \includegraphics[width=1\linewidth]{images/fashion-mnist/scores/EMGM-SM/EMGM-SM-FID-K.pdf}
-%     %     \caption{FID score}
-%     %     \label{fig-sm-fid}
-%   \end{subfigure}
-%   \centering
-%   \begin{subfigure}{.24\textwidth}
-%     \centering
-%     \includegraphics[width=1\linewidth]{images/fashion-mnist/scores/EMGM-SM/EMGM-SM-MMD-K.pdf}
-%     %     \caption{MMD score}
-%     %     \label{fig-sm-mmd}
-%   \end{subfigure}
-%   \begin{subfigure}{0.24\textwidth}
-%     \centering
-%     \includegraphics[width=1.\linewidth]{images/fashion-mnist/scores/EMGM-SM/EMGM-SM-1NN-K.pdf}
-%     %     \caption{1NN score}
-%     %     \label{fig-sm-1nn}
-%   \end{subfigure}
-%   \caption{ GenMM and LatMM evaluated on Fashion-MNIST (std =0.8) }
-%   \vspace{10pt}
-% \end{figure*}
-
-
-
-In this section, we evaluate our proposed mixture models for generating samples and maximum likelihood classification. We will show encouraging results.
-
-% under different metrics firstly. Then demos of sample generating and interpolation are shown. Lastly, we apply our model to classification tasks based on maximum likelihood criterion.
-
-\begin{figure*}[!ht]
-  \captionsetup[subfigure]{justification=centering}
-  \centering
-  \begin{subfigure}{.4\textwidth}
-    \centering
-    \includegraphics[width=1\linewidth]{images/supply/mnist_GenMM_nll_curves-crop.pdf}
-    \vspace{-0.6cm}
-    \caption{Dataset MNIST}
-    \label{fig-genmm-mnist-nll-curve}
-  \end{subfigure}\hspace{1cm}
-  \begin{subfigure}{.4\textwidth}
-    \centering
-    \includegraphics[width=1\linewidth]{images/supply/fashion_GenMM_nll_curves-crop.pdf}
-    \vspace{-0.6cm}
-    \caption{Dataset Fashion-MNIST}
-    \label{fig-genmm-fsh-nll-curve}
-  \end{subfigure}
-  \vspace{-0.3cm}
-  \caption{NLL (Unit: nat/pixel) of GenMM versus training epochs with different number of mixture component $k$. (a) $10000$ images from MNIST is used for training, (b) $10000$ images from Fashion-MNIST is used for training.}
-  \label{fig:genmm-nll}
-\end{figure*}
-
-\begin{figure*}[!ht]
-  \captionsetup[subfigure]{justification=centering}
-  \centering
-  \begin{subfigure}{.4\textwidth}
-    \centering
-    \includegraphics[width=1\linewidth]{images/supply/mnist_LatMM_nll_curves-crop.pdf}
-    \vspace{-0.6cm}
-    \caption{Dataset of MNIST}
-    \label{fig-latmm-mnist-nll-curve}
-  \end{subfigure}\hspace{1cm}
-  \begin{subfigure}{.4\textwidth}
-    \centering
-    \includegraphics[width=1\linewidth]{images/supply/fashion_LatMM_nll_curves-crop.pdf}
-    \vspace{-0.6cm}
-    \caption{Dataset Fashion-MNIST}
-    \label{fig-latmm-fsh-nll-curve}
-  \end{subfigure}
-  \vspace{-0.3cm}
-  \caption{NLL (Unit: nat/pixel) of LatMM versus training epochs with different number of mixture component $k$. (a) $10000$ images from MNIST is used for training, (b) $10000$ images from Fashion-MNIST is used for training.}
-  \label{fig:latmm-nll}
-  \vspace{0.3cm}
-\end{figure*}
-\subsection{Experimental setup}\label{sub:exp-setup}
-
-
-
-We use the flow-based neural network for implementing generators $\{\bm{g}_k\}_{k=1}^{K}$ in GenMM and $\bm{g}$ in LatMM. Specifically, we use the Glow structure \cite{2018arXiv180703039K} that is developed based on RealNVP \cite{2016arXiv160508803D} and NICE \cite{DBLP:journals/corr/DinhKB14}. As introduced in \autoref{subsec-flow-intro}, the operation in \autoref{eq-gl} is a coupling
-layer. Since only a part of the input is mapped non-linearly after a coupling
-layer and the rest part remains the same, permutation \cite{2016arXiv160508803D} or $1\times 1$ convolution operation \cite{2018arXiv180703039K} is used to alternate the part of signal that goes through identity mapping. In Glow structure, a basic \textit{flow step} is the concatenation of three layers: Actnorm (element-wise affine mapping)
-$\rightarrow$ $1\times 1$ Convolution (for permutation purpose)
-$\rightarrow$ Coupling layer. A \textit{flow block} consists of: a squeeze layer,
-several flow steps, a split layer. A squeeze layer reshapes
-signal. A split layer allows
-flow model to split some elements of hidden layers out and model them
-directly as standard Gaussian, which relieves computation burden. In our experiments, there are also split layers that make dimension of $\bm{z}$ one fourth of dimension $\bm{x}$, and split signal in hidden layers are modeled as standard Gaussian. 
-
-% In all of our experiments, the generators $\bm{g}_k, \forall k$, in
-% GenMM and $\bm{g}$ of LatMM use the same structure: \textit{three} flow blocks with
-% each flow block consisting of \textit{four} coupling layers.  
-All generators used in our experiments are randomly initialized before training. 
-% In order to make comparison fair, our models with different configuration of $K$ are all trained for $30$ epochs on both datasets. Comparison are made with the trained models.  
-In addition, the prior distribution $\bm{\pi}$ update in both GenMM and LatMM is every $5$ epochs, {i.e.},  $t_{\pi} = 5$. For the training of LatMM, we adopt the Gamma distribution $\Gamma(\bm{\sigma}_k^{-1}; a, b)$ as the parameter prior for $\bm{\sigma}_k^{-1}, \forall k$, with shape parameter $a=2$ and rate parameter $b = 1$.
-Our models are implemented using Pytorch and experiments are carried out on Tesla P100 GPU. Code is available at github repository\footnote{https://github.com/FirstHandScientist/EM-GM}.
-
-
-\begin{figure*}[!tp]
-  \captionsetup[subfigure]{justification=centering}
-  \centering
-  \begin{subfigure}{.24\textwidth}
-    \centering
-    \includegraphics[width=1\linewidth]{images/mnist/scores/std1EMGM-NM/EMGM-NM-IS-K.pdf}
-    % \caption{IS score}
-    % \label{fig-nm-isk}
-  \end{subfigure}
-  \vspace{-2pt}
-  \begin{subfigure}{.24\textwidth}
-    \centering
-    \includegraphics[width=1\linewidth]{images/mnist/scores/std1EMGM-NM/EMGM-NM-FID-K.pdf}
-    % \caption{FID score}
-    % \label{fig-nm-fidk}
-  \end{subfigure}
-  \centering
-  \begin{subfigure}{.24\textwidth}
-    \centering
-    \includegraphics[width=1\linewidth]{images/mnist/scores/std1EMGM-NM/EMGM-NM-MMD-K.pdf}
-    % \caption{MMD score}
-    % \label{fig-nm-mmdk}
-  \end{subfigure}
-  \centering
-  \begin{subfigure}{0.24\textwidth}
-    \centering
-    \includegraphics[width=1\linewidth]{images/mnist/scores/std1EMGM-NM/EMGM-NM-1NN-K.pdf}
-    % \caption{1NN score}
-    % \label{fig-nm-1nnk}
-  \end{subfigure}
-  \centering
-  \begin{subfigure}{.24\textwidth}
-    \centering
-    \includegraphics[width=1\linewidth]{images/mnist/scores/std1EMGM-SM/EMGM-SM-IS-K.pdf}
-    % \caption{IS score}
-    % \label{fig-sm-is}
-  \end{subfigure}
-  \centering
-  \begin{subfigure}{.24\textwidth}
-    \centering
-    \includegraphics[width=1\linewidth]{images/mnist/scores/std1EMGM-SM/EMGM-SM-FID-K.pdf}
-    % \caption{FID score}
-    % \label{fig-sm-fid}
-  \end{subfigure}
-  \centering
-  \begin{subfigure}{.24\textwidth}
-    \centering
-    \includegraphics[width=1\linewidth]{images/mnist/scores/std1EMGM-SM/EMGM-SM-MMD-K.pdf}
-    % \caption{MMD score}
-    % \label{fig-sm-mmd}
-  \end{subfigure}
-  \begin{subfigure}{0.24\textwidth}
-    \centering
-    \includegraphics[width=1.\linewidth]{images/mnist/scores/std1EMGM-SM/EMGM-SM-1NN-K.pdf}
-    % \caption{1NN score}
-    % \label{fig-sm-1nn}
-  \end{subfigure}
-  \vspace{-0.35cm}
-  \caption{IS, FID, MMD and 1NN of GenMM and LatMM for MNIST dataset. GenMM and LatMM are trained on $60000$ images of MNIST. The results are evaluated on $2000$ samples per simulation point ($1000$ samples generated by GenMM or LatMM for corresponding $K$, $1000$ samples from MNIST). $5$ experiments are carried out for each assessed score at each setting of $K$. Curve with marker denotes mean score and shaded area denotes the range of corresponding score.}\label{fig-scores-k}
-  % \vspace{10pt}
-  \vspace{-0.15cm}
-\end{figure*}
-
-\begin{figure*}[!ht]
-  \captionsetup[subfigure]{justification=centering}
-  \centering
-  \begin{subfigure}{.24\textwidth}
-    \centering
-    \includegraphics[width=1.0\linewidth]{images/fashion-mnist/scores/std1EMGM-NM/EMGM-NM-IS-K.pdf}
-    % \caption{IS score}
-    % \label{fig-nm-isk}
-  \end{subfigure}
-  \vspace{-2pt}
-  \begin{subfigure}{.24\textwidth}
-    \centering
-    \includegraphics[width=1.0\linewidth]{images/fashion-mnist/scores/std1EMGM-NM/EMGM-NM-FID-K.pdf}
-    % \caption{FID score}
-    % \label{fig-nm-fidk}
-  \end{subfigure}
-  \centering
-  \begin{subfigure}{.24\textwidth}
-    \centering
-    \includegraphics[width=1\linewidth]{images/fashion-mnist/scores/std1EMGM-NM/EMGM-NM-MMD-K.pdf}
-    % \caption{MMD score}
-    % \label{fig-nm-mmdk}
-  \end{subfigure}
-  \centering
-  \begin{subfigure}{0.24\textwidth}
-    \centering
-    \includegraphics[width=1\linewidth]{images/fashion-mnist/scores/std1EMGM-NM/EMGM-NM-1NN-K.pdf}
-    % \caption{1NN score}
-    % \label{fig-nm-1nnk}
-  \end{subfigure}
-  \centering
-  \begin{subfigure}{.24\textwidth}
-    \centering
-    \includegraphics[width=1\linewidth]{images/fashion-mnist/scores/std1EMGM-SM/EMGM-SM-IS-K.pdf}
-    % \caption{IS score}
-    % \label{fig-sm-is}
-  \end{subfigure}
-  \centering
-  \begin{subfigure}{.24\textwidth}
-    \centering
-    \includegraphics[width=1\linewidth]{images/fashion-mnist/scores/std1EMGM-SM/EMGM-SM-FID-K.pdf}
-    % \caption{FID score}
-    % \label{fig-sm-fid}
-  \end{subfigure}
-  \centering
-  \begin{subfigure}{.24\textwidth}
-    \centering
-    \includegraphics[width=1\linewidth]{images/fashion-mnist/scores/std1EMGM-SM/EMGM-SM-MMD-K.pdf}
-    % \caption{MMD score}
-    % \label{fig-sm-mmd}
-  \end{subfigure}
-  \begin{subfigure}{0.24\textwidth}
-    \centering
-    \includegraphics[width=1.\linewidth]{images/fashion-mnist/scores/std1EMGM-SM/EMGM-SM-1NN-K.pdf}
-    % \caption{1NN score}
-    % \label{fig-sm-1nn}
-  \end{subfigure}
-  \vspace{-0.35cm}
-  \caption{IS, FID, MMD and 1NN of GenMM and LatMM for
-    Fashion-MNIST dataset. GenMM and LatMM are trained on $60000$ images of Fashion-MNIST. The results are evaluated on $2000$ samples
-    per simulation point ($1000$ samples generated by GenMM or LatMM
-    for corresponding $K$, $1000$ samples from Fashion-MNIST). $5$
-    experiments are carried out for each assessed score at each
-    setting of $K$. Curve with marker denotes mean score and shaded
-    area denotes the range of corresponding
-    score.}\label{fig-scores-k-FashionMNIST}
-  \vspace{0.2cm}
-  % \vspace{10pt}
-\end{figure*}
-\subsection{Evaluation of Proposed Models}
-In order to see if the proposed algorithms of GenMM and LatMM help to improve probability distribution modeling capacity, we assess our proposed algorithms with varying number of mixtures ($K$). Since our models are explicit models, the negative log likelihood (NLL) is used for comparison of our models. Apart from NLL, another four different metrics are used in assessment of models.
-The metrics are Inception Score (IS) \cite{NIPS2016_6125,2018arXiv180101973B,2018arXiv180607755X}, Frechet
-Inception Distance (FID) \cite{2017arXiv170608500H}, Maximum Mean
-Discrepancy (MMD) \cite{2018arXiv180607755X} and two-sample test based 1-Nearest
-Neighbor (1NN) score \cite{2016arXiv161006545L}. IS measures statistically if a given sample can be recognized by a classifier with high confidence. A high IS stands for high quality for generated samples. FID measures a divergence between two distributions under testing by assuming these two distribution are both Gaussian. We also use MMD with Gaussian kernel to test how dissimilar two distributions are.
-Small values of FID and MMD mean that the mixture distribution model
-is close to the underlying distribution of dataset. 1NN score measures
-if two given distributions are empirically close by computing 1NN accuracy
-on samples from two distributions under testing. The closer 1NN score is to $0.5$, the more likely 
-two distributions under testing are the same. Therefore, a high IS is good, low FID and MMD scores, and 1NN score close to 0.5 are good. We use the evaluation
-framework of \cite{2018arXiv180607755X} to compute these metrics scores, where
-we train a ResNet on datasets MNIST and Fashion-MNIST, respectively, as the feature extractor for evaluation of the four performance metrics.
-
-% \begin{table}%[htbp]
-%   \centering
-%   \caption{\textcolor{red}{Wrong Evaluation:NLL (nat/dim) of GenMM and LatMM on MNIST}}\label{tab-nll-genMM}
-%   \begin{tabular}{l|r|rrrrr}
-      %       \toprule
-      %       \multirow{2}{*}{Dataset} &\multicolumn{5}{c}{K of GenMM} \\
-      %       \cline{2-6}
-      %                                        & 1 &   3 &   5 &   7 &   9 \\          
-      %       \hline                                                                                        
-      %       {Training} & 
-                           %                            4.208 &  4.167 &  4.015 &  4.043 &  4.067 \\                                 
-      %       \hline
-      %       Testing &  
-                        %                         4.197 &  4.165 &  4.025 &  4.053 &  4.075 \\    
-      %       \bottomrule
-      %     \end{tabular} 
-      %       \begin{tabular}{l|r|rrrrr}
-      %       \toprule
-      %       \multirow{2}{*}{Dataset}  & \multicolumn{5}{c}{K of LatMM} \\
-      %       \cline{2-6}
-      %                                        &   1 &   3 &   5 &   7 &   9 \\          
-      %       \hline                              
-      %       {Training} &
-                           %                            4.181 &  4.176 &  4.134 &  4.029 &  4.037 \\
-      %       \hline
-      %       {Testing}  &
-                           %                            4.195 &  4.178 &  4.144 &  4.042 &  4.049 \\                                \bottomrule
-      %     \end{tabular} 
-      %       \end{table}
-
-      %       \begin{table}%[htbp]
-      %       \centering
-      %       \caption{\textcolor{green}{Correction, Not positive result:NLL (nat/dim) of GenMM and LatMM on MNIST}}
-      %       \begin{tabular}{l|r|rrrrr}
-      %       \toprule
-      %       \multirow{2}{*}{Dataset} &\multicolumn{5}{c}{K of GenMM} \\
-      %       \cline{2-6}
-      %                                        & 1 &   3 &   5 &   7 &   9 \\          
-      %       \hline                                                                                        
-      %       {Training} & 
-                           %                            2.125 &  2.139 &  2.133 &  2.127 &  2.131 \\                                 
-      %       \hline
-      %       Testing &  
-                        %                         2.131 &  2.144 &  2.139 &  2.134 &  2.137 \\    
-      %       \bottomrule
-      %     \end{tabular} 
-      %       \begin{tabular}{l|r|rrrrr}
-      %       \toprule
-      %       \multirow{2}{*}{Dataset}  & \multicolumn{5}{c}{K of LatMM} \\
-      %       \cline{2-6}
-      %                                        &   1 &   3 &   5 &   7 &   9 \\          
-      %       \hline                              
-      %       {Training} &
-                           %                            2.127 &  2.134 &  2.133 &  2.114 &  2.138 \\
-      %       \hline
-      %       {Testing}  &
-                           %                            2.133 &  2.140 &  2.138 &  2.120 &  2.144 \\                                \bottomrule
-      %     \end{tabular} 
-      %       \end{table}
-      % %       \\on training:\\
-      % %       \begin{tabular}{lrrrrr}                                                                                                                                       
-      %       \toprule                                                                                                                                                      
-      %       {} &   EMGM-1C &   EMGM-3C &   EMGM-5C &   EMGM-7C &   EMGM-9C \\                                                                                             
-      %       \midrule                                                                                                                                                      
-      %       0 &  4.208416 &  4.167086 &  4.015222 &  4.042882 &  4.066821 \\                                                                                              
-      %       1 &  4.208633 &  4.167396 &  4.015282 &  4.042878 &  4.066774 \\                                                                                              
-      %       2 &  4.208084 &  4.166920 &  4.015456 &  4.042807 &  4.066949 \\                                                                                              
-      %       3 &  4.208728 &  4.167286 &  4.015196 &  4.042803 &  4.066941 \\                                                                                              
-      %       4 &  4.208323 &  4.166983 &  4.015214 &  4.042674 &  4.066878 \\                                                                                              
-      %       \bottomrule                                                                                                                                                   
-      %     \end{tabular}  
-
-      %       \\testing\\
-
-      %       \begin{tabular}{lrrrrr}                                                                                                                                       
-      %       \toprule                                                                                                                                                      
-      %       {} &   EMGM-1C &   EMGM-3C &   EMGM-5C &   EMGM-7C &   EMGM-9C \\                                                                                             
-      %       \midrule                                                                                                                                                      
-      %       0 &  4.196499 &  4.166211 &  4.025781 &  4.053625 &  4.075733 \\                                                                                              
-      %       1 &  4.198064 &  4.164900 &  4.025194 &  4.052824 &  4.075715 \\                                                                                              
-      %       2 &  4.196538 &  4.165242 &  4.024896 &  4.053364 &  4.074783 \\                                                                                              
-      %       3 &  4.198911 &  4.165181 &  4.025704 &  4.053324 &  4.076087 \\                                                                                              
-      %       4 &  4.198935 &  4.164621 &  4.026264 &  4.053708 &  4.075494 \\                                                                                              
-      %       \bottomrule                                                                                                                                                   
-      %     \end{tabular}  
-
-      %       \begin{table}[htbp]
-      %       \centering
-      %       \caption{NLL (nat/dim) of LatMM on MNIST}\label{tab-nll-latMM}
-      %       \begin{tabular}{l|r|rrrrr}
-      %       \toprule
-      %       \multirow{2}{*}{Dataset}  & \multicolumn{5}{c}{K of LatMM} \\
-      %       \cline{2-6}
-      %                                        &   1 &   3 &   5 &   7 &   9 \\          
-      %       \hline                              
-      %       {Training} &
-                           %                            4.181 &  4.176 &  4.134 &  4.029 &  4.037 \\
-      %       \hline
-      %       {Testing}  &
-                           %                            4.195 &  4.178 &  4.144 &  4.042 &  4.049 \\                                \bottomrule
-      %     \end{tabular}                                                                                    \end{table}
-
-      %       training \\
-      %       \begin{tabular}{lrrrrr}                                                                                                                                       
-      %       \toprule                                                                                                                                                      
-      %       {} &   EMGM-1S &   EMGM-3S &   EMGM-5S &   EMGM-7S &   EMGM-9S \\                                                                                             
-      %       \midrule                                                                                                                                                      
-      %       0 &  4.180553 &  4.176250 &  4.134201 &  4.028757 &  4.037176 \\                                                                                              
-      %       1 &  4.181187 &  4.176145 &  4.134370 &  4.028634 &  4.036834 \\                                                                                              
-      %       2 &  4.181523 &  4.176267 &  4.134102 &  4.028518 &  4.036781 \\                                                                                              
-      %       3 &  4.180647 &  4.176359 &  4.134188 &  4.028753 &  4.036891 \\                                                                                              
-      %       4 &  4.181394 &  4.176374 &  4.134405 &  4.028574 &  4.036821 \\                                                                                              
-      %       \bottomrule                                                                                                                                                   
-      %     \end{tabular} 
-
-      %       testing \\
-      %       \begin{tabular}{lrrrrr}                                                                                                                                       
-      %       \toprule                                                                                                                                                      
-      %       {} &   EMGM-1S &   EMGM-3S &   EMGM-5S &   EMGM-7S &   EMGM-9S \\                                                                                             
-      %       \midrule                                                                                                                                                      
-      %       0 &  4.194728 &  4.178272 &  4.143965 &  4.041466 &  4.049319 \\                                                                                              
-      %       1 &  4.194917 &  4.178052 &  4.143046 &  4.041250 &  4.048735 \\                                                                                              
-      %       2 &  4.194268 &  4.178865 &  4.143759 &  4.041944 &  4.048040 \\                                                                                              
-      %       3 &  4.195079 &  4.177494 &  4.143818 &  4.041399 &  4.049067 \\                                                                                              
-      %       4 &  4.194052 &  4.179352 &  4.143538 &  4.041786 &  4.048846 \\                                                                                              
-      %       \bottomrule                                                                                                                                                   
-      %     \end{tabular}   
-
-
-      %       \begin{table}
-      %       \centering
-      %       \caption{The lowest NLL value of LatMM for curves in \autoref{fig:latmm-nll} (nat/pixel).}
-      %       \label{tab:lowestNLLlatMM}
-      %       \begin{tabular}{l|c|c|c|c}\toprule
-      %       \toprule
-      %       {Dataset} &  K=1 &  K=3 &  K=5 &  K=7 \\
-      %       \midrule
-      %       MNIST &   1.9450 &   1.9384 &    1.9379 &    1.9341 \\ \midrule
-      %       Fashion-MNIST &   2.6091 &   2.4405 &   2.4385 &   2.4157 \\
-      %       \bottomrule
-      %     \end{tabular}
-      %       \end{table}
-
-
-\begin{table}
-  \caption{The lowest NLL value of GenMM for curves in \autoref{fig:genmm-nll} (nat/pixel).}
-  \label{tab:lowestNLLgenMM}
-  % \centering
-  \begin{tabular}{l|c|c|c|c}
-    \toprule
-    {Dataset} & K=1 &  K=3 &  K=5 &  K=7 \\                                         
-    \midrule                                                                                          MNIST &     1.8929 &    1.8797 &    1.8719 &    1.8579 \\
-    FashionMNIST &   2.3571 &   2.3429 &   2.3353 &   2.3323 \\ 
-  \end{tabular} 
-\end{table}
-The NLL curves of GenMM and LatMM models during model training phase are shown in \autoref{fig:genmm-nll} and \autoref{fig:latmm-nll}, respectively. Subsets of MNIST and Fashion-MNIST are used to train our mixture models in order to assess their performance w.r.t. NLL when different number of mixture components $K$ is used. All the curves in \autoref{fig:genmm-nll} and \autoref{fig:latmm-nll} show that NLL decreases as training epoch number increases in general. There is fluctuation of these decreasing NLL curves due to: (a) the iteration of E-step and M-step of EM, and (b) the use of batch-size gradient in optimization at M-step. In each figure of \autoref{fig:genmm-nll} and \autoref{fig:latmm-nll}, NLL curve corresponding to larger total number of mixture components, $K$, reaches smaller NLL value after traning for same number of epochs. The results are consistent since as $K$ increases, both GenMM and LatMM have smaller NLL. These results confirm our hypothesis that mixture models fit real data better. The lowest NLL values of curves in \autoref{fig:genmm-nll} in training GenMM models are reported in \autoref{tab:lowestNLLgenMM}.
-
-\begin{figure*}[!ht]
-  \captionsetup[subfigure]{justification=centering}
-  \centering
-  \begin{subfigure}[b]{0.24\textwidth}
-    \centering
-    % \includegraphics[width=1\linewidth]{images/mnist/samples/gen_c12_std08.png}
-    \includegraphics[width=1\linewidth]{images/mnist/samples/genMNIST_GenMM_K7_std089.png}
-    \caption{Generated Samples. (GenMM, K=7)}
-  \end{subfigure}
-  % \begin{subfigure}[b]{0.19\textwidth}
-  %   \centering
-  %   \includegraphics[width=1\linewidth]{images/mnist/interpolation/interpo_c12_mnist_std07.png}
-  %   \caption{Interpolation. (GenMM, K=12)}\label{fig-interpo}
-  % \end{subfigure}
-  \centering
-  \begin{subfigure}[b]{0.24\textwidth}
-    \centering
-    \includegraphics[width=1\linewidth]{images/fashion-mnist/samples/gene_c3_std1_samples.png}
-    \caption{Generated samples. (GenMM, K=3)}
-  \end{subfigure}
-  \begin{subfigure}[b]{0.24\textwidth}
-    \centering
-    % \includegraphics[width=1\linewidth]{images/fashion-mnist/samples/gen_s5_std1.png}
-    \includegraphics[width=1\linewidth]{images/mnist/samples/gen_LatMM_K3_std088.png}
-    \caption{Generated samples. (LatMM, K=3)}
-  \end{subfigure}
-  \begin{subfigure}[b]{0.24\textwidth}
-    \centering
-    \includegraphics[width=1\linewidth]{images/fashion-mnist/samples/gen_s7_std1.png}
-    \caption{Generated samples. (LatMM, K=7)}
-  \end{subfigure}
-  % \begin{subfigure}[b]{0.23\textwidth}
-  %   \centering
-  %   \includegraphics[width=1\linewidth]{images/fashion-mnist/samples/gene_c7_std1_samples.png}
-  %   \caption{Generated samples. (EMGM-NM, K=7)}
-  % \end{subfigure}
-  \vspace{-0.3cm}
-  \caption{Generated samples by GenMM and LatMM for MNIST and Fashion-MNIST datasets.}\label{fig-demo-samples}
-  % \vspace{0.5cm}
-\end{figure*}
-      %       \begin{figure}
-      %       \centering
-      %       \includegraphics[width=.6\linewidth]{images/mnist/interpolation/interpo_c12_mnist_std07.png}
-      %       \caption{Interpolation in latent space to generate samples. We use GenMM with K=12.}
-      %       \vspace{0.5cm}
-      %       \end{figure}
-
-\begin{figure*}[!ht]
-  \centering
-  \captionsetup[subfigure]{justification=centering}
-  \begin{subfigure}[b]{0.3\textwidth}
-    \centering
-    \includegraphics[width=1\linewidth]{images/mnist/interpolation/interpoMNIST_homo_GenMM_K7_map_grid.png}
-    \caption{Interpolation by GenMM, K=7. Identity of $\bm{g}_k$ is chosen by $\argmax_{k}\; \gamma_k$.}\label{fig-interpo-genmm1}
-  \end{subfigure}
-  \hspace{10pt}
-  \begin{subfigure}[b]{0.3\textwidth}
-    \centering
-    \includegraphics[width=1\linewidth]{images/mnist/interpolation/interpoMNIST_GenMM_K7_random_grid.png}
-    \caption{Interpolation by GenMM, K=7. Identity of $\bm{g}_k$ is randomly chosen.}\label{fig-interpo-genmm2}
-  \end{subfigure}
-  \hspace{10pt}
-  \begin{subfigure}[b]{0.3\textwidth}
-    \centering
-    \includegraphics[width=1\linewidth]{images/fashion-mnist/interpolation/interpoFashion_homo_GenMM_K9_map_grid.png}
-    \caption{Interpolation by GenMM, K=9. Identity of $\bm{g}_k$ is chosen by $\argmax_{k}\; \gamma_k$.}\label{fig-interpo-genmm3}
-  \end{subfigure}
-  % \caption{Interpolation in latent space to generate samples . GenMM}\label{fig-interpo}
-  \vspace{0.22cm}
-  % \label{fig-app-interpolation}
-  % \vspace{0.2cm}
-  % \end{figure*}
-  % \begin{figure*}[!ht]
-  \centering
-  \captionsetup[subfigure]{justification=centering}
-  \begin{subfigure}[b]{0.3\textwidth}
-    \centering
-    \includegraphics[width=1\linewidth]{images/mnist/interpolation/LatMMK9interpo_sample_grid.png}
-    \caption{Interpolation by LatMM, K=9.}\label{fig-interpo-latmm1}
-  \end{subfigure}
-  \hspace{10pt}
-  \begin{subfigure}[b]{0.3\textwidth}
-    \centering
-    \includegraphics[width=1\linewidth]{images/mnist/interpolation/interpoMNIST_heter_LatMM_K9_sample_grid.png}
-    \caption{Interpolation by LatMM, K=9.}\label{fig-interpo-latmm2}
-  \end{subfigure}
-  \hspace{10pt}
-  \begin{subfigure}[b]{0.3\textwidth}
-    \centering
-    \includegraphics[width=1\linewidth]{images/fashion-mnist/interpolation/interpoFashion_heter_LatMM_K9_grid.png}
-    \caption{Interpolation by LatMM, K=9.}\label{fig-interpo-latmm3}
-  \end{subfigure}\vspace{-0.5cm}
-  \caption{Interpolation in latent space to generate samples . First
-    and last rows are real samples from MNIST. For each row, images
-    are generated by interpolating latent variables of empirical
-    images in first and last rows.}\label{fig-interpo}
-  \vspace{0.2cm}
-  \label{fig-app-interpolation}
-  % \vspace{0.2cm}
-\end{figure*}
-
-
-As for the scores of IS, FID, MMD, and 1NN, we increase $K$ for the proposed models and check
-how the four metrics vary. We do several trials of evaluation and
-report the results. The results are shown in
-\autoref{fig-scores-k} for MNIST datset and
-\autoref{fig-scores-k-FashionMNIST} for Fashio-MNIST dataset. Let us
-first address the results in \autoref{fig-scores-k}. It can be
-observed that IS increases with number of mixtures $K$. The IS
-improvement shows a saturation and decreasing trend for GenMM when
-$K=9$. The FID, MMD and 1NN scores show a decreasing trend with
-increase in $K$. Their trends also saturate with increase in $K$. The
-trends obey a statistical knowledge that performance improves with
-increase in the model complexity, and then deteriorates if the model
-complexity continues to increase. As that in \autoref{fig-scores-k}, similar trends are also observed in \autoref{fig-scores-k-FashionMNIST}. In some cases, performance for $K=3$ is poorer than $K=1$. We assume that the random initialization of parameters in mixture models has a high influence in this regard. 
-Considering the trends in all the scores for both the figures, we can conclude that GenMM and LatMM can model the underlying distributions of data and the mixture models are good.
-      %       Therefore, if we want to model a datset's distribution using our proposed GenMM or LatMM models with large modeling capacity, it can be done by using large number of mixture components. When increasing $K$ from $1$ to $3$, $5$, $7$, the comparison between GenMM's NLL curves in \autoref{fig:genmm-nll} and LatMM's NLL curves in \autoref{fig:latmm-nll} shows that the NLL curve gap (the gain) of GenMM is larger than that of LatMM. This is consistent with our discussion about the model complexity of GenMM and LatMM in \autoref{sec:complexity}, i.e. GenMM is more complex than LatMM and we can expect GenMM has better modeling capacity than LatMM when generator networks are similarly complex. One exception happens between curve of $K=1$ and that of $K=3$ for LatMM in \autoref{fig-latmm-fsh-nll-curve}. This could be due to totally random initialization of all neural networks parameters.
-
-      %       We also list the lowest NLL value observed in each curve of \autoref{fig-genmm-mnist-nll-curve}, \autoref{fig-genmm-fsh-nll-curve}, \autoref{fig-latmm-mnist-nll-curve}, and \autoref{fig-latmm-mnist-nll-curve}. They are shown in \autoref{tab:lowestNLLgenMM} and \autoref{tab:lowestNLLlatMM}. As expected, the lowest NLL value decreases as $K$ increases for both GenMM and LatMM trained on two datasets. Again, the NLL value dropping gap for GenMM is larger than that for LatMM in general sense.
-
-      %       We report NLL versus number of mixture omponents ($K$). To
-      %       avoid numerical computation problem of log-sum for high-dimension
-      %       signal, the $\log{P_k(\bm{x})}$ is scaled 
-      %       \footnote{Direct computation of log-likelihood
-      %       $\log{\sum_{k=1}^{K}\;\pi_k P_k(\bm{x})}$ for high dimensional
-      %       signal $\bm{x}$ is numerically problematic. Then the scaled NLL is
-      %       actually reported as $\log{\sum_{k=1}^{K}\pi_k
-      %       \left(P_k(\bm{x})\right)^{1/\mathrm{dim}(\bm{x})}}$.} by dimension of $\bm{x}$,
-      %       \emph{i.e.} $\mathrm{dim}(\bm{x})$, and we report NLL via unit of nat
-      %       per dimension (nat/dim).
-
-
-
-
-      %       The tables 1 and 2 show the NLL where we use MNIST dataset. The training dataset of MNIST is used for learning the model parameters. The testing dataset of MNIST is used to verify how the trained models fit for unseen test dataset. We observe from the tables that the NLL decreases with increase in $K$ and then shows a timid upward trend. This NLL behaviour is consistent with a usual statistical knowledge that performance improves with increase in model complexity and then deteriorates if model complexity continues to increase. Also, we observe that NLL for testing dataset is close to the NLL for training dataset. This shows that our proposed models and developments of EM algorithms are able to address generalization property.
-
-      %       Using the trained models for the first experiment, we report four more
-      %       scores to show performance versus model complexity. The IS, FID, MMD
-      %       and INN scores are shown in \autoref{fig-scores-k}. For this figure,
-      %       we did a random selection of 1000 data samples from training dataset;
-      %       this is true data. Then we generated 1000 data samples using trained
-      %       models. We used 1000 (true) real data and 1000 generated data to
-      %       compute the scores. The scores are computed for several trials. In the
-      %       \autoref{fig-scores-k}, a solid line is the average of trials and the shaded region shows the range of scores across the average score.       
-
-
-\subsection{Sample Generating and Interpolation}
-
-\begin{table*}
-  \caption{Test Accuracy Table of GenMM for Classification Task}\label{tab:acc-classification}
-  % \centering
-  % \subcaption{Accuracy Table of GenMM on Test Data}
-  % \centering  
-  \begin{tabular}{l|c|c|c|c|c|c|c} \toprule
-    {Dataset} &  K=1 &  K=2 &  K=3 &  K=4 & K=10 & K=20 & State Of Art \\ \midrule
-    Letter & 0.9459 &  0.9513 & 0.9578  & 0.9581 & 0.9657 & \textbf{0.9674} & {0.9582} \cite{tang2016extreme} \\ \midrule
-    Satimage & 0.8900 & 0.8975 & 0.9045 & 0.9085 & 0.9105 & \textbf{0.9160} & 0.9090 \cite{jiang2013k-svd}   \\ \midrule
-    Norb & 0.9184 & 0.9257 & 0.9406 & 0.9459 & 0.9538 & \textbf{0.9542} & 0.8920 \cite{pmlr-v5-salakhutdinov09a}  \\
-    % \bottomrule
-  \end{tabular}
-  % \centering
-  % \subcaption{Accuracy Table of LatMM}
-  % \centering  
-  % \begin{tabular}{l|c|c|c|c|c}
-      %       \toprule
-      %       {Dataset} &  K=1 &  K=2 &  K=3 &  K=4 &  State of Art \\
-      %       \midrule
-      %       Letter & 0.9453 &  0.9421 &  0.9462 &   0.9469 &  0.9582 \cite{tang2016extreme} \\ \midrule
-      %       Satimage & 0.8855 & 0.8895 & 0.8730 & 0.8895 & 0.9090 \cite{jiang2013k-svd} \\ \midrule
-      %       Norb & 0.9315 & 0.9221 & 0.9151 & 0.9274 & 0.8920 \cite{pmlr-v5-salakhutdinov09a} \\
-      %       \bottomrule                                                                  
-      %     \end{tabular}                                                                
-\end{table*}
-\begin{figure*}[!ht]
-  \captionsetup[subfigure]{justification=centering}
-  \centering
-  \begin{subfigure}{.33\textwidth}
-    \centering
-    \includegraphics[width=1\linewidth]{images/supply/train_curves/letter_1.pdf}
-    \vspace{-0.8cm}
-    \caption{K=1}
-    % \label{fig-nm-isk}
-  \end{subfigure}
-  \begin{subfigure}{.33\textwidth}
-    \centering
-    \includegraphics[width=1\linewidth]{images/supply/train_curves/letter_2.pdf}
-    \vspace{-0.8cm}
-    \caption{K=2}
-    % \caption{FID score}
-    % \label{fig-nm-fidk}
-  \end{subfigure}
-  \centering
-  \begin{subfigure}{.33\textwidth}
-    \centering
-    \includegraphics[width=1\linewidth]{images/supply/train_curves/letter_3.pdf}
-    \vspace{-0.8cm}
-    \caption{K=3}
-    % \caption{MMD score}
-    % \label{fig-nm-mmdk}
-  \end{subfigure}
-  \centering
-  \begin{subfigure}{0.33\textwidth}
-    \centering
-    \includegraphics[width=1\linewidth]{images/supply/train_curves/letter_4.pdf}
-    \vspace{-0.8cm}
-    \caption{K=4}
-    % \caption{1NN score}
-    % \label{fig-nm-1nnk}
-  \end{subfigure}
-  \centering
-  \begin{subfigure}{.33\textwidth}
-    \centering
-    \includegraphics[width=1\linewidth]{images/supply/train_curves/letter_10.pdf}
-    \vspace{-0.8cm}
-    \caption{K=10}
-    % \caption{IS score}
-    % \label{fig-sm-is}
-  \end{subfigure}
-  \centering
-  \begin{subfigure}{.33\textwidth}
-    \centering
-    \includegraphics[width=1\linewidth]{images/supply/train_curves/letter_20.pdf}
-    \vspace{-0.8cm}
-    \caption{K=20}
-    % \caption{FID score}
-    % \label{fig-sm-fid}
-  \end{subfigure}
-  \vspace{-0.3cm}
-  \caption{Train and Test Accuracy Curves versus Epochs on Dataset Letter.}
-  \label{fig:class-letter}
-  \vspace{0.2cm}
-\end{figure*}
-
-
-
-
-Next we show generated samples from the proposed models trained with MNIST and Fashion-MNIST in \autoref{fig-demo-samples}. In the figure, we show generated samples from GenMM and LatMM for MNIST and Fashion-MNIST datasets. We use different value of $K$ to generate images. It can be observed that LatMM is able to produce good quality image samples as GenMM. While we argue that LatMM has a lower level of complexity than GenMM, it is seen that LatMM works good in practice.    
-
-In the second experiment, we explore power of invertibility for interpolation in the latent domain. We use samples from MNIST and Fashion-MNIST datasets for this `interpolation' experiment. In \autoref{fig-interpo}, we have six subfigures. For each subfigure, the first row and the last row are comprised of the real (true) data samples from MNIST and Fashion-MNIST dataset. In each column, we find latent codes corresponding to the real samples of the first row and the last row, $\bm{z}_1, \bm{z}_2$. This is possible as the neural networks are invertible. Then, we perform a convex combination of the two latent codes as $\alpha \bm{z}_1 + (1- \alpha)\bm{z}_2$, where $0 < \alpha <1$. The latent code produced by the convex combination is used to generate a new sample using the trained models. All other rows except the first and the last rows of the figure are the generated samples by varying $\alpha$. In \autoref{fig-interpo}, we observe the change visually from the first row to last row - how the first row slowly changes to the last row. We use GenMM for \autoref{fig-interpo-genmm1}, \autoref{fig-interpo-genmm2}, \autoref{fig-interpo-genmm3}, and LatMM for \autoref{fig-interpo-latmm1}, \autoref{fig-interpo-latmm2}, \autoref{fig-interpo-latmm3}. Interpolation experiment for LatMM is easier than GenMM. GenMM has a set of neural network generators $\{ \bm{g}_k(\bm{z}) \}_{k=1}^K$ and a fixed Gaussian distribution for latent variable $\bm{z}$. We compute $\gamma_k$ for a real image $\bm{x}$, and then find the latent code $\bm{z}$ of $\bm{x}$ using $\bm{g}_{k^{*}}^{-1}(\bm{x})=\bm{f}_{k^{*}}(\bm{x})$, where $k^{*} = \arg \max_{k} \gamma_k$. For two real images (one image is in the first row and the second image in the last row), we find the corresponding latent codes, compute their convex combination as interpolation, and then pass the computed latent code through a generator $\bm{g}_k(\bm{z})$ to produce a generated sample $\bm{x}$. Identity of the generator of GenMM is chosen as $k^{*}$ corresponding to the image of the first row if $\alpha < 0.5$, or to the image of the last row if $\alpha \geq 0.5$.
-
-\begin{figure*}[!ht]
-  \captionsetup[subfigure]{justification=centering}
-  \centering
-  \begin{subfigure}{.33\textwidth}
-    \centering
-    \includegraphics[width=1\linewidth]{images/supply/train_curves/norb_1.pdf}
-    \vspace{-0.8cm}
-    \caption{K=1}
-    % \caption{IS score}
-    % \label{fig-nm-isk}
-  \end{subfigure}
-  \vspace{-2pt}
-  \begin{subfigure}{.33\textwidth}
-    \centering
-    \includegraphics[width=1\linewidth]{images/supply/train_curves/norb_2.pdf}
-    \vspace{-0.8cm}
-    \caption{K=2}
-    % \caption{FID score}
-    % \label{fig-nm-fidk}
-  \end{subfigure}
-  \centering
-  \begin{subfigure}{.33\textwidth}
-    \centering
-    \includegraphics[width=1\linewidth]{images/supply/train_curves/norb_3.pdf}
-    \vspace{-0.8cm}
-    \caption{K=3}
-    % \caption{MMD score}
-    % \label{fig-nm-mmdk}
-  \end{subfigure}
-  \centering
-  \begin{subfigure}{0.33\textwidth}
-    \centering
-    \includegraphics[width=1\linewidth]{images/supply/train_curves/norb_4.pdf}
-    \vspace{-0.8cm}
-    \caption{K=4}
-    % \caption{1NN score}
-    % \label{fig-nm-1nnk}
-  \end{subfigure}
-  \centering
-  \begin{subfigure}{.33\textwidth}
-    \centering
-    \includegraphics[width=1\linewidth]{images/supply/train_curves/norb_10.pdf}
-    \vspace{-0.8cm}
-    \caption{K=10}
-    % \caption{IS score}
-    % \label{fig-sm-is}
-  \end{subfigure}
-  \centering
-  \begin{subfigure}{.33\textwidth}
-    \centering
-    \includegraphics[width=1\linewidth]{images/supply/train_curves/norb_20.pdf}
-    \vspace{-0.8cm}
-    \caption{K=20}
-    % \caption{FID score}
-    % \label{fig-sm-fid}
-  \end{subfigure}
-  \vspace{-0.3cm}
-  \caption{Train and Test Accuracy Curves versus Epochs on Dataset Norb}
-  \label{fig:class-norb}
-\end{figure*}
-
-
-The second experiment on interpolation shows interesting result for
-modeling multi-modal data. The distribution of ten digits together in
-MNIST dataset is expected to be multi-modal. The aspect of multi-modal
-distribution is addressed using the experimental result shown in
-\autoref{fig-interpo-genmm2}. We use similar experimental steps
-as that in \autoref{fig-interpo-genmm1} but with modifications. It
-is evident that the generated digit images do not correspond well to
-the real images of the first row and the last row. For example, in the
-first column of \autoref{fig-interpo-genmm2}, we observe
-presence of digits two and eight, while we expect that the
-column should be comprised of only images of digit zero. Natural
-question is why interpolation leads to generation of digits that are
-unexpected. The answer lies in the procedure of performing our
-experiment. The key difference for this experiment compared to the
-experiment in \autoref{fig-interpo-genmm1} is that a sample is
-produced by a randomly selected generator $\bm{g}_k(\bm{z})$ from $K$
-possible choices. We compute interpolated latent code using the same
-procedure as that in \autoref{fig-interpo-genmm1}, but use the generator where its identity $k$ is randomly sampled from the prior $\bm{\pi}$ directly. The generated images in this interpolation experiment reveals a clue that each generator models a subset of the whole training dataset. We can qualitatively argue that use of multiple generators helps for modeling the multi-modal distribution.  
-
-\subsection{Application to Classification Task}
-\begin{figure*}[!ht]
-  \captionsetup[subfigure]{justification=centering}
-  \centering
-  \begin{subfigure}{.33\textwidth}
-    \centering
-    \includegraphics[width=1\linewidth]{images/supply/train_curves/satimage_1.pdf}
-    \vspace{-0.8cm}
-    \caption{K=1}
-    % \caption{IS score}
-    % \label{fig-nm-isk}
-  \end{subfigure}
-  \vspace{-2pt}
-  \begin{subfigure}{.33\textwidth}
-    \centering
-    \includegraphics[width=1\linewidth]{images/supply/train_curves/satimage_2.pdf}
-    \vspace{-0.8cm}
-    \caption{K=2}
-    % \caption{FID score}
-    % \label{fig-nm-fidk}
-  \end{subfigure}
-  \centering
-  \begin{subfigure}{.33\textwidth}
-    \centering
-    \includegraphics[width=1\linewidth]{images/supply/train_curves/satimage_3.pdf}
-    \vspace{-0.8cm}
-    \caption{K=3}
-    % \caption{MMD score}
-    % \label{fig-nm-mmdk}
-  \end{subfigure}
-  \centering
-  \begin{subfigure}{0.33\textwidth}
-    \centering
-    \includegraphics[width=1\linewidth]{images/supply/train_curves/satimage_4.pdf}
-    \vspace{-0.8cm}
-    \caption{K=4}
-    % \caption{1NN score}
-    % \label{fig-nm-1nnk}
-  \end{subfigure}
-  \centering
-  \begin{subfigure}{.33\textwidth}
-    \centering
-    \includegraphics[width=1\linewidth]{images/supply/train_curves/satimage_10.pdf}
-    \vspace{-0.8cm}
-    \caption{K=10}
-    % \caption{IS score}
-    % \label{fig-sm-is}
-  \end{subfigure}
-  \centering
-  \begin{subfigure}{.33\textwidth}
-    \centering
-    \includegraphics[width=1\linewidth]{images/supply/train_curves/satimage_20.pdf}
-    \vspace{-0.8cm}
-    \caption{K=20}
-    % \caption{FID score}
-    % \label{fig-sm-fid}
-  \end{subfigure}
-  \vspace{-0.3cm}
-  \caption{Train and Test Accuracy Curves versus Epochs on Dataset Satimage.}
-  \vspace{0.3cm}
-  \label{fig:class-satimage}
-\end{figure*}
-In this subsection, we apply our proposed mixture models to classification tasks using the maximum likelihood criterion. We compare classification performance with the state-of-art results. The state-of-art results are produced by discriminative learning approaches. The major advantage of maximum likelihood based classification is that any new class can be accommodated on-the-fly. On the contrary a discriminative learning approach requires retraining whenever new classes appear. 
-
-For a given dataset with $Y$ classes, we divide the dataset by sample labels and each subset has the same label $y$. Then we train one GenMM model per class of data, i.e. $p(\bm{x};\bm{\Theta}_{y})$ is trained with the $y$-th class's data. After we have all $p(\bm{x};\bm{\Theta}_y)$, $\forall y = 1, 2, \cdots, Y$ trained, a new sample $\bm{x}$ is predicted by $\argmax_{y} p(\bm{x};\bm{\Theta}_y)$.
-
-The maximum likelihood based classification experiment as described above is carried out in three different datasets: Letter, Satimage, and Norb. For each dataset, we train our models for $300$ epoches on the training data of the corresponding dataset, and the test accuracy is reported in \autoref{tab:acc-classification}. The state-of-art accuracy of each dataset in literature is also listed in this table for comparison. For each dataset, we increase the total number of mixture components $K$ and the neural network generators have the same structure. The table shows that the classification accuracy on each dataset is increased as we increase the number of generators in GenMM. When $K$ is $10$ or $20$, maximum likelihood based classification by GenMM outperforms the state-of-art accuracy. The state-of-art accuracy results are obtained by using discriminative learning approaches. For dataset Norb, more significant performance gain is observed. Our classification accuracy is boosted from $0.9184$ to $0.9542$ when $K$ is increased from $1$ to $20$ and a large improvement margin is obtained over reference accuracy. We also test LatMM on classification task, but its accuracy is more or less around the accuracy of GenMM with $K=1$. Note that LatMM is a relatively low-complexity model than GenMM. 
-      %       The latent source mixture strategy of LatMM is not as powerful as GenMM to model multi-modal data.
-
-\autoref{fig:class-letter} \autoref{fig:class-satimage} and \autoref{fig:class-norb} show the train and test accuracy changing along with the training epoch on dataset Letter and Satimage, respectively. For each dataset, the accuracy curves versus epoch trained with GenMM at different value of $K$ are shown. In these sets of figures, all accuracy curves climbs and flattens around some value, as training epoch increases. Train accuracy is either coincident with, or above test accuracy curve at different training phases. For each set of figures on a given dataset, the gap between train and test curve is smaller as a larger number of mixture components is used. As $K$ increases, test curve flattens at a larger accuracy value. This again speaks for validation of our proposed models and also the advantage of using our mixture models for practical tasks.
 
 \section{Conclusion}
 We conclude that the principal of expectation maximization can be used for neural network based probability distribution modeling. Our approach leads to explicit distribution modeling and the experimental results show an important aspect that the normal statistical behaviour of modeling performance versus model complexity remains valid. The proposed models are able to generate images which have good visual quality. This is also supported by several metric scores. Practical applications of our models for classification tasks are also carried out. The results confirm that our approach is good for modeling multi-modal distributions.
