@@ -1070,18 +1070,16 @@ Considering the trends in all the scores for both the figures, we can conclude t
     % \caption{FID score}
     % \label{fig-sm-fid}
   \end{subfigure}
-  \vspace{-0.3cm}
   \caption{Train and Test Accuracy Curves versus Epochs on Dataset Letter.}
   \label{fig:class-letter}
-  \vspace{0.2cm}
 \end{figure*}
 
 
 
 
-Next we show generated samples from the proposed models trained with MNIST and Fashion-MNIST in \autoref{fig-demo-samples}. In the figure, we show generated samples from GenMM and LatMM for MNIST and Fashion-MNIST datasets. We use different value of $K$ to generate images. It can be observed that LatMM is able to produce good quality image samples as GenMM. While we argue that LatMM has a lower level of complexity than GenMM, it is seen that LatMM works good in practice.    
+Next we show generated samples from the proposed models trained with MNIST and Fashion-MNIST in Figure~\ref{fig-demo-samples}. In the figure, we show generated samples from GenMM and LatMM for MNIST and Fashion-MNIST datasets. We use different value of $K$ to generate images. It can be observed that LatMM is able to produce good quality image samples as GenMM. While we argue that LatMM has a lower level of complexity than GenMM, it is seen that LatMM works good in practice.    
 
-In the second experiment, we explore power of invertibility for interpolation in the latent domain. We use samples from MNIST and Fashion-MNIST datasets for this `interpolation' experiment. In \autoref{fig-interpo}, we have six subfigures. For each subfigure, the first row and the last row are comprised of the real (true) data samples from MNIST and Fashion-MNIST dataset. In each column, we find latent codes corresponding to the real samples of the first row and the last row, $\bm{z}_1, \bm{z}_2$. This is possible as the neural networks are invertible. Then, we perform a convex combination of the two latent codes as $\alpha \bm{z}_1 + (1- \alpha)\bm{z}_2$, where $0 < \alpha <1$. The latent code produced by the convex combination is used to generate a new sample using the trained models. All other rows except the first and the last rows of the figure are the generated samples by varying $\alpha$. In \autoref{fig-interpo}, we observe the change visually from the first row to last row - how the first row slowly changes to the last row. We use GenMM for \autoref{fig-interpo-genmm1}, \autoref{fig-interpo-genmm2}, \autoref{fig-interpo-genmm3}, and LatMM for \autoref{fig-interpo-latmm1}, \autoref{fig-interpo-latmm2}, \autoref{fig-interpo-latmm3}. Interpolation experiment for LatMM is easier than GenMM. GenMM has a set of neural network generators $\{ \bm{g}_k(\bm{z}) \}_{k=1}^K$ and a fixed Gaussian distribution for latent variable $\bm{z}$. We compute $\gamma_k$ for a real image $\bm{x}$, and then find the latent code $\bm{z}$ of $\bm{x}$ using $\bm{g}_{k^{*}}^{-1}(\bm{x})=\bm{f}_{k^{*}}(\bm{x})$, where $k^{*} = \arg \max_{k} \gamma_k$. For two real images (one image is in the first row and the second image in the last row), we find the corresponding latent codes, compute their convex combination as interpolation, and then pass the computed latent code through a generator $\bm{g}_k(\bm{z})$ to produce a generated sample $\bm{x}$. Identity of the generator of GenMM is chosen as $k^{*}$ corresponding to the image of the first row if $\alpha < 0.5$, or to the image of the last row if $\alpha \geq 0.5$.
+In the second experiment, we explore power of invertibility for interpolation in the latent domain. We use samples from MNIST and Fashion-MNIST datasets for this `interpolation' experiment. In Figure~\ref{fig-interpo}, we have six subfigures. For each subfigure, the first row and the last row are comprised of the real (true) data samples from MNIST and Fashion-MNIST dataset. In each column, we find latent codes corresponding to the real samples of the first row and the last row, $\bm{z}_1, \bm{z}_2$. This is possible as the neural networks are invertible. Then, we perform a convex combination of the two latent codes as $\alpha \bm{z}_1 + (1- \alpha)\bm{z}_2$, where $0 < \alpha <1$. The latent code produced by the convex combination is used to generate a new sample using the trained models. All other rows except the first and the last rows of the figure are the generated samples by varying $\alpha$. In Figure~\ref{fig-interpo}, we observe the change visually from the first row to last row - how the first row slowly changes to the last row. We use GenMM for Figure~\ref{fig-interpo-genmm1}, \ref{fig-interpo-genmm2}, \ref{fig-interpo-genmm3}, and LatMM for Figure~\ref{fig-interpo-latmm1}, \ref{fig-interpo-latmm2}, \ref{fig-interpo-latmm3}. Interpolation experiment for LatMM is easier than GenMM. GenMM has a set of neural network generators $\{ \bm{g}_k(\bm{z}) \}_{k=1}^K$ and a fixed Gaussian distribution for latent variable $\bm{z}$. We compute $\gamma_k$ for a real image $\bm{x}$, and then find the latent code $\bm{z}$ of $\bm{x}$ using $\bm{g}_{k^{*}}^{-1}(\bm{x})=\bm{f}_{k^{*}}(\bm{x})$, where $k^{*} = \arg \max_{k} \gamma_k$. For two real images (one image is in the first row and the second image in the last row), we find the corresponding latent codes, compute their convex combination as interpolation, and then pass the computed latent code through a generator $\bm{g}_k(\bm{z})$ to produce a generated sample $\bm{x}$. Identity of the generator of GenMM is chosen as $k^{*}$ corresponding to the image of the first row if $\alpha < 0.5$, or to the image of the last row if $\alpha \geq 0.5$.
 
 \begin{figure*}[!ht]
   \captionsetup[subfigure]{justification=centering}
@@ -1139,7 +1137,6 @@ In the second experiment, we explore power of invertibility for interpolation in
     % \caption{FID score}
     % \label{fig-sm-fid}
   \end{subfigure}
-  \vspace{-0.3cm}
   \caption{Train and Test Accuracy Curves versus Epochs on Dataset Norb}
   \label{fig:class-norb}
 \end{figure*}
@@ -1149,20 +1146,20 @@ The second experiment on interpolation shows interesting result for
 modeling multi-modal data. The distribution of ten digits together in
 MNIST dataset is expected to be multi-modal. The aspect of multi-modal
 distribution is addressed using the experimental result shown in
-\autoref{fig-interpo-genmm2}. We use similar experimental steps
-as that in \autoref{fig-interpo-genmm1} but with modifications. It
+Figure~\ref{fig-interpo-genmm2}. We use similar experimental steps
+as that in Figure~\ref{fig-interpo-genmm1} but with modifications. It
 is evident that the generated digit images do not correspond well to
 the real images of the first row and the last row. For example, in the
-first column of \autoref{fig-interpo-genmm2}, we observe
+first column of Figure~\ref{fig-interpo-genmm2}, we observe
 presence of digits two and eight, while we expect that the
 column should be comprised of only images of digit zero. Natural
 question is why interpolation leads to generation of digits that are
 unexpected. The answer lies in the procedure of performing our
 experiment. The key difference for this experiment compared to the
-experiment in \autoref{fig-interpo-genmm1} is that a sample is
+experiment in Figure~\ref{fig-interpo-genmm1} is that a sample is
 produced by a randomly selected generator $\bm{g}_k(\bm{z})$ from $K$
 possible choices. We compute interpolated latent code using the same
-procedure as that in \autoref{fig-interpo-genmm1}, but use the generator where its identity $k$ is randomly sampled from the prior $\bm{\pi}$ directly. The generated images in this interpolation experiment reveals a clue that each generator models a subset of the whole training dataset. We can qualitatively argue that use of multiple generators helps for modeling the multi-modal distribution.  
+procedure as that in Figure~\ref{fig-interpo-genmm1}, but use the generator where its identity $k$ is randomly sampled from the prior $\bm{\pi}$ directly. The generated images in this interpolation experiment reveals a clue that each generator models a subset of the whole training dataset. We can qualitatively argue that use of multiple generators helps for modeling the multi-modal distribution.  
 
 \subsection{Application to Classification Task}
 \begin{table*}[!t]
@@ -1170,12 +1167,12 @@ procedure as that in \autoref{fig-interpo-genmm1}, but use the generator where i
   % \centering
   % \subcaption{Accuracy Table of GenMM on Test Data}
   % \centering  
-  \begin{tabular}{l|c|c|c|c|c|c|c} \toprule
+  \begin{tabular}{lccccccc} \toprule
     {Dataset} &  K=1 &  K=2 &  K=3 &  K=4 & K=10 & K=20 & State Of Art \\ \midrule
     Letter & 0.9459 &  0.9513 & 0.9578  & 0.9581 & 0.9657 & \textbf{0.9674} & {0.9582} \cite{tang2016extreme} \\ \midrule
     Satimage & 0.8900 & 0.8975 & 0.9045 & 0.9085 & 0.9105 & \textbf{0.9160} & 0.9090 \cite{jiang2013k-svd}   \\ \midrule
     Norb & 0.9184 & 0.9257 & 0.9406 & 0.9459 & 0.9538 & \textbf{0.9542} & 0.8920 \cite{pmlr-v5-salakhutdinov09a}  \\
-    % \bottomrule
+    \bottomrule
   \end{tabular}
   % \centering
   % \subcaption{Accuracy Table of LatMM}
@@ -1247,340 +1244,40 @@ procedure as that in \autoref{fig-interpo-genmm1}, but use the generator where i
     % \caption{FID score}
     % \label{fig-sm-fid}
   \end{subfigure}
-  \vspace{-0.3cm}
   \caption{Train and Test Accuracy Curves versus Epochs on Dataset Satimage.}
-  \vspace{0.3cm}
   \label{fig:class-satimage}
 \end{figure*}
+
 In this section, we apply our proposed mixture models to classification tasks using the maximum likelihood criterion. We compare classification performance with the state-of-art results. The state-of-art results are produced by discriminative learning approaches. The major advantage of maximum likelihood based classification is that any new class can be accommodated on-the-fly. On the contrary a discriminative learning approach requires retraining whenever new classes appear. 
 
 For a given dataset with $Y$ classes, we divide the dataset by sample labels and each subset has the same label $y$. Then we train one GenMM model per class of data, i.e. $p(\bm{x};\bm{\Theta}_{y})$ is trained with the $y$-th class's data. After we have all $p(\bm{x};\bm{\Theta}_y)$, $\forall y = 1, 2, \cdots, Y$ trained, a new sample $\bm{x}$ is predicted by $\argmax_{y} p(\bm{x};\bm{\Theta}_y)$.
 
-The maximum likelihood based classification experiment as described above is carried out in three different datasets: Letter, Satimage, and Norb. For each dataset, we train our models for $300$ epoches on the training data of the corresponding dataset, and the test accuracy is reported in \autoref{tab:acc-classification}. The state-of-art accuracy of each dataset in literature is also listed in this table for comparison. For each dataset, we increase the total number of mixture components $K$ and the neural network generators have the same structure. The table shows that the classification accuracy on each dataset is increased as we increase the number of generators in GenMM. When $K$ is $10$ or $20$, maximum likelihood based classification by GenMM outperforms the state-of-art accuracy. The state-of-art accuracy results are obtained by using discriminative learning approaches. For dataset Norb, more significant performance gain is observed. Our classification accuracy is boosted from $0.9184$ to $0.9542$ when $K$ is increased from $1$ to $20$ and a large improvement margin is obtained over reference accuracy. We also test LatMM on classification task, but its accuracy is more or less around the accuracy of GenMM with $K=1$. Note that LatMM is a relatively low-complexity model than GenMM. 
-      %       The latent source mixture strategy of LatMM is not as powerful as GenMM to model multi-modal data.
+The maximum likelihood based classification experiment as described above is carried out in three different datasets: Letter, Satimage, and Norb. For each dataset, we train our models for $300$ epoches on the training data of the corresponding dataset, and the test accuracy is reported in Table~\ref{tab:acc-classification}. The state-of-art accuracy of each dataset in literature is also listed in this table for comparison. For each dataset, we increase the total number of mixture components $K$ and the neural network generators have the same structure. The table shows that the classification accuracy on each dataset is increased as we increase the number of generators in GenMM. When $K$ is $10$ or $20$, maximum likelihood based classification by GenMM outperforms the state-of-art accuracy. The state-of-art accuracy results are obtained by using discriminative learning approaches. For dataset Norb, more significant performance gain is observed. Our classification accuracy is boosted from $0.9184$ to $0.9542$ when $K$ is increased from $1$ to $20$ and a large improvement margin is obtained over reference accuracy. We also test LatMM on classification task, but its accuracy is more or less around the accuracy of GenMM with $K=1$. Note that LatMM is a relatively low-complexity model than GenMM. 
 
-\autoref{fig:class-letter} \autoref{fig:class-satimage} and \autoref{fig:class-norb} show the train and test accuracy changing along with the training epoch on dataset Letter and Satimage, respectively. For each dataset, the accuracy curves versus epoch trained with GenMM at different value of $K$ are shown. In these sets of figures, all accuracy curves climbs and flattens around some value, as training epoch increases. Train accuracy is either coincident with, or above test accuracy curve at different training phases. For each set of figures on a given dataset, the gap between train and test curve is smaller as a larger number of mixture components is used. As $K$ increases, test curve flattens at a larger accuracy value. This again speaks for validation of our proposed models and also the advantage of using our mixture models for practical tasks.
-
-
-\section{expectation maximization of neural network based mixture models}
-
-\section{An alternative construction method}
-
-\section{Experiments}
-
+Figure~\ref{fig:class-letter}, \ref{fig:class-satimage} and \ref{fig:class-norb} show the train and test accuracy changing along with the training epoch on dataset Letter and Satimage, respectively. For each dataset, the accuracy curves versus epoch trained with GenMM at different value of $K$ are shown. In these sets of figures, all accuracy curves climbs and flattens around some value, as training epoch increases. Train accuracy is either coincident with, or above test accuracy curve at different training phases. For each set of figures on a given dataset, the gap between train and test curve is smaller as a larger number of mixture components is used. As $K$ increases, test curve flattens at a larger accuracy value. This again speaks for validation of our proposed models and also the advantage of using our mixture models for practical tasks.
 
 \section{Summary}
+In this chapter, we considered the learning problem in the presence of imcomplete data (or unobserved variables) in directed graphs. We introduced normalizing flows that ware implemented as neural networks to model the conditional distributions, in order to increase modeling flexibility. Building a model more expressively helps reduces the inherent bias in modeling. The proposed models allow both exact likelihood computation and also efficient sampling.
 
-\section{Raw material}
-\section{Introduction}
+Learning methods of the proposed models ware proposed. Due to the presence of neural network based flows in conditional distribution modeling, expectation maximization was tailored to adapt to their learning and the maximization step was approximately solved with back-propagation technique. The approximation was also partially due to the fact that batch-based optimization had to been used to accommodate large dataset. From the perspective of the numerical evaluations, the proposed models are valid. The numerical results show that normal statistical behavior of modeling performance versus model complexity remains valid. More expressive models benefit the applications to data representation (data generating) and classification.
 
-% Recently a significant attention has been given to
-The paradigm of neural network based implicit distribution
-modeling has received a significant attention. In this paradigm, a neural network being a powerful non-linear function acts as an efficient generator. Prominent examples of neural network based implicit distributions are generative adversarial networks (GANs) \cite{NIPS2014_5423} and its
-variants \cite{NIPS2016_6125,
-  2018arXiv180508318Z, salimans2018improving}. GANs are efficient for generating samples and successful in several applications \cite{ledig2017photo}, \cite{NIPS2016_6125}. For a GAN, a latent variable is used as
-an input to the generator neural network of the GAN and the output of the
-neural network is considered to be a data sample from the implicit
-distribution.  In implicit distribution modeling by GANs, neither
-analytical form of the distribution nor likelihood for a data sample
-is available. Naturally the use of neural network based implicit distribution models like GANs is restricted to many applications where it is important to compute likelihood, for example, maximum likelihood based classification.
+The considered models in this chapter assume that an observation with its unobserved variable is independent from other observation instances (with their corresponding hidden variables). This assumption could bring poor models when true signal is temporal and the independence does not hold. In next chapter, we would consider how to model and learn a model where this independence is gone. 
 
-% Naturally, this is a limitation to explore use of EM for design of neural network based implicit mixture models. %On the other hand, to the best of authors' knowledge, we are not aware of works on exploring EM for neural network based explicit mixture models.
+\section{Related Work}
+Using mixture model to get gain in model flexibility is typical technique, which is especially useful when target dataset is multi-modal. This gain comes with unobserved variables. The unobserved variables usually are related with abstraction of data modal, which helps us interpret the data. But they also pose challenges in model learning. In literature, expectation maximization \cite{dempster1977maximum} is a standard approach for learning parameters of an explicit mixture model where likelihood is tractable. Gaussian mixture model is the most classic one in this framwork \cite{Bishop:2006:PRM:1162264}.
+\textcolor{blue}{Apart from explicit likelihood, EM for large dataset... add some new references \cite{karimi2019incrementalEM}}
 
-In this article, we focus on neural network based explicit distribution modeling. An explicit distribution model has an analytical functional form and we are able to compute likelihood. While use of neural network based generators in GANs for distribution modeling is powerful, we look for further improvements. In this regard, a standard practice is to use mixture models assuming that the underlying distribution is multi-modal, or data are spread over multiple manifolds and subspaces. Therefore we propose to design neural network based explicit mixture models such that they
-\begin{enumerate}
-\item[(a)] have analytical forms, 
-\item[(b)] offer the advantage of computing likelihood, and 
-\item[(c)] retain the advantage of generating samples efficiently.
-\end{enumerate}
-With the advantage of computing likelihood, our proposed neural network based mixture models are suitable for maximum likelihood based classification. 
-
-An important question is how to design practical algorithms to learn parameters of the proposed mixture models. In literature, expectation-maximization (EM) \cite{dempster1977maximum} is a standard approach for learning parameters of an explicit mixture model in a maximum likelihood framework, such as learning parameters of a Gaussian mixture model (GMM) \cite{Bishop:2006:PRM:1162264}. For realizing EM, computation of the
-posterior distribution of a hidden variable (related to identity of a mixture component) given the observation
-(visible signal/data) is required in the expectation step
-(E-step). In addition, it is required to compute the joint log-likelihood of the observation signal and the hidden variable in the maximization step (M-step). For example, EM for GMM can be realized due to fullfilment of the above two requirements. Typically it is challenging to fulfill these two requirements for many other mixture distribution models. We also face the challenge to realize EM for learning parameters of neural network based explicit mixture models. This is due to the fact that use of neural networks in design of a system/algorithm/method often leads to loss of required level of analytical tractability. 
-
-% We also face the challenge to realize EM for --->
-% The challenge remains to releaze EM for ...
-
-% It is often difficult to fulfill these two requirements for many  mixture distribution models due to analytical tractability. 
-% For the case of learning GMM parameters, EM can be realized due to availability of computable likelihood and posterior. On the other hand, 
-% It is a challenge to realize EM for learning parameters of neural network based explicit mixture models. Use of neural networks in a system often brings analytical complexities. 
-
-In pursuit of neural network based explicit mixture models, our contributions in this article are as follows.
-\begin{enumerate}
-\item[(a)] Proposing two mixture models - a high-complexity model and a low-complexity model. The low-complexity model uses shared parameters.
-\item[(b)] Finding theoretical conditions for the models such that EM can be applied for their parameter learning. The theoretical conditions help to find explicit posterior and computation of expected likelihood. 
-  % \item[(c)] \textcolor{blue}{Convergence analysis is provided for our proposed models and we provide a sufficient condition such that our models converge.}
-\item[(c)] Designing practical algorithms for realization of EM where gradient search based optimization is efficiently embedded into M-step.
-\item[(d)] Demonstrating efficiency of proposed mixture models through extensive experiments for generating samples and maximum likelihood based classification. 
-\end{enumerate}
-{At this point we mention the conditions of realizing EM to learn neural network based explicit mixture models.} The sufficient conditions are invertibility of associated neural networks and Jacobian computation of functional form of the neural networks. This helps to compute likelihood using change of variables. In practice we address the sufficient conditions using a flow-based neural network \cite{2018arXiv180703039K}.
-
-
-
-
-
-
-
-
-
-
-% Learning of mixture distribution is a classic problem in
-% pattern recognition and machine learning. Use of expectation maximization (EM)\cite{dempster1977maximum} is a standard approach for learning of mixture distribution model in a maximum likelihood framework, for example, learning a Gaussian mixture model (GMM) \cite{Bishop:2006:PRM:1162264}. Further extensions using variational inference for learning
-% parameters of mixture models, such as GMM, beta mixture model have been explored in literature\cite{ma2011bayesian}.
-
-% EM applies to explicit mixture distribution modeling. An explicit
-% distribution has an analytical form and likelihood for
-% a data sample can be computed. For realizing EM, computation of the
-% posterior distribution of a latent variable given the observation
-% (visible signal) is required firstly in the expectation step
-% (E-step). In addition, it is required to compute the log-likelihood of joint observation signal and latent variable in the maximization step (M-step). It is often a challenge to fulfill these two requirements for many  mixture distribution models. 
-
-% % For many models of practical interest, especially the
-% % distribution models that are based on neural networks, it is
-% % often infeasible to fulfill the above requirements of latent variable
-% % posterior and joint logarithm likelihood computation.
-
-% % Use of EM is traditionally explored for those mixture models where we
-% % have computable analytical expressions for mixture distribution modeling. For example, GMM has an explicit analytical form and we can compute likelihood for a data point. %It is easy to 
-% % calculate hidden variables (also known as responsibilities in EM literature) as posterior. 
-% % GMM is comprised of a number of Gaussian components. We learn parameters of GMM which are the prior probabilities, mean vectors and covariance matrices for the Gaussian components. 
-
-% % Analytical and computable expression of a mixture model helps for ease
-% % of use. For example, we can easily calculate likelihood for a data sample, sampling from the distribution, etc. Further, learning of parameters of mixture model using machine learning approaches, such as EM may be realizable. 
-
-% Recently machine learning community has given significant attention to
-% the paradigm of neural network based implicit distribution
-% modeling. In this paradigm, neural network based non-linear functions act as powerful generators. Prominent examples of neural network based implicit distributions are generative adversarial networks (GANs) \cite{NIPS2014_5423} and its
-% variants \cite{NIPS2016_6125,
-% 2018arXiv180508318Z, salimans2018improving}. GANs have shown
-% success in several applications such as image super
-% resolution \cite{ledig2017photo} and semi-supervised learning \cite{NIPS2016_6125}. A latent variable is used as
-% an input to the generator neural network of GAN and the output of the
-% neural network is considered to be a data sample from the implicit
-% distribution. In implicit distribution modeling by GANs, neither
-% analytical form of the distribution nor likelihood for a data sample
-% is available. Naturally, this is a limitation to explore use of EM for design of neural network based implicit mixture models. %On the other hand, to the best of authors' knowledge, we are not aware of works on exploring EM for neural network based explicit mixture models.
-
-% In this article, we explore use of EM for neural network based explicit mixture modeling. We propose two such mixture models that admit explicit, analytical expressions for the distributions and allow the computation of likelihood of data samples. We provide sufficient conditions to address the two requirements of EM in its E-step and M-step. The sufficient conditions are invertibility of associated neural networks and Jacobian computation of functional form of the neural networks. Therefore our main contribution in this article is to realize EM for neural network based explicit mixture models. We exploit power of EM for mixture modeling in maximum likelihood framework, as well as power of non-linear functional representation of neural networks. Our expectation is that the proposed mixture models are good for data with high diversity, where data distribution has multiple modes, or data are spread over multiple manifolds and subspaces.  
-
-
-\subsection{Related Work and Background}
-% \textcolor{blue}{We have to reduce size of this section. More compact writing necessary.}
-
-% GANs do not provide explicit distribution models and they are
-% trained by an adversary game, where neural network based generator and discriminator play against with each other to improve the implicit probability distribution induced by the generator. 
-While GANs have high success in many applications, they are known to
-suffer in a mode dropping problem where a generator of a GAN is unable
-to capture all modes of an underlying probability distribution of data
-\cite{2018arXiv180600880K}. To address diversity in data and model
-multiple modes in a distribution, variants of generative models have been developed and
-usage of multiple generators
-has been considered. For instance, methods of minibatch discrimination \cite{NIPS2016_6125} and feature representation \cite{bang2018icml} are used to construct new discriminators of GANs which encourage the GANs to generate samples with diversity. Multiple Wasserstein GANs \cite{2017arXiv170107875A} are used in \cite{2018arXiv180600880K} with appropriate mutual information based regularization to encourage the diversity of samples generated by different GANs.
+When likelihood is not tractable (e.g., implicit probabilistic models), different objectives need to be designed to guide the modeling learning. Generative adversarial networks (GANs) have gained increasing attention in this track \cite{NIPS2014_5423, NIPS2016_6125, 2018arXiv180508318Z, salimans2018improving}.
+GANs are efficient for generating samples and successful in several applications \cite{ledig2017photo, NIPS2016_6125}. In a GAN, a latent variable is used as
+an input to the generator neural network of the GAN and the output of the neural network is considered to be a data sample from a implicit distribution. The implicit distraction targets at approximating the underling distribution of the given dataset, via guidance of a discriminator.
+To capture diversity in data (multi-modal), usage of multiple generators has been considered. For instance, multiple Wasserstein GANs \cite{2017arXiv170107875A} are used in \cite{2018arXiv180600880K} with appropriate mutual information based regularization to encourage the diversity of samples generated by different GANs.
 A mixture GAN approach is proposed in \cite{hoang2018mgan} using multiple generators and multi-classification solution to
-encourage diversity of samples. Multi-agent diverse GAN \cite{DBLP:journals/corr/GhoshKNTD17} similarly employs $k$ generators, but uses a $(k+1)$-class discriminator instead of a typical binary discriminator to increase the diversity of generated samples. These works are implicit probability distribution modeling and thus prior distribution of generators can not be inferred when multiple generators are used.
-% In all these existing GAN based mixture modeling method we do not have advantage of analytical form and computing prior distribution of generators. 
-
-Typically, for a GAN, the latent variable is assumed to follow a known and fixed distribution, e.g., Gaussian. The latent signal for a given data sample can not be obtained since generators which are usually based on neural networks are non-invertible. The mapping from a data sample to its corresponding latent signal is approximately estimated by neural networks in different ways. \cite{donahue2017adversarial} and \cite{dumoulin2017adversarially} propose to train a
-generative model and an inverse mapping (also neural network) from the data sample to the latent signal
-simultaneously, using the adversarial training method of
-GAN. Alternatively, \cite{dustin2017hierarchical}
-proposes to approximately minimize a Kullback-Leibler divergence to
-estimate the mapping from the data sample to the latent variable, which leads to a nontrivial probability density ratio estimation problem.
-
-% \textcolor{blue}{Please compress this paragraph.}
-Another track of
-mixture modeling is based on ensembling method that combines weaker
-learners together to boost the overall performance \cite{grover2017aaai_boost,
-  2017arXiv170102386T}. In this approach mixture models are obtained as follows. Based on how well the current-step mixture model captures the underlying distribution, a new generative model is
-trained to compensate the miss-captured part. However, measuring the difference between current-step mixture model and underlying distribution
-of dataset quantitatively is a nontrivial task. In addition, since incremental building components are used in the mixture modeling, parallel training of model components is not feasible.
+encourage diversity of samples. Multi-agent diverse GAN \cite{DBLP:journals/corr/GhoshKNTD17} similarly employs $k$ generators, but uses a $(k+1)$-class discriminator instead of a typical binary discriminator to increase the diversity of generated samples. These works are implicit probability distribution modeling and thus empirical or appropriate methods have to been used ot cope the unobserved random variable. For instance, extra neural networks are used to model the posterior of the unobserved variables \cite{donahue2017adversarial, dumoulin2017adversarially}. 
 
 
-% is to combine weak or imperfect generative models to
-% improve their overall performance, which is similar to boosting
-% technique in supervised learning. In this type of approaches, an
-% imperfect generative model is firstly trained directly using empirical dataset. Then the
-% empirical dataset is reweighed to correct errors made by the trained imperfect
-% generative model. Finally, a new generative model is trained on the reweighed
-% empirical dataset. The reweighing step and new generative model
-% training step are repeated, and these trained generative models are
-% used in mixture way. \cite{grover2017aaai_boost} studies the application
-% of boosting technique to generative models ensemble with regard to
-% Kullback-Liebler divergence. A more general study of ensembling
-% generative models by boosting is to minimizing a f-divergence between
-% the empirical data distribution and the ensembled generative model
-% \cite{2017arXiv170102386T}. This incremental building method tries to
-% improve the performance of the ensembled model by adding a new
-% (weighted) generative model component at each step. However, parallel
-% training among generative model components is not feasible for this
-% approach, since reweighing step on dataset is based on how bad the
-% current ensembled generative model is. In addition, in each reweighing
-% step, the ratio of true data distribution to the ensembled generative model
-% distribution needs to be estimated. True data distribution is of course unknown and
-% probability distribution ratio is usually statistical estimated which
-% has large variance.
+Another track of mixture modeling is based on ensembling method that combines weaker learners together to boost the overall performance \cite{grover2017aaai_boost,2017arXiv170102386T}. In this approach mixture models are obtained as follows. Based on how well the current-step mixture model captures the underlying distribution, a new generative model is trained to compensate the miss-captured part. However, measuring the difference between current-step mixture model and underlying distribution of dataset quantitatively is a nontrivial task, especially when likelihood is not tractable. In addition, since incremental building components are used in the mixture modeling, parallel training of model components is not allowed.
 
 
-% \hrule
-
-
-
-% GANs have shown high promise in
-% high-dimensional probability distribution representation and
-% manipulation. Success applications of GANs have been seen such as in
-% simi-supervised learning \cite{NIPS2016_6125} and image super resolution
-% \cite{ledig2017photo}. GANs do not provide any density function estimation and are
-% trained by an adversary game, where neural network based generator and
-% discriminator play against with each other to improve the implicit
-% probability distribution induced by the generator. Given the success
-% of GANs, they are hard to train stably and suffer from
-% mode dropping problem where trained generators of GANs only can only
-% capture a part of underlying distribution of datasets\cite{2018arXiv180600880K}.
-
-
-% % \textcolor{red}{(You mean: distribution induced by generator? or generative model?)}. \textcolor{red}{(I think the discussion of GANs should be from the point view of probabilistic modeling, since our work/method is also probability distribution modeling method.)} 
-
-
-% We use a flow model of neural network \cite{} in practical implementations to realize the sufficient conditions. Using extensive experiments, we show that mixture distributions are better to fit a data distribution than a single component distribution in the sense of likelihood and four different metrics. 
-
-% \textcolor{blue}{does these two following paragraphs necessary here? I think we can discuss these two in experiment section and conclusions.}
-% Our experimental results also show that the proposed model adhere to
-% an important aspect in machine learning. The aspect is the general
-% statistical knowledge about trend in model performance versus model
-% complexity. We are able to show that the likelihood performance
-% improves in the beginning with increase in model complexity, but then
-% further increase of model complexity does not give further significant benefit. The same trend is valid with other metrics we use for experimental validation. Additionally we show that the EM formulations have good generalization property. The performance gap between training dataset and testing dataset remains small for the datasets we use for experiments.
-
-% % -----------------------------------------------------
-% % \textcolor{blue}{below is part of the introduction written by dong}
-% % On the one hand, GANs are hard to train, i.e. the well
-% % known stability problem of training. On the other hand, GANs suffer from
-% % mode dropping problem where trained generators of GANs only can only
-% % capture a part of empirical data distributions. In another word, the
-% % support of the probability distribution induced by a generative model
-% % contains only one or several sub-manifolds of empirical data distribution.
-
-% % One of assumptions accounting for mode dropping problem is that empirical data locates in multiple disjoint manifolds in high
-% % dimensional space. This has been discussed and intuitively explained
-% % in \cite{2018arXiv180600880K}. The difficulty of learning
-% % disjoint/disconnected manifolds of data by a GAN remains.
-
-% % Carrying on the assumption the underlying distribution of a dataset
-% % has disconnected support, that consists of multiple disjoint submanifolds, we try and
-% % attempt the problem of learning the underlying probability
-% % distribution by building generative models in mixture way.
-% % We assume that the disjoint support of the underlying distribution is either because it is induced by multiple generators using a single latent signal, or by multiple latent signals via a single  generator. A general model which is a combination of the two above assumptions is beyond the scope of this paper.
-% % We summarize our contribution of this work as follows:
-% % \begin{itemize}
-% % \item As our first assumption, we propose an expectation maximization generative model where
-% %   generators are combined in an naive mixture way, termed as
-% %   EMGM-NM. The prior distribution of generators of this mixture model is estimated
-% %   using the posterior distribution along with empirical data distribution.
-% % \item Following our second assumption, we propose an expectation maximization generative model with
-% %   latent source distribution as an mixture distribution, which is
-% %   termed as EMGM-SM. Similar, the prior distribution of latent sources
-% %   is estimated during training the EMGM-SM model.
-% % \item In our models EMGM-NM and EMGM-SM, we are able to infer the latent
-% %   code of an image by method of maximizing a posterior probability. 
-% % \end{itemize}
-
-
-
-
-% Recent researches have actively explored the implicit probability
-% modeling via methods of generative models, where generators are
-% designed and trained in various ways to learn underlying distribution
-% of datasets with high diverse data samples. Generally speaking,
-% modifying generative models and using mixture of multiples generators
-% have been considered in the literature as approaches to avoid mode
-% dropping in learning of underlying distribution of empirical datasets. For instance,
-% methods of minibatch discrimination \cite{NIPS2016_6125} and 
-% representation feature \cite{bang2018icml} are used to construct new
-% discriminators of GANs which encourage the GANs to generate different samples.
-
-% It is claimed that empirical data often lies in multiple disjoint
-% sub-manifolds that are disconnected or disjoint with each
-% other\cite{2018arXiv180600880K}. Therefore, it is intuitive to employ
-% multiple generators to emulate the data
-% distribution with support consisting of disconnected sub-manifolds. 
-% \cite{2018arXiv180600880K} proposes DMWGAN to diversify generated
-% samples by training multiple Wasserstein GANs
-% \cite{2017arXiv170107875A}, and uses mutual information between
-% generated samples and their corresponding generator id to encourage
-% the diversity of samples generated by different GANs. With a similar
-% motivation, MGAN proposes a mixture GAN approach using multiple generators and a multi-classification
-% network is also trained in addition to a typical binary discriminator to
-% encourage diversity of samples generated by these
-% generators\cite{hoang2018mgan}. Multi-Agent Diverse GAN \cite{DBLP:journals/corr/GhoshKNTD17}
-% similarly employs $k$ generators, but uses a $k+1$-class discriminator
-% instead of a typical binary discriminator to increase the diversity of
-% generated samples.
-
-% Although the previous works in exploring multiple generators usage
-% show improvements of generative model performance. Different techniques
-% and regularizations have to used to stop multiple generators from
-% collapsing same part of distribution representation. In addition, the
-% prior distribution of generators are nontrivial to estimate since
-% density function is not available in the implicit models.
-
-% Additionally, latent source distribution for generators is assumed as
-% known (usually Gaussian) but the source signal corresponding to a
-% given empirical sample can not be obtained since generators are usual
-% implemented as neural networks and are not reversible. This problem is
-% also approximately attempted in different ways.\cite{donahue2017adversarial} and \cite{dumoulin2017adversarially} propose to train a
-% generative model and an inverse mapping from data to latent signal
-% simultaneously, using the adversarial training method of
-% GAN. Alternatively, \cite{dustin2017hierarchical} proposes to use variational inference method to
-% estimate the posterior probability of latent signal given observation
-% of data via implicit implicit models.
-
-
-% Another track is to combine weak or imperfect generative models to
-% improve their overall performance, which is similar to boosting
-% technique in supervised learning. In this type of approaches, an
-% imperfect generative model is firstly trained directly using empirical dataset. Then the
-% empirical dataset is reweighed to correct errors made by the trained imperfect
-% generative model. Finally, a new generative model is trained on the reweighed
-% empirical dataset. The reweighing step and new generative model
-% training step are repeated, and these trained generative models are
-% used in mixture way. \cite{grover2017aaai_boost} studies the application
-% of boosting technique to generative models ensemble with regard to
-% Kullback-Liebler divergence. A more general study of ensembling
-% generative models by boosting is to minimizing a f-divergence between
-% the empirical data distribution and the ensembled generative model
-% \cite{2017arXiv170102386T}. This incremental building method tries to
-% improve the performance of the ensembled model by adding a new
-% (weighted) generative model component at each step. However, parallel
-% training among generative model components is not feasible for this
-% approach, since reweighing step on dataset is based on how bad the
-% current ensembled generative model is. In addition, in each reweighing
-% step, the ratio of true data distribution to the ensembled generative model
-% distribution needs to be estimated. True data distribution is of course unknown and
-% probability distribution ratio is usually statistical estimated which
-% has large variance.
-
-
-% % Although the previous works aim to diversify the generated samples, it
-% % is often assumed further that the prior distribution of the generative
-% % model components is uniform, due to the intractability of neural
-% % neworks used as generators. A recently related work to ours in
-% % \cite{eitan2018nips_gmm} compares GANs with maximizing log-likelihood
-% % of Gaussian mixture model and finds that the Gaussian mixture model
-% % can generate samples with higher diversity but sample quality is not
-% % as good as that of GANs.
-
-
-
-
-
-
-
-\section{Conclusion}
-We conclude that the principal of expectation maximization can be used for neural network based probability distribution modeling. Our approach leads to explicit distribution modeling and the experimental results show an important aspect that the normal statistical behaviour of modeling performance versus model complexity remains valid. The proposed models are able to generate images which have good visual quality. This is also supported by several metric scores. Practical applications of our models for classification tasks are also carried out. The results confirm that our approach is good for modeling multi-modal distributions.
-Further extensions using variational inference for learning
-parameters of mixture models will be studied in the future.
 
 
 %%% Local Variables:
