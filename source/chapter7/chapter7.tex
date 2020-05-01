@@ -1,7 +1,25 @@
-\chapter{Powering Hidden Markov Model by Neural Network based Generative Models}
+\chapter{Powering Hidden Markov Model by Normalizing Flows}
+We have been mainly discussing the topics of modeling and learning where an observation instance is independent of others so far. In another word, the assumption of independent and identically distributed observation instances has been used. In this chapter, we extend to the topic of modeling and learning for sequential or temporal signal, such as speech signal, trajectories of a robot's movement, DNA sequence, etc.
+
+In modeling a dynamic system that generates sequential signal, we are usually interested in reasoning about the system state that evolves over time underlining the signal. For simplification, the timeline over which a dynamic system generates sequential signal is discretized, i.e. time is sliced. Thus for each time slice $t$, we can take a measurement of the dynamic system, which corresponds to an observed variable $\bm{x}_t$. Due to the limitation of our measure or the abstraction in modeling, the state of the system at this time slice is not directly available, which corresponds an unobserved or hidden variable $s_t$.
+
+Losing of independence assumption poses a challenge in model learning and inference. As the dynamic system evolves, the dependency (correspondence to edges in graphical model) can be arbitrary complex. The complexity can be too high for practical usages in general. Therefore constraints are required to allow reasonable model learning and states estimations.
+The most widely used constraint is probably the Markov assumption, i.e. $(\bm{x}_{t+1}, {s}_{t+1})$ is independent of $(\bm{x}_{1:t-1}, {s}_{1:t-1})$ if $(\bm{x}_{t}, {s}_{t})$ is given. This assumption indeed reduces the complexity of graphical structure in modeling the dynamic system, since we would not need to draw any edges between variables with time interval larger than one, in graphical representation.
+
+The other issue is parameterization of the model of the dynamic system. If we directly model $\{\bm{x}_t, {s}_t, t=1, 2, \cdots, T\}$ jointly, the parameterization would grow exponentially as the system evolves over time. A good solution to this issue is to introduce the \textit{template} concept into graphical model. In the assumption, the variable $\bm{x}_t$ or $s_t$ becomes an instance of a \textit{template variable}. More importantly, each dependency between two continuous time slices becomes an instance of a \textit{template factor}. When the dynamic evolves from time $t$ to $t+1$, we only need to instantiate from the template variables and template factors without add new parameters to the model. Template based dynamic Bayesian networks belong to such kind of models.
+
+If we add one more assumption that variable $\bm{x}_t$ the rest of variables $\{\bm{x}_{t^{\prime}}, {s}_{t^{\prime}}, t^{\prime}\neq t \}$ if the state $s_t$ is given, we reduce a dynamic Bayesian network into the classic hidden Markov model (HMM). Similar to chapter~\ref{chpt6:em-flow}, we bring the normalizing flows into the \textit{template factors} to increase the flexibility of HMM in modeling dynamic systems in this chapter.
+
+
+
+modeling:
 
 For permeable part and notation of this chapter, refer to \cite[Chapter~6.2]{koller2009pgm}.
 Give a figure/illustration: Dynamic Bayesian Network > 2-TBN > HMM
+
+
+complexity, why template > HMM
+
 
 A bit history of HMM, see \cite[Chapter~6.8]{koller2009pgm}
 
@@ -13,6 +31,56 @@ content:
 
 HMM is an instance of 2-time-slice Bayesian network(2-TBN) (section 6.2.2 Koller). Also, it can be argued from CRF.
 \section{Hidden Markov Model}
+\begin{figure}[tp!]
+  \centering
+  \begin{subfigure}{0.35\textwidth}
+  \begin{tikzpicture}
+    \tikzstyle{enode} = [thick, draw=black, circle, align=center]
+    \tikzstyle{cnode} = [thick, draw=black, circle, align=center, inner sep = 0.3pt]
+    \tikzstyle{nnode} = [thick, rectangle, rounded corners = 2pt,minimum size = 0.8cm,draw,inner sep = 8pt]
+    \node[enode] (s) at (-1.5,2) {${s}$};
+    \node[enode] (x) at (0,0){$\bm{x}^{\prime}$};
+    \node[enode] (sp) at (0,2){${s}^{\prime}$};
+    \node[nnode, fit=(x)(z)(s)] (box) {};
+    % \node[] at (-1.8,-0.4) {$\abs{\Dd}$};
+    
+    \draw[->] (s) to (sp);
+    \draw[->] (sp) to (x);
+
+  \end{tikzpicture}
+  \caption{The generic template for HMM.}\label{chpt7:fig:hmm-template}
+\end{subfigure}
+\hspace{5pt}
+\begin{subfigure}{0.45\textwidth}
+  \begin{tikzpicture}
+    \tikzstyle{enode} = [thick, draw=black, circle, align=center]
+    \tikzstyle{cnode} = [thick, draw=black, circle, align=center, inner sep = 0.3pt]
+    \tikzstyle{nnode} = [thick, rectangle, rounded corners = 2pt,minimum size = 0.8cm,draw,inner sep = 8pt]
+    \node[enode] (s0) at (0,2) {${s}_0$};
+    \node[enode] (s1) at (1.5,2){${s}_1$};
+    \node[enode] (s2) at (3,2){${s}_2$};
+    \node[enode] (s3) at (4.5,2){${s}_3$};
+    
+    \node[enode] (x1) at (1.5,0){$\bm{x}_1$};
+    \node[enode] (x2) at (3,0){$\bm{x}_2$};
+    \node[enode] (x3) at (4.5,0){$\bm{x}_3$};
+    \node[nnode, draw=white, fit=(s0)(s1)(x1)] (box) {};
+    
+    \draw[->] (s0) to (s1);
+    \draw[->] (s1) to (s2);
+    \draw[->] (s2) to (s3);
+
+    \draw[->] (s1) to (x1);
+    \draw[->] (s2) to (x2);
+    \draw[->] (s3) to (x3);
+    
+  \end{tikzpicture}
+  % \vskip 10pt
+  \caption{The unrolled HMM instance to time $t=3$.}\label{chpt7:fig:hmm-template}
+\end{subfigure}
+\caption{From HMM template to instance.}
+\end{figure}
+
 
 \section{GenHMM}
 
