@@ -527,7 +527,7 @@ We avoid this problem by using the following alternatives:
   $\Gamma(\bm{\sigma}_k^{-1};a, b)$, where $\Gamma(\cdot; a, b)$ is
   Gamma distribution with parameter $a$ and $b$. Then, the objective function of the optimization problem w.r.t. $\bm{\Theta}$ is reformulated as
   \begin{equation}\label{eq-latmm-obj1}
-    \umax{ \ubar{\bm{\Theta}}}   \frac{1}{n}
+    \umax{ \ubar{\bm{\Theta}}}   \frac{1}{\abs{\Dd}}
     \ubar{\Qq}\left(\ubar{\bm{\Theta}},\ubar{\bm{\Theta}}^{\mathrm{old}} \right)
     +\frac{1}{K}
     \log\prod_{k=1}^K
@@ -537,7 +537,7 @@ We avoid this problem by using the following alternatives:
 \item Alternatively, we use an $l_2$ regularization on $\bm{\sigma}_k$,
   which formulates the optimization step as
   \begin{equation}
-    \umax{\ubar{\bm{\Theta}}}   \frac{1}{n} \ubar{\Qq}\left(\ubar{\bm{\Theta}},\ubar{\bm{\Theta}}^{\mathrm{old}}\right)-\lambda \sum_{k=1}^K \frac{(1- \bm{\sigma}_k)^2}{K},
+    \umax{\ubar{\bm{\Theta}}}   \frac{1}{\abs{\Dd}} \ubar{\Qq}\left(\ubar{\bm{\Theta}},\ubar{\bm{\Theta}}^{\mathrm{old}}\right)-\lambda \sum_{k=1}^K \frac{(1- \bm{\sigma}_k)^2}{K},
   \end{equation}
   where $\la$ is the regulation parameter.
 \end{itemize}
