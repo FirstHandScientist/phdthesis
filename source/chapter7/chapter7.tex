@@ -509,7 +509,7 @@ Gaussian. The configuration for each generator is shown as Table~\ref{table:gene
 \begin{table}
   \caption{Configuration of generators of GenHMM in Experiments}\label{table:generator-setting}
   \centering
-  \begin{tabular}{l|c}
+  \begin{tabular}{lc}
     \toprule
     \begin{tabular}[x]{@{}c@{}} Latent distribution $p_{s,\kappa}(\bm{z})$ \\ $s\in \Ss, \kappa=1, 2, \cdots, K $ \end{tabular} & Standard Gaussian \\
     \hline
@@ -530,18 +530,18 @@ Transition matrix $\bm{A}$ is initialized as upper triangular matrix for GenHMM.
 \begin{table}
   \caption{Test accuracy table for $39$ dimensional features and folded $39$ phonemes.}\label{tab:acc-classification39f_a}
   \centering  
-  \begin{tabular}{l|l|c|c|c}
+  \begin{tabular}{llccc}
     \toprule
     {Model} & Criterion &  K=1 &  K=3 &  K=5  \\  \midrule
     \multirow{3}{*}{GMM-HMM}
-            & Accuracy    & $62.3\%$ &  $68.0\%$ &  $68.7\%$  \\
-            & {Precision} & $67.9\%$ &  $72.6\%$ &  $73.0\%$  \\
-            & {F1}        & $63.7\%$ &  $69.1\%$ &  $69.7\%$ \\
+            & Accuracy    & 62.3 &  68.0 &  68.7  \\
+            & {Precision} & 67.9 &  72.6 &  73.0  \\
+            & {F1}        & 63.7 &  69.1 &  69.7 \\
     \midrule
     \multirow{3}{*}{GenHMM}
-            & Accuracy    & $76.7\%$   & $77.7\%$ &  $77.7\%$ \\ 
-            & {Precision} & $76.9\%$   & $78.1\%$ &  $78.0\%$ \\
-            & {F1}        & $76.1\%$   & $77.1\%$ &  $77.0\%$\\
+            & Accuracy    & 76.7   & \textbf{77.7} &  {77.7} \\ 
+            & {Precision} & 76.9   & \textbf{78.1} &  78.0 \\
+            & {F1}        & 76.1   & \textbf{77.1} &  77.0\\
     \bottomrule                                                                  
   \end{tabular}
 \end{table}
@@ -549,18 +549,18 @@ Transition matrix $\bm{A}$ is initialized as upper triangular matrix for GenHMM.
 \begin{table}
   \caption{Test accuracy table for $39$ dimensional features and $61$ phonemes.}\label{tab:acc-classification39f_b}
   \centering  
-  \begin{tabular}{l|l|c|c|c} \toprule
+  \begin{tabular}{llccc} \toprule
     {Model} & Criterion & K=1 &  K=3 &  K=5
     \\ \midrule
     \multirow{4}{*}{GMM-HMM}
-            & Accuracy    & $53.6\%$ &  $59.6\%$ & $61.9\%$  \\
-            & {Precision} & $59.1\%$ &  $63.9\%$ & $65.7\%$ \\
-            & {F1}        & $54.7\%$ &  $60.5\%$ & $62.7\%$\\
+            & Accuracy    & 53.6 &  59.6 & 61.9  \\
+            & {Precision} & 59.1 &  63.9 & 65.7 \\
+            & {F1}        & 54.7 &  60.5 & 62.7\\
     \midrule
     \multirow{3}{*}{GenHMM}
-            & Accuracy    & $69.5\%$ & $70.6\%$ & $70.7\%$   \\
-            & {Precision} & $69.2\%$ & $70.5\%$ & $71.0\%$ \\
-            & {F1}        & $68.6\%$ & $69.6\%$ & $69.6\%$\\
+            & Accuracy    & 69.5 & 70.6 & \textbf{70.7}   \\
+            & {Precision} & 69.2 & 70.5 & \textbf{71.0}   \\
+            & {F1}        & 68.6 & 69.6 & \textbf{69.6}   \\
     \bottomrule
   \end{tabular}
   \vspace{0.5cm}
@@ -576,18 +576,18 @@ Table \ref{tab:acc-classification39f_a} and \ref{tab:acc-classification39f_b} sh
 \begin{table}
   \caption{Test accuracy table for $13$ dimensional features and folded $39$ phonemes.}\label{tab:acc-classification13f_a}
   \centering  
-  \begin{tabular}{l|l|c|c|c}
+  \begin{tabular}{llccc}
     \toprule
     {Model} & Criterion & K=1 &  K=3 &  K=5  \\  \midrule
     \multirow{3}{*}{GMM-HMM}
-            & Accuracy & $48.5\%$ &  $51.2\%$ &  $52.4\%$  \\
-            & Precision& $56.2\%$ &  $58.3\%$ &  $59.5\%$  \\
-            & F1       & $50.3\%$ &  $53.0\%$ &  $54.2\%$  \\
+            & Accuracy & 48.5 &  51.2 &  52.4  \\
+            & Precision& 56.2 &  58.3 &  59.5  \\
+            & F1       & 50.3 &  53.0 &  54.2  \\
     \midrule
     \multirow{3}{*}{GenHMM}
-            & Accuracy & $61.1\%$ &  $62.1\%$ & $62.1\%$   \\ 
-            & Precision& $61.1\%$ &  $61.9\%$ &  $62.1\%$  \\
-            & F1       & $59.7\%$ &  $60.7\%$ &  $60.2\%$  \\
+            & Accuracy & 61.1 &  \textbf{62.1} &  62.1   \\ 
+            & Precision& 61.1 &  61.9 &  \textbf{62.1}  \\
+            & F1       & 59.7 &  \textbf{60.7} &  60.2  \\
 
     \bottomrule                                                                  
   \end{tabular}
@@ -597,18 +597,18 @@ Table \ref{tab:acc-classification39f_a} and \ref{tab:acc-classification39f_b} sh
   \caption{Test accuracy table for $13$ dimensional features and $61$
     phonemes.}\label{tab:acc-classification13f_b}
   \centering
-  \begin{tabular}{l|l|c|c|c}
+  \begin{tabular}{llccc}
     \toprule
     {Model} & Criterion &  K=1 &  K=3 &  K=5 \\ \midrule
     \multirow{3}{*}{GMM-HMM}
-            & Accuracy & $37.1\%$ &  $40.6\%$ & $42.2\%$  \\
-            &Precision & $44.6\%$ &  $47.4\%$ & $48.8\%$  \\
-            & F1       & $38.8\%$ &  $42.1\%$ & $43.7\%$ \\
+            & Accuracy & 37.1 &  40.6 & 42.2  \\
+            &Precision & 44.6 &  47.4 & 48.8  \\
+            & F1       & 38.8 &  42.1 & 43.7 \\
     \midrule
     \multirow{3}{*}{GenHMM}
-            & Accuracy & $50.3\%$ & $50.8\%$ & $52.3\%$   \\
-            & Precision& $49.3\%$ & $50.9\%$ & $52.1\%$ \\
-            &F1        & $47.8\%$ & $48.3\%$ & $49.3\%$ \\
+            & Accuracy & 50.3 & 50.8 & \textbf{52.3}   \\
+            & Precision& 49.3 & 50.9 & \textbf{52.1} \\
+            &F1        & 47.8 & 48.3 & \textbf{49.3} \\
     \bottomrule
   \end{tabular}
   \vspace{0.5cm}
@@ -619,26 +619,25 @@ Similar experiments are carried out by using only the MFCC coefficients as featu
 \begin{table}
   \caption{Test accuracy table of perturbation with white noise ($K=3$, folded $39$ phonomes).}
   \label{tab:acc-classification39f_noise_snr}
-  \vspace{-0.1cm}
   \centering
-  \begin{tabular}{l|l|c|c|c|c}
+  \begin{tabular}{llcccc}
     \toprule
     \multirow{2}{*}{Model} & \multirow{2}{*}{Criterion} &
                                                           \multicolumn{4}{c}{White Noise SNR} \\
-    \cline{3-6}
+    % \cline{3-6}
     
                            && {15dB} &  {20dB} &  {25dB} & {30dB}  \\
     \midrule
     \multirow{3}{*}{GMM-HMM}
-                           & Accuracy & $36.6\%$ &  $44.2\%$ &  $50.8\%$ & $57.1\%$
+                           & Accuracy & 36.6 &  44.2 &  50.8 & 57.1
     \\
-                           &Precision & $59.2\%$ &  $64.2\%$ &  $68.4\%$ & $70.6\%$  \\
-                           & F1       & $39.9\%$ &  $47.7\%$ &  $53.9\%$ & $59.9\%$ \\
+                           &Precision & 59.2 &  64.2 &  68.4 & 70.6  \\
+                           & F1       & 39.9 &  47.7 &  53.9 & 59.9 \\
     \midrule
     \multirow{3}{*}{GenHMM}
-                           & Accuracy & $52.4\%$ & $62.0\%$ &  $69.7\%$ & $74.3\%$ \\
-                           &Precision & $60.0\%$ &  $65.9\%$ &  $71.7\%$ & $74.8\%$  \\
-                           & F1       & $52.5\%$ &  $62.0\%$ &  $69.3\%$ & $73.5\%$ \\
+                           & Accuracy & 52.4 & 62.0 &  69.7 & \textbf{74.3} \\
+                           &Precision & 60.0 &  65.9 &  71.7 & \textbf{74.8}  \\
+                           & F1       & 52.5 &  62.0 &  69.3 & \textbf{73.5} \\
     \bottomrule                                                                  
   \end{tabular}
   \vspace{0.1cm}
@@ -646,26 +645,26 @@ Similar experiments are carried out by using only the MFCC coefficients as featu
 \begin{table}
   \caption{Test accuracy table of perturbation by different type of noise (SNR=$20$dB, $K=3$, folded $39$ phonomes).}
   \label{tab:acc-classification39f_noise_type}
-  \vspace{-0.1cm}
+  
   \centering
-  \begin{tabular}{l|l|c|c|c|c}
+  \begin{tabular}{llcccc}
     \toprule
     \multirow{2}{*}{Model} & \multirow{2}{*}{Criterion} &
                                                           \multicolumn{4}{c}{Noise Type} \\
-    \cline{3-6}
+   
     
                            &  &  White &  Pink &  Babble & Volvo  \\
     \midrule
     \multirow{3}{*}{GMM-HMM}
-                           & Accuracy & $44.2\%$ &  $48.8\%$ &  $57.7\%$ & $66.6\%$
+                           & Accuracy & 44.2 &  48.8 &  57.7 & {66.6}
     \\
-                           &Precision & $64.2\%$ &  $66.1\%$ &  $67.0\%$ & $71.9\%$  \\
-                           & F1       & $47.7\%$ &  $52.3\%$ &  $59.7\%$ & $67.8\%$ \\
+                           &Precision & 64.2 &  66.1 &  67.0 & {71.9}  \\
+                           & F1       & 47.7 &  52.3 &  59.7 & {67.8} \\
     \midrule
     \multirow{3}{*}{GenHMM}
-                           & Accuracy & $62.0\%$ &  $65.1\%$ &  $70.0\%$ & $75.7\%$ \\
-                           &Precision & $65.9\%$ &  $67.8\%$ &  $70.4\%$ & $75.9\%$  \\
-                           & F1       & $62.0\%$ &  $64.6\%$ &  $69.0\%$ & $75.3\%$ \\
+                           & Accuracy & 62.0 &  65.1 &  70.0 & \textbf{75.7} \\
+                           &Precision & 65.9 &  67.8 &  70.4 & \textbf{75.9}  \\
+                           & F1       & 62.0 &  64.6 &  69.0 & \textbf{75.3} \\
     \bottomrule                                                                  
   \end{tabular}
   \vspace{0.3cm}
@@ -676,7 +675,7 @@ Apart from standard classification testing, we also test the robustness of our m
 
 \section{Application to Sepsis Detection}
 In this section, we apply our developed model to the sepsis detection for infants. Sepsis may rapidly develop among newborn babies who are under case in neonatal intensive care units (NICU). The sequential signals in this application are the physiological signals, which are taken as input for sepsis prediction.
-
+\textcolor{blue}{add dGenHMM}
 \subsection{Patient Dataset}
 The bedside monitor signals of $48$ premature infants which have been under care at a NICU in Karolinska University hospital have been collected.
 The sequential signals used are the Respiratory Frequency (RF), the beat to beat interval (RRi) and the blood oxygen saturation level ($Sp0_2$).
@@ -694,61 +693,50 @@ Our dataset consisted in $3501$ time frames, among which 1774 with label $0$ and
 All time frames have a constant size of $T=1200$ samples and are $3$-dimensional.
 
 \subsection{Experiments}
-
 To make the experiments more interesting, we add a set of basedline methods in the comparisons.
-Baseline model HeRO is used, which uses the RRi singal for feature extraction and applies a logistic regression to the extracted features.
+Baseline model HeRO is used, which uses the RRi singal for feature extraction and applies a logistic regression to the extracted features. See \cite{honore2020icassp} about detailed feature extraction.
+Pulse oximetry predictive score (POPS) \cite{sullivanEarlyPulseOximetry2018} uses mean, standard  deviation,  skewness,  kurtosis  and  min-maxcross correlation between RR-interval and $SpO2$ to compute a risk score. POPS is also a logistic regression method. 
+For the logistic regressions, optimal regularization parameter was found with cross-validation and grid search in the set $\{10^{-5}, \cdots, 10^{5}\}$.
 
-Pulse oximetry predictive score (POPS) \cite{sullivanEarlyPulseOximetry2018} uses mean, standard  deviation,  skewness,  kurtosis  and  min-maxcross correlation between RR-interval and $SpO2$ to compute a risk score. POPS is also a logistic regression method.
+We performed binary classification by the maximum likelihood with GMM-HMM, GenHMM and dGenHMM as probabilistic models.
+The GMM-HMM hyper-parameters were the number of states and the number of Gaussians per state.
+% The number of Gaussians per states was varied between \{2,4,6,8,10,12\}.
+For GenHMM and dGenHMM, the hyper-parameters were the number of states, the number of flows per state, chain-length in each flow, the size of the networks in a coupling layer of a flow.
+Given our limited input dimension, the size of the networks in the coupling layers was fixed to $3$.
+The chain-length in the coupling layer of each flow was varied between $4$ and $8$.
+We varied the number of states in HMMs in $\{3,6,9\}$ and show the results in Table~\ref{table:results:HMM}.
+
+We repeated our experiments $3$ times and each time a random $30\%$ of the patients was left out for testing.
+This lead to $2361 \pm 353$ time series in the training sets and $1140 \pm 353$ time series in the testing sets.
+We used a different set of input features to test our models in different conditions.
+HMMs are trained on raw time series and on raw time series with first and second order derivatives.
+For logistic regression models, HeRO is trained with $3$-dimensional features, and POPS with $10$-dimensional features.
 The results associated with these two sets of features are presented in Table~\ref{table:results:Lin}.
 Extreme learning machines (ELM) and support vector machine (SVM) with a gaussian kernel trained on the raw time series data are also added into the comparison.
 
-
-
-We performed binary classification of two types of fixed length input time series in a maximum likelihood framework with GMM, Flow and dFlow -HMMs as probabilistic models.
-As a baseline, we used the clinically used HRCi index and the more recent POPS features as input to a logistic regression system.
-We used $m=4$ and $r=0.2\sigma_{\ubm{x}_{RRi}}$ for the sample entropy computation.
-We repeated our experiments $3$ times and each time a random $30\%$ of the patients was left out for testing.
-This lead to $2361 \pm 353$ time series in the training sets and $1140 \pm 353$ time series in the testing sets.
-The code was written in Python using the Scikit-learn library for the HeRO system, hmmlearn for GMM-HMM,  and PyTorch to implement Flow and dFlow-HMM.
-The GMM-HMM hyper-parameters were the number of states and the number of Gaussians per state.
-The number of Gaussians per states was varied between \{2,4,6,8,10,12\}.
-For Flow and dFlow-HMMs the hyper-parameters were the number of states, the number of Flow-model per state, the number of chains in each Flow-model, the size of the networks in the coupling layers.
-Given our limited input dimension, the size of the networks in the coupling layers was fixed to $3$.
-The number of chains in the coupling layer of each Flow-model was varied between $4$ and $8$.
-We varied the number of states in our HMMs in $\{3,6,9\}$ and show the results in Table~\ref{table:results:HMM}.
-For the logistic regression, optimal regularization parameter was found with cross-validation and grid search in the set $\{10^{-5}, \cdots, 10^{5}\}$.
-We used a different set of input features to test our models in different conditions.
-HMMs are trained on raw time series and on raw time series with first and second order derivatives.
-The logistic regression model is trained on HRCi, $3$-dimensional feature, and on POPS, $10$-dimensional features.
-
 \subsection{Numerical Results}
-The results for the linear prediction systems are presented in Table~\ref{table:results:Lin} and the results for the HMMs are presented in Table~\ref{table:results:HMM}.
-The bold fonts corresponds to the maximum performance across HMM models given a number of states.
-
-
-
-
-
-
+The results for the HMMs are presented in Table~\ref{table:results:HMM} and the comparison with other benchmarks are presented in Table~\ref{table:results:Lin}.
 
 \begin{table}[!ht]
 \center
 \caption{Test accuracy of HMMs}
 \setlength{\tabcolsep}{4pt}
-\begin{tabular}{c|c|c|c}    \toprule
-Number of states 		&  n=3 			    				&  n=6									&  n=9 						\\  \bottomrule
-                                        \multicolumn{4}{c}{Raw time series} 		\\
+\begin{tabular}{cccc}    
+\toprule
+Number of states 		&  n=3 			    				&  n=6									&  n=9 						\\  
+\hline
+                                        \multicolumn{4}{c}{Raw sequential input} 		\\
 \hline
 GMM-HMM				&   0.68 $\pm$ 0.03 		&    \textbf{0.68} $\pm$ 0.03 			&   	\textbf{0.69} $\pm$ 0.03  	\\
-FlowHMM  				&   0.67 $\pm$ 0.04     	&    0.61 $\pm$ 0.08   		    &   	0.63 $\pm$ 0.08   \\
-dFlowHMM 				&   \textbf{0.70} $\pm$ 0.10    	&	   0.67 $\pm$ 0.06      	    &  	    0.65 $\pm$ 0.04    \\
+GenHMM  				&   0.67 $\pm$ 0.04     	&    0.61 $\pm$ 0.08   		    &   	0.63 $\pm$ 0.08   \\
+dGenHMM 				&   \textbf{0.70} $\pm$ 0.10    	&	   0.67 $\pm$ 0.06      	    &  	    0.65 $\pm$ 0.04    \\
    \toprule
-                                        \multicolumn{4}{c}{Raw time series + $1^{st}$ and $2^{nd}$ order derivatives}\\
+                                        \multicolumn{4}{c}{Raw sequential input + $1^{st}$ and $2^{nd}$ order derivatives}\\
 \hline
 GMM-HMM				&   \textbf{0.75} $\pm$ 0.05 		&    \textbf{0.74} $\pm$ 0.08			&   	\textbf{0.74} $\pm$ 0.05  	\\
-FlowHMM  				&   0.69 $\pm$ 0.07    	&    0.66 $\pm$ 0.06  		    &   	0.59 $\pm$ 0.08  \\
-dFlowHMM 				&  0.71 $\pm$ 0.04    		&	   0.72 $\pm$ 0.10     	    &  	   0.67 $\pm$ 0.04   \\
-\hline
+GenHMM  				&   0.69 $\pm$ 0.07    	&    0.66 $\pm$ 0.06  		    &   	0.59 $\pm$ 0.08  \\
+dGenHMM 				&  0.71 $\pm$ 0.04    		&	   0.72 $\pm$ 0.10     	    &  	   0.67 $\pm$ 0.04   \\
+\bottomrule
 \end{tabular}
 
 \label{table:results:HMM}
@@ -760,17 +748,18 @@ dFlowHMM 				&  0.71 $\pm$ 0.04    		&	   0.72 $\pm$ 0.10     	    &  	   0.67 $
 \center
 \caption{Comparison of HMM with other models}
 \begin{tabular}{*4c}
-\hline
+\toprule
 %                                       			& \multicolumn{2}{c}{Features}\\
- Model							&   			    & Variety 		 	\\  \bottomrule
-\hline
-\multicolumn{4}{c}{Using features}    \\ \hline
+ Model							&   			    & Performance 	 	\\  
+\toprule
+
+\multicolumn{4}{c}{Using feature extraction}    \\ \hline
 Logistic Regression	 & & POPS & 0.54$\pm$0.01				  \\
 & & HeRO			&   0.57$\pm$0.04\\   \hline
-\multicolumn{3}{c}{Using raw sequential data}    \\    \hline  
+\multicolumn{3}{c}{Using raw sequential input}    \\    \hline  
 SVM      & &                       &   0.60 $\pm$ 0.04   			\\
 ELM		& &						&   0.60 $\pm$ 0.03   				\\ 
-dFlowHMM     & &                     &   0.70 $\pm$ 0.10  \\ \hline
+dGenHMM     & &                     &   0.70 $\pm$ 0.10  \\ \hline
 
 \hline
 \end{tabular}
@@ -780,16 +769,16 @@ dFlowHMM     & &                     &   0.70 $\pm$ 0.10  \\ \hline
 %%%%%%%%%%%%%%%%%%%%
 
 
-The HeRO (HRCi + logistic regression) reaches $57\%$ of correct classifications.
-It outperforms the POPS algorithms which reaches only $54\%$ and is the lowest performing algorithm here.
-As expected, the linear classifiers are outperformed by Gaussian kernel SVM, ELM and our HMMs.
+The HeRO reaches $57\%$ of correct classifications.
+It outperforms the POPS algorithms which reaches only $54\%$, which is method with the lowest performance here.
+As expected, the logistic classifiers are outperformed by Gaussian kernel SVM, ELM and our HMMs.
 SVM and ELM both reach an accuracy of $60\%$ and comparable standard deviations of $4\%$ and $3\%$.
-This is lower than dFlow-HMM which reaches $70\%$ accuracy and outperforms both Flow-HMM $67\%$, and GMM-HMM $68\%$ when the number of states $n=3$ and for raw-time series.
-These results are contrasted by the large standard deviation of dFlow-HMM $10\%$, which is larger than both Flow-HMM $4\%$ and GMM-HMM $3\%$.
-When the number of states increases to $n=6$ and $n=9$, GMM-HMM reaches $68\%$ and $69\%$ which outperforms Flow-HMM with $61\%$ and $63\%$, and dFlow-HMM with $67\%$ and $65\%$.
-When the input time series is augmented with $1^{st}$ and $2^{nd}$ order derivatives, GMM-HMM reaches its highest performance with $75\%$ accuracy at $n=3$.
-Flow-HMM and dFlow-HMM also reach their highest performance with $69\%$ at $n=3$ and $72\%$ at $n=6$.
-Here, GMM-HMM outperforms both Flow and dFlow-HMM.
+This is lower than dGenHMM which reaches $70\%$ accuracy and outperforms both GenHMM $67\%$, and GMM-HMM $68\%$.
+These results are contrasted by the large standard deviation of dGenHMM $10\%$, which is larger than both GenHMM $4\%$ and GMM-HMM $3\%$.
+When the number of states increases to $n=6$ and $n=9$, GMM-HMM reaches $68\%$ and $69\%$ which outperforms GenHMM, and dGenHMM.
+When the raw sequential input is augmented with $1^{st}$ and $2^{nd}$ order derivatives, GMM-HMM reaches its highest performance at $75\%$ accuracy.
+GenHMM and dGenHMM also reach their highest performance with $69\%$ at $n=3$ and $72\%$ at $n=6$.
+Here, GMM-HMM outperforms both GenHMM and dGenMM.
 
 \subsection{Discussion}
 The HeRO model surprisingly under-performs on our dataset.
