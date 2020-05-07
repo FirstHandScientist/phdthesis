@@ -64,7 +64,7 @@ The challenge lies at the determinant computation of Jacobian $\bm{J}$, or equiv
 This flow architecture divides the feature $\bm{h}_l$ at the $l$'th layer into two subparts as
 $\bm{h}_l = [\bm{h}_{l,a}^{\intercal} \, , \, \bm{h}_{l,b}^{\intercal}]^{\intercal}$ where
 $(\cdot)^{\intercal}$ denotes transpose operation. We have the following forward and inverse relations between $(l-1)$'th and $l$'th layers:
-\begin{align}\label{eq-gl}
+\begin{align}\label{chpt6:eq-gl-coupling}
   \bm{h}_{l-1} &=
                  \begin{bmatrix}
                    \bm{h}_{l-1,a}\\
@@ -109,7 +109,7 @@ where $\bm{I}_a$ is identity matrix and $\mathrm{diag}(\cdot)$ returns a square 
                     &  = p(\bm{z}) \prod_{l=1}^L \abs{\det\left( \mathrm{diag}(\bm{m}_a(\bm{h}_{l,a}))  \right)}.
 \end{align}
 
-\eqref{eq-gl} describes a \textit{coupling} mapping between layers. Since the coupling has a partial identity mapping, direct concatenation of multiple such coupling mappings would result in a partial identity mapping of the overall mapping $\tilde{\bm{g}}$. Therefore, techniques such as alternating the positions of identity mapping \cite{2016arXiv160508803D} or using $1\times1$ convolution operations \cite{2018arXiv180703039K} before each coupling mapping are used to treat the issue.
+\eqref{chpt6:eq-gl-coupling} describes a \textit{coupling} mapping between layers. Since the coupling has a partial identity mapping, direct concatenation of multiple such coupling mappings would result in a partial identity mapping of the overall mapping $\tilde{\bm{g}}$. Therefore, techniques such as alternating the positions of identity mapping \cite{2016arXiv160508803D} or using $1\times1$ convolution operations \cite{2018arXiv180703039K} before each coupling mapping are used to treat the issue.
 Sometimes, it may not be necessary to carry all features thorough all $L$ chain steps. For instance, \cite{2016arXiv160508803D}\cite{2018arXiv180703039K} split some hidden
 layer signal $\bm{h}$ and model a part of it directly as standard Gaussian to reduce computation and memory burden.
 
@@ -733,7 +733,7 @@ In this section, we evaluate our proposed mixture models for generating samples 
 
 \subsection{Experimental setup}\label{sub:exp-setup}
 
-We use the flow-based neural network for implementing generators $\{\bm{g}_k\}_{k=1}^{K}$ in GenMM and $\bm{g}$ in LatMM. Specifically, we use the Glow structure \cite{2018arXiv180703039K} that is developed based on RealNVP \cite{2016arXiv160508803D} and NICE \cite{DBLP:journals/corr/DinhKB14}. As introduced in section~\ref{chpt6:sec:flow}, the operation in \eqref{eq-gl} is a coupling
+We use the flow-based neural network for implementing generators $\{\bm{g}_k\}_{k=1}^{K}$ in GenMM and $\bm{g}$ in LatMM. Specifically, we use the Glow structure \cite{2018arXiv180703039K} that is developed based on RealNVP \cite{2016arXiv160508803D} and NICE \cite{DBLP:journals/corr/DinhKB14}. As introduced in section~\ref{chpt6:sec:flow}, the operation in \eqref{chpt6:eq-gl-coupling} is a coupling
 layer. Since only a part of the input is mapped non-linearly after a coupling
 layer and the rest part remains the same, permutation \cite{2016arXiv160508803D} or $1\times 1$ convolution operation \cite{2018arXiv180703039K} is used to alternate the part of signal that goes through identity mapping. In Glow structure, a basic \textit{flow step} is the concatenation of three layers: Actnorm (element-wise affine mapping)
 $\rightarrow$ $1\times 1$ Convolution (for permutation purpose)
