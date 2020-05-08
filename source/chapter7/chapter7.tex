@@ -169,7 +169,7 @@ The signal of the probability distribution for a state $s$ of GenHMM is shown in
 
 Assume the sequential signal $\ubm{x}$ follows the true distribution $p^{\prime}(\ubm{x})$, which is unknown. We would like to use GenHMM to model this distribution. Alternatively, we are looking for the answer to the question
 \begin{equation}
-  \umin{\bm{H}\in \Hh} KL({p}(\ubm{x})\| p(\ubm{x};\bm{H})),
+  \umin{\bm{H}\in \Hh} KL({p^{\prime}}(\ubm{x})\| p(\ubm{x};\bm{H})),
 \end{equation}
 where $KL(\cdot\|\cdot)$ denotes the Kullback-Leibler divergence. For practical consideration, we only have access to the samples of $p^{\prime}(\ubm{x})$, i.e. the dataset of this distribution. For the given dataset, we denote its empirical distribution by $\hat{p}(\ubm{x}) = \frac{1}{R}\sum_{r=1}^{R} \delta_{\ubmr{x}{r}}(\ubm{x})$, where $R$ denotes the total number of sequential samples and superscipt $(\cdot)^{r}$ denotes the index of $r$-th sequential signal. 
 The KL divergence minimization problem can be reduced to a likelihood maximization problem
@@ -481,7 +481,8 @@ To summarize the learning solution in section~\ref{subsec:optmGenHMM}, we wrap o
 
 As described by the pseudocode in Algorithm~\ref{algo:genhmm}, the learning of GenHMM is divided into optimizations w.r.t. to generators' parameters $\bm{\Theta}$, initial probability $\bm{q}$ of hidden state, transition matrix $\bm{A}$, and generator mixture weights $\bm{\Pi}$. Different from the optimization w.r.t. to $\bm{q}$, $\bm{A}$ and $\bm{\Pi}$, which have optimal solutions, generator learning usually cannot give optimal solution to problem $\max_{\bm{\Theta}} \Qq(\bm{\Theta}; \bm{H}^{\mathrm{old}})$. In fact, given that no optimal $\bm{\Theta}$ is obtained, learning of GenHMM can still converge as long as quantity $\Qq(\bm{\Theta}; \bm{H})$ are improving in iterations in Algorithm~\ref{algo:genhmm}, where the inequalities in Proposition~\ref{proposition1} still hold. Therefore optimal $\bm{\Theta}$ in each iteration is not required for convergence of GenHMM as long as the loss in $\eqref{eq:obj-q-gen-mix}$ is getting improved.
 \begin{remark}
-  \textcolor{blue}{The above discussed maximum likelihood training is also known as generative training, which models the signal generating process with the defined generative model. An alternative training principle is discriminative training where a conditional distribution is modeled directly and optimized as the objective. See more insightful discussion about these two principles by \cite{lasserre2006principled}. Since generative models characterizes a joint distribution, it is usually possible to train a generative model via discriminative training, with mildly alternating the objective function. On contrast, it is usually not likely to train a discriminative model via generative training, since the direct conditional probability modeling of the discriminative model omits the observable signal that is highly structured. These two training principles are possible to be used together at different training phases. For instance, in our work \cite{}, the generative training was applied to GenHMM firstly, and then a discriminative training phase was used to tune the model, which showed improved performance in sepsis detection of preterm infants.
+  \label{chpt7:rmk:generative-discriminative}
+  {The above discussed maximum likelihood training is also known as generative training, which models the signal generating process with the defined generative model. An alternative training principle is discriminative training where a conditional distribution is modeled directly and optimized as the objective. Since generative models characterize a joint distribution, it is usually possible to train a generative model via discriminative training, with mildly alternating the objective function. On the contrast, it is usually not likely to train a discriminative model via generative training, since the direct conditional probability modeling of the discriminative model omits modeling distribution of the observable signal that is highly structured. These two training principles are possible to be used together at different training phases. For instance, apply the generative training firstly, and then a discriminative training phase for the generative-trained model which acts as a parameter fine-tuning phase \cite{hinton2012deepSpeech}. See detailed insightful discussion about these two principles by \cite{lasserre2006principled}.
   }
 \end{remark}
 
@@ -567,7 +568,7 @@ Transition matrix $\bm{A}$ is initialized as upper triangular matrix for GenHMM.
 \end{table}
 
 
-\subsection{Experimental Results}
+\subsection{Numerical Results}
 
 We firstly show the phoneme classification using 39 dimensional MFCC features (MFCC coefficients, deltas, and delta-deltas), to validate one possible usage of our proposed model. Since generative training is carried out in our experiments, GMM-HMM is trained and tested as a reference model in our experiments. Training and testing of GMM-HMM is in the same condition as GenHMMs are trained and tested. Dataset usage for GenMM and GMM-HMM is the same, and number of states for GMM-HMM is the same as that for GenHMM in modeling each phoneme. Apart from setting the reference model, we also run the experiment comparisons with different total number of mixture components.
 
@@ -674,14 +675,23 @@ Apart from standard classification testing, we also test the robustness of our m
 
 
 \section{Application to Sepsis Detection}
-In this section, we apply our developed model to the sepsis detection for infants. Sepsis may rapidly develop among newborn babies who are under case in neonatal intensive care units (NICU). The sequential signals in this application are the physiological signals, which are taken as input for sepsis prediction.
-\textcolor{blue}{add dGenHMM}
+In this section, we apply our developed model to the sepsis detection for infants. Sepsis may rapidly develop among newborn babies who are under care in neonatal intensive care units (NICU). The sequential signals in this application are the physiological signals, which are taken as input for
+sepsis prediction.
+
+Apart from the default maximum likelihood that does generative training of GenHMM, it is also possible to carry out discriminative training as discussed in Remark~\ref{chpt7:rmk:generative-discriminative}.
+This discriminative training is performed by maximizing the conditional probability of the correct class $y\in \Yy$ given its input $\ubm{x}$, where $\Yy$ is the alphabet of class $y$. This leads to
+\begin{equation} \label{chpt7:eq:discriminative}
+\umax{\left\{ \bm{H}_i, i=1, \cdots \abs{\Yy} \right\}}{}\sum_{(\ubm{x},\bm{y})} \log \frac{p(\ubm{x}\mid\bm{H}_{{y}})p(\bm{H}_{{y}})}{\sum_{y^{\prime}}p(\ubm{x}\mid\bm{H}_{y^{\prime}})p(\bm{H}_{y^{\prime}})}.
+\end{equation}
+It can be seen that the complexity in discriminative training of GenHMM increases as $\abs{\Yy}$ is large, since the marginal $p(\ubm{x})= \sum_{y^{\prime}}p(\ubm{x}\mid\bm{H}_{y^{\prime}})p(\bm{H}_{y^{\prime}})$ has to be evaluated for each sequential sample. But for this sepsis detection, there are two classes, i.e. $\Yy = \left\{ 1,2 \right\}$ and thus the computation is affordable.
+The classes prior probabilities $p(\bm{H}_{i}),~i=1,2$ are infered from the training dataset. We use \textit{dGenHMM} to denote that GenHMM is finely tuned by discriminative training with objective \eqref{chpt7:eq:discriminative}, after default generative training phase.
+
 \subsection{Patient Dataset}
 The bedside monitor signals of $48$ premature infants which have been under care at a NICU in Karolinska University hospital have been collected.
 The sequential signals used are the Respiratory Frequency (RF), the beat to beat interval (RRi) and the blood oxygen saturation level ($Sp0_2$).
 All signals were sampled at $1$Hz and segmented into $20$ minutes time frames.
 Each time frame was then labelled based on information retrieved from the Electronic Health Records (EHR).
-Similarly to heart rate observation system (HeRO) \cite{hicksHeartRateObservation2013, griffinHeartRateCharacteristics2005}, a logistic regession method using RRi, we aim at detecting septic events earlier than clinical suspicion of sepsis, defined as the sampling of a blood culture.
+Similar to heart rate observation system (HeRO) \cite{hicksHeartRateObservation2013, griffinHeartRateCharacteristics2005}, a logistic regession method using RRi, we aim at detecting septic events earlier than clinical suspicion of sepsis.
 In our study we use a threshold of $72$h prior to blood sample, to label a time frame as \textit{septic}, according to the practices in \cite{gurMathematicalAlgorithmDetection2014}.
 A time frame was retro-actively labeled $1$ if it occurred at most $72$h prior to clinical suspicion.
 A time frame was labeled $0$ if it occured during a day when no notes were entered in the infant's EHR.
@@ -692,7 +702,7 @@ The birth weight was $1.61\pm1.10$ kg and the gestational age at birth $30.9\pm6
 Our dataset consisted in $3501$ time frames, among which 1774 with label $0$ and $1727$ with label $1$.
 All time frames have a constant size of $T=1200$ samples and are $3$-dimensional.
 
-\subsection{Experiments}
+\subsection{Experimental Setup}
 To make the experiments more interesting, we add a set of basedline methods in the comparisons.
 Baseline model HeRO is used, which uses the RRi singal for feature extraction and applies a logistic regression to the extracted features. See \cite{honore2020icassp} about detailed feature extraction.
 Pulse oximetry predictive score (POPS) \cite{sullivanEarlyPulseOximetry2018} uses mean, standard  deviation,  skewness,  kurtosis  and  min-maxcross correlation between RR-interval and $SpO2$ to compute a risk score. POPS is also a logistic regression method. 
@@ -778,26 +788,18 @@ These results are contrasted by the large standard deviation of dGenHMM $10\%$, 
 When the number of states increases to $n=6$ and $n=9$, GMM-HMM reaches $68\%$ and $69\%$ which outperforms GenHMM, and dGenHMM.
 When the raw sequential input is augmented with $1^{st}$ and $2^{nd}$ order derivatives, GMM-HMM reaches its highest performance at $75\%$ accuracy.
 GenHMM and dGenHMM also reach their highest performance with $69\%$ at $n=3$ and $72\%$ at $n=6$.
-Here, GMM-HMM outperforms both GenHMM and dGenMM.
 
-\subsection{Discussion}
-The HeRO model surprisingly under-performs on our dataset.
-This poor performance may be due to inconsistencies in the sepsis definition.
-The definition of a sepsis varies between the different studies, here we include culture positive and culture negative which differs from the initial HERO study \cite{griffinHeartRateCharacteristics2005} but is in accordance with the definitions used in the more recent RALIS study \cite{mithalComputerizedVitalSigns2016}.
-
-The performance of GMM-HMM is significantly increased when adding $1^{st}$ and $2^{nd}$ order derivative as part of the input.
-This is in accordance with the initial studies performed on speech processing  tasks \cite{liuPoweringHiddenMarkov2019}.
-Our attempt to improve the performance of Flow-HMM using discriminative training was successful for both raw time series and $1^{st}$ and $2^{nd}$ order derivatives inputs.
-This is encouraging, given that our current discriminative training consists of only one epoch.
-We expect the marginal gain of discriminative training to improve the performance of dFlow-HMM even further with more iterations.
-However, we note a decrease in performance of Flow-HMM and dFlow-HMM as the number of hidden states is increased. This is due to the fact that there are more parameters to learn as we increase the hidden states, for the same amount of data.
-Among all the tested systems, GMM-HMM has the smallest standard deviation, which indicates that this model is robust to changes in training dataset.
-Flow models were originally designed for high-dimensional data distribution modeling.
-As expected, additional dimensions in Flow-HMM input lead to improvement in performances compared to the $3$-dimensional case.
-We conjecture that Flow-HMM and dFlow-HMM suffer from insufficient training data, considering the fact that more parameters are to be learnt than GMM.
+Improved performance of GenHMM using discriminative training (dGenHMM) was significant for both $1^{st}$ and $2^{nd}$ order derivatives as argument to inputs.
+This is encouraging, given that our current discriminative training consists of only one epoch, i.e. one-epoch fine-tuning.
+The performance of GMM-HMM is also significantly increased when adding $1^{st}$ and $2^{nd}$ order derivative, reaching higher than dGenHMM.
+This phenomenon is due to two aspects: i) model complexity; ii) dataset size. GMM-HMM is a simpler model compared to GenHMM. Besides, the number of samples in dataset is limited, i.e. only $3501$ time frames. These two major factors together explain why the performance of GMM-HMM increase while that of GenHMM decreases as $n$ increase from $3$ to $9$ (a increase of each corresponding model's complexity).
+Also discriminative trianing, dGenHMM, does improve the performance. The insufficient training data makes its final accuracy fall behind the much simpler model GMM-HMM.
 
 \section{Conclusion}
-In this work, we proposed a generative model based HMM (GenHMM) whose generators are realized by neural networks. We provided the training method for GenHMM. The validity of GenHMM was demonstrated by the experiments of classification tasks on practical sequential dataset. The learning method in this work is based on generative training. For future work, we would consider discriminative training for classification tasks of sequential data.
+In this chapter, we discussed the representation and learning of a temporal model. With the simplification of Markov assumption and the concept of template, the HMMs, as simplified dynamic Bayesian networks, have a good balance between representation power and computation efficiency. Thus, they have been widely used in disciplines in practice. The modeling expressivity is further enriched by the introduction of normalizing flows. The developed GenHMM is a generic model and allows large freedom of customization, which can be employed for practical applications such as the demonstrated speech recognition and sepsis detection. Due to the presence of hidden variables, the learning of GenHMM is carried out within expectation maximization framework. Adaption is made to accommodate the neural network implementation of normalizing flows and large datasets in parameter learning.
+
+In increasing the representation power of modeling, GenHMM relies on enriching the flexibility of conditional probability models. Alternative options lie with the template model design. In fact, template is the core concept for more general object-relational modeling of probabilistic graphical models. Generally speaking, any object-relation can be used to define a skeleton that functions as a template. Then ground probabilistic graphical models can be formed by assembling the instances from skeletons or templates. The results models can be rich and representative for general object-relation modeling. The sequential instances concatenation shown in the chapter is one way of the general modeling process. It is suggested to bear the learning complexity in mind when making use of flexible representation of template models. It may be the case that the best representation brings prohibitive inference or learning complexity. Therefore, the modeling accuracy and inference/learning complexity should be jointly considered when designing models for practical applications.
+
 
 \section{Raw}
 
