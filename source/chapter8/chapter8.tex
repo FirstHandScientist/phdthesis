@@ -1,4 +1,8 @@
 \chapter{An implicit probabilistic generative model}
+\label{chapter8}
+\graphicspath{{source/chapter8/}}
+
+
 content: \href{https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=8682721}{Entropy-regularized Optimal Transport Generative Models}, ICASSP 2019
 
 
@@ -9,6 +13,609 @@ content: \href{https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=8682721}{Ent
 \section{Experimental results}
 
 \section{Summary}
+\section{Raw}
+\section{Introduction}
+
+Data-driven learning of a probability distribution by a generative model is an important problem 
+in statistical signal processing and machine learning. 
+Recently neural network based generative models are popular tools to
+study underlying probability distribution of datasets. A prominent example is 
+generative adversarial network (GAN) \cite{NIPS2014_5423}, which learns 
+implicit distribution models. 
+
+In the GAN of \cite{NIPS2014_5423}, a generator produces
+synthetic samples and a discriminator endeavors to
+distinguish between real samples and synthetic samples. Generators and discriminators are realized using (deep) neural networks.
+Discriminator and generator
+play an adversary game against each other using a `min-max' optimization to learn parameters of neural networks. 
+For generator, the game
+turns out be minimizing Jensen-Shannon divergence (JSD) between
+target distribution and induced distribution by generator when discriminator is
+optimal. Using the same adversary
+optimization, deep convolutional neural network based GAN (DCGAN)
+\cite{2015arXiv151106434R} producing good quality synthetic images, has attracted high attention.
+
+JSD has limitations in GANs where generators and dis-
+criminators are based on deep neural networks. The first limitation is that back
+propagation suffers from vanishing gradient. Gradient of cost
+function with respect to (w.r.t.) generator vanishes as
+discriminator approaches optimal (see Theorem~2.4~\cite{2017arXiv170104862A}),
+which stops generator from further learning. The second limitation is due to high sensitivity of JSD to slight perturbations. JSD can be large between a distribution $P_x$ and a distribution $P_{x+\epsilon}$ where $\epsilon$ is perturbation\cite{2017arXiv170104862A}. 
+
+Both limitations are addressed in Wasserstein GAN (WGAN)
+\cite{2017arXiv170107875A}. Wasserstein distance stems from
+optimal transport (OT) problem, which measures divergence between two
+distributions. The WGAN formulation does not require an explicit
+discriminator and it does not has the vanishing-gradient problem. Further,
+Wasserstein distance/OT is upper bounded by the standard deviation of perturbation $\epsilon$
+\cite{2017arXiv170104862A}, addressing the second limitation. 
+
+OT based cost in WGAN brings a strict constraint to follow in its optimization.
+Kantorovich-Rubinstein duality used in WGAN requires a supremum over
+infinite set of all Lipschitz functions with Lipschitz constant equal
+to one. Various sub-optimal techniques are proposed to enforce the
+Lipschitz property. An example is weight clipping
+\cite{2017arXiv170107875A} where neural network parameters (weights)
+are updated first without Lipschitz constraint and then projected to
+satisfy Lipschitz constraint in each iteration. Other approaches are
+gradient penalty\cite{2017arXiv170400028G} and spectrum normalization\cite{2018arXiv180205957M}.
+
+In this article, our main contribution is to explore use of Entropy-regularized OT (EOT) cost for generative models. 
+The EOT was studied earlier for efficient comparison between two probability distributions \cite{2013arXiv1306.0895C}. 
+The major advantage of EOT is
+that corresponding dual problem is free from Lipschitz constraint. Use of EOT improves
+analytical tractability allows us to develop two generative models. Our
+first model considers EOT cost directly on distribution of signals (in our case,
+on the image pixels). This model uses an one-shot optimization problem, \emph{i.e.} no use of adversarial game in iterations. The second model
+considers EOT on feature distribution instead of direct signal
+distribution. In this case we also need to learn a representation
+mapping, which is implemented as a neural network. 
+This requires alternative optimization of representation mapping and
+generator. In addition to the above advantage, duality of EOT can be
+effectively solved and straightforwardly extended to parallel computation. 
+
+
+\section{EOT based generative models}
+
+In this section, we begin with Entropy-regularized OT (EOT) cost and then propose generative models.
+
+\subsection{Entropy-regularized OT} 
+
+We denote our working space by $(\mathcal{X},\|\cdot\|_2)$ where
+$\mathcal{X}\subset\mathbb{R}^d$ and $\|\cdot\|_2$ is the Euclidean
+distance. Assume that $\mathcal{X}_1$, $\mathcal{X}_2$ are $N$-sample
+subsets of $\mathcal{X}$. Let $P$ be a distribution on $\mathcal{X}_1$
+and $Q$ be a distribution on $\mathcal{X}_2$. OT calculates the
+minimum cost of transporting distribution $P$ to $Q$. We use $W(P,Q)$ to denote entropy-regularized OT (EOT) cost as follows:\vspace{-2pt}
+\begin{equation}\label{eq-entropic-wsd}
+  W(P,Q)=\min_{ \pi \in \Pi(P,Q)} \dotp{\pi}{M} - \la H(\pi),\vspace{-2pt}
+\end{equation}
+where $\dotp{\cdot}{\cdot}$ stands for the inner product of
+two matrices, and $\Pi(P,Q)$ is a set of joint distribution $\pi$ on
+the sample sets $\mathcal{X}_1\times\mathcal{X}_2$ such that $\pi$ has
+marginal distributions $P$ and $Q$. 
+The cost matrix $M$ has elements $[M]_{i,j} = d(x^{(i)}, y^{(j)}) = \normd{x^{(i)} - y^{(j)}}^2$ and $x^{(i)}, y^{(j)}$ are
+samples of $P, Q$, respectively. Here $H(\pi) = \sum_{i,j} -\pi_{i,j}
+\log(\pi_{i,j})$ and $\la \in \RR_{+}$ is the regularization
+parameter. The entropy regularization in \eqref{eq-entropic-wsd}  translates 
+to a requirement that the joint distribution $\pi$ has a high entropy. 
+Note that $\|\cdot\|_2$ is invariant of unitary transform and hence
+representation of $\mathcal{X}$ in another unitary basis does not
+change the cost matrix. The duality of EOT cost in \eqref{eq-entropic-wsd} is\vspace{-2pt}
+\begin{equation}\label{eq-dual-wsd}
+  W(P,Q) \! =  \max_{\al, \be \in \mathbb{R}^{N}} \al^{T}P \! + \! \beta^{T}Q \! - \!
+  \sum_{i,j} \lambda e^{ \frac{{\left( \al + \beta - [M]_{i,j} \right)}}{\la} },\vspace{-2pt}
+\end{equation}
+where $\alpha,\beta$ are dual variables and $(\cdot)^T$ means transpose. The optimal dual vector $\beta^{\ast}$
+of \eqref{eq-dual-wsd} is a subgradient of $W(P,Q)$ with respect to $Q$.
+There is a computationally efficient algorithm called Sinkhorn
+algorithm\cite{2013arXiv1306.0895C, 2013arXiv1310.4375C} to
+solve~\eqref{eq-dual-wsd}, which alternatively scales the rows and columns of matrix $e^{-\frac{M}{\lambda}}$. This alternative computation gives a pair of vectors $(u, v) \in \RR^N_{+} \times \RR^N_{+}$ that defines the optimal primary and dual variavles (see proposition 2 in \cite{2013arXiv1310.4375C}): \vspace{-2pt}
+\begin{equation}\label{eq-dual-opt}
+  \hspace{-1pt}\pi^{\ast}\hspace{-5pt} =\hspace{-3pt}
+  \mathrm{diag}(u) \,\hspace{-1pt} e^{\frac{-M}{\la}} \, \hspace{-4pt}\mathrm{diag}(v),  \beta^{\ast}\hspace{-5pt} =\hspace{-3pt}\frac{\log(u^T)\mathds{1}_N}{N\la} \mathds{1}_N -\frac{\log(u)}{\la}.\vspace{-2pt}
+\end{equation}
+where $\mathrm{diag}(u)$ is a matrix with diagonal entries from vector $u$ and $\mathds{1}_N$ is a column vector with ones.
+
+
+\subsection{EOT based Generative Models}
+
+In this subsection, we propose two generative models.
+We first develop an EOT based generative model handling signals/data directly. This models is referred to as EOT generative model (EOTGM). 
+In our second model, we use a
+representation mapping where EOT cost is used to optimize the
+generative model and representation mapping jointly. The second model is referred as EOT based GAN (EOTGAN).
+% In our EOT based GAN, we have a generator, but do not have an explicit discriminator. Instead we use a representation mapping where EOT cost is used to optimize the generator function and representation function jointly. We first develop an EOT based algorithm for generative model learning that can handle signals/data directly. Then we develop second algorithm that can handle representation features. The second algorithm is referred to as EOT based GAN (EOTGAN). 
+\vspace{-3pt}
+\subsubsection{EOT based generative model (EOTGM)}\label{subsec-gmeot}
+{Assume that $P$ is the unknown true probability distribution of a dataset and $Q$ is a probability distribution induced by a generator $g: \Zz \rightarrow \Xx$. Generator $g$ usually is realized by a neural network and maps latent signal $Z \in \Zz$ to signal in $\Xx$, i.e., $g(Z) \in \Xx$. Latent signal is assumed to follow a fixed distribution $Z \sim P_Z$ ($P_Z$ is usually assumed to be Gaussian). The mapped signal $g(Z) \sim Q$ since $g$ induces $Q$. Denote the parameter of $g$ by $\theta$. Applying EOT cost to learn $Q$ is equivalent to minimizing $W(P, Q)$ w.r.t. generator $g$}:\vspace{-2pt}
+% Assume that $P$ is the unknown true probability distribution for a given dataset and $Q$ is
+% a probability distribution induced by generator $g: \Zz \rightarrow
+% \Xx$. The generator function $g$ depending on parameter $\theta$,
+% transforms an input $Z$ from latent space $\Zz$ to signal space
+% $\Xx$, given $Z \sim P_{Z}$ (usually a Gaussian noise). The generator $g(Z)$ 
+% induces $Q$. Learning of $Q$ is equivalent to minimization of $W(P, Q)$ w.r.t. generator $g$: 
+\begin{equation}\label{eq-entropic-model}
+  \underset{g:\mathcal{Z}\to \Xx}{\argmin}\, W(P, Q) = \underset{{\theta}}{\argmin}\, W(P, Q).\vspace{-2pt}
+\end{equation}
+Since $\beta^{\ast}$ in
+\eqref{eq-dual-opt} is subgradient of $W(P, Q)$ w.r.t. $Q$, we are able to
+optimize the generator $g$ such that the induced distribution $Q$
+approximates $P$, using gradient chain rule:\vspace{-2pt}
+\begin{equation}
+  \nabla_{\theta}W(Q, P) = \left(\nabla_{\theta}Q\right)^{T}
+  \beta^{\ast}.\vspace{-2pt}
+\end{equation}
+Alternatively the optimization problem \eqref{eq-entropic-model} can be addressed by solving $\argmin_{g}\dotp{\pi^{\ast}}{M} $ iteratively using auto-gradient functions in PyTorch\cite{pytorch} or
+TensorFlow\cite{tensorflow}, where $\pi^{\ast}$ is primary optimal
+variable to \eqref{eq-entropic-wsd} given by \eqref{eq-dual-opt}. We
+propose Algorithm~\ref{algo-E-WL} to learn distribution $P$
+via minimizing the EOT loss w.r.t parameter $\th$
+of generator function $g$.
+\begin{algorithm}
+  \caption{EOT based generative model (EOTGM)}\label{algo-E-WL}
+  \begin{algorithmic}[1]
+    \STATE{$l$: the update rate at each iteration, $N$: the batch
+      size, and $\th_{0}$: the initial parameter for $g$.}
+    \WHILE{$\theta$ has not converged}
+    \STATE Sample $\left\{ x^{(i)} \right\}_{i=1}^{N} \sim P$, a batch
+    from a real dataset. 
+    \STATE Sample $\left\{ z^{(i)} \right\}_{i=1}^{N} \sim P_{z}$, a batch of noise samples.
+    \STATE Get $\left\{ y^{(i)} \right\}_{i=1}^{N}$ by passing
+    $\left\{ z^{(i)} \right\}_{i=1}^{N}$ through $g$.
+    \STATE Calculate the cost matrix $M$.
+    \STATE $\pi^{\ast}$, $\beta^{\ast} \gets$ primary and dual
+    solutions of $W(\left\{ x^{(i)} \right\}_{i=1}^{N}, \left\{
+      {y}^{(i)}\right\}_{i=1}^{N})$ according Equation~\eqref{eq-dual-opt}.
+    \STATE $\theta \gets \theta - l \left(\nabla_{\th}{Q}\right)^T
+    \beta^{\ast}$. (Or back propagate using loss $\dotp{\pi^{\ast}}{M}$)
+    \ENDWHILE
+  \end{algorithmic}
+\end{algorithm}
+
+\subsubsection{EOT based GAN (EOTGAN)}
+
+In this subsection, we consider representation learning (feature
+learning) with which usage of EOT is more meaningful than that
+directly in signal space.
+It is well-known that Euclidean distance is not well suited to compare
+two multimedia signals. For example, Euclidean distance between an
+image and its rotated version can be large, but they are visually same. In Algorithm \ref{algo-E-WL} we construct cost matrix $M$ in EOT using 
+Euclidean distance between real signals and generated signals. Our new proposal is to transform signal through a representation mapping 
+$f: \Xx \rightarrow \Mm$, $\mathcal{M}\subset\mathbb{R}^{m}$ and we compare features in the representation space via EOT. We assume that Euclidean distance
+between features in the representation space is more semantically
+meaningful. An element of the cost matrix $M_f$ in representation domain (feature domain) is:\vspace{-4pt}
+\begin{equation}\label{def-similarity}
+  d_f(x, y) = \|f(x)-f(y)\|_{2}^{2}.
+\end{equation}
+
+Our new objective is joint learning of generator $g$ and representation $f$. A natural question is how to construct $f$ function? {Inspired by the triplet loss in \cite{7298682} aiming at larger distance between distinct classes than in-class distance, we may consider two virtual classes labeled by $P$ and $Q$.
+% Then samples from the same class share more similarity and thus should have smaller distance in $\Mm$.
+This means that the representation function $f$ should have the algebraic property: $ d_f(x, \tilde{x}) + \gamma \leq d_f(x, y) $ for $\gamma > 0$, where $x$ and $\tilde{x}$ are two samples from distribution $P$ and $y$ is a generated signal from distribution $Q$. Meanwhile, $g$ tries to mitigate this distinction.} % Construction of $f$ function for all triplets $(x, \tilde{x}, y)$ satisfying the algebraic property is non-trivial.
+
+Following the above idea, let us denote the distribution of $f(x)$ and $f(y)$ by $P_f$ and $Q_f$, respectively. Let $M_f$ be the cost matrix in representation domain and its elements $[M_f]_{i,j} = d_f(x^{(i)}, y^{(j)})$, $x^{(i)} \sim P, y^{(j)}\sim Q$.  Then we learn $f$ and $g$ using alternative optimization, as follows. \vspace{-8pt}
+\begin{enumerate}
+\item Learning of representation $f$ is minimizing EOT cost\vspace{-6pt}
+  \begin{equation}\label{eq-sim-in}
+    W(P_f, P_f) = \min_{\widetilde{\pi} \in \Pi(P_f, P_f) } \dotp{\widetilde{\pi}}{\widetilde{M}_f} - \la H(\widetilde{\pi}),\vspace{-6pt}
+  \end{equation}
+  where $[\widetilde{M}_f]_{i,j} = d_f(x^{(i)}, \tilde{x}^{(j)})$, $x^{(i)}, \tilde{x}^{(j)} \sim P$, and minimizing EOT cost\vspace{-6pt}
+  \begin{equation}\label{eq-sim-ex}
+    W(P_f, Q_f) = \min_{{\pi} \in \Pi(P_f, Q_f) } \dotp{{\pi}}{M_f} - \la H({\pi}).\vspace{-8pt}
+  \end{equation}
+\item Learning of generator $g$ is minimizing EOT cost\vspace{-6pt}
+  \begin{equation}
+    W(P_f, Q_f).\vspace{-8pt}
+  \end{equation}
+\end{enumerate} 
+Both $W(P_f, P_f)$ and $W(P_f, Q_f)$ have lower bounds, but no upper bounds. 
+We combine the step 1 in above using a hinge loss and define the following costs.\vspace{-2pt}
+\begin{equation}
+  \hspace{-15pt}
+  \begin{array}{rl}
+    &\Ll_f(P_f, Q_f) \triangleq \max\hspace{-2pt}\left(0,\hspace{-2pt} W\hspace{-1pt}(P_f,P_f)\hspace{-2pt}-\hspace{-2pt} W\hspace{-1pt}(P_f,Q_f) \hspace{-2pt}+\hspace{-2pt} \gamma \right)\hspace{-2pt},\\
+    &\Ll_g(P_f,Q_f) \triangleq W(P_f,Q_f),
+  \end{array} \vspace{-2pt}
+\end{equation}
+where $\gamma>0$. Hinge loss helps to balance the adversarial
+training of the $f$ and $g$.
+Note the our hinge adversarial loss shares similarity only in form to the self-attention
+GAN\cite{2018arXiv180508318Z} and geometric GAN\cite{2017arXiv170502894L}
+but is motivated differently and defined in different metric. 
+We used neural networks for constructing $f$ and $g$ functions. Let us assume that 
+the parameters of $f$ and $g$ are $\omega$ and $\theta$, respectively.
+Then the adversarial training between representation $f$ and
+generator $g$ is the following alternative optimization problem:\vspace{-2pt}
+\begin{equation}
+  \begin{array}{rl}
+    &\min_{f} \Ll_f(P_f, Q_f) = \min_{\omega} \Ll_f(P_f, Q_f), \\ 
+    &\min_{g} \Ll_g(P_f, Q_f) = \min_{\th} \Ll_{g}(P_f, Q_f).
+  \end{array}\vspace{-2pt}
+\end{equation}
+The EOTGAN is shown in Algorithm \ref{algo-eWGAN}.
+
+
+
+
+% However, Pixel representation of images does not induce meaningful
+% Euclidean distances\cite{ponce2011computer}. Thus applying Algorithm~\ref{algo-E-WL}
+% directly in $\Xx$ for problem in \eqref{eq-entropic-wsd} may not
+% guide $g$ to generate meaningfully semantic samples.
+% Assuming there is feature mapping for samples, then we
+% can apply Algorithm~\ref{algo-E-WL} in the feature domain to avoid the
+% above problem. To measure how semantically similar two
+% samples are, we define a similarity metric
+% 
+% \begin{equation}\label{def-similarity}
+%   d_f(y, x) \coloneqq \|f(y)-f(x)\|_{2,\mathcal{M}}^{2}.
+% \end{equation}
+% where $f: \Xx \rightarrow \Mm$, $\mathcal{M}\subset\mathbb{R}^{m}$, which is
+% parameterized by $\omega$, $\|\cdot\|_{2,\mathcal{M}}^{2}$ is the
+% corresponding squared Euclidean distance in feature space $\Mm$.
+% $f$ here maps the input patterns into the feature space $\Mm$ where
+% semantic distance is approximated. Since $f$ takes values in $\Xx$,
+% we try to learn a push-forward probability distribution $P$ in feature space $\Mm$, instead of
+% learning in $\Xx$ to avoid the instability problem of approximating
+% distribution in high-dimension domain.
+% 
+% However, $f$ usually is dataset-dependent. In order to get $f$ we use
+% triple loss to learn $f$ in \eqref{def-similarity}. We
+% assume samples from $P$ belong to positive class, and samples from
+% $g$'s induced distribution $Q$ belong to negative class. Samples from
+% same class share common features and should have small OT distance in
+% feature domain $\Mm$, while OT distance between different classes
+% should be large in $\Mm$. Then learning of $f$ is minimizing:
+% \begin{equation}\label{eq-sim-in}
+%   W_f(P, P) = \inf_{\pi_{\mathrm{in}} \in \Pi(P, P) }\dotp{\pi_{\mathrm{in}}}{M_{\mathrm{in}}} - \la H(\pi_{\mathrm{in}}),
+% \end{equation}
+% where $[M_{\mathrm{in}}]_{i,j} = d_f(x_i, \tilde{x}_j), x_i,
+% \tilde{x}_j \sim P$, while maximizing:
+% \begin{equation}\label{eq-sim-ex}
+%   W_f(P, Q) = \inf_{\pi_{\mathrm{ex}} \in \Pi(P, Q) }\dotp{\pi_{\mathrm{ex}}}{M_{\mathrm{ex}}} - \la H(\pi_{\mathrm{ex}}),
+% \end{equation}
+% where $[M_{\mathrm{ex}}]_{i,j} = d_f(x_i, y_j)$, $x_i \sim P, y_j\sim
+% Q$. Note \eqref{eq-sim-in} makes sense since two different random batchs of
+% samples from $P$ are used for large datasets.
+% 
+% 
+% Since both $W_f(P, P)$ and $W_f(P, Q)$ are
+% lowered bounded instead of upper bounded, similar to triplet loss used
+% in \cite{7298682}, feature mapping $f$ here is trained by minimizing a hinge loss
+% $\Ll_{f}(P, Q)$ while generator $g$ is trained by adversarially
+% minimizing $\Ll_{g}(P, Q)$, EOT distance between empirical and synthetic
+% samples:
+% \begin{align}
+    %     \Ll_f(P, Q) &= \max\left(0, W_f(P,P)- W_f(P,Q) + \gamma \right),
+                        %                         \nonumber \\
+    %     \Ll_g(P,Q) &= W_f(P,Q).
+                       %   \end{align}
+                       %                        where $\gamma>0$. Hinge adversarial loss here helps to balance the adversarial
+                       %                        training of the $f$ and $g$.
+                       %                        Note the our hinge adversarial loss shares similarity only in form to the self-attention
+                       %                        GAN\cite{2018arXiv180508318Z} and geometric GAN\cite{2017arXiv170502894L}
+                       %                        but is motivated differently and defined in different metric.
+                       %                        
+                       %                        Then the adversarial training between similarity mapping $f$ and
+                       %                        generator $g$ is alternatively minimizing:
+                       %                        \begin{align}
+                       %                      &\min_{f} \Ll_f(P, Q) = \min_{\omega} \Ll_f(P, Q)\nonumber \\
+    %                       &\min_{g} \Ll_g(P, Q) = \min_{\th} \Ll_{g}(P, Q)
+                              %   \end{align}
+                              %                               where $\omega$ is parameter of $f$. This is an
+                              %                               adversarial optimization approach using the EOT discussed in
+                              %                               Subsection \ref{subsec-gmeot}. We refer it as EOTGAN whose algorithm is summarized in Algorithm \ref{algo-eWGAN}.
+
+
+\begin{algorithm}
+  \caption{EOT based GAN (EOTGAN)}\label{algo-eWGAN}
+  \begin{algorithmic}[1]
+    \STATE {$l$: the update rate at each iteration, $N$: the batch
+      size and $\th_{0}$, $\omega_0$: the initial parameters for $g$ and $f$.}
+    \WHILE{$\theta$ has not converged}
+    \STATE Sample two batches of data $ \left\{ x^{(i)}
+    \right\}_{i=1}^{N}, \left\{ \tilde{x}^{(i)} \right\}_{i=1}^{N}  $,
+    and latent samples $\left\{ z^{(i)} \right\}_{i=1}^{N} $,
+    $x^{(i)},\tilde{x}^{(i)} \sim P, z\sim P_{z}$.
+    \STATE Get $ \left\{ y^{(i)} \right\}_{i=1}^{N}$ by passing
+    $\left\{ z^{(i)} \right\}_{i=1}^{N}$ through $g$.
+    \STATE $\widetilde{\pi}^{\ast} \gets$ solving $ W_f\left( \left\{ f(x^{(i)})
+      \right\}_{i=1}^{N} , \left\{ f(\tilde{x}^{(i)})
+      \right\}_{i=1}^{N}\right)$
+    \STATE ${\pi}^{\ast} \gets$ sovling $W_f\left( \left\{ f(x^{(i)})
+      \right\}_{i=1}^{N}, \left\{ f({y}^{(i)})
+      \right\}_{i=1}^{N} \right)$
+    \STATE $\partial{f} \gets \nabla_{\om} \max\left(0,  \dotp{\widetilde{\pi}^{\ast}}{\widetilde{M}}-\dotp{{\pi^{\ast}}}{{M}}+ \gamma\right)$
+    \STATE $\om \gets \om - l \cdot \partial{f}$
+    \STATE Sample $\left\{ z^{(i)} \right\}_{i=1}^{N}$
+    and get $ \left\{ y^{(i)} \right\}_{i=1}^{N}$ via $g$.
+    \STATE $\pi^{\ast} \gets$ sovling $W_f\left( \left\{ f(x^{(i)})
+      \right\}_{i=1}^{N}, \left\{ f({y}^{(i)})
+      \right\}_{i=1}^{N} \right)$
+    \STATE $\partial{g} \gets \nabla_{\th} \dotp{\pi^{\ast}}{M}$
+    \STATE $\th \gets \th -l \cdot \partial{g}$
+    \ENDWHILE
+  \end{algorithmic}
+\end{algorithm}
+
+\subsubsection{Advantage of EOT against OT}
+
+Usage of entropy regularization in EOT avoids the need for Kantorovich-Rubinstein duality
+of OT, thus is free from Lipschitz constraint. In literature, several methods endeavor to
+satisfy Lipschitz constraint, for example, projecting neural network
+parameters into a space fulfilling Lipschitz constraint via weight
+clipping \cite{2017arXiv170107875A}, spectrum
+normalization \cite{2018arXiv180205957M}), or adding gradient 
+penalty into GAN's cost function \cite{2017arXiv170400028G}. Projecting
+approaches bring the problem of neural network capacity underuse and
+limit its ability to learn complex mapping. Gradient penalty approach takes
+gradients of each layer's weight parameters of a neural network into
+GAN's cost, thus computation complexity grows fast as the neural
+network goes deeper. 
+EOT avoids the above mentioned problems and also has the benefit of a lower
+computation complexity. With entropy-regularization and Sinkhorn
+algorithm, the computation complexity scales as $\mathcal{O}(N^2)$ \cite{2013arXiv1306.0895C}. 
+On the other hand, solving OT cost using interior-point methods has computational requirement as 
+$\mathcal{O}(N^3\log{N})$. 
+                              %                               Other techniques may be
+                              %                               used to even further to reduce the computation complexity bellow $\mathcal{O}(N^2)$\cite{2018arXiv180300567P}.
+
+                              %                               \textcolor{red}{We need to show Lipschitz form and what are the problems}
+
+                              %                               \subsection{Entropy-constrained  OT cost}
+
+                              %                               \subsection{Entropy-constrained OT GAN}
+
+
+                              %                               \subsection{Entropy-regularized OT}\label{subsec-wsd}
+
+                              %                               To relieve the computation burden, we are going to apply entropic
+                              %                               regulation to the original objective function of OT and employ the
+                              %                               Sinkhorn algorithm \cite{2013arXiv1306.0895C} for fast computation,
+                              %                               which provides accurate and stable computation, and can
+                              %                               be well parallelized on GPU execution. Additionally, the entropy
+                              %                               regularization allows smooth solution to the OT problem.
+                              %                               The Entropy-regularized OT (EOT) can be formulated as:
+                              %                               \begin{equation}
+                              %                               W(P,Q)=\min_{\pi\in \Pi(P,Q)} \dotp{\pi}{M} - \la H(\pi),
+                              %                               \end{equation}
+                              %                               where $[M]_{i,j} = d(x_i, y_j) = \normd{x_i - y_j}$ and $x_i, y_j$ are
+                              %                               samples of $P, Q$ respectively, $H(\pi) = \sum_{i,j} -\pi_{i,j}
+                              %                               \log(\pi_{i,j})$ and $\la \in \RR^{+}$ is the regulation parameter.
+                              %                               Using duality, the EOT problem can be formulated as
+                              %                               \begin{equation}
+                              %                               W(P,Q) = \max_{\al, \be \in \mathbb{R}^{N}} \al^{T}P + \beta^{T}Q -
+                              %                               \sum_{i,j} \lambda e^{ {\left( \al + \beta - [M]_{i,j} \right)}/{\la} }
+                              %                               \end{equation}
+
+                              % %                               \begin{prop}
+                              % %                                 \unsure{Minh, any analysis you want to put here? For the proposition?}
+                              % %                                 Let generator $g: \Zz \rightarrow \Xx$ be parameterized by $\th \in \Theta$
+                              % %                                 and $g$ is differentiable w.r.t $\th$. The subgradient of the entropy
+                              % %                                 regularized Wasserstain distance loss with respect to parameter of
+                              % %                                 generator $G$ is:
+                              % %                                 \begin{equation}
+                              % %                                   \pd{J(Q, P)}{\th} = (\pd{G}{\th})^{T} \alpha,
+                              % %                                 \end{equation}
+                              % %                                 where $\al$ is obtained by the following sinkhorn algorithm:
+
+                              % %                                 \begin{algorithm}
+                              % %                                   \caption{Computation of Entropy Regularized Wasserstein Loss}\label{algo-sinkhorn}
+                              % %                                   \begin{algorithmic}[1]
+                              % %                                     \Require{$M, \la, p, q$ \Comment{$p,q$ lies in probability simplex
+                              % %                                     for distribution $P, Q$.\\ $M_{i,j} = d(x_i, y_j)$ }}
+                              % %                                     \State $K = \exp(-M/\la)$
+                              % %                                     \State $x = ones(length(q))/length(q)$
+                              % %                                     \While{$x$ not converge}
+                              % %                                     \State $x \gets diag(1/q)*K*(p*(1./(K^{T}1./q)) $
+                              % %                                     \EndWhile\label{euclidendwhile}
+
+                              % %                                     \State $u \gets 1./x, v \gets q.*(1./K^{T}*u)$
+                              % %                                     \State $\pi \gets \mathrm{diag}(u)K \mathrm{diag}(v)$
+                              % %                                     \State $\al \gets -\la \log(u) + \la \ones^{T} \log(u)/length(q)*\ones$
+
+                              % %                                   \end{algorithmic}
+                              % %                                 \end{algorithm}
+                              % %                               \end{prop}
+
+
+    %     The optimal dual vector $\beta^{\ast}$
+    %     of \eqref{eq-dual-opt} is
+    %     actually a subgradient of $W(P,Q)$ w.r.t. $Q$. $\beta^{\ast}$ can be efficiently
+    %     computed by alternatively scaling the rows and columns of $M$ by
+    %     Sinkhorn algorithm\cite{2013arXiv1306.0895C, 2013arXiv1310.4375C}
+    %     , which gives a pair of
+    %     vectors $(u, v) \in \RR^n_{+} \times \RR^m_{+}$ that define the
+    %     optimal primary and dual arguments: $\pi^{\ast} =
+    %     \mathrm{diag}(u)e^{-M/\la}\mathrm{diag}(v), \beta^{\ast} = -\frac{\log(u)}{\la} +
+    %     \frac{\log(u)\mathds{1}_n}{n\la} \mathds{1}_n$.
+
+
+    % %     We show by a toy dataset in Subsection \ref{subsec-mg}, solving problem
+    % %     \eqref{eq-entropic-wsd} gives the distribution $Q$ represented by
+    % %     generator $g$, which is close to empirical distribution $P$. %According to
+    % %     \cite{2017arXiv170107875A}, the convergence of OT distance
+    % %     between $Q$ and $P$ guarantees their $KL$ divergence, i.e. $T(P,Q)
+    % %     \rightarrow 0$ implies $KL(P \| Q) \rightarrow 0$.
+
+
+
+    %     \input{section/sec-entropy-wgan}
+    %     \input{section/sec-experimental}
+\section{Experimental Results}
+We perform experiments to justify our arguments on loss choice and algorithms. We evaluate our
+generative models on a toy synthetic dataset of Gaussian-mixture distribution and real image digit dataset MNIST.
+\begin{figure*}[!ht]
+  \captionsetup[subfigure]{justification=centering}
+  \centering
+  \begin{subfigure}[b]{0.24\textwidth}
+    \centering
+    \includegraphics[width=1\linewidth]{images/toy/gauss4/frame8.jpg}
+    \caption{}
+    \label{fig-toy}
+  \end{subfigure}
+  \centering
+  \begin{subfigure}[b]{0.24\textwidth}
+    \centering
+    \includegraphics[width=0.8\linewidth]{images/mnist/fake/eot_18500_crop.png}\vspace{5pt}
+    \caption{}
+    \label{fig-fake-wgan}
+  \end{subfigure}
+  \centering
+  \begin{subfigure}[b]{0.25\textwidth}
+    \centering
+    \includegraphics[width=1.1\linewidth]{images/mnist/tra_score/IS_29.pdf}\vspace{-3pt}
+    \caption{}
+    \label{fig-tra-is}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.25\textwidth}
+    \centering
+    \includegraphics[width=1.1\linewidth]{images/mnist/tra_score/FID_29.pdf}\vspace{-3pt}
+    \caption{}
+    \label{fig-tra-fid}
+  \end{subfigure}
+  \vspace{-15pt}
+  \caption{(a) Toy distribution learning ($4$-mixture Gaussians) using EOTGM. Real samples (red '+') and contour
+    (red curve), versus generated samples (blue 'o') and contour
+    (blue curve) by $g$. (b) Generated samples by EOTGAN for MNIST dataset. (c) and (d)
+    Comparison of IS and FID (on MNIST) versus mixing ratio $r$. (For
+    each model at a certain mixture ratio, $5$ experiments are
+    independently performed. Each solid curve with markers plots the mean of $5$
+    experiments with shaded areas denoting the range of corresponding
+    results.}
+  \label{fig-tra-score}\vspace{8pt}  
+\end{figure*}
+
+\subsection{Evaluation Metrics}\label{subsec-metric}
+Inception Score (IS) has been popularly used in evaluation of GAN
+models\cite{NIPS2016_6125}. IS is defined as $
+  IS(Q) = \exp\bigl[ \EE_{y \sim Q} KL\bigl( \PP(c | y)\| \PP(c) \bigr)  \bigr]$,
+where $x\sim Q$
+indicates synthetic sample from distribution $Q$ induced by generator $g$, $KL(\cdot, \cdot)$ is Kullback-Leibler divergence, $\PP(c|y)$ is the
+conditional class distribution, and $\PP(y) = \int_x\PP(c|y) \,d Q(x)$
+is the marginal class distribution. Large IS score means generated
+samples contain clear objects. Generative models with high IS can output high
+diversity of samples.
+Apart from $KL$-based metric,
+an alternative common metric is Frechet Inception Distance (FID)\cite{2017arXiv170608500H}. FID measures the OT distance
+of two probability distribution by assuming the two distributions are
+Gaussian. Smaller FID means the generated samples are more similar to
+empirical samples. Both FID and IS will be used in our experiments. High IS and low FID are better. 
+
+\vspace{-3pt}
+\subsection{Evauation of EOTGM using toy dataset}\label{subsec-mg}
+
+{We firstly evaluate our proposed EOTGM on a toy dataset sampled from a known probability
+  distribution: two-dimensional four-mixture Gaussian. This mixture Gaussian is our target distribution to learn, i.e., $P$. The generator $g$ uses a neural network with structure: Input $\rightarrow$ Dense $256$ $\rightarrow$ ReLU $\rightarrow$ Dense $256$ $\rightarrow$ ReLU $\rightarrow$ Dense $256$ $\rightarrow$ ReLU$\rightarrow$Dense $2$. The parameter $\theta$ of $g$ here is the set of parameters of this neural network. Latent distribution $P_Z$ used here is standard Gaussian: $\mathcal{N}\left(\bigl(\begin{smallmatrix}& 0\\
+    &0\end{smallmatrix}\bigr) ,\bigl( \begin{smallmatrix}1 & 0\\ 0 &
+    1\end{smallmatrix}  \bigr)\right)$.
+The toy dataset is used by Algorithm~\autoref{algo-E-WL} (EOTGM) to train $g$. In Fig.\ref{fig-toy}, we plot the empirical samples from our toy dataset and the synthetic samples generated by $g$. The corresponding contours are also plotted. It shows that the induced distribution by $g$ approaches the mixture Gaussian distribution well without missing any mode.}          
+% Here noise $P_z$ is Gaussian distributed:
+% $\mathcal{N}\left(\bigl(\begin{smallmatrix}& 0\\
+%     &0\end{smallmatrix}\bigr) ,\bigl( \begin{smallmatrix}1 & 0\\ 0 &
+%     1\end{smallmatrix}  \bigr)\right)$.
+% These empirical samples are used by
+% Algorithm~\autoref{algo-E-WL} (EOTGM) to train $g$.
+% The target distribution  for $g$ is the mixture
+% Gaussian. In Fig.\ref{fig-toy} we plot the empirical samples and the synthetic samples generated by $g$. The corresponding contours are
+% also plotted. It shows that the induced distribution by $g$ approaches the
+% mixture Gaussian distribution well without missing any mode.
+                                                                     %                                                                      \begin{figure}[t!]
+                                                                     %                                                                      \centering
+                                                                     %                                                                      \subfigure[$4$ Gaussians (standard deviation $1$).]
+                                                                     %                                                                      {\includegraphics[width=0.3\linewidth]{images/toy/gauss4/frame12.jpg}
+                                                                     %                                                                      \label{fig-toy1}
+                                                                     %                                                                      }
+                                                                     %                                                                      \centering
+                                                                     %                                                                      \subfigure[$9$ Gaussians (standard deviation $1$).]
+                                                                     %                                                                      {\includegraphics[width=0.3\linewidth]{images/toy/gauss9/frame11.jpg}
+                                                                     %                                                                      \label{fig-toy2}
+                                                                     %                                                                      }
+                                                                     %                                                                      \centering
+                                                                     %                                                                      \subfigure[Swissroll with Gaussian noise (standard deviation $2/3$).]
+                                                                     %                                                                      {\includegraphics[width=0.3\linewidth]{images/toy/swiss/frame10.jpg}
+                                                                     %                                                                      \label{fig-toy3}
+                                                                     %                                                                      }
+                                                                     %                                                                      \caption{Toy distribution learning: mixture Gaussian and
+                                                                     %                                                                      Swissroll. A new batch of empirical samples of size $256$ are
+                                                                     %                                                                      drawn in each iteration. Real samples (orange '+') and contour
+                                                                     %                                                                      (orange curve), versus generated samples (green '+') by $g$ contour
+                                                                     %                                                                      (green curve). 
+                                                                     %                                                                      }\label{fig-toy}
+                                                                     %                                                                      \end{figure}
+
+
+                                                                     %                                                                      \begin{figure}[t!]
+                                                                     %                                                                      \centering
+                                                                     %                                                                      \subfigure[Empirical samples from Cifar10 dataset]
+                                                                     %                                                                      {\includegraphics[width=0.45\linewidth]{images/cifar_hard/real_samples_19500.png}}
+                                                                     %                                                                      \subfigure[Generated samples by $gf$ using loss defined in
+                                                                     %                                                                      \eqref{eq-entropic-wsd}]
+                                                                     %                                                                      {\includegraphics[width=0.45\linewidth]{images/cifar_hard/fake_samples_19500.png}}
+                                                                     %                                                                      \caption{Blur samples generated by $g$ via loss defined in
+                                                                     %                                                                      \eqref{eq-entropic-wsd} on Cifar10}\label{fig-wsd}
+                                                                     %                                                                      \end{figure}
+\subsection{Evaluation of generative models using MNIST}
+In this subsection we evaluate both the generative models using MNIST dataset.
+The representation mapping $f$ in EOTGAN adapts two converlutional layers
+appended with fully connected layers\footnote{$32$ Conv2d $5 \times5$
+  $\rightarrow$ PReLU $\rightarrow$ MaxPool $2\times2$ $\rightarrow$
+  $64$ Conv2d $5\times5$ $\rightarrow$ PReLU $\rightarrow$ MaxPool
+  $2\times2$ $\rightarrow$ Dense $256$ $\rightarrow$ PReLU
+  $\rightarrow$ Dense $256$ $\rightarrow$ PReLU $\rightarrow$ Dense
+  $2$}
+similar to \cite{1467314}\cite{1640964}. Generator $g$ uses the same
+setting as that of DCGAN and WGAN. Noise $P_z$ is $100$-dimensional Guassian.
+We report IS and FID scores of EOTGAN in comparison with DCGAN and WGAN. Since EOTGAN is trained with representation mapping $f$ that
+acts as feature mapping, it is not fair to use this representation mapping $f$ to do the
+evaluation and make comparison since it would gives EOTGAN
+advantages. Similar to \cite{2018arXiv180607755X}, we train a 34-layer
+ResNet on MNIST to perform feature extraction for metric measurements
+of IS and FID. In addition, we put EOTGM (Algorithm~\autoref{algo-E-WL}) in the comparison as well.
+
+Data for evaluations is constructed by mixing empirical samples and
+synthetic samples generated by $g$. We draw the set $\mathcal{S}_{\mathrm{em}}$ of 2000 empirical samples from MNIST dataset. To generate a set $\mathcal{S}_{\mathrm{syn}}$ of synthetic
+samples we draw $2000r$ samples from the generator network $g$ where
+$r\in[0,1]$ while rest $2000(1-r)$ are sampled directly from
+MNIST. All following experiments are applied on
+$\mathcal{S}_{\mathrm{em}}$ and $\mathcal{S}_{\mathrm{syn}}$. 
+The way of mixing empirical data and generated data helps
+us to identify if a metric is intuitively helpful. Among the chosen metrics IS at $r=0$ serves as a upper bound for the test while the FID at $r=0$ serves as a lower bound for the corresponding tests. %, and they should not decrease with the increase of $r=0$. Any results that breaking these rules may denote invalidity of a metric..
+
+IS measures how certain a classifier assigns a class label to a given
+generated sample. The larger IS is, the better the generative model
+is. We plot IS versus $r$ for different models in
+Fig. \ref{fig-tra-is}. IS scores of all four tested models drop with
+increasing portion of synthetic samples in
+$\mathcal{S}_{\mathrm{syn}}$, which is consistent with intuition. IS
+of EOTGAN drops at the slowest rate among the four model as more
+synthetic samples, for larger $r$, are mixed into test data. It shows
+that EOTGAN outperforms WGAN and DCGAN in this test. EOTGM is found to provide the lowest IS.
+This may be attributed to the setup that 
+EOT optimization with cost measured by Euclidean distance of signals
+fails to capture semantic similarity.
+%Though \cite{2018arXiv180607755X}, \cite{2018arXiv180101973B} claimed
+%that IS should not be used on dataset beyond ImageNet, the results
+%in Fig.~\ref{fig-tra-is} is based on the ResNet that we have trained
+%on MNIST and thus can be used for the classification in IS metric.
+
+In Fig.~\ref{fig-tra-fid} the perfomances of different models are
+compared using the FID metric. The smaller the FID of a generative model is, the more similar the
+generated samples are to the empirical samples. EOTGAN is the least affected model among all the four, as the ratio $r$ increases, i.e. the generated samples by EOTGAN is more similar to the empirical
+ones in the feature space regarding to FID. FID of WGAN is larger than that of EOTGAN. As
+more generated samples are mixed the FIDs of DCGAN and EOTGM grow
+even faster, which means the samples generated by these two models are
+less similar to the empirical samples.
+\section{Conclusion}
+This work shows that entropy-regularized optimal transport cost is
+useful to train neural network based generative models for learning implicit probability
+distributions. With computationally efficient Sinkhorn algorithm,
+learning of a probability distribution by a generative model can be
+posed as an one-shot optimization problem. For further progress in
+quality of generating samples, our experiments show that additional use of
+representation mapping and alternative optimization based on
+adversarial game produce better
+semantic samples. 
+
 
 
 %%% Local Variables:
