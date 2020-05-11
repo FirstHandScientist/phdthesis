@@ -795,72 +795,24 @@ The performance of GMM-HMM is also significantly increased when adding $1^{st}$ 
 This phenomenon is due to two aspects: i) model complexity; ii) dataset size. GMM-HMM is a simpler model compared to GenHMM. Besides, the number of samples in dataset is limited, i.e. only $3501$ time frames. These two major factors together explain why the performance of GMM-HMM increase while that of GenHMM decreases as $n$ increase from $3$ to $9$ (a increase of each corresponding model's complexity).
 Also discriminative trianing, dGenHMM, does improve the performance. The insufficient training data makes its final accuracy fall behind the much simpler model GMM-HMM.
 
-\section{Conclusion}
+\section{Summary}
 In this chapter, we discussed the representation and learning of a temporal model. With the simplification of Markov assumption and the concept of template, the HMMs, as simplified dynamic Bayesian networks, have a good balance between representation power and computation efficiency. Thus, they have been widely used in disciplines in practice. The modeling expressivity is further enriched by the introduction of normalizing flows. The developed GenHMM is a generic model and allows large freedom of customization, which can be employed for practical applications such as the demonstrated speech recognition and sepsis detection. Due to the presence of hidden variables, the learning of GenHMM is carried out within expectation maximization framework. Adaption is made to accommodate the neural network implementation of normalizing flows and large datasets in parameter learning.
 
 In increasing the representation power of modeling, GenHMM relies on enriching the flexibility of conditional probability models. Alternative options lie with the template model design. In fact, template is the core concept for more general object-relational modeling of probabilistic graphical models. Generally speaking, any object-relation can be used to define a skeleton that functions as a template. Then ground probabilistic graphical models can be formed by assembling the instances from skeletons or templates. The results models can be rich and representative for general object-relation modeling. The sequential instances concatenation shown in the chapter is one way of the general modeling process. It is suggested to bear the learning complexity in mind when making use of flexible representation of template models. It may be the case that the best representation brings prohibitive inference or learning complexity. Therefore, the modeling accuracy and inference/learning complexity should be jointly considered when designing models for practical applications.
 
+\section{Literature Work}
+Probabilistic models of temporal processes are challenging topics in pattern recognition and machine learning, which can be generalized to a wide range of problems of sequential dependency beyond temporal signals.
+The various applications cover but not limited to reinforcement learning \cite{ding2018reinforcementhmm,levine2018reinforcementReview}, natural language modeling \cite{khan2016survey,Hariyanti_2019}, biological sequence analysis such as proteins \cite{ASHWIN20172} and DNA \cite{ren2015dna}, etc.
+The study on temporal process modeling goes back many years.
+Hidden Markov models (HMMs) were discussed as early as in $1980$s by \cite{rabiner1986intro_hmm}, and further by \cite{rabiner1989tutorialhmm}.
+The generalization of HMMs into probabilistic graphical models, dynamic Bayesian networks, was proposed around the same period in \cite{dean1989reasoning}.
 
-\section{Raw}
+The classic way is to use a Gaussian mixture model (GMM) per state of HMM \cite{juang1986maximum}, where GMMs are used to connect states of HMM to sequential data input. GMM based HMM (GMM-HMM) has become a standard model for sequential data modeling, and been employed widely for practical applications, especially in speech recognition \cite{gales2008application,chatterjee2011auditory}.
 
+To represent data in nonlinear manifolds, research attempting at training HMM with neural networks has been carried out to boost the modeling capacity of HMM. A successful work of this track has brought deep neural network (DNN) that is defined by restrictive Boltzmann machines (RBMs) \cite{Hinton2012} into HMM based models \cite{hinton2012deepSpeech,li2013hybrid,Miao2013ImprovingLC}. RBM based HMM is trained with a hierarchical scheme consisting of multiple steps of unsupervised learning, formatting of a classification network, and then supervised learning. The hierarchical procedure comes from the empirical expertise in this domain. The hierarchical learning scheme of RBM/DNN based HMM consists of: i) RBMs are trained one after the other in an unsupervised fashion and are stacked together as one deep neural network model, ii) then a final softmax layer is added to the stack of RBMs to represent the probability of an HMM state given a data input, iii) a discriminative training is performed for the final tuning of the model at the final stage.
 
-modeling:
-
-For permeable part and notation of this chapter, refer to \cite[Chapter~6.2]{koller2009pgm}.
-Give a figure/illustration: Dynamic Bayesian Network > 2-TBN > HMM
-
-
-complexity, why template > HMM
-
-
-A bit history of HMM, see \cite[Chapter~6.8]{koller2009pgm}
-
-content:
-
-1. \href{https://arxiv.org/abs/1910.05744}{Powering Hidden Markov Model by Neural Network based Generative Models}, ECAI 2020
-
-2. Antoine Honore, Dong Liu, \href{https://arxiv.org/pdf/1910.13904.pdf}{Hidden Markov Models for sepsis detection in preterm infants}, ICASSP, 2020
-
-HMM is an instance of 2-time-slice Bayesian network(2-TBN) (section 6.2.2 Koller). Also, it can be argued from CRF.
-
-\section{Introduction}
-Sequential data modeling is a challenging topic in pattern recognition and machine learning. For many applications, the assumption of independent and identically distributed (i.i.d.) data points is too strong to model data properly. Hidden Markov model (HMM) is a classic way to model sequential data without the i.i.d. assumption. HMM has been widely used in different practical problems, including applications in reinforcement learning \cite{ding2018reinforcementhmm,levine2018reinforcementReview}, natural language modeling \cite{khan2016survey,Hariyanti_2019}, biological sequence analysis such as proteins \cite{ASHWIN20172} and DNA \cite{ren2015dna}, etc.
-
-A HMM is a statistical representation of sequential data generating process.
-Each state of a HMM is associated with a probabilistic model.
-The probabilistic model is used to represent the relationship between a state of HMM and sequential data input. The typical way is to use a Gaussian mixture model (GMM) per state of HMM \cite{juang1986maximum}, where GMMs are used to connect states of HMM to sequential data input. GMM based HMM (GMM-HMM) has become a standard model for sequential data modeling, and been employed widely for practical applications, especially in speech recognition \cite{gales2008application,chatterjee2011auditory}.
-
-Given the success of GMM-HMM, it is not efficient for modeling data in nonlinear manifold. Research attempts at training HMM with neural networks have been made to boost the modeling capacity of HMM. A successful work of this track has brought deep neural network (DNN) that is defined by restrictive Boltzmann machines (RBMs) \cite{Hinton2012} into HMM based models \cite{hinton2012deepSpeech,li2013hybrid,Miao2013ImprovingLC}. RBM based HMM is trained with a hierarchical scheme consisting of multiple steps of unsupervised learning, formatting of a classification network and then supervised learning. The hierarchical procedure comes from the empirical expertise in this domain. To be more specific, the hierarchical learning scheme of RBM/DNN based HMM consists of: i) RBMs are trained one after the other in unsupervised fashion, and are stacked together as one deep neural network model, ii) then a final softmax layer is added to the stack of RBMs to represent the probability of a HMM state given a data input, iii) a discriminative training is performed for the final tuning of the model at the final stage.
-
-Another track of related work is hybrid method of temporal neural network models and HMM. In \cite{liu2019lstmHmmHyb,buys2018bridging,vik2016rnnHmm}, a long short-term memory (LSTM) model/recurrent neural network (RNN) is combined with HMM as hybrid. A hierarchical training is carried out by: i) training a HMM first, ii) then doing modified training of LSTM using trained HMM. This hierarchical training procedure is motivated by the intuition of using LSTM or RNN to fill in the gap where HMM can not learn. 
-
-% work of epfl fiting GMM with neural network...
-
-The above works help improve modeling capacity of HMM based models by bringing in neural networks. A softmax layer is usually used to represent probability whenever a conditional distribution is needed. These hierarchical schemes are built based on intuition of domain knowledge. Training of these hierarchical models usually requires expertise in specific areas to be able to proceed with the hierarchical procedure of training and application usage. 
-
-In this work, we propose a generative model based HMM, termed as GenHMM. Specifically, a generative model in our GenHMM is generator-mixed, where a generator is realized by a neural network to help the model gain high modeling capacity.
-Our proposed model, GenHMM,
-\begin{itemize}
-\item has high modeling capacity of sequential data, due to the neural network based generators;
-\item is easy to train. Training of GenHMM employs expectation maximization (EM) framework. Therefore, training a GenHMM is as easy as training a GMM-HMM model, while configuration of GenHMM is flexible;
-  % \item has high modeling capability of sequence data, though its training and using are handy
-\item is able to compute loglikelihood exactly and efficiently.
-\end{itemize}
-Instead of using softmax for probability representation, our GenHMM has tractability of exact loglikelihood of given sequential data, which is based on the change of variable formula. To make the loglikelihood computation efficient, neural network based generators of GenHMM are realized as flow models. 
-
-Our contributions in the paper are as follows.
-\begin{itemize}
-\item Proposing a neural network based HMM for sequential data modeling, i.e. GenHMM. GenHMM has the tractability of exact likelihood.
-\item Designing practical algorithm for training GenHMM under EM framework. Stochastic gradient  search in batch fashion is embedded in this algorithm.
-\item Giving convergence analysis for GenHMM under the proposed learning algorithm.
-\item Verifying the proposed model on practical sequential data.
-\end{itemize}
-
-
-
-
-
-
+With the prevalence of deep learning, further works on neural network based temporal models are present in literature. A representative track is the hybrid method of temporal neural network models and HMM. In \cite{liu2019lstmHmmHyb,buys2018bridging,vik2016rnnHmm}, a long short-term memory (LSTM) model/recurrent neural network (RNN) is combined with HMM as hybrid. A hierarchical training is carried out by: i) training an HMM first, ii) then doing modified training of LSTM using trained HMM. This hierarchical training procedure is motivated by the intuition of using LSTM or RNN to fill in the gap where HMM can not learn.
+Another successful exploration is motivated by hierarchical HMM \cite{fine1998hierarchicalHMM}, a variant of HMM that tries to model complex multi-scale structures of hidden variables in sequential signal modeling. Work hierarchical multiscale RNN \cite{chung2016hmRNN} and variational temporal abstraction \cite{kim2019variational} use neural networks to infer the multi-scale structures of hidden variables, where applications of language models and navigations are demonstrated successfully.
 
 
 %%% Local Variables:
