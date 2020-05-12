@@ -1,9 +1,120 @@
-\chapter{An implicit probabilistic generative model}
+\chapter{An Implicit Probabilistic Generative Model}
 \label{chapter8}
 \graphicspath{{source/chapter8/}}
+In previous chapters, we discussed learning in both undirected (\label{chpt5:undirecteLearning}) and directed (chapter~\ref{chpt6:em-flow} and \ref{chpt7:genhmm}) graphical models. The model learning of previous discussions has been under the principle of maximum likelihood, which includes the cases of MRF learning with approximate inference and the likelihood variational lower bound such as \eqref{chpt5:eq:lower-bound-F}. With maximum likelihood learning, if exactly likelihood is not available, its variational or approximate value is used as the objective function.
+
+In this chapter, we introduce a way of learning a generative model that does not use maximum likelihood. Different from the normalizing flows in previous chapters, we do not require the induced distribution $p(\bm{x};\bm{\theta})$ by a generator in the generative model to be tractable. In another word, the generator-induced distribution $p(\bm{x};\bm{\theta})$ is \textit{implicit} and likelihood-intractable. This relaxation indeed gives us larger freedom of defining the generators, and thus enlarge the hypothesis space of model distribution $p(\bm{x};\bm{\theta})$. But it also brings the question of how to learn such a model without the tractable density function. Perhaps, a question before the 'how' is the the 'why', i.e. why we need such kind of models.
+
+The motivation of studying these generative models lies in the applications where sampling from the implicit distributions is more important than likelihood tractability. Due to the curse of dimensionality, deep generative models that defined with neural network based generators and induce implicit distribution, demonstrate their advantage in the efficiency of modeling training and sampling in high-dimensional space, in comparison with explicit statistic models. This allows the representation and manipulation of implicitly high-dimensional distributions via the generative models. For instance, deep generative models have been used in image super-resolution, image-to-image translation, etc. Besides, implicit generative models can be naturally incorporated in reinforcement learning where typically an agent tries to learn to finish some tasks via interacting with a dynamic environment. In model-based methods, using a generative model to represent the environment and generating states for the agent to learn with, offers the way of training agents in simulations.
+
+In this chapter, we introduce the learning of implicit probabilistic generative models by employing \textit{optimal transport} from transportation theory that does not need to the tractability of likelihood. As long as we can simple for a generative model efficiently, learning of the generative model can be formed as the minimization of an optimal transport distance between the induced implicit distribution and an empirical distribution.
+
+\section{Optimal Transport}
+\textcolor{blue}{more into the OT here.} 
+
+We denote the space $(\bm{\Xx},\|\cdot\|_2)$ be our working space, where $\bm{\Xx} = \prod_{x=1}^{N} \Xx_i$ as defined in chapter~\ref{chapter2}. $\|\cdot\|_2$ is the Euclidean distance. Assume that $\bm{\Xx}_1$, $\bm{X}_2$ are finite sample subsets of $\bm{X}$. Let $p^{\ast}$ be a distribution on $\bm{\Xx}_1$ and $p$ be a distribution on $\bm{\Xx}_2$. We use $T(p^{\ast},p)$ to denote the optimal value of Kantovich's transportation problem\cite{villani2003topics} which is given by
+\begin{equation}
+  T(p^{\ast}, p) = \min_{\pi\in\Pi(p^{\ast}, p)}\langle\pi,\bm{M}\rangle
+\end{equation}
+where $\langle\cdot,\cdot\rangle$ stands for the inner product of
+two matrices, M is the cost matrix and its entry is given by $\left\{ \normd{x_i-y_j} \right\}_{i,j}$.
+Herein $\Pi(p^{\ast}, p)$ is a set of joint distribution on the sample sets $\bm{\Xx}_1\times\bm{\Xx}_2$. Note that the inner product is invariant of unitary transform. Therefore representing $\bm{x}\in \bm{\Xx}$ is another basis does not change the cost matrix.\\
+
+\begin{remark}[Connection to WGAN]
+Optimal Transportation (OT) distances, also known as Kantovich distances
+and Wasserstein distrance, measure the minimum transportation cost of
+two given distributions \cite{villani2003topics}. OT problem and its
+variants have been widely studied to achieve stable and fast computations\cite{2013arXiv1310.4375C}\cite{2013arXiv1306.0895C}\cite{2016arXiv161006519S}\cite{DBLP:conf/icml/ClaiciCS18}.
+
+Recent works try to seek the objective loss to avoid the vanishing
+gradient problem.
+A further step to stable training of GANs is the Wasserstein GAN
+\cite{2017arXiv170107875A}, which proves that convergence of the
+Kantovich's transportation distance \cite{villani2003topics}, also
+known as Wasserstein distance, is weaker than that of $KL$ and $JS$ divergence\footnote{This conclusion applies when
+  $\mathcal{X}$ is compact metric space}. The
+Wasserstein is amount to the optimization problem:
+\begin{equation}\label{eq-wgan}
+  \min_{g} \max_{\|f\|_{L} \leq 1} \EE_{X \sim P}\left[ f(Y) \right] -
+  \EE_{Y~\sim Q}\left[ f(Y) \right],
+\end{equation}
+where $Y=g(Z), Z~P_z$, $\|\cdot\|$ is the 1-Lipschitz function
+family. Though WGAN performs better in optimization process for
+solving the vanishing gradient of GANs and the variants, the way 
+\cite{2017arXiv170107875A} enforcing the Lipschitz constraint by
+clipping weights of $f$ network, brings capacity
+underuse as claimed by and also optimization
+difficulties\cite{2017arXiv170400028G}. \cite{pmlr-v84-genevay18a}
+tries to design optimization objective leveraging the OT and Maximum
+Mean Discrepancy (MMD) by
+using entropy regulation OT, but also clipping weights. 
+The followed work WGAN-GP \cite{2017arXiv170400028G} considers several examples of critics, which is not very satisfying given the optimization domain is the set of 1-Lipschitz functions.
+\end{remark}
+
+\begin{remark}[Connection to vanilla GAN]
+The GANs\cite{NIPS2014_5423},\cite{2017arXiv170100160G} define two
+adversary networks. The \emph{generator} network $g$ maps a source of
+noise $P_z$ to a high-dimensional data space. The \emph{discriminator} $d$
+network gets input from either output of $g$ or empirical samples from
+$P$. The generator $g$ and discriminator $d$ play against each other
+regarding the minimax objective:
+\begin{equation}\label{eq-gan}
+  \min_{g} \max_d \EE_{X \sim P}\left[ \log(d(X)) \right] + \EE_{Y}\left[ \log(1-d(Y) \right],
+\end{equation}
+where $Y=g(Z)\sim Q, Z \sim P_z$.
+The probability representation of $g$ relies on if minimax game finds
+its equilibrium where distribution of $g(Z)$ is the same as $P$ and
+$d$ is optimal. In optimal case of $d$, objective of
+\autoref{eq-gan} is to minimize the $JS(P,Q)$. But
+Theorem~2.4 in \cite{2017arXiv170104862A} shows the problem of
+vanishing gradient w.r.t. parameters of $g$. Another benchmark work
+DCGAN \cite{2015arXiv151106434R} demonstrates successful architecture
+of $g$ by applying transpose convolutional layers, but suffers the
+same problem due the same optimization objective.
+
+\end{remark}
+
+\section{Related Work}
+\subsection{Base: Generative Adversarial Network}
 
 
-content: \href{https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=8682721}{Entropy-regularized Optimal Transport Generative Models}, ICASSP 2019
+\subsection{Siamese Structure and Triplet Loss}
+
+Siamese architecture is commonly used in verification or
+authentication learning problems\cite{1467314}, which always take a
+pair of inputs $x_1, x_2$ that are mapped by same $f: \Xx \rightarrow
+\Mm$, the output "energy" $\norm{f(x_1) - f(x_2)}$ measures the
+compatibility/similarity for the pair of inputs.
+Triplet loss \cite{7298682} takes triple inputs: $x_1, x_2, y \in \Xx$
+that are anchor, positive and negative input respectively and try to
+learn $f$ such that positive inputs always has smaller "energy" than
+the negative inputs with regarding to anchor inputs,
+$\normd{f(x_1)-f(x_2)}^2 + \gamma \le \normd{f(x_1)-f(y)}^2$, 
+where $\gamma$ is margin value.
+
+% The anchor and positive inputs are chosen in same class
+% and $Y$ from a different class. Embedding $f$
+% functions as if a "similarity" metric, after mapping of which
+% distance of anchor and positive is minimized, while the distance of
+% anchor and negative is maximized. The triplet loss is defined
+% \cite{7298682}
+% \begin{equation}
+%     \sum_{i}^{N}\left[\normd{f(x_1^{(i)})-f(x_2^{(i)})}^2 - 
+%     \normd{f(x_1^{(i)})-f(y^{(i)})}^2 + \ga \right]_{+},
+% \end{equation}
+% where $[\cdot]_{+} = \max(0, \cdot)$. 
+
+Recent work \cite{2017arXiv171105084C} has proposed 
+the TripletGAN that is close research to
+our work, where the generative model is trained by solving the
+following minimax problem:
+\begin{equation}
+  \min_{g} \max_{f} \EE_{{\substack{X\sim P \\ Y_1= g(Z_1)\\ Y_2 = g(Z_2)}}}\left[ \normd{f(Y_1)-f(X)}^2 - \normd{f(Y_1)-f(Y_2)}^2 \right],
+\end{equation}
+where $Z_1, Z_2 \sim P_z$ and $(Z_1,Z_2,X)$ are mutually independent. The TripletGAN has two virtual
+"classes" no matter how many the empirical dataset actually has. It treats samples
+$X\sim P$ from empirical dataset as if a virtual positive "class" while the all
+generated samples $Y=g(Z), Z\sim P_z$ as a negative "class". 
 
 
 \section{Modeling data without explicit probabilistic distribution}
