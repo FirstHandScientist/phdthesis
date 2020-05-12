@@ -1,4 +1,5 @@
 \chapter{Powering Hidden Markov Model by Normalizing Flows}
+\label{chpt7:genhmm}
 We have been mainly discussing the topics of modeling and learning where an observation instance is independent of others so far. In another word, the assumption of independent and identically distributed observation instances has been used. In this chapter, we extend to the topic of modeling and learning for sequential or temporal signals, such as speech signal, trajectories of a robot's movement, DNA sequence, etc.
 
 In modeling a dynamic system that generates sequential signals, we are usually interested in reasoning about the system state that evolves over time underlining the signal. For simplification, the timeline over which a dynamic system generates sequential signal is discretized, i.e. time is sliced. Thus for each time slice $t$, we can take a measurement of the dynamic system, which corresponds to an observed variable $\bm{x}_t$. Due to the limitation of our measure or the abstraction in modeling itself, the state of the system at this time slice is not directly available, which corresponds to an unobserved or hidden variable $s_t$.
