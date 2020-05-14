@@ -10,12 +10,11 @@ The motivation of studying these generative models lies in the applications wher
 In this chapter, we introduce the learning of implicit probabilistic generative models by employing \textit{optimal transport} from transportation theory that does not need to the tractability of likelihood. As long as we can simple for a generative model efficiently, learning of the generative model can be formed as the minimization of an optimal transport distance between the induced implicit distribution and an empirical distribution.
 
 \section{Optimal Transport}
-\textcolor{blue}{more into the OT here.Optimal Transportation (OT) distances, also known as Kantovich distances
-and Wasserstein distrance, measure the minimum transportation cost of
-two given distributions \cite{villani2003topics}. OT problem and its
-variants have been widely studied to achieve stable and fast computations\cite{2013arXiv1310.4375C}\cite{2013arXiv1306.0895C}\cite{2016arXiv161006519S}\cite{DBLP:conf/icml/ClaiciCS18}.
-} 
+Optimal transport (OT) is a geometric tool for comparison of probability distribution. OT has a rich and varied history. Its work traces back as early as $18$th century as in Monge's work \cite{monge1781memoire}. OT has been widely used in different fields, such as economic problems, logistics, production planning, etc. Along its development in history, OT has been given difference names, such as earth mover distance, Kantovich distance
+and Wasserstein distance. Abstractly, OT distances measures the minimum transportation cost of from the mass of a distribution to another distribution \cite{villani2003topics}. Due to its close relation to comparison of probability distributions and optimization, OT and its
+variants have also been popularly used in machine learning and gained fast development in both theory and applications \cite{2013arXiv1310.4375C, 2013arXiv1306.0895C, 2016arXiv161006519S, DBLP:conf/icml/ClaiciCS18}.
 
+The high-level idea of this chapter is to use the OT distance to guide us to find the distribution $p(\bm{x}; \bm{\theta})$ of a generative model to approximate the true distribution $p^{\ast}(\bm{x})$. We begin with the introduction to OT itself and make connections to popular generative models in machine learning.
 
 We denote the space $(\bm{\Xx},\|\cdot\|_2)$ be our working space, where $\bm{\Xx} = \prod_{x=1}^{N} \Xx_i$ as defined in chapter~\ref{chapter2}. $\|\cdot\|_2$ is the Euclidean distance. Assume that $\bm{\Xx}_1$, $\bm{X}_2$ are finite sample subsets of $\bm{X}$. Let $p^{\ast}(\bm{x})$ be a distribution on $\bm{\Xx}_1$ and $p(\bm{x};\bm{\theta})$ be a distribution on $\bm{\Xx}_2$.
 With mild abuse of notation, we denote the OT distance between $p^{\ast}(\bm{x})$ and $p(\bm{x}; \bm{\theta})$ by $T(p^{\ast},p)$. According to Kantovich's transportation problem\cite{villani2003topics}, we have $T(p^{\ast},p)$ given by
@@ -27,8 +26,6 @@ two matrices, and $\Pi(p^{\ast},p)$ is a set of joint distribution $\pi$ on
 the sample sets $\bm{\Xx}_1\times\bm{\Xx}_2$ such that $\pi$ has
 marginal distributions $p^{\ast}(\bm{x})$ and $p(\bm{x}; \bm{\theta})$. 
 The cost matrix $\bm{M}$ has elements $M_{i,j} = d(\bm{x}_1^{i}, \bm{x}_2^{j})$, where $d(\cdot, \cdot)$ is a distance and $\bm{x}_1^{i}, \bm{x}_2^{j}$ are $i$th and $j$th samples from $p^{\ast}(\bm{x})$ and $p(\bm{x}; \bm{\theta})$, respectively. 
-
-The high-level idea is to use the OT distance to guide us to find $p(\bm{x}; \bm{\theta})$ to approximate the true distribution $p^{\ast}(\bm{x})$.
 
 
 \begin{remark}[Connection to vanilla generative adversarial network]
@@ -48,7 +45,7 @@ $d$ is optimal. In optimal case of the discriminator, objective of
 
 
 \begin{remark}[Connection to Wassertein GAN]\label{chpt8:rmk:wgan}
-  It is interesting to note that the OT minimization can be connected to GANs via its duality form. According to Kantorovich-Rubinstein duality \cite{},
+  It is interesting to note that the OT minimization can be connected to GANs via its duality form. According to Kantorovich-Rubinstein duality \cite[section~2.4]{2018arXiv180300567P}\cite{villani2008optimal},
   \begin{equation}
      T(p^{\ast},p) = \sup_{\|f\|_{L} \leq 1} \EE_{p^{\ast}(\bm{x})}\left[ f(\bm{x}) \right] -
   \EE_{p(\bm{x};\bm{\theta})}\left[ f(\bm{x}) \right],
@@ -62,6 +59,9 @@ family. Then minimization of the OT distance is formulated as a min-max problem 
 where $p(\bm{x};\bm{\theta}) = p(\bm{g}(\bm{z}); \bm{\theta})$ with $\bm{\theta}$ parameterizing $\bm{g}$ and $\bm{z}\sim p(\bm{z})$. The  Lipschitz constraint enforcing is not trivial in general, especially for the deep generative models where $\bm{g}$ is implemented by neural networks. Nevertheless, the vanilla GAN in \eqref{chpt8:eq:eq-gan} is similar to the \eqref{chpt8:eq:eq-wgan} from minimization of OT distance.
 \end{remark}
 
+\begin{remark}[Connection to auto-encoders]
+It is know that the variational lower bound of the likelihood function as in \eqref{chpt5:eq:lower-bound-F} is used to train variational auto-encoders, where an encoder and a decoder adjust their parameters to maximize the variational lower bound in the maximum likelihood principle. Since OT offers an alternative tool for modeling learning, it is also employed to train auto-encoders in likelihood-free settings, which shares some similarity with the variational auto-encoders. See \cite{patrini2018sinkhornVAE, genevay2017gan,bousquet2017optimal} for detailed discussions.
+\end{remark}
 
 \section{EOT based Generative Models}
 
@@ -253,33 +253,32 @@ generative models on a toy synthetic dataset of Gaussian-mixture distribution an
 \begin{figure*}[!ht]
   \captionsetup[subfigure]{justification=centering}
   \centering
-  \begin{subfigure}[b]{0.24\textwidth}
+  \begin{subfigure}[b]{0.44\textwidth}
     \centering
     \includegraphics[width=1\linewidth]{images/toy/gauss4/frame8.jpg}
     \caption{}
     \label{fig-toy}
   \end{subfigure}
   \centering
-  \begin{subfigure}[b]{0.24\textwidth}
+  \begin{subfigure}[b]{0.44\textwidth}
     \centering
     \includegraphics[width=0.8\linewidth]{images/mnist/fake/eot_18500_crop.png}\vspace{5pt}
     \caption{}
     \label{fig-fake-wgan}
   \end{subfigure}
   \centering
-  \begin{subfigure}[b]{0.25\textwidth}
+  \begin{subfigure}[b]{0.44\textwidth}
     \centering
     \includegraphics[width=1.1\linewidth]{images/mnist/tra_score/IS_29.pdf}\vspace{-3pt}
     \caption{}
     \label{fig-tra-is}
   \end{subfigure}
-  \begin{subfigure}[b]{0.25\textwidth}
+  \begin{subfigure}[b]{0.44\textwidth}
     \centering
     \includegraphics[width=1.1\linewidth]{images/mnist/tra_score/FID_29.pdf}\vspace{-3pt}
     \caption{}
     \label{fig-tra-fid}
   \end{subfigure}
-  \vspace{-15pt}
   \caption{(a) Toy distribution learning ($4$-mixture Gaussians) using EOTGM. Real samples (red '+') and contour
     (red curve), versus generated samples (blue 'o') and contour
     (blue curve) by $\bm{g}$. (b) Generated samples by EOTGAN for MNIST dataset. (c) and (d)
@@ -288,7 +287,7 @@ generative models on a toy synthetic dataset of Gaussian-mixture distribution an
     independently performed. Each solid curve with markers plots the mean of $5$
     experiments with shaded areas denoting the range of corresponding
     results.}
-  \label{fig-tra-score}\vspace{8pt}  
+  \label{fig-tra-score}
 \end{figure*}
 
 \subsection{Evaluation Metrics}\label{subsec-metric}
@@ -411,7 +410,7 @@ ones in the feature space regarding to FID. FID of WGAN is larger than that of E
 more generated samples are mixed the FIDs of DCGAN and EOTGM grow
 even faster, which means the samples generated by these two models are
 less similar to the empirical samples.
-\section{Conclusion}
+\section{Summary}
 This work shows that entropy-regularized optimal transport cost is
 useful to train neural network based generative models for learning implicit probability
 distributions. With computationally efficient Sinkhorn algorithm,
@@ -424,6 +423,8 @@ semantic samples.
 
 
 \section{Related Work}
+
+
 \subsection{Base: Generative Adversarial Network}
 
 
