@@ -4,29 +4,29 @@
 \section{Motivations}
 \label{section1.1}
 
-Most tasks conducted by a person or an automated system requires a fundamental ability of \textit{reasoning}, which is always about reaching a conclusion based on available information. At times, a conclusion is not enough and it is also required to know how reliable the conclusion is. Take the coronavirus (COVID-19) that started at the end of 2019 as example, a doctor needs to check the information about a person to reason if the person is infected by the coronavirus. The relevant information includes symptoms such as fever, cough, breathing difficulties and probably kidney failure in severe cases. Even after the doctor has reached a conclusion of positive or negative infection of coronavirus for the person, a natural question is why and how \textit{confident} the diagnose is made.
+Most tasks conducted by a person or an automated system require a fundamental ability of \textit{reasoning}, which is always about reaching a conclusion based on available information. At times, a conclusion is not enough, and it is also required to know how reliable the conclusion is. Take the coronavirus (COVID-19) that started at the end of 2019 as an example: A doctor needs to check the information about a person to reason if the person is infected by the coronavirus. The relevant information includes symptoms such as fever, cough, breathing difficulties, and probably kidney failure in severe cases. Even after the doctor has reached a conclusion of positive or negative infection of coronavirus for the person, a natural question is why and how \textit{confidently} the diagnose is made.
 
-Instead of randomly guessing, reasoning is to answer queries with preserving uncertainty, by making best of available information. Two fundamental problems are inevitable before a rational reasoning can be conducted. 
+Instead of randomly guessing, reasoning aims at answering queries with preserving uncertainty by making the best of the available information. Two fundamental problems are inevitable before rational reasoning can be conducted. 
 \begin{itemize}
-\item How should we specify the relationship between a conclusion and the available information? In the coronavirus example, the counterpart question to answer is how the doctor should relate coronavirus infection with the symptoms. This step is called \textit{modeling} which represents a reasoning problem abstractly by specifying the relationship between known information and unknown parts, in preparation of answer query on it.
-\item With the modeled representation, how a conclusion should be made? This process of reaching a answer to the query from an abstracted representation is called \textit{inference}. Assume the doctor knows that the candidate has fever and cough, but not any breathing problem, how likely does the candidate have be infected by coronavirus?
+\item How should we specify the relationship between a conclusion and the available information? In the coronavirus example, the corresponding question to answer is how the doctor should relate the coronavirus infection to the symptoms. This step is called \textit{modeling} which represents a reasoning problem abstractly by specifying the relationship between known information and unknown parts, in preparation for answering queries.
+\item With the modeled representation, how should a conclusion be drawn? This process of reaching an answer to the query from an abstracted representation is called \textit{inference}. Assume the doctor knows that the candidate has fever and cough, but not any breathing problem. Then, how likely is it that the candidate is infected with the coronavirus?
 \end{itemize}
 
-In the modeling and inference process, it is not likely that the very beginning assumptions are perfectly right about the truth and can be used for all instances of the same type of queries. On the contrary, we usually begin with simple (sometimes naive) assumptions of representation a problem, and come back to revise it later when more information or evidence is available, which is aligned with our learning process of new knowledge. In fact, this assumption-and-revision procedure can be more compact. Instead of fixing the model representation at the beginning when one might not be sure the correctness of the assumptions about the model, one can assume a set of models with the assumption that the 'correct' model is in this set. A typical strategy is to leave some freedom to the configuration of the model at the beginning. Each instantiating the configuration generates a model representation. By using available observations or information, the model is adjusted to be able to be best compatible with the observations. This procedure adds the following fundamental problem in reasoning.
+In the modeling and inference process, it is not likely that very early assumptions are perfectly right about the truth and can be used for all instances of the same type of queries. On the contrary, we usually begin with simple (sometimes naive) assumptions on the representation of a problem, and come back to revise them later when more information or evidence is available. This is aligned with our process of learning new knowledge. In fact, this assumption-and-revision procedure can be more compact. Instead of fixing the model representation at the beginning when one might not be sure about the correctness of the assumptions of the model, one can consider a set of models under the assumption that the 'correct' model is in this set. A typical strategy is to leave some freedom to the configuration of the model at the beginning. Each instantiation of the configuration generates a model representation. By using available observations or information, the model is adjusted to best match with the observations. This procedure adds the following fundamental problem in reasoning.
 \begin{itemize}
-\item Instead of having a fixed model at the first step, a set of models (or hypothesis) is given. We then need to choose one model that best describes the available observations or information. This phase of choosing a model is called \textit{learning}. 
+\item Instead of having a fixed model at the first step, a set of models (or hypotheses) is given. We then need to choose one model that best describes the available observations or information. This phase of choosing a model is called \textit{learning}. 
 \end{itemize}
 Afterwards, inference can be conducted on the learned model to answer queries.
 
-With all the discussed problems above, modeling, inference and learning, our purpose is to carry out reasoning with being aware of how confident a conclusion or answer is. 
-These problems can be treated nicely with probabilistic models via Bayesian logic. Probabilistic model is built on the fundamental calculus of probability theory that is natural to accommodate the \textit{uncertainty}, which is desired in reasoning. In additional, the probabilistic models offers rich space to modeling problems, where inference can be carried on either exactly or approximately. \textbf{More importantly, the modeling or modeling learning part is not necessarily coupled with inference algorithms}. This proper separation allows freedom that a certain family of general inference algorithms can be applies to a broad class probabilistic models. It offers the freedom of trying different model representation of a class without the need of replacing inference algorithm. 
+With all the discussed problems above, i.e., modeling, inference, and learning, our goal is to carry out reasoning while being aware of how confident a conclusion or answer is. 
+These problems can be treated nicely with probabilistic models via Bayesian logic. A probabilistic model is built on the fundamental calculus of probability theory that provides a convenient framework for addressing \textit{uncertainty}, which is desired in reasoning. In addition, probabilistic models offer rich space for modeling problems, where inference can be carried out either exactly or approximately. \textbf{More importantly, the modeling or model learning part is not necessarily coupled with inference algorithms}. This proper separation provides the freedom that a certain family of general inference algorithms can be applied to a broad class of probabilistic models. It offers the freedom of trying different model representations of a class without the need for replacing the inference algorithm.
 
 \begin{example}\label{example-corona}
-  Consider the coronavirus infection problem. Using probabilistic model, we are able to model the problem in a rigid way. Additionally, we can make query more formally in probabilistic model framework. Assume each symptom among fever, cough and breathing difficulty can take value from $\left\{ \mathrm{True}, \mathrm{False} \right\}$. Also the coronavirus infection is either true or false. One exemplified query can be
+  Consider the coronavirus infection problem. Using a probabilistic model, we are able to model the problem in a rigid way. Additionally, we can formalize a query in a probabilistic model framework. Assume each symptom among fever, cough, and breathing difficulty can take a value from $\left\{ \mathrm{True}, \mathrm{False} \right\}$. Also, the coronavirus infection is either true or false. One exemplified query can be
   \begin{equation}
     P(\mathrm{Infection} = \mathrm{True} | \mathrm{Fever} = \mathrm{True}, \mathrm{Cough} = \mathrm{False}, \mathrm{Breathing Difficulty}= \mathrm{True}), \nonumber
   \end{equation}
-  which is asking how likely the patient is infected by coronavirus if symptoms of both fever and breathing difficulty are observed but no sight of cough symptom.
+  which is asking how likely the patient is to be infected by the coronavirus if symptoms of both fever and breathing difficulty are observed but no cough symptoms.
 
 \end{example}
 
@@ -44,7 +44,7 @@ These problems can be treated nicely with probabilistic models via Bayesian logi
       \draw[->] (virus) -- (cough);
       \draw[->] (virus) -- (breath);
     \end{tikzpicture}
-    \caption{A directed graphical model for Example~\ref{example-corona}.}
+    \caption{}
     \label{fig:dag-coronavirus}
   \end{subfigure}\hspace{2.5cm}
   \begin{subfigure}{0.3\textwidth}
@@ -59,21 +59,23 @@ These problems can be treated nicely with probabilistic models via Bayesian logi
       \draw[-] (rs) -- (env);
       
     \end{tikzpicture}
-    \caption{An undirected graphical model.}
+    \caption{}
     \label{fig:mrf-communication}
   \end{subfigure}
-  \caption{Different perspectives on probabilistic graphic models. \ref{fig:dag-coronavirus} A toy Bayesian network. \ref{fig:mrf-communication} A toy Markov random field.}
+  \caption{Different perspectives on probabilistic graphic models. \ref{fig:dag-coronavirus} A directed graphical model (Bayesian network) for Example~\ref{example-corona}. \ref{fig:mrf-communication} A toy undirected graphical model (Markov random field).}
   \hspace{1cm}
 \end{figure}
 
 
-Given the fact that probabilistic theory offers a rigid foundation to model and study the problems, which is used to answer query that we concern, it soon becomes intractable when dozens or hundreds of relevant attributes are joint considered. This can be exemplified by giving finer levels of each symptom in coronavirus infection, e.g. symptom fever is represented by the actual body temperature in integer instead of true-or-false binary state on the one hand. On the other hand, there could be more directly and indirectly relevant symptoms such as muscle pain and congestion. Together with the symptoms, the recent travel itinerary is also related. Additionally, season flu could also similarly bring up some symptoms listed above. 
+We have argued that probabilistic theory offers a rigid foundation to model and study the problems, which can be used to answer queries. Unfortunately, it soon becomes intractable when dozens or hundreds of relevant attributes are jointly considered. This can be exemplified by giving finer levels of each symptom in the coronavirus infection, e.g., symptom fever is represented by the actual body temperature in integer instead of true-or-false binary state on the one hand. On the other hand, there could be more directly and indirectly relevant symptoms such as muscle pain and congestion. Together with these symptoms, a recent travel itinerary may also be relevant. Additionally, season flu could also similarly bring up some symptoms listed above. 
 
-Probabilistic graphical model offers a general framework to encode random variable dependency of a complex probabilistic distribution into a structured graph, which is a powerful tool to compactly model relevant attributes and facts of a complex problem or a system. As show in Figure~\ref{fig:dag-coronavirus} that represents the problem of Example~\ref{example-corona} into a directed graphical model (also called Bayesian network or generative model), the nodes (or vertexes) correspond to the variables that represents symptoms and infection state, whereas the edges between nodes correspond how one variable may influence others. In certain scenarios, it is natural to use directed graphical models (generative models) to represent that a observable variable is dependent on a latent variable that generates the observations. For instance, a noisy location sensor of a car keeps measuring the car's true location and reading noisy locations. 
+A probabilistic graphical model offers a general framework to encode random variable dependency of a complex probabilistic distribution into a structured graph, which is a powerful tool to compactly model relevant attributes and facts of a complex problem or a system. As shown in Figure~\ref{fig:dag-coronavirus} that represents the problem of Example~\ref{example-corona} into a directed graphical model (also called Bayesian network or generative model), the nodes (or vertexes) correspond to the variables that represent symptoms and infection state, whereas the edges between nodes correspond how one variable may influence others. In certain scenarios, it is natural to use directed graphical models (generative models) to represent that an observable variable is depending on a latent variable that generates the observations. For instance, a noisy location sensor of a car keeps measuring the car's true location and reading noisy locations. 
 
-In contract to the directed graphical model, there are more scenarios that the interaction between related random variables is not directional and an undirected edge is used, which leads to the undirected graphical model (or Markov random field, Section~\ref{chpt2:sec:graphical-models}) representation. Undirected graphical models are popularly used in computer vision, computational biology, digital communication, statistical physics, etc. Figure~\ref{fig:mrf-communication} illustrates an exemplified undirected graphical model in digital communication context. On the one hand, a receiver wants to know what is the true symbol by joint considering its communication environment and its received symbol. On the other hand, the symbol received by the receiver is jointly formulated by the true symbol and communication environment. The influence among them is apparently not directional since the impact along an edge can be bidirectional in this example.
+In contrast to directed graphical models, there are scenarios for which the interaction between related random variables is not directional and an undirected edge is used, which leads to the undirected graphical model representation (or Markov random field, see Section~\ref{chpt2:sec:graphical-models}). Undirected graphical models are popularly used in computer vision, computational biology, digital communication, statistical physics, etc. Figure~\ref{fig:mrf-communication} illustrates an exemplified undirected graphical model in digital communication context. On the one hand, a receiver wants to know what is the true symbol by jointly considering its communication environment and its received symbol. On the other hand, the symbol received by the receiver is jointly formulated by the true symbol and communication environment. The influence among them is apparently not directional since the impact along an edge can be bidirectional in this example, e.g., in a sensor network where the environment triggers the sensor to send a message at the same time it affects the communication channel.
 
-Probabilistic graphical model offers a 'scientific language' to do reasoning with uncertainty within framework of probabilistic theory. It is usually a nature representation for a complex system or problem and offers straightforward abstraction. The compact representation of probabilistic graphical model bridges the joint distribution of a complex system, and its graphical abstraction that captures the statistic dependency reflecting our understanding of the system. The advantage of its representation power is one of the reasons that leads to its popularity in difference disciplines.
+A probabilistic graphical model offers a 'scientific language' to do reasoning with uncertainty within the framework of probabilistic theory. It is usually a natural representation of a complex system or problem and offers straightforward abstraction. A probabilistic graphical model bridges the graphical representation of the complex system and the statistic dependency of attributes of the system.
+% The compact representation of probabilistic graphical model bridges the joint distribution of a complex system, and its graphical abstraction that captures the statistic dependency reflecting our understanding of the system.
+The advantage of its representation power is one of the reasons that lead to its popularity in different disciplines.
 
 \begin{figure}[!t]
   \centering
@@ -94,34 +96,34 @@ Probabilistic graphical model offers a 'scientific language' to do reasoning wit
   \hspace{1cm}
 \end{figure}
 
-Probabilistic graphical model coupled with its underlining distribution is a powerful tool for effective inference, apart from its advantage of representation power. It allows to answer queries with the help of the underlining distribution when practical inference algorithms are provided, which meets our need of reasoning with uncertainty. In addition to inference, probabilistic graphical model also supports learning from data. With certain amount of data available, a probabilistic graphical model can be learned to explain the observed data better in addition to align with our own understanding of a domain. The learned graphical model can serve to do inference with higher confidence in return. A diagram is illustrated in Figure~\ref{fig:intro-pgm}. As would become clear in Part~\ref{part:learning}, the inference may be needed to carry out model learning as well, apart from the above mutual-benefiting interaction.
+A probabilistic graphical model coupled with its underlying distribution is a powerful tool for effective inference, apart from its advantage of representation power. It allows us to answer queries with the help of the underlining distribution when practical inference algorithms are provided, which meets our need for reasoning with uncertainty. In addition to inference, probabilistic graphical models also support learning from data. With a certain amount of data available, a probabilistic graphical model can be learned to explain the observed data better in addition to align with our subjective understanding of a domain, e.g., our prior knowledge. The learned graphical model can serve to do inference with higher confidence in return. The interplay between inference and learning in probabilistic graphical models is illustrated in Figure~\ref{fig:intro-pgm}. As would become clear in Part~\ref{part:learning}, the inference may be needed to carry out model learning as well, apart from the above mutual-benefiting interaction.
 
 
 
 \section{Scope and Thesis Outline}\label{chpt1:sec:scope-outline}
-We gives the intuition and motivation of probabilistic graphical model in last section, and the interaction between inference and learning in this framework. In this section, we would navigate further among the topics within this framework and states the ones that we would cover in the thesis.
+We have given the intuition and motivation of probabilistic graphical models in the last section, and pointed out the interaction between inference and learning in this framework. In this section, we would categorize the main topics within the framework firstly. Then, we would outline the thesis content.
 
-Inference in probabilistic graphical model is about answering queries with help of its coupled distribution. These queries can be generally grouped into the following cases:
+Inference in probabilistic graphical models is about answering queries with help of its coupled distribution. These queries can be generally grouped into the following cases:
 \begin{itemize}
-\item Computing the likelihood of observed data or unobserved random variable.
-\item Computing the marginals distribution over a particular subset of random variables.
-\item Computing the conditional distribution a subset of variables given the configuration of another subset of variables. 
+\item Computing the likelihood of observed data or unobserved random variables.
+\item Computing the marginal distribution over a particular subset of random variables.
+\item Computing the conditional distribution of a subset of variables given the configuration of another subset of variables. 
 \item Computing the most likely configuration of (a subset of) variables.
 \end{itemize}
-\textit{The work of this thesis would be mainly related with the first three cases in inference part.}
+\textit{The work of this thesis is mainly related to the first three cases mentioned above.}
 
 
-Due to either the requirement of efficiency in solving a problem or the structure of the problem's graphical model representation, it is not always that case that the above inference problem can solved exactly. Thus inference methods can be divided into
+Due to either the requirement of efficiency in solving a problem or the structure of the problem's graphical model representation, it is not always the case that the above inference problem can be solved exactly. Thus inference methods can be divided into
 \begin{itemize}
-\item exact inference,
-\item and approximate inference.
+\item Exact inference,
+\item Approximate inference.
 \end{itemize}
-For a limited class of graphs, exact inference such as variable elimination and sum-product algorithm can be used. Some graphs also allow efficient inference after mild graph modification, e.g. junction tree method. However, the above listed inference problems can only be approximately solved in general graphs. The approximate inference family can be further divided into
+For a limited class of graphs, exact inference such as variable elimination and sum-product algorithm can be used. Some graphs also allow efficient inference after mild graph modification, e.g. junction tree method. However, the above-listed inference problems can only be approximately solved in general graphs. The approximate inference family can be further divided into
 \begin{itemize}
 \item Stochastic Approximation (Particle methods),
 \item Deterministic Approximation (Variational methods).
 \end{itemize}
-Stochastic approximation mainly relies on sample instances to answer queries, where a major challenge lies in how to obtain samples efficiently from a target distribution. Gibbs sampling, importance sampling and Markov Chain Monte Carlo are within this family. On the other hand, deterministic approximations refer to the variational methods, such as mean field approximation, loopy belief propagation, expectation propagation etc. \textit{From the perspectives of methodology, we related work in this thesis locates in the family of variational methods under approximate inference category.}
+Stochastic approximation mainly relies on sample instances to answer queries, where a major challenge lies in how to obtain samples efficiently from a target distribution. Gibbs sampling, importance sampling, and Markov Chain Monte Carlo are within this family. On the other hand, deterministic approximations refer to the variational methods, such as mean field approximation, loopy belief propagation, expectation propagation, etc. \textit{From the perspective of methodology, this thesis is mainly related with approximate inference under the variational method category.}
 
 
 As for learning in probabilistic graphical models, there are two types of learning problems
@@ -129,10 +131,10 @@ As for learning in probabilistic graphical models, there are two types of learni
 \item Structure learning,
 \item Parameter learning.
 \end{itemize}
-The first case refer to determine the structure of a graphical model from observations, which is usually reduced to the problem of whether there should be an edge between a pair of nodes in the graphical model. The parameter learning is about to determine the parameter of a probabilistic graphical model (or its coupled distribution), with its graphical structure known. Structure learning is out of the scope of this thesis. The term \textit{learning} in thesis means the estimation of the parameters of a distribution. This problem is mainly discussed in Part~\ref{part:learning}, where we would touch the topics about learning in both undirected and directed graphical models. 
+The first case refers to determining the structure of a graphical model from observations, which is usually reduced to the problem of whether there should be an edge between a pair of nodes in the graphical model. The parameter learning is about to determine the parameter of a probabilistic graphical model (or its coupled distribution), with its graphical structure known. Structure learning is out of the scope of this thesis. The term \textit{learning} in the thesis means the estimation of the parameters of a distribution. This problem is mainly discussed in Part~\ref{part:learning}, where we would address learning in both undirected and directed graphical models. 
 
 
-As for the learning techniques, the learning principles can categorized into
+As for the learning techniques, the learning principles can be categorized into
 \begin{itemize}
 \item Maximal likelihood estimation
 \item Maximal conditional likelihood
@@ -140,7 +142,7 @@ As for the learning techniques, the learning principles can categorized into
 \item Maximal-margin
 \item Maximum entropy
 \end{itemize}
-in general. We would touch techniques of the first three cases in Part~\ref{part:learning}.
+in general. Our work is mainly related to the first three cases in Part~\ref{part:learning}.
 
 \subsection{Publications}
 The following works ware done during the author's PhD education.
