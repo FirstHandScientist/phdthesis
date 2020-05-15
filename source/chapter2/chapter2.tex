@@ -1,33 +1,36 @@
 \chapter{Background}
 \label{chapter2}
-In this chapter, we review some background knowledge that is going be used in this thesis. We begin with the introduction to probabilistic graphical models. Then a divergence measure is introduced. Common inference tasks and methods are discussed before the learning problems in probabilistic graphical models are reviewed, which are interpreted as minimization of the divergence measure.
+In this chapter, we review some background knowledge that is going to be used in this thesis. We begin with the introduction to probabilistic graphical models. Then a divergence measure is introduced. Common inference tasks and methods are discussed before the learning problems in probabilistic graphical models are reviewed, which are interpreted as minimization of the divergence measure.
 
 \section{Graphical Models}
 \label{chpt2:sec:graphical-models}
-Graphical models provide a formal graph representation of statistical dependency of complex problems or systems. The conditional independence of random variables can be conveniently encoded and analyzed by a graphical model. More importantly, query problems can be resolved by interactions of local regions of a graphical model in exact or approximate ways, which are usually unfeasible to solve directly.
+Graphical models provide a formal graph representation of statistical dependencies of complex problems or systems. The conditional independence of random variables can be conveniently encoded and analyzed by a graphical model. More importantly, query problems can be resolved by local message interactions of a graphical model in exact or approximate ways, which are usually infeasible to solve directly.
 
-More formally, a graphical model is a graphical representation of a collection of random variables (along their domains) where their statistical dependency encoded into a set of non-negative functions and the graphical structure. Let $\bm{x}= (x_1, x_2, \cdots, x_N)$ be a vector of random variables with $N$ as a positive integer, where an element variable $x_i$ can be either discrete or continuous random variable and takes values from its domain $\Xx_i$. Note that the domain of a random variable is not necessary be the same as that of another. With some abuse of notation, we might use $\bm{x}$ to denote its assignment when there is no cause of ambiguity in context. The joint probability is denoted by $p(\bm{x})=p(x_1, x_2, \cdots, x_N)$.
+More formally, a graphical model is a graphical representation of a collection of random variables (along their domains) where their statistical dependencies are encoded into a set of non-negative functions and the graphical structure. Let $\bm{x}= (x_1, x_2, \cdots, x_N)$ be a vector of random variables with $N$ as a positive integer, where an element variable $x_i$ can be either discrete or continuous random variable and takes values from its domain $\Xx_i$. Note that the domain of a random variable is not necessary be the same as that of another. With some abuse of notation, we might use $\bm{x}$ to denote its assignment when there is no cause of ambiguity in context. The joint probability distribution is denoted by $p(\bm{x})=p(x_1, x_2, \cdots, x_N)$.
 We denote $\bm{\Xx} = \prod_{x=1}^{N} \Xx_i$ and then $\bm{x}\in \bm{\Xx}$.
 
-As motivated in Chapter~\ref{section1.1}, a graphical model can be directed or undirected. A directed graphical model also is also know as a Bayesian network or generative model in literature \cite[Chapter~8]{Bishop:2006:PRM:1162264}. We might use the names alternatively. The non-negative functions in graphical models encodes the local compatibility of states of random variables. In directed graphical models, i.e. Bayesian networks, the local functions are conditional probability functions. The joint probability distribution is represented as the product of these conditional probability functions,
+As motivated in Chapter~\ref{section1.1}, a graphical model can be directed or undirected. A directed graphical model is also know as a Bayesian network or generative model in the literature \cite[Chapter~8]{Bishop:2006:PRM:1162264}. We might use the names alternatively. The non-negative functions in graphical models encode the local compatibility of states of random variables. In directed graphical models, i.e. Bayesian networks, the local functions are conditional probability functions. The joint probability distribution is represented as the product of these conditional probability functions,
 \begin{equation}
   p(\bm{x}) = \prod_{n=1}^{N}p(x_n| \Pp(x_n)),
 \end{equation}
-where $\Pp(\cdot)$ denotes the set of parent nodes in the directed graph. In an directed graphical model, the local functions, i.e. the conditional probability distributions, e.g. $\{p(x_n| \Pp(x_n))\}$, are normalized and proper distributions. Additionally, sampling from a underlining distribution $p(\bm{x})$ of a directed graphical model is efficient. Due to acyclic property of directed graphical models, by the well know \textit{ancestral sampling}, a sample $(x_1, x_2, \cdots, x_N)$ can be drawn sequentially via following the directed edges. In another word, $x_n$ is always sampled after $\Pp(x_n)$. This process might be viewed as the 'generative' process of signal $\bm{x}$, i.e. how $\bm{x}$ is generated from the graphical model.
+where $\Pp(\cdot)$ denotes the set of parent nodes in the directed graph. In an directed graphical model, the local functions, i.e. the conditional probability distributions, e.g. $\{p(x_n| \Pp(x_n))\}$, are normalized and proper distributions. The directed graph of a directed graphical model or a Bayesian network is required to be an \textit{acyclic} graph. That is to say, if starting from a node $1$ (associated with $x_1$) and following a directed path $x_1\rightarrow \cdots \rightarrow x_n$ along the directed edges of the graph, there is no path such that $n=1$. Sampling from a underlining distribution $p(\bm{x})$ of a directed graphical model is efficient. Due to acyclic property of directed graphical models, by the well know \textit{ancestral sampling}, a sample $(x_1, x_2, \cdots, x_N)$ can be drawn sequentially via following the directed edges. In another word, $x_n$ is always sampled after $\Pp(x_n)$. This process might be viewed as the 'generative' process of signal $\bm{x}$, i.e. how $\bm{x}$ is generated from the graphical model.
 
-A Bayesian network (generative model) is usually easier to be interpreted due to the fact that its local functions are conditional probabilities and it is natural to decompose the joint underlining distribution into conditional probability distributions. But Bayesian networks can only be applied to the limited cases where influence between variables is directional. In many practical cases, interaction between variables can not be naturally described by impact with directionality. A problem of this kind can be represented by an undirected graphical model, i.e. a Markov random field (MRF). Under certain condition, a Bayesian network can be perfectly represented by a Markov random field without loss of independence information by moralizing edges \cite[Chapter~4.5]{koller2009pgm}. Instead of conditional probability distributions, the local functions of MRF represents the compatibility of states of different variables, which are termed as \textit{potential factors}. Different from conditional probabilities in a Bayesian network, a potential factor in a MRF is not necessary normalized (not necessary to be summed to one). We provide a toy example of MRF with three variable nodes as follows.
+A Bayesian network (generative model) is usually easier to interpret due to the fact that its local functions are conditional probabilities and it is natural to decompose the joint underlining distribution into conditional probability distributions. However, there are practical scenarios where interaction between two variables can not be naturally described by impact with directionality, which may bring the difficulty of deciding the direction of an edge between them. Furthermore, there are cases where a Bayesian network can not encode all independence constraints of a distribution (see \cite[seciton~3.4.3]{koller2009pgm}). Therefore, an alternative representation method can be an undirected graphical model, i.e. a Markov random field (MRF). Under certain conditions, a Bayesian network can be perfectly represented by a Markov random field without loss of independence information by moralizing edges \cite[Chapter~4.5]{koller2009pgm}. Instead of conditional probability distributions, the local functions of MRF represents the compatibility of states of different variables, which are termed as \textit{potential factors}. Different from conditional probabilities in a Bayesian network, a potential factor in a MRF is not necessary normalized (not necessary to be summed to one). We provide a toy example of MRF with three variable nodes as follows.
 \begin{figure}[!t]
   % \captionsetup[subfigure]{justification=centering}
-  \begin{subfigure}{.3\textwidth}
+  \begin{subfigure}{.28\textwidth}
     \begin{tikzpicture}
-      \begin{scope}[scale=0.7]
+      \begin{scope}[scale=0.6]
         \tikzstyle{cnode} = [thick, draw=black, circle, inner sep = 2pt,  align=center]
         \node[cnode] (x1) at (0,0) {$1$};
         \node[cnode] (x2) at (3,0) {$2$};
-        \node[cnode] (x3) at (1.5,-2) {$3$};
+        \node[cnode] (x3) at (3,-3) {$3$};
+        \node[cnode] (x4) at (0,-3) {$4$};
+
         \draw[-] (x1) -- (x2);
-        \draw[-] (x1) -- (x3);
+        \draw[-] (x1) -- (x4);
         \draw[-] (x2) -- (x3);
+        \draw[-] (x4) -- (x3);
       \end{scope}
     \end{tikzpicture}
   \end{subfigure}
@@ -43,16 +46,16 @@ A Bayesian network (generative model) is usually easier to be interpreted due to
       \bottomrule
     \end{tabular}
   \end{subfigure}
-  \begin{subfigure}{0.05\textwidth}
-    \centering
-    \begin{tikzpicture}
-      \node[] at (0,0) {$\cdots$};
-    \end{tikzpicture}
-  \end{subfigure}
+  % \begin{subfigure}{0.05\textwidth}
+  %   \centering
+  %   \begin{tikzpicture}
+  %     \node[] at (0,0) {$\cdots$};
+  %   \end{tikzpicture}
+  % \end{subfigure}
   \begin{subfigure}{0.3\textwidth}
     \begin{tabular}{llc}
       \toprule
-      $x_2$ & $x_3$ & $\phi(x_1, x_2)$ \\
+      $x_2$ & $x_3$ & $\phi(x_2, x_3)$ \\
       \midrule
       0  &  0  &  5 \\
       0  &  1  &  3 \\
@@ -61,17 +64,23 @@ A Bayesian network (generative model) is usually easier to be interpreted due to
       \bottomrule
     \end{tabular}
   \end{subfigure}
-  \caption{A Markov random field with three binary nodes. Potential factors are represented by tables.}
+  \begin{subfigure}{0.03\textwidth}
+    \centering
+    \begin{tikzpicture}
+      \node[] at (0,0) {$\cdots$};
+    \end{tikzpicture}
+  \end{subfigure}
+  \caption{A Markov random field with four binary nodes. Potential factors are represented by tables.}
   \label{chp2:fig:toy_mrf}
   \hspace{1cm}
 \end{figure}
 
 \begin{example}\label{chpt2:mrf-3node-example}
-  As shown in Figure~\ref{chp2:fig:toy_mrf}, the MRF encodes dependency of three random variables $x_1$, $x_2$, and $x_3$, where node $i$ is associated with variable $x_i$ and each has a binary domain, i.e. $\Xx_i = \{0,1\}$ for $i =1,2,3$. Three potential factors of the MRF together define the joint distribution
+  As shown in Figure~\ref{chp2:fig:toy_mrf}, the MRF encodes the dependencies of four random variables $x_1$, $x_2$, $x_3$, and $x_4$, where node $i$ is associated with variable $x_i$ and each has a binary domain, i.e. $\Xx_i = \{0,1\}$ for $i =1, 2, 3, 4$. Four potential factors of the MRF together define the joint distribution
   \begin{equation*}
-    p(\bm{x}) = \frac{1}{Z} \phi_{1,2}(x_1, x_2) \phi_{2,3}(x_2, x_3) \phi_{1,3}(x_1, x_3)
+    p(\bm{x}) = \frac{1}{Z} \phi_{1,2}(x_1, x_2) \phi_{2,3}(x_2, x_3) \phi_{1,4}(x_1, x_4)\phi_{3,4}(x_3, x_4)
   \end{equation*}
-  where $Z = \sum_{x_1, x_2, x_3}\phi_{1,2}(x_1, x_2) \phi_{2,3}(x_2, x_3) \phi_{1,3}(x_1, x_3)$ normalizes the potential factors such that $p(\bm{x})$ is a proper distribution. The exemplified potential factors in Figure~\ref{chp2:fig:toy_mrf} demonstrate that it is more compatible or likely when $x_1$, $x_2$ and $x_3$ are in the same state (either $0$ or $1$) than they are configured into different states.
+  where $Z = \sum_{x_1, x_2, x_3, x_4}\phi_{1,2}(x_1, x_2) \phi_{2,3}(x_2, x_3) \phi_{1,4}(x_1, x_4)\phi_{3,4}(x_3, x_4)$ normalizes the potential factors such that $p(\bm{x})$ is a proper distribution. The exemplified potential factors in Figure~\ref{chp2:fig:toy_mrf} demonstrate that it is more compatible or likely when $x_1$, $x_2$ and $x_3$ are in the same state (either $0$ or $1$) than they are configured into different states.
 \end{example}
 
 From the above example to a formal statement, a MRF over random vector $\bm{x}$ can be represented by a undirected graph $\Gg(\Vv, \Ee)$, with each node $i \in \Vv$ is associated with a random variable $x_i$ and undirected edge set $\Ee \subset \Vv \times \Vv$. This MRF encodes a collection of distributions that factorize as
@@ -84,7 +93,11 @@ where $\Ff$ is the set of indexes of potential factors, and each factor $\phi_{a
 \end{equation}
 is the \textit{partition function}. Apparently, the partition function normalizes the potential factors such that $p(\bm{x}; \bm{\theta})$ is a proper probability.
 
-\begin{remark}
+\begin{remark}[On set $\Ff$ of potential factors]
+In our definition in \eqref{chp2:eq:mrf-definition}, the set of potential factors, i.e. $\Ff$, is not required to be the set of all \textit{maximal cliques} of the graph $\Gg$. A clique is of the graph $\Gg$ a subset of nodes in $\Gg$ within which any two nodes are connected by an edge of $\Gg$, while a maximal clique such that it is not possible to include any other nodes from $\Gg$ in the clique without it ceasing to be a clique. Note there is literature that defines MRF over maximal cliques \cite[section~8.3.2]{Bishop:2006:PRM:1162264}. Actually, we can always reformulate \eqref{chp2:eq:mrf-definition} into factorization over maximal cliques by redefining a maximal clique as the product factors in $\Ff$ that is subset of the maximal clique. Nevertheless, the definition in \eqref{chp2:eq:mrf-definition} without maximal clique requires allows more flexible of factorization and finer specification of potential factors. These properties maybe beneficial to computations.
+\end{remark}
+
+\begin{remark}[Comparison of directed and undirected graphical models]
   We can compare directed and undirected graphical models with regarding to the following aspects.
   \begin{itemize}
   \item \textit{Representation}: The structure and the parameterizaiton in directed graphical models provide a natural representation for many types of real-world domains. MRF representation is not usually as intuitive as that of directed graphical models. But the acyclic property of directed graphical models limits their representation power. On the other hand, MRFs can be either cyclic or acyclic, which offers the flexibility of graph structure and can simplify the graphical representation. Due to the weaker requirement of potential factors and the weaker requirement of graphical structure in MRFs than local functions and acyclic constraint in directed graphical models, respectively, the representation of MRFs are richer. 
@@ -110,22 +123,30 @@ is the \textit{partition function}. Apparently, the partition function normalize
         \node[above=0.2mm of x1] {$x_1$};
         \node[cnode] (x2) at (3,0) {$2$};
         \node[above=0.2mm of x2] {$x_2$};
-        \node[cnode] (x3) at (1.5,-2) {$3$};
+        \node[cnode] (x3) at (3,-3) {$3$};
         \node[below=0.2mm of x3] {$x_3$};
+        \node[cnode] (x4) at (0,-3) {$4$};
+        \node[below=0.2mm of x4] {$x_4$};
 
+        
         \node[nnode] (f12) at (1.5, 0) {};
         \node[] at ($(f12) + (0,0.6)$) {$\phi_{1,2}$};
-        \node[nnode] (f13) at (0.75, -1) {};
-        \node[] at ($(f13) + (-0.8,0)$) {$\phi_{1,3}$};
-        \node[nnode] (f23) at (2.25, -1) {};
+        \node[nnode] (f34) at (1.5, -3) {};
+        \node[] at ($(f34) + (0,0.6)$) {$\phi_{3,4}$};
+        
+        \node[nnode] (f14) at (0, -1.5) {};
+        \node[] at ($(f14) + (0.8,0)$) {$\phi_{1,4}$};
+        \node[nnode] (f23) at (3, -1.5) {};
         \node[] at ($(f23) + (0.80,0)$) {$\phi_{2,3}$};
         \path[-, draw, thick]
         (x1) edge node {} (f12)
         (f12) edge node {} (x2)
         (x2) edge node {} (f23)
         (f23) edge node {} (x3)
-        (x3) edge node {} (f13)
-        (f13) edge node {} (x1)
+        (x3) edge node {} (f34)
+        (f34) edge node {} (x4)
+        (x4) edge node {} (f14)
+        (f14) edge node {} (x1)
         ;
       \end{scope}
     \end{tikzpicture}
@@ -139,25 +160,35 @@ is the \textit{partition function}. Apparently, the partition function normalize
         \tikzstyle{cnode} = [thick, draw=black, circle, inner sep = 2pt,  align=center]
         \tikzstyle{cfnode} = [thick, draw=black, fill=gray,circle, inner sep = 2pt,  align=center]
         \tikzstyle{nnode} = [thick, rectangle, rounded corners = 0pt,draw,inner sep = 5pt]
+
         \node[cnode] (x1) at (0,0) {$1$};
         \node[above=0.2mm of x1] {$x_1$};
         \node[cfnode] (x2) at (3,0) {$2$};
         \node[above =0.2mm of x2] {$x_2\!\!=\!\!1$};
-        \node[cnode] (x3) at (1.5,-2) {$3$};
+        \node[cnode] (x3) at (3,-3) {$3$};
         \node[below=0.2mm of x3] {$x_3$};
+        \node[cnode] (x4) at (0,-3) {$4$};
+        \node[below=0.2mm of x4] {$x_4$};
+
+        
         \node[nnode] (f12) at (1.5, 0) {};
-        \node[] at ($(f12) + (0.2,0.6)$) {$\phi_{1,2}$};
-        \node[nnode] (f13) at (0.75, -1) {};
-        \node[] at ($(f13) + (-0.8,0)$) {$\phi_{1,3}$};
-        \node[nnode] (f23) at (2.25, -1) {};
-        \node[] at ($(f23) + (1.10,0)$) {$\phi_{2,3}$};
+        \node[] at ($(f12) + (0,0.6)$) {$\phi_{1,2}$};
+        \node[nnode] (f34) at (1.5, -3) {};
+        \node[] at ($(f34) + (0,0.6)$) {$\phi_{3,4}$};
+        
+        \node[nnode] (f14) at (0, -1.5) {};
+        \node[] at ($(f14) + (0.8,0)$) {$\phi_{1,4}$};
+        \node[nnode] (f23) at (3, -1.5) {};
+        \node[] at ($(f23) + (0.80,0)$) {$\phi_{2,3}$};
         \path[-, draw, thick]
         (x1) edge node {} (f12)
         (f12) edge node {} (x2)
         (x2) edge node {} (f23)
         (f23) edge node {} (x3)
-        (x3) edge node {} (f13)
-        (f13) edge node {} (x1)
+        (x3) edge node {} (f34)
+        (f34) edge node {} (x4)
+        (x4) edge node {} (f14)
+        (f14) edge node {} (x1)
         ;
       \end{scope}
     \end{tikzpicture}
@@ -171,24 +202,35 @@ is the \textit{partition function}. Apparently, the partition function normalize
         \tikzstyle{cnode} = [thick, draw=black, circle, inner sep = 2pt,  align=center]
         \tikzstyle{cfnode} = [thick, draw=black, fill=gray,circle, inner sep = 2pt,  align=center]
         \tikzstyle{nnode} = [thick, rectangle, rounded corners = 0pt,draw,inner sep = 5pt]
+
+
         \node[cnode] (x1) at (0,0) {$1$};
         \node[above=0.2mm of x1] {$x_1$};
-        
-        \node[cnode] (x3) at (1.5,-2) {$3$};
+        \node[cnode] (x3) at (3,-3) {$3$};
         \node[below=0.2mm of x3] {$x_3$};
+        \node[cnode] (x4) at (0,-3) {$4$};
+        \node[below=0.2mm of x4] {$x_4$};
+
+        
         \node[nnode] (f12) at (1.5, 0) {};
         \node[] at ($(f12) + (1.2,0.6)$) {$\phi_{1,2}(x_1, x_2\!\!=\!\! 1)$};
-        \node[nnode] (f13) at (0.75, -1) {};
-        \node[] at ($(f13) + (-0.8,0)$) {$\phi_{1,3}$};
-        \node[nnode] (f23) at (2.25, -1) {};
-        \node[] at ($(f23) + (1.2,0.6)$) {$\phi_{2,3}(x_2\!\!=\!\! 1, x_3)$};
+        
+        \node[nnode] (f34) at (1.5, -3) {};
+        \node[] at ($(f34) + (0,0.6)$) {$\phi_{3,4}$};
+        
+        \node[nnode] (f14) at (0, -1.5) {};
+        \node[] at ($(f14) + (0.8,0)$) {$\phi_{1,4}$};
+        \node[nnode] (f23) at (3, -1.5) {};
+        \node[] at ($(f23) + (-0.2,0.6)$) {$\phi_{2,3}(x_2\!\!=\!\! 1, x_3)$};
+
         \path[-, draw, thick]
         (x1) edge node {} (f12)
-        
-        
+
         (f23) edge node {} (x3)
-        (x3) edge node {} (f13)
-        (f13) edge node {} (x1)
+        (x3) edge node {} (f34)
+        (f34) edge node {} (x4)
+        (x4) edge node {} (f14)
+        (f14) edge node {} (x1)
         ;
       \end{scope}
     \end{tikzpicture}
