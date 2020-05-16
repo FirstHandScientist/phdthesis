@@ -9,7 +9,7 @@ The motivation of studying these generative models lies in the applications wher
 
 In this chapter, we introduce the learning of implicit probabilistic generative models by employing \textit{optimal transport} from transportation theory that does not need to the tractability of likelihood. As long as we can simple for a generative model efficiently, learning of the generative model can be formed as the minimization of an optimal transport distance between the induced implicit distribution and an empirical distribution.
 
-\section{Optimal Transport}
+\section{Optimal Transport}\label{chpt:sec:ot}
 Optimal transport (OT) is a geometric tool for comparison of probability distribution. OT has a rich and varied history. Its work traces back as early as $18$th century as in Monge's work \cite{monge1781memoire}. OT has been widely used in different fields, such as economic problems, logistics, production planning, etc. Along its development in history, OT has been given difference names, such as earth mover distance, Kantovich distance
 and Wasserstein distance. Abstractly, OT distances measures the minimum transportation cost of from the mass of a distribution to another distribution \cite{villani2003topics}. Due to its close relation to comparison of probability distributions and optimization, OT and its
 variants have also been popularly used in machine learning and gained fast development in both theory and applications \cite{2013arXiv1310.4375C, 2013arXiv1306.0895C, 2016arXiv161006519S, DBLP:conf/icml/ClaiciCS18}.
