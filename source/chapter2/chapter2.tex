@@ -15,7 +15,7 @@ As motivated in Chapter~\ref{section1.1}, a graphical model can be directed or u
 \end{equation}
 where $\Pp(\cdot)$ denotes the set of parent nodes in the directed graph. In an directed graphical model, the local functions, i.e. the conditional probability distributions, e.g. $\{p(x_n| \Pp(x_n))\}$, are normalized and proper distributions. The directed graph of a directed graphical model or a Bayesian network is required to be an \textit{acyclic} graph. That is to say, if starting from a node $1$ (associated with $x_1$) and following a directed path $x_1\rightarrow \cdots \rightarrow x_n$ along the directed edges of the graph, there is no path such that $n=1$. Sampling from a underlining distribution $p(\bm{x})$ of a directed graphical model is efficient. Due to acyclic property of directed graphical models, by the well know \textit{ancestral sampling}, a sample $(x_1, x_2, \cdots, x_N)$ can be drawn sequentially via following the directed edges. In another word, $x_n$ is always sampled after $\Pp(x_n)$. This process might be viewed as the 'generative' process of signal $\bm{x}$, i.e. how $\bm{x}$ is generated from the graphical model.
 
-A Bayesian network (generative model) is usually easier to interpret due to the fact that its local functions are conditional probabilities and it is natural to decompose the joint underlining distribution into conditional probability distributions. However, there are practical scenarios where interaction between two variables can not be naturally described by impact with directionality, which may bring the difficulty of deciding the direction of an edge between them. Furthermore, there are cases where a Bayesian network can not encode all independence constraints of a distribution (see \cite[seciton~3.4.3]{koller2009pgm}). Therefore, an alternative representation method can be an undirected graphical model, i.e. a Markov random field (MRF). Under certain conditions, a Bayesian network can be perfectly represented by a Markov random field without loss of independence information by moralizing edges \cite[Chapter~4.5]{koller2009pgm}. Instead of conditional probability distributions, the local functions of MRF represents the compatibility of states of different variables, which are termed as \textit{potential factors}. Different from conditional probabilities in a Bayesian network, a potential factor in a MRF is not necessary normalized (not necessary to be summed to one). We provide a toy example of MRF with three variable nodes as follows.
+A Bayesian network (generative model) is usually easier to interpret due to the fact that its local functions are conditional probabilities and it is natural to decompose the joint underlining distribution into conditional probability distributions. However, there are practical scenarios where interaction between two variables can not be naturally described by impact with directionality, which may bring the difficulty of deciding the direction of an edge between them. Also, there are cases where a Bayesian network can not encode all independence constraints of a distribution, which could be due to the structure of Bayesian networks is not appropriated (see \cite[seciton~3.4.2]{koller2009pgm}). Therefore, an alternative representation method can be an undirected graphical model, i.e. a Markov random field (MRF). Under certain conditions, a Bayesian network can be perfectly represented by a Markov random field without loss of independence information by moralizing edges \cite[section~4.5]{koller2009pgm}\cite[section~8.3.4]{Bishop:2006:PRM:1162264}. Instead of conditional probability distributions, the local functions of MRF represents the compatibility of states of different variables, which are termed as \textit{potential factors}. Different from conditional probabilities in a Bayesian network, a potential factor in a MRF is not necessary normalized (not necessary to be summed to one). We provide a toy example of MRF with three variable nodes as follows.
 \begin{figure}[!t]
   % \captionsetup[subfigure]{justification=centering}
   \begin{subfigure}{.28\textwidth}
@@ -91,7 +91,7 @@ where $\Ff$ is the set of indexes of potential factors, and each factor $\phi_{a
 \begin{equation}
   Z(\bm{\theta}) = \sum_{\bm{x}} \prod_{a \in \Ff} \phi_{a}(\bm{x}_{a};\bm{\theta})
 \end{equation}
-is the \textit{partition function}. Apparently, the partition function normalizes the potential factors such that $p(\bm{x}; \bm{\theta})$ is a proper probability.
+is the \textit{partition function}. Obviously, the partition function normalizes the potential factors such that $p(\bm{x}; \bm{\theta})$ is a proper probability.
 
 \begin{remark}[On set $\Ff$ of potential factors]
 In our definition in \eqref{chp2:eq:mrf-definition}, the set of potential factors, i.e. $\Ff$, is not required to be the set of all \textit{maximal cliques} of the graph $\Gg$. A clique is of the graph $\Gg$ a subset of nodes in $\Gg$ within which any two nodes are connected by an edge of $\Gg$, while a maximal clique such that it is not possible to include any other nodes from $\Gg$ in the clique without it ceasing to be a clique. Note there is literature that defines MRF over maximal cliques \cite[section~8.3.2]{Bishop:2006:PRM:1162264}. Actually, we can always reformulate \eqref{chp2:eq:mrf-definition} into factorization over maximal cliques by redefining a maximal clique as the product factors in $\Ff$ that is subset of the maximal clique. Nevertheless, the definition in \eqref{chp2:eq:mrf-definition} without maximal clique requires allows more flexible of factorization and finer specification of potential factors. These properties maybe beneficial to computations.
@@ -100,17 +100,19 @@ In our definition in \eqref{chp2:eq:mrf-definition}, the set of potential factor
 \begin{remark}[Comparison of directed and undirected graphical models]
   We can compare directed and undirected graphical models with regarding to the following aspects.
   \begin{itemize}
-  \item \textit{Representation}: The structure and the parameterizaiton in directed graphical models provide a natural representation for many types of real-world domains. MRF representation is not usually as intuitive as that of directed graphical models. But the acyclic property of directed graphical models limits their representation power. On the other hand, MRFs can be either cyclic or acyclic, which offers the flexibility of graph structure and can simplify the graphical representation. Due to the weaker requirement of potential factors and the weaker requirement of graphical structure in MRFs than local functions and acyclic constraint in directed graphical models, respectively, the representation of MRFs are richer. 
+  \item \textit{Representation}: The structure and the parameterizaiton in directed graphical models provide a natural representation for many types of real-world domains. For domains where interactions are naturally directional, directional graphical models can best manifest the abstraction and encode the dependencies. On the contrast, for domains where interactions are symmetrical without certain directionality, MRFs would be natural choices since forcing a directionality in these cases may cause an incomplete representation of dependencies. Furthermore, MRFs can be either cyclic or acyclic, which allows intuitive graphical representation with weaker constraint and gives the flexibility of graph structures.
   \item \textit{Local nonnegative functions}: The local functions are conditional probability functions in directed graphical models, but potential factors (nonnegative) in undirected cases.
   \item \textit{Sampling}: Sampling is more straightforward within generative models (directed graphs) than that in MRFs.
   \item \textit{Normalization}: Since each local function is a conditional probability function in directed graphical models, partition function for normalization is not needed. A MRF in general comes with partition functions, since potential factors are not necessarily normalized.
   \end{itemize}
 \end{remark}
 
+\begin{remark}[Graphical models with both directed and undirected edges]
+  In the above discussions, we have presented both directed and undirected graphical models. In literature, a single graphical model may also encode both directed and undirected dependencies, i.e. there are both directed and undirected edges in its graph. Perhaps the most well-known models of this kind are the \textit{conditional random fields} (CRFs). See \cite{charles2012crf} for more introduction.
+\end{remark}
 
 
-
-\subsection{Alternative Representation of MRF}
+\subsection{An Alternative Representation}
 \begin{figure}[!t]
   % \captionsetup[subfigure]{justification=centering}
   \begin{subfigure}{.33\textwidth}
@@ -243,11 +245,10 @@ In our definition in \eqref{chp2:eq:mrf-definition}, the set of potential factor
   \hspace{1cm}
 \end{figure}
 
-
-The representation of a MRF by $\Gg(\Vv, \Ee)$ as explained above is compact, but the potential factors are not present in the graphical representation. An alternative representation to MRF is \textit{factor graph} \cite{kschischang2001factor_graph},
-which is a bipartite graph topology. In a factor graph, a potential factor is explicitly represented as a factor node, as counterpart of variable node associated with a random variable.
+The previous graphical representations do not explicitly the conditional probability functions or potential factors in their graphs. An alternative representation to a graphical model (undirected or directed) is \textit{factor graph} \cite{kschischang2001factor_graph},
+which is a bipartite graph topology. In a factor graph, a potential factor or a conditional probability funciton is explicitly represented as a factor node, as the counterpart of the variable node associated with a random variable. We focus on the correspondence between a MRF and its factor graph here.
 \begin{definition}\label{chpt2:def:factor-graph}
-  A factor graph $\Gg_F$, is a bipartite graph that represents the factorization structure of \eqref{chp2:eq:mrf-definition}. A factor graph has two types of nodes: i) a variable node for each variable $x_i$; ii) a factor node for each potential function $\phi_{a}$. An edge between a variable node $i$ and factor node $a$ if and only if $x_i$ is argument of $\phi_{a}$. We would denote a factor graph by $\Gg_F(\Vv \cup \Ff, \Ee_F)$ with $\Vv$ as the set of variable nodes, $\Ff$ as the set of factor nodes, and $\Ee_F$ the set of undirected edges.
+  A factor graph $\Gg_F$, is a bipartite graph that represents the factorization of \eqref{chp2:eq:mrf-definition}. A factor graph has two types of nodes: i) a variable node for each variable $x_i$; ii) a factor node for each potential function $\phi_{a}$. An edge is placed between a variable node $i$ and factor node $a$ if and only if $x_i$ is argument of $\phi_{a}$. We denote a factor graph by $\Gg_F(\Vv \cup \Ff, \Ee_F)$ with $\Vv$ as the set of variable nodes, $\Ff$ as the set of factor nodes, and $\Ee_F$ the set of undirected edges.
 \end{definition}
 \begin{example}
   Let us represent the Example~\ref{chpt2:fig:factor-graph-3node-example} by a factor graph, which is shown in Figure~\ref{chpt2:fig:factor-graph-3node-example}. Different from the representation by $\Gg(\Vv, \Ee)$ in Figure~\ref{chp2:fig:toy_mrf}, factor nodes are explicitly represented by square nodes.
@@ -255,9 +256,9 @@ which is a bipartite graph topology. In a factor graph, a potential factor is ex
 
 
 \subsection{Conditioning on Observations in MRFs}
-It is not rare that a graphical model may contain observed variable. The node set of a MRF can be separated into a subset $\Vv_O$ of nodes, that are associated with observed variable $\bm{x}_O$, and a subset $\Vv_U$ of nodes associated with unobserved variable $\bm{x}_U$. For an evidence is observed,
+It is not rare that a graphical model may contain observed variable. The node set of a MRF can be separated into a subset $\Vv_O$ of nodes that are associated with observed variable $\bm{x}_O$, and a subset $\Vv_U$ of nodes associated with unobserved variable $\bm{x}_U$. When an evidence is observed, its likelihood can be computed as
 \begin{equation}
-  p(\bm{x}_U|\bm{x}_O;\bm{\theta}) = \frac{p(\bm{x}_U, \bm{x}_O; \bm{\theta})}{p(\bm{x}_O;\bm{\theta})} =  \frac{Z(\bm{x}_O,\bm{\theta})}{Z(\bm{\theta})},
+  p(\bm{x}_O;\bm{\theta}) = \sum_{\bm{x}_U} p(\bm{x}_O;\bm{\theta}) =\sum_{\bm{x}_U}\frac{\tilde{p}(\bm{x}; \bm{\theta})}{Z(\bm{\theta})} = \frac{Z(\bm{x}_O,\bm{\theta})}{Z(\bm{\theta})},
 \end{equation}
 where 
 \begin{align}
@@ -265,11 +266,13 @@ where
   Z(\bm{x}_O, \bm{\theta}) &= \sum_{\bm{x}_U} \tilde{p}(\bm{x}; \bm{\theta}), \nonumber \\
   Z(\bm{\theta}) &= \sum_{\bm{x}_O}\sum_{\bm{x}_U} \tilde{p}(\bm{x}; \bm{\theta}).
 \end{align}
-This means that a condition probability can be computed by partition function and sub-partition functions. Alternatively, when an evidence $\bm{e}_O$ (an sample instance of $\bm{x}_O$) is observed, the conditional probability can be written as
+This means that the likelihood of an (partial) evidence can be computed by partition function and sub-partition functions. As would been seen in Part~\ref{part:learning}, this likelihood function, or its appropriations would be used for model learning.
+
+ When an evidence $\bm{e}_O$ (an sample instance of $\bm{x}_O$) is observed, the conditional probability can be written as
 \begin{equation}\label{chpt2:eq:mrf-condtioning}
   p(\bm{x}_U|\bm{x}_O=\bm{e}_O;\bm{\theta}) = \frac{\tilde{p}(\bm{x}_U, \bm{x}_O = \bm{e}_O; \bm{\theta})}{\sum_{\bm{x}_U}\tilde{p}(\bm{x}_U, \bm{x}_O = \bm{e}_O; \bm{\theta})} \propto \tilde{p}(\bm{x}_U, \bm{x}_O = \bm{e}_O; \bm{\theta})
 \end{equation}
-where $\propto$ stands for propositional to. \ref{chpt2:eq:mrf-condtioning} shows an interesting phenomenon for MRF including evidence. It can be understood as clamping nodes in $\Vv_O$ of the MRF to configuration $\bm{e}_O$, i.e. the domain of $\bm{x}_O$ becomes a set containing only one instance $\bm{e}_O$. For instance, an example of conditioning on a variable node for Example~\ref{chpt2:mrf-3node-example} is shown in Figure~\ref{chpt2:fig:factor-graph-3node-example-condition}.
+where $\propto$ stands for proportional to. \eqref{chpt2:eq:mrf-condtioning} shows an interesting phenomenon for MRF including evidence. It can be understood as clamping nodes in $\Vv_O$ of the MRF to configuration $\bm{e}_O$, i.e. the domain of $\bm{x}_O$ becomes a set containing only one instance $\bm{e}_O$. For instance, an example of conditioning on a variable node for Example~\ref{chpt2:mrf-3node-example} is shown in Figure~\ref{chpt2:fig:factor-graph-3node-example-condition}, where node $2$ is clamped to evidence $x_2=1$.
 
 
 
@@ -277,11 +280,11 @@ In addition to the above intuitions, conditioning can also be understood as a pr
 the graph including evidence node $2$ in Figure~\ref{chpt2:fig:factor-graph-3node-example-condition} can be further reduced into a Figure~\ref{chpt2:fig:factor-graph-3node-example-reduced}. Then any inference applicable to a MRF applies to the MRF with nodes clamped as well. A MRF with several nodes clamped to some evidence can be seen either as a manipulation of its domain or the graph itself.
 
 
-It can be seen that MRF framework is capable to handle conditioning as well. Therefore, in the following part of the thesis, it might or might not have bee based on conditioning observed variables when a MRF is mentioned. 
+It can be seen that the MRF framework is capable of handling evidence and conditioning as well. We would come back to this topic in Part~\ref{part:learning}.
 
 \section{Divergence}\label{chpt2:sec:devergence}
-Before we get into more discussion about inference and learning topics, we firstly introduce the concept of \textit{divergence} measures since principles of both learning and inference are closed related with divergence measure.
-A divergence measure play a fundamental role when we try to use a probability distribution (over discrete or continue variable)  $q$ to approximate another probability distribution $p$. A divergence measure is used to formally quantity how much information is lost when $p$ is represented by $q$. Denote $\PP$ as the space of measures $p$ and $q$, i.e. $p, q \in \PP$.
+Before we get into further discussions about inference and learning, we first introduce the concept of \textit{divergence} measures since principles of both learning and inference are closed related with divergence measures.
+A divergence measure plays a fundamental role when we try to use a probability distribution (over discrete or continue variable)  $q$ to approximate another probability distribution $p$. A divergence measure is used to formally quantity how much information is lost when $p$ is represented by $q$. Denote $\PP$ as the space of measures $p$ and $q$, i.e. $p, q \in \PP$.
 \begin{definition}
   Given the space $\PP$ of probability distribution for a random variable $\bm{x}$, a divergence on this space is defined as a function $D(p\|q): \PP \times \PP \rightarrow \RR^{+}\cup \{0\}$ such that $D(p\|q) \geq 0$ for all $p, q \in \PP$ and $D(p\|q)=0$ if and only if $p=q$.
 \end{definition}
@@ -296,25 +299,41 @@ Here we introduce the classic \textit{Kullback-Leibler divergence} \cite{kullbac
 \end{definition}
 
 
-KL divergence is not symmetric. In another word, there is no equivalence between $\mathrm{KL}(p\|q)$ and $\mathrm{KL}(q\|p)$ in general. 
+KL divergence is not symmetric. In another word, there is no equivalence between $\mathrm{KL}(p\|q)$ and $\mathrm{KL}(q\|p)$ in general. A symmetric divergence that generalizes the KL divergence would be introduced in Section~\ref{chpt3:sec:alpha-divergence}. Furthermore, an extra metric that is used to compare distributions, optimal transport, would be introduced in Section~\ref{chpt:sec:ot}.
 
 
 
 \section{Inference Tasks}
 
 
-Given a probability distribution $p(\bm{x})$ as the underline distribution of a graphical model, inference in general can be divided into four kinds of tasks, as brought up in Chapter~\ref{chpt1:sec:scope-outline}. Our work in this thesis would be closely involved with the problems
+Given a probability distribution $p(\bm{x})$ as the underlying distribution of a graphical model, inference in general can be divided into four kinds of tasks, as explained in Chapter~\ref{chpt1:sec:scope-outline}. Our work in this thesis is closely involved with the problems
 \begin{itemize}
 \item computing the likelihood of observed data or unobserved random variable;
 \item computing the marginals distribution over a particular subset of nodes, i.e. $p(\bm{x}_A)$ for $A \subset \Vv$. Note that single-node marginal distribution $p(x_i)$ also belongs to this case;
 \item computing the conditional distribution a subset of nodes given the configuration of another subset of nodes, i.e. $p(\bm{x}_A| \bm{x}_B)$ for $A, B \in \Vv$ and $A \cap B = \emptyset$;
 \end{itemize}
-in MRFs. The above tasks are also close related with the inference of partition function
+in MRFs. The above tasks are also closely related with the inference of the partition function, i.e.,
 \begin{itemize}
-\item Computation of $Z(\bm{\theta}) = \sum_{\bm{x}} \prod_{a \in \Ff} \phi_{a}(\bm{x}_{a};\bm{\theta})$, or sub-partition functions.
+\item computation of $Z(\bm{\theta}) = \sum_{\bm{x}} \prod_{a \in \Ff} \phi_{a}(\bm{x}_{a};\bm{\theta})$, or sub-partition functions.
 \end{itemize}
 
-In the following section, we would introduce the variational methods for the above tasks in high-level.
+In the following section, we introduce the methods for the above tasks in high-level.
+
+\section{Inference with Message-Passing}
+\label{chpt2:sec:inference-mp}
+In this section, we briefly treat the exact inference of graphical models. Please see \cite{Bishop:2006:PRM:1162264, koller2009pgm, yedida2005constucting, yedidia2003understanding} for detailed discussions. In order to compute a marginal probability, we need to sum or integrate the joint probability distribution over some variables. This operation can be performed as a sequence of operations by a pre-defined ordering of the variables. Since the underline distribution of a graphic model (directed or undirected) is a product of factors, the sequence or order can be chosen in a way that facilitates the sum or integral operations. Thus the computation of the marginal probability is up to choose a specific ordering of remaining variables to eliminate (sum or integrate out) repeatedly. This brings the very fundamental exact inference method, \textit{variable elimination}.
+
+When we want to ask multiple queries (marginal probabilities) on a graphical model, we repetitively call variable elimination method for each query until all queries are answered. The \textit{sum-product} algorithm is more efficient for this case. It is a \textit{message-passing} algorithm that operates on graphical models. More importantly, the intermediate results, the messages, are shared in all computations. Thus one call of this message-passing algorithm returns answers to multiple queries. The sum-product algorithm, also known as \textit{belief propagation}, has the message update rule as follows.
+\begin{equation}\label{chpt2:eq:loopy-bp}
+  m_{a\rightarrow i}(x_i) \propto \sum_{\bm{x}_{a} \backslash x_i}
+  \phi_{a}(\bm{x}_{a}) \prod_{j \in a \backslash i} \prod_{a^{\prime} \in \mathrm{ne}_j
+    \backslash a} m_{a^{\prime}\rightarrow j}(x_j),
+\end{equation}
+where $a^\prime, a \in \Ff$ and $\mathrm{ne}_i = \left\{ a | i \in a, a \in \Ff \right\}$. The left-hand-side of $\propto$ is the updated message and the right-hand-side of $\propto$ is a function of factors and old messages in \eqref{chpt2:eq:loopy-bp}. For instance, the marginal for $x_i$ is simply $p(x_i)\propto\prod_{a\in\mathrm{ne}_i}m_{a\rightarrow i}(x_i)$ after all messages have been updated accordingly. For a tree-structured graph, the message-passing rule in \eqref{chpt2:eq:loopy-bp} with pre-defined ordering of sequential updates gives exact marginals.
+
+However, when a graphical model is not tree-structured, the above methods can not give exact inference. If exact inference is still desired here, one may consider converting the graph of the graphical model into a clique tree, an acyclic graph whose nodes are the maximal cliques, and apply the \textit{junction tree} algorithm.
+
+It is known that the computational complexity of the junction tree method grows exponentially in the size of the maximal clique. Therefore, for certain classes of graphs, exact inference is feasible by using the methods mentioned above. On the other hand, there are many graphical models where exact inference is too expensive in computation or simply prohibitive. We need to turn to approximate inference to cope with such models.
 
 
 \section{Variational inference}
@@ -344,27 +363,31 @@ where $\tilde{p}(\bm{x}; \bm{\theta}) =  \prod_{a \in \Ff} \psi_{a}(\bm{x}_{a}; 
 
 \subsection{Variational Free Energy and Mean Field}
 
-In mean field approach, a fully-factorized approximation is used,
-\begin{equation}\label{eq:mf-factorization}
-  b_{MF}(\bm{x}) = \prod_{i=1}^{N}b_i(x_i).
+Mean field method, similar to the sum-product algorithm, is an iterative message-passing approach. 
+The message update rule of mean field algorithm is described as follow.
+\begin{equation}\label{chpt2:eq:mf-update}
+  \log{b_i(x_i)} \propto \sum_{a \in \mathrm{ne}_i} \sum_{\bm{x}_{a} \backslash x_i} \log{\phi_{a}}(\bm{x}_{a};\bm{\theta}_{a}) \prod_{j\in {a}\backslash i} b_j(x_j).
 \end{equation}
-Substituting \eqref{eq:mf-factorization} into the variational free energy gives
+The algorithm does iterative update of the belief on each node of the graphical model. An update step for node $i$ use its neightbors' old  beliefs  $\left\{ b_j(x_j), j\in {a}\backslash i, a \in \mathrm{ne}_i \right\}$ and factors to assign new belief $b_i(x_i)$. After the iterative algorithm converges, the approximation to marginal $p(x_i)$ is $b_i(x_i)$.
+
+
+In fact, mean field approach uses the fully-factorized distribution,
+\begin{equation}\label{eq:mf-factorization}
+  b_{MF}(\bm{x}) = \prod_{i=1}^{N}b_i(x_i),
+\end{equation}
+to approximate the joint distraction $p(\bm{x};\bm{\theta})$. The update rule \eqref{chpt2:eq:mf-update} can be obtained by minimizing the 'difference' between fully-factorized distribution and $p(\bm{x};\bm{\theta})$, i.e., the variational free energy \eqref{chpt2:eq:variational-free-energy}. Specifically,
+substituting \eqref{eq:mf-factorization} into the variational free energy \eqref{chpt2:eq:variational-free-energy} gives
 \begin{align}
   F_{MF}(b) =  - \sum_{a \in \Ff}\sum_{\bm{x}_{a}} \log{\phi_{a}(\bm{x}_{a};\bm{\theta})}
   \prod_{i\in a}b_i(x_i) + \sum_{i \in \Vv} \sum_{x_i} b_i(x_i) \log{b_i(x_i)},
 \end{align}
-where $i \in a$ stands for the node $i$'s associated $x_i$ is argument of $\phi_{a}$.
-Solving the minimization of $F_{MF}$ w.r.t. $b_{MF}(\bm{x})$ gives the
-update rule of mean field
-\begin{equation}
-  \log{b_i(x_i)} \propto \sum_{a \in \mathrm{ne}_i} \sum_{\bm{x}_{a} \backslash x_i} \log{\phi_{a}}(\bm{x}_{a};\bm{\theta}_{a}) \prod_{j\in {a}\backslash i} b_j(x_j),
-\end{equation}
-where $\mathrm{ne}_i = \left\{ a | i \in a, a \in \Ff \right\}$, i.e. the
-potential factors that has $x_i$ as argument.
+\textcolor{blue}{where $i \in a$ stands for the node $i$'s associated $x_i$ is argument of $\phi_{a}$.} Minimizing $F_{MF}(b)$ over $\left\{ b_i \right\}$ would give us the mean field update rule \eqref{chpt2:eq:mf-update}.
 
 \subsection{Bethe Free Energy and (Loopy) Belief Propagation}
 
+We described the sum-product algorithm (belief propagation) for exact inference in tree-structured graphs in Section~\ref{chpt2:sec:inference-mp}. For graphical models with the presence of cycles or loops, we can still apply the sum-product algorithm as if there was no loop. This is known as the loopy belief propagation (loopy BP). Of course, the inference results are no long exact any more. In fact, loopy BP works well in many practical cases.
 
+Now we give the intuition of loopy BP from the perspective of free energy minimization, which comes with the name of Bethe approximation in literature.
 Different from the mean field approximation, Bethe approximation also includes the non-single-node beliefs $\{b_{a}(\bm{x}_{a})\}$ apart from the single-node beliefs $\{b_i(x_i)\}$\cite{yedidia2003understanding}. In this case, the Bethe free energy is given by
 \begin{align}\label{chpt2:bethe-free-energy}
   F_{Bethe}(b) = \sum_{a} \sum_{\bm{x}_{a}}
@@ -384,12 +407,8 @@ Due to the  non-single-node beliefs, there are consistency constrains $\sum_{\bm
 \end{align}
 where $\Vv$ and $\Ff$ are the set of variable nodes and the set of
 factor nodes in factor graph as defined in
-Definition~\ref{chpt2:def:factor-graph}, gives the (loopy) BP message-passing rule
-\begin{equation}\label{chpt2:eq:loopy-bp}
-  m_{a\rightarrow i}(x_i) \propto \sum_{\bm{x}_{a} \backslash x_i}
-  \phi_{a}(\bm{x}_{a}) \prod_{j \in a \backslash i} \prod_{a^{\prime} \in \mathrm{ne}_j
-    \backslash a} m_{a^{\prime}\rightarrow j}(x_j).
-\end{equation}
+Definition~\ref{chpt2:def:factor-graph}, gives the (loopy) BP message-passing rule that has the same formula as in \eqref{chpt2:eq:loopy-bp}.
+
 
 
 \section{Learning principles}
