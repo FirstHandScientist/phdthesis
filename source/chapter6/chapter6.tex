@@ -200,7 +200,7 @@ where the superscript $i$ corresponds to the $i$'th data sample in a given datas
 We address the above maximum likelihood estimation problem using EM. 
 Let us use a categorical variable $\bm{s} = [s_1, s_2, \cdots, s_K]$
 for $1$-of-$K$ representation to be a hidden variable that indicates which generator is the actual one. Elements of $\bm{s}$ follow $s_k \in \{0,1\}$, $\sum_{k=1}^K s_k =1$, and $p(s_k=1)=\pi_k$. The variable $\bm{s}$ is the hidden variable in EM. We will use $\gamma_k$ to denote the posterior probability $p(s_k =1|\bm{x})$ calculated as
-\begin{align}\label{eq-genmm-gamma}
+\begin{align}\label{eq-genmm-gamma-org}
   \gamma_k = p(s_k =1|\bm{x};\bm{\Theta}) 
   = \frac{\pi_k p(\bm{g}(\bm{z};\bm{\theta}_k))}{\sum_{l=1}^K\; \pi_l p(\bm{g}(\bm{z};\bm{\theta}_l))}.
 \end{align}
