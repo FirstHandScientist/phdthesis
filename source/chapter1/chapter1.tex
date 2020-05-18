@@ -134,7 +134,7 @@ As for learning in probabilistic graphical models, there are two types of learni
 The first case refers to determining the structure of a graphical model from observations, which is usually reduced to the problem of whether there should be an edge between a pair of nodes in the graphical model. The parameter learning is about to determine the parameter of a probabilistic graphical model (or its coupled distribution), with its graphical structure known. Structure learning is out of the scope of this thesis. The term \textit{learning} in the thesis means the estimation of the parameters of a distribution. This problem is mainly discussed in Part~\ref{part:learning}, where we would address learning in both undirected and directed graphical models. 
 
 
-As for the learning techniques, the learning principles can be categorized into
+\textcolor{blue}{revise this}As for the learning techniques, the learning principles can be categorized into
 \begin{itemize}
 \item Maximal likelihood estimation
 \item Maximal conditional likelihood
@@ -180,9 +180,15 @@ The following works ware done during the author's PhD education.
 The material presented in this thesis is based on the author's works which are partially published in 1, 2, 3, 4, 5, 6, 7 listed above. 
 \subsection{Outline of Thesis}
 
-\textcolor{blue}{To be written after main content is finished.}
+A general outline of the rest of the thesis is as follows. Part~\ref{part:background} introduces the background knowledge and notations in support the further successive chapters. In what follows, the main ideas and techniques are present with two parts. Part~\ref{part:inference} consists of Chapter~\ref{chapter3} and \ref{chapter4} focuses the inference techniques. Part~\ref{part:learning} consists of Chapter~\ref{chpt5:undirecteLearning}, \ref{chpt6:em-flow} and \ref{chpt7:genhmm} and \ref{chapter8} covers mainly the learning topics. Chapter~\ref{chapter9} discusses some future directions along this line of research and closes the thesis. We summarize the context more specifically as follows.
 
+The background part (Part~\ref{part:background}) fist reviews the basics of probabilistic graphical models e.g., directed and undirected graphical models (also known as Bayesian network and Markov random fields), that are the fundamental frameworks for the content in this thesis. Then, the inference tasks and basic message-passing algorithms (e.g., mean field and belief propagation) are reviewed. To give more intuition on approximate inference, the connection to variational free energy is discussed. The background part ends with the discussion on the essential learning principles of probabilistic graphical models.
 
+Part~\ref{part:inference} focuses on the development of inference in Markov random fields. Firstly, an alternative view of belief propagation is developed in contract to free energy minimization in Chapter~\ref{chapter3}. A variant belief propagation algorithm is developed based on the alternative understanding. The convergence conditions of the proposed algorithm are studied and offered in the binary-state case of a variable node in pairwise Markov random fields. Secondly, in Chapter~\ref{chapter4}, this part then takes the path of addressing inference approximately by optimizing the region-based free energy which generalizes the Bethe free energy corresponding to the belief propagation algorithm. The developed method incorporates deep neural networks in solving the optimization problem of region-based free energy.
+
+Part~\ref{part:learning} moves the focus to learning of probabilistic graphical models. This part begins with the explanation of the role of inference in addressing learning problems of probabilistic graphical models in Chapter~\ref{chpt5:undirecteLearning} and shows numerically the impact of different inference algorithms on the learning of Markov random fields. The rest content of this part is mainly on model learning with partial observations, i.e., there is the presence of hidden variables, which is addressed in expectation maximization framework. Chapter~\ref{chpt6:em-flow} explores the more expressive probabilistic graphical models, i.e., finite mixtures of models with normalizing flows that are likelihood-tractable, and learning of these models. Chapter~\ref{chpt7:genhmm} extends the idea of graphical models with flows of Chapter~\ref{chpt6:em-flow} into a special case of dynamic Bayesian network, i.e., the hidden Markov model. The model learning is addressed with expectation maximization and applications of this model is demonstrated. With the idea that more general non-linear mapping can induce more expressive probabilistic distributions, Chapter~\ref{chapter8} studies the learning of likelihood-free generative models with a different metric, i.e., optimal transport. The learning of this kind of model is developed in the way of both direct optimal transport distance minimization and generative adversarial training.
+
+Chapter~\ref{chapter9} concludes the thesis with closing remarks.
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "../../main"
