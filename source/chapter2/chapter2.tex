@@ -15,7 +15,7 @@ As motivated in Chapter~\ref{section1.1}, a graphical model can be directed or u
 \end{equation}
 where $\Pp(\cdot)$ denotes the set of parent nodes in the directed graph. In an directed graphical model, the local functions, i.e., the conditional probability distributions $\{p(x_n| \Pp(x_n))\}$, are normalized and proper distributions. The directed graph of a directed graphical model or a Bayesian network is required to be an \textit{acyclic} graph. That is to say, if starting from a node $1$ (associated with $x_1$) and following a directed path $x_1\rightarrow \cdots \rightarrow x_n$ along the directed edges of the graph, there is no path such that $n=1$. Sampling from a underlining distribution $p(\bm{x})$ of a directed graphical model is efficient. Due to acyclic property of directed graphical models, by the well know \textit{ancestral sampling}, a sample $(x_1, x_2, \cdots, x_N)$ can be drawn sequentially via following the directed edges. In another word, $x_n$ is always sampled after $\Pp(x_n)$. This process might be viewed as the 'generative' process of signal $\bm{x}$, i.e., how $\bm{x}$ is generated from the graphical model.
 
-A Bayesian network (generative model) is usually easier to interpret due to the fact that its local functions are conditional probabilities and it is natural to decompose the joint underlining distribution into conditional probability distributions. However, there are practical scenarios where interaction between two variables can not be naturally described by impact with directionality, which may bring the difficulty of deciding the direction of an edge between them. Also, there are cases where a Bayesian network can not encode all independence constraints of a distribution, which could be due to the structure of Bayesian networks is not appropriated (see \cite[seciton~3.4.2]{koller2009pgm}). Therefore, an alternative representation method can be an undirected graphical model, i.e., a Markov random field (MRF). Under certain conditions, a Bayesian network can be perfectly represented by a Markov random field without loss of independence information by moralizing edges \cite[section~4.5]{koller2009pgm}\cite[section~8.3.4]{Bishop:2006:PRM:1162264}. Instead of conditional probability distributions, the local functions of MRF represents the compatibility of states of different variables, which are termed as \textit{potential factors}. Different from conditional probabilities in a Bayesian network, a potential factor in a MRF is not necessary normalized (not necessary to be summed to one). We provide a toy example of MRF with three variable nodes as follows.
+A Bayesian network (generative model) is usually easier to interpret due to the fact that its local functions are conditional probabilities and it is natural to decompose the joint underlining distribution into conditional probability distributions. However, there are practical scenarios where interaction between two variables can not be naturally described by impact with directionality, which may bring the difficulty of deciding the direction of an edge between them. Also, there are cases where a Bayesian network can not encode all independence constraints of a distribution, which could be due to that certain structures are not appropriated by Bayesian networks (see \cite[seciton~3.4.2]{koller2009pgm}). Therefore, an alternative representation method can be an undirected graphical model, i.e., a Markov random field (MRF). Under certain conditions, a Bayesian network can be perfectly represented by a Markov random field without loss of independence information by moralizing edges \cite[section~4.5]{koller2009pgm}\cite[section~8.3.4]{Bishop:2006:PRM:1162264}. Instead of conditional probability distributions, the local functions of MRF represents the compatibility of states of different variables, which are termed as \textit{potential factors}. Different from conditional probabilities in a Bayesian network, a potential factor in a MRF is not necessary normalized (not necessary to be summed to one). We provide a toy example of MRFs as follows.
 \begin{figure}[!t]
   % \captionsetup[subfigure]{justification=centering}
   \begin{subfigure}{.28\textwidth}
@@ -94,21 +94,21 @@ where $\Ff$ is the set of indexes of potential factors, and each factor $\phi_{a
 is the \textit{partition function}. Obviously, the partition function normalizes the potential factors such that $p(\bm{x}; \bm{\theta})$ is a proper probability.
 
 \begin{remark}[On set $\Ff$ of potential factors]
-In our definition in \eqref{chp2:eq:mrf-definition}, the set of potential factors, i.e., $\Ff$, is not required to be the set of all \textit{maximal cliques} of the graph $\Gg$. A clique is of the graph $\Gg$ a subset of nodes in $\Gg$ within which any two nodes are connected by an edge of $\Gg$, while a maximal clique such that it is not possible to include any other nodes from $\Gg$ in the clique without it ceasing to be a clique. Note there is literature that defines MRF over maximal cliques \cite[section~8.3.2]{Bishop:2006:PRM:1162264}. Actually, we can always reformulate \eqref{chp2:eq:mrf-definition} into factorization over maximal cliques by redefining a maximal clique as the product of potential factors (in $\Ff$) that are subsets of the maximal clique. Nevertheless, the definition in \eqref{chp2:eq:mrf-definition} without maximal clique requires allows more flexibility of factorization and finer specification of potential factors. These properties may also benefit computations.
+In our definition in \eqref{chp2:eq:mrf-definition}, the set of potential factors, i.e., $\Ff$, is not required to be the set of all \textit{maximal cliques} of the graph $\Gg$. A clique of the graph $\Gg$ is a subset of nodes in $\Gg$, within which any two nodes are connected by an edge of $\Gg$. A maximal clique is a clique such that it is not possible to include any other nodes from $\Gg$ into the clique without it ceasing to be a clique. Note there is literature that defines MRF over maximal cliques \cite[section~8.3.2]{Bishop:2006:PRM:1162264}. Actually, we can always reformulate \eqref{chp2:eq:mrf-definition} into factorization over maximal cliques by redefining a maximal clique as the product of potential factors (in $\Ff$) that are subsets of the maximal clique. Nevertheless, the definition in \eqref{chp2:eq:mrf-definition} without maximal clique requirement allows more flexibility of factorization and finer specification of potential factors. These properties may also benefit computations.
 \end{remark}
 
 \begin{remark}[Comparison of directed and undirected graphical models]
   We can compare directed and undirected graphical models with regard to the following aspects.
   \begin{itemize}
-  \item \textit{Representation}: The structure and the parameterization in directed graphical models provide a natural representation for many types of real-world domains. For domains where interactions are naturally directional, directional graphical models can best manifest the abstraction and encode the dependencies. On the contrast, for domains where interactions are symmetrical without certain directionality, MRFs would be natural choices since forcing a directionality in these cases may cause an incomplete representation of dependencies. Furthermore, MRFs can be either cyclic or acyclic, which allows intuitive graphical representation with weaker constraint and gives the flexibility of graph structures.
-  \item \textit{Local nonnegative functions}: The local functions are conditional probability functions in directed graphical models, but potential factors (nonnegative) in undirected cases.
+  \item \textit{Representation}: The structure and the parameterization in directed graphical models provide a natural representation for many types of real-world domains. For domains where interactions are naturally directional, directional graphical models can best manifest the abstraction and encode the dependencies. On the contrary, for domains where interactions are symmetrical without certain directionality, MRFs would be natural choices since forcing a directionality in these cases may cause an incomplete representation of dependencies. Furthermore, MRFs can be either cyclic or acyclic, which allows intuitive graphical representation with weaker constraint and gives the flexibility of graph structures.
+  \item \textit{Local nonnegative functions}: The local functions are conditional probability functions in directed graphical models. In undirected graphical models, the local functions are potential factors that allow more flexible forms.
   \item \textit{Sampling}: Sampling is more straightforward within generative models (directed graphs) than that in MRFs.
   \item \textit{Normalization}: Since each local function is a conditional probability function in directed graphical models, the partition function for normalization is not needed. An MRF, in general, comes with a partition function, since potential factors are not necessarily normalized.
   \end{itemize}
 \end{remark}
 
 \begin{remark}[Graphical models with both directed and undirected edges]
-  In the above discussions, we have presented both directed and undirected graphical models. In literature, a single graphical model may also encode both directed and undirected dependencies, i.e., there are both directed and undirected edges in its graph. Perhaps the most well-known models of this kind are the \textit{conditional random fields} (CRFs). See \cite{charles2012crf} for more introduction.
+  In the above discussions, we have presented both directed and undirected graphical models. In literature, a single graphical model may also encode both directed and undirected dependencies, i.e., there are both directed and undirected edges in its graph. Perhaps the most well-known models in this track are the \textit{conditional random fields} (CRFs). See \cite{charles2012crf} for more introduction.
 \end{remark}
 
 
@@ -245,7 +245,7 @@ In our definition in \eqref{chp2:eq:mrf-definition}, the set of potential factor
   \hspace{1cm}
 \end{figure}
 
-The previous graphical representations do not explicitly the conditional probability functions or potential factors in their graphs. An alternative representation to a graphical model (undirected or directed) is \textit{factor graph} \cite{kschischang2001factor_graph},
+The previous graphical representations do not explicitly include the conditional probability functions or potential factors in their graphs. An alternative representation to a graphical model (undirected or directed) is \textit{factor graph} \cite{kschischang2001factor_graph},
 which is a bipartite graph topology. In a factor graph, a potential factor or a conditional probability funciton is explicitly represented as a factor node, as the counterpart of the variable node associated with a random variable. We focus on the correspondence between a MRF and its factor graph here.
 \begin{definition}\label{chpt2:def:factor-graph}
   A factor graph $\Gg_F$, is a bipartite graph that represents the factorization of \eqref{chp2:eq:mrf-definition}. A factor graph has two types of nodes: i) a variable node for each variable $x_i$; ii) a factor node for each potential function $\phi_{a}$. An edge is placed between a variable node $i$ and factor node $a$ if and only if $x_i$ is argument of $\phi_{a}$. We denote a factor graph by $\Gg_F(\Vv \cup \Ff, \Ee_F)$ with $\Vv$ as the set of variable nodes, $\Ff$ as the set of factor nodes, and $\Ee_F$ the set of undirected edges.
@@ -258,7 +258,7 @@ which is a bipartite graph topology. In a factor graph, a potential factor or a 
 \subsection{Conditioning on Observations in MRFs}
 It is not rare that a graphical model may contain observed variable. The node set of a MRF can be separated into a subset $\Vv_O$ of nodes that are associated with observed variable $\bm{x}_O$, and a subset $\Vv_U$ of nodes associated with unobserved variable $\bm{x}_U$. When an evidence is observed, its likelihood can be computed as
 \begin{equation}
-  p(\bm{x}_O;\bm{\theta}) = \sum_{\bm{x}_U} p(\bm{x}_O;\bm{\theta}) =\sum_{\bm{x}_U}\frac{\tilde{p}(\bm{x}; \bm{\theta})}{Z(\bm{\theta})} = \frac{Z(\bm{x}_O,\bm{\theta})}{Z(\bm{\theta})},
+  p(\bm{x}_O;\bm{\theta}) = \sum_{\bm{x}_U} p(\bm{x};\bm{\theta}) =\sum_{\bm{x}_U}\frac{\tilde{p}(\bm{x}; \bm{\theta})}{Z(\bm{\theta})} = \frac{Z(\bm{x}_O,\bm{\theta})}{Z(\bm{\theta})},
 \end{equation}
 where 
 \begin{align}
@@ -266,11 +266,11 @@ where
   Z(\bm{x}_O, \bm{\theta}) &= \sum_{\bm{x}_U} \tilde{p}(\bm{x}; \bm{\theta}), \nonumber \\
   Z(\bm{\theta}) &= \sum_{\bm{x}_O}\sum_{\bm{x}_U} \tilde{p}(\bm{x}; \bm{\theta}).
 \end{align}
-This means that the likelihood of an (partial) evidence can be computed by partition function and sub-partition functions. As would be seen in Part~\ref{part:learning}, this likelihood function, or its appropriations would be used for model learning.
+This means that the likelihood of an (partial) evidence can be computed by partition function and sub-partition functions. As shall be seen in Part~\ref{part:learning}, this likelihood function, or its appropriations would be used for model learning.
 
  When an evidence $\bm{e}_O$ (an sample instance of $\bm{x}_O$) is observed, the conditional probability can be written as
 \begin{equation}\label{chpt2:eq:mrf-condtioning}
-  p(\bm{x}_U|\bm{x}_O=\bm{e}_O;\bm{\theta}) = \frac{\tilde{p}(\bm{x}_U, \bm{x}_O = \bm{e}_O; \bm{\theta})}{\sum_{\bm{x}_U}\tilde{p}(\bm{x}_U, \bm{x}_O = \bm{e}_O; \bm{\theta})} \propto \tilde{p}(\bm{x}_U, \bm{x}_O = \bm{e}_O; \bm{\theta})
+  p(\bm{x}_U|\bm{x}_O=\bm{e}_O;\bm{\theta}) = \frac{\tilde{p}(\bm{x}_U, \bm{x}_O = \bm{e}_O; \bm{\theta})}{\sum_{\bm{x}_U}\tilde{p}(\bm{x}_U, \bm{x}_O = \bm{e}_O; \bm{\theta})} \propto \tilde{p}(\bm{x}_U, \bm{x}_O = \bm{e}_O; \bm{\theta}),
 \end{equation}
 where $\propto$ stands for proportional to. \eqref{chpt2:eq:mrf-condtioning} shows an interesting phenomenon for MRF including evidence. It can be understood as clamping nodes in $\Vv_O$ of the MRF to configuration $\bm{e}_O$, i.e., the domain of $\bm{x}_O$ becomes a set containing only one instance $\bm{e}_O$. For instance, an example of conditioning on a variable node for Example~\ref{chpt2:mrf-3node-example} is shown in Figure~\ref{chpt2:fig:factor-graph-3node-example-condition}, where node $2$ is clamped to evidence $x_2=1$.
 
@@ -299,7 +299,7 @@ Here we introduce the classic \textit{Kullback-Leibler divergence} \cite{kullbac
 \end{definition}
 
 
-KL divergence is not symmetric. In another word, there is no equivalence between $\mathrm{KL}(p\|q)$ and $\mathrm{KL}(q\|p)$ in general. A symmetric divergence that generalizes the KL divergence would be introduced in Section~\ref{chpt3:sec:alpha-divergence}. Furthermore, an extra metric that is used to compare distributions, optimal transport, would be introduced in Section~\ref{chpt:sec:ot}.
+KL divergence is not symmetric. In another word, there is no equivalence between $\mathrm{KL}(p\|q)$ and $\mathrm{KL}(q\|p)$ in general. A symmetric divergence that generalizes the KL divergence would be introduced in Section~\ref{chpt3:sec:alpha-divergence}. Furthermore, an extra metric that is used to compare distributions, i.e., optimal transport, would be introduced in Section~\ref{chpt:sec:ot}.
 
 
 
@@ -309,7 +309,7 @@ KL divergence is not symmetric. In another word, there is no equivalence between
 Given a probability distribution $p(\bm{x})$ as the underlying distribution of a graphical model, inference in general can be divided into four kinds of tasks, as explained in Chapter~\ref{chpt1:sec:scope-outline}. Our work in this thesis is closely involved with the problems
 \begin{itemize}
 \item computing the likelihood of observed data or unobserved random variable;
-\item computing the marginals distribution over a particular subset of nodes, i.e., $p(\bm{x}_A)$ for $A \subset \Vv$. Note that single-node marginal distribution $p(x_i)$ also belongs to this case;
+\item computing the marginals distribution over a particular subset of nodes, i.e., $p(\bm{x}_A)$ for $A \subset \Vv$. Note that a single-node marginal distribution $p(x_i)$ also belongs to this case;
 \item computing the conditional distribution a subset of nodes given the configuration of another subset of nodes, i.e., $p(\bm{x}_A| \bm{x}_B)$ for $A, B \in \Vv$ and $A \cap B = \emptyset$;
 \end{itemize}
 in MRFs. The above tasks are also closely related with the inference of the partition function, i.e.,
@@ -319,11 +319,11 @@ in MRFs. The above tasks are also closely related with the inference of the part
 
 In the following section, we introduce the methods for the above tasks at a high-level.
 
-\section{Inference with Message-Passing}
+\section{Exact Inference}
 \label{chpt2:sec:inference-mp}
 In this section, we briefly treat the exact inference of graphical models. Please see \cite{Bishop:2006:PRM:1162264, koller2009pgm, yedida2005constucting, yedidia2003understanding} for detailed discussions. In order to compute a marginal probability, we need to sum or integrate the joint probability distribution over some variables. This operation can be performed as a sequence of operations by a pre-defined ordering of the variables. Since the underline distribution of a graphic model (directed or undirected) is a product of factors, the sequence or order can be chosen in a way that facilitates the sum or integral operations. Thus the computation of the marginal probability is up to choose a specific ordering of remaining variables to eliminate (sum or integrate out) repeatedly. This brings the very fundamental exact inference method, \textit{variable elimination}.
 
-When we want to ask multiple queries (marginal probabilities) on a graphical model, we repetitively call variable elimination method for each query until all queries are answered. The \textit{sum-product} algorithm is more efficient for this case. It is a \textit{message-passing} algorithm that operates on graphical models. More importantly, the intermediate results, the messages, are shared in all computations. Thus one call of this message-passing algorithm returns answers to multiple queries. The sum-product algorithm, also known as \textit{belief propagation}, has an iterative message update rule. A message update step from a factor $a$ to its neighboring variable node $i$ is 
+When we want to ask multiple queries (marginal probabilities) on a graphical model, we repetitively call the variable elimination method for each query until all queries are answered. The \textit{sum-product} algorithm is more efficient for this case. It is a \textit{message-passing} algorithm that operates on graphical models. More importantly, the intermediate results, the messages, are shared in all computations. Thus one call of this message-passing algorithm returns answers to multiple queries. The sum-product algorithm, also known as \textit{belief propagation}, has an iterative message update rule. A message update step from a factor $a$ to its neighboring variable node $i$ is 
 \begin{equation}\label{chpt2:eq:loopy-bp}
   m_{a\rightarrow i}(x_i) \propto \sum_{\bm{x}_{a} \backslash x_i}
   \phi_{a}(\bm{x}_{a}) \prod_{j \in a \backslash i} \prod_{a^{\prime} \in \mathrm{ne}_j
@@ -375,11 +375,11 @@ The intuition of mean field algorithm can be given by the variational free energ
 \begin{equation}\label{eq:mf-factorization}
   b_{MF}(\bm{x}) = \prod_{i=1}^{N}b_i(x_i),
 \end{equation}
-to approximate the joint distraction $p(\bm{x};\bm{\theta})$. The update rule \eqref{chpt2:eq:mf-update} can be obtained by minimizing the 'difference' between fully-factorized distribution and $p(\bm{x};\bm{\theta})$, i.e., the variational free energy \eqref{chpt2:eq:variational-free-energy}. Specifically,
+to approximate the joint distraction $p(\bm{x};\bm{\theta})$. The update rule \eqref{chpt2:eq:mf-update} can be obtained by minimizing the 'difference' between the fully-factorized distribution and $p(\bm{x};\bm{\theta})$, i.e., the variational free energy \eqref{chpt2:eq:variational-free-energy}. Specifically,
 substituting \eqref{eq:mf-factorization} into the variational free energy \eqref{chpt2:eq:variational-free-energy} gives
 \begin{align}
   F_{MF}(b) =  - \sum_{a \in \Ff}\sum_{\bm{x}_{a}} \log{\phi_{a}(\bm{x}_{a};\bm{\theta})}
-  \prod_{i\in a}b_i(x_i) + \sum_{i \in \Vv} \sum_{x_i} b_i(x_i) \log{b_i(x_i)},
+  \prod_{i\in a}b_i(x_i) + \sum_{i \in \Vv} \sum_{x_i} b_i(x_i) \log{b_i(x_i)}.
 \end{align}
 Minimizing $F_{MF}(b)$ over $\left\{ b_i \right\}$ would give us the mean field update rule \eqref{chpt2:eq:mf-update}.
 
@@ -409,20 +409,20 @@ where $\Vv$ and $\Ff$ are the set of variable nodes and the set of
 factor nodes in factor graph as defined in
 Definition~\ref{chpt2:def:factor-graph}, gives the (loopy) BP message-passing rule that has the same formula as in \eqref{chpt2:eq:loopy-bp}.
 
-The variational approaches would be further discussed and compared with in Part~\ref{part:inference}.
+The variational approaches would be further discussed and compared in Part~\ref{part:inference}.
 
-\section{Learning principles}
+\section{Learning Principles}
 \label{chpt2:sec:learning-principles}
 We have touched the learning topic in Chapter~\ref{chapter1}, which is to find the 'best' probability distribution $p(\bm{x}; \bm{\theta})$ in its space $\PP$. To make the discussion more concrete, we assume the domain is governed by a underlying distribution $p^{\ast}$ that is induced by a (directed or undirected) graphical model, $\Mm^{\ast} = \left\{ \Kk^{\ast}, \bm{\theta}^{\ast} \right\}$ with $\Mm^{\ast}$ representing its structure and $\bm{\theta}^{\ast}$ representing its parameter. Here we discuss about \textit{model learning} (parameter learning only). For notation simplicity, we use $p^{\ast}(\bm{x})$ to denote this distribution. We are given a dataset $\Dd = \{\bm{x}^{1}, \bm{x}^{2}, \cdots, \bm{x}^{M}\}$. Following the standard assumption, these sample instances are \textit{independent and identically distributed (i.i.d.)} according to $p^{\ast}(\bm{x})$. The task is then to use the information from the dataset to learn a distribution $p(\bm{x};\bm{\theta})$ within its space $\PP$, since the governing distribution $p^{\ast}(\bm{x})$ is not known.
 
 The problem of learning a distribution in $\PP$ to approximate $p^{\ast}$ can be formulated as density estimation. With the concept of KL divergence in Section~\ref{chpt2:sec:devergence}, learning of $p(\bm{x};\bm{\theta})$ can be formulated as minimizing the KL divergence
 \begin{align}\label{chpt2:sec:mle-as-min-kl}
   &\mathrm{KL}(p^{\ast}(\bm{x})\|p(\bm{x}; \bm{\theta})) \nonumber \\
-  =& \EE_{\bm{x} \sim p^{\ast}}\left[ \log{\frac{p^{\ast}(\bm{x})}{p(\bm{x}; \bm{\theta})}} \right] \nonumber \\
-  =& - H(p^{\ast}) - \EE_{\bm{x} \sim p^{\ast}}\left[ \log{{p(\bm{x}; \bm{\theta})}} \right],
+  =& \EE_{p^{\ast}(\bm{x})}\left[ \log{\frac{p^{\ast}(\bm{x})}{p(\bm{x}; \bm{\theta})}} \right] \nonumber \\
+  =& - H(p^{\ast}) - \EE_{p^{\ast}(\bm{x})}\left[ \log{{p(\bm{x}; \bm{\theta})}} \right],
 \end{align}
 where $H(p^{\ast})$ is the entropy of $p^{\ast}$.
-Due to the property of divergence, the KL divergence in \eqref{chpt2:sec:mle-as-min-kl} is zero if and only if $p(\bm{x};\bm{\theta})=p^{\ast}(\bm{x})$. The last line of \eqref{chpt2:sec:mle-as-min-kl} shows that the negative entropy term does not depend on $p(\bm{x}; \bm{\theta})$. Thus we can just focus on the expectation term $\EE_{\bm{x} \sim p^{\ast}}\left[ \log{{p(\bm{x}; \bm{\theta})}} \right]$, which is \textit{expected log-likelihood}. Therefore, we can just use the expected log-likelihood to do model learning instead of minimizing the KL divergence.
+Due to the property of divergence, the KL divergence in \eqref{chpt2:sec:mle-as-min-kl} is zero if and only if $p(\bm{x};\bm{\theta})=p^{\ast}(\bm{x})$. The last line of \eqref{chpt2:sec:mle-as-min-kl} shows that the negative entropy term does not depend on $p(\bm{x}; \bm{\theta})$. Thus we can just focus on the expectation term $\EE_{\bm{x} \sim p^{\ast}}\left[ \log{{p(\bm{x}; \bm{\theta})}} \right]$, which is \textit{expected log-likelihood}. Therefore, we can just use the expected log-likelihood to do model learning.
 
 Note although we can use the expected log-likelihood for the model learning task and for even model comparison (comparing a trained model with another one), we lose the information of how close a trained model is to $p^{\ast}$. This is due to the omitting of $H(p^{\ast})$, which is not available.
 
@@ -432,15 +432,15 @@ Since it is not possible to know $p^{\ast}$ (otherwise we do not need to learn i
 \end{equation}
 and
 \begin{equation}
-  \EE_{\bm{x}\sim p^{\ast}}(\log{{p(\bm{x}; \bm{\theta})}}) \approx \Ll(\Dd; \bm{\theta}).
+  \EE_{p^{\ast}(\bm{x})}\left[ \log{{p(\bm{x}; \bm{\theta})}} \right] \approx \Ll(\Dd; \bm{\theta}).
 \end{equation}
 
 The log-likelihood $\Ll(\Dd; \bm{\theta})$ is one of the most widely used loss for model learning. However, $\Ll(\Dd; \bm{\theta})$ is not always a feasible loss to compute since
 \begin{itemize}
 \item it is often that exact computation of $p(\bm{x};\bm{\theta})$ is not possible; or
-\item there are some elements of $\bm{x}$ which are not observable (latent variables).
+\item there are some elements of $\bm{x}$ which are not observable (hidden or latent variables).
 \end{itemize}
-For the first case, the typical treatment is to approximate the exact log-likelihood. This is done by approximation by employing inference methods or   making simplified assumptions on dependency structure of the graphical model of $p(\bm{x})$. Then, optimization is carried out with regard to the approximated log-likelihood. These methods include surrogate likelihood \cite{wainwright06estimating, lu2019blockBP}, pseudo-likelihood\cite{qu2019gmnn, lazarogredilla2019learning}, piecewise likelihood \cite{sutton2012piecewise, lin_2016_CVPR}, saddle-point approximation \cite{srikumar-etal-2012-amortizing, NIPS2019_9687}.
+For the first case, the typical treatment is to approximate the exact log-likelihood. This is done via approximation by employing inference methods or   making simplified assumptions on dependency structure of the graphical model of $p(\bm{x})$. Then, optimization is carried out with regard to the approximated log-likelihood. These methods include surrogate likelihood \cite{wainwright06estimating, lu2019blockBP}, pseudo-likelihood\cite{qu2019gmnn, lazarogredilla2019learning}, piecewise likelihood \cite{sutton2012piecewise, lin_2016_CVPR}, saddle-point approximation \cite{srikumar-etal-2012-amortizing, NIPS2019_9687}.
 
 Apart from the above case where all variables are observable, the partial observed models, the latent variable case, are equally import in inference and learning with uncertainty. This class of models includes (but is not limited to) classic Gaussian mixture models (GMMs) and hidden Markov models (HMMs). There are latent variables because:
 \begin{itemize}
@@ -448,7 +448,7 @@ Apart from the above case where all variables are observable, the partial observ
 \item A practical true attribute of an object may be difficult or impossible to measure exactly. For instance, the disease infection can only be diagnosed via the relevant symptoms, see e.g., Example~\ref{example-corona}. In the position tracking of a car with noisy sensors, the true position of the car might only be inferred via noisy data of sensors.
 \item No measurement on an attribute of an object of interest is made. For instance, the velocity sensor in the car tracking example might not be stable and might fail from time to time.
 \end{itemize}
-In general, latent variables are commonly used to deal with partial observation problems, data clustering, data manipulation, etc. Let us denote the observable variable and latent variable by $\bm{x}_O$ and $\bm{x}_U$, respectively. We can see that the log-likelihood $p(\bm{x}_O, \bm{x}_U; \bm{\theta})$ is not available any more as it is in the fully-observed case. To deal with the latent variables, we can try to optimize the partial log-likelihood
+In general, latent variables are commonly used to deal with partial observation problems, data clustering, data manipulation, etc. Let us denote the observable variable and latent variable by $\bm{x}_O$ and $\bm{x}_U$, respectively. We can see that the log-likelihood $p(\bm{x}_O, \bm{x}_U; \bm{\theta})$ is not available anymore as it is in the fully-observed case. To deal with the latent variables, we can try to optimize the partial log-likelihood
 \begin{align}
   l(\bm{x}_O; \bm{\theta}) =& \log{p(\bm{x}_O; \bm{\theta})} \nonumber \\  
   = & \EE_{q(\bm{x}_U|\bm{x}_O)}\left[ \log{\frac{q(\bm{x}_U|\bm{x}_O)}{p(\bm{x}_U|\bm{x}_O;\bm{\theta})} \cdot \frac{p(\bm{x}_U,\bm{x}_O;\bm{\theta})}{q(\bm{x}_U|\bm{x}_O)}} \right] \nonumber \\
@@ -464,16 +464,16 @@ where $H(q(\bm{x}_U|\bm{x}_O))$ is the entropy of $q(\bm{x}_U|\bm{x}_O)$, and $q
 \end{equation}
 with equality when $q(\bm{x}_U|\bm{x}_O) = p(\bm{x}_U|\bm{x}_O; \bm{\theta})$. $F(q, \bm{\theta})$ is also called \textit{variational lower bound}.
 
-One of the most widely used methods in learning with latent variable is \textit{expectation maximization (EM)} \cite{DEMP1977em}. In the EM method, the posterior of $\bm{x}_U$ is computed exactly from $p$, $q(\bm{x}_U|\bm{x}_O) = \argmax_{q}{F(q, \bm{\theta})} = p(\bm{x}_U|\bm{x}_O; \bm{\theta})$, which is the optimal solution to $q$. Then the parameter $\bm{\theta}$ of $p$ is optimized. The two steps are optimized iteratively.
+One of the most widely used methods in learning with latent variable is \textit{expectation maximization (EM)} \cite{DEMP1977em}. In the EM method, the posterior of $\bm{x}_U$ is computed exactly from $p$, $q(\bm{x}_U|\bm{x}_O) = \argmax_{q}{F(q, \bm{\theta})} = p(\bm{x}_U|\bm{x}_O; \bm{\theta})$, which is the optimal solution to $q$. Then the parameter $\bm{\theta}$ of $p$ is optimized. The two steps are optimized iteratively. The detailed treatment can be found in Part~\ref{part:learning}
 
 In cases where the posterior of $\bm{x}_U$ is not feasible to compute, the variational EM\cite[section~6.2.2]{wainwright2008graphical} or Monte Carlo EM (need sampling technique) \cite{neath2012convergence} can be applied. There are also neural network based methods with Monte Carlo estimator to cope with the latent variable problems, see e.g., \cite{DBLP:journals/corr/KingmaW13, kuleshov2017NVIL, lazarogredilla2019learning, goodfellow2014gan}.
 
 
 In the above discussion, we have assumed that the model's distribution $q$ is explicitly defined, i.e., the distribution (along with its density function or mass function) is available. 
 
-In an alternative track, deep generative models grow popularity in literature and can be applied to different areas such as high-dimensional data representation, reinforcement learning, and semi-supervised learning, because of its efficient sampling of multi-mode distributions \cite{2017arXiv170100160G}. A generator in a deep generative model induces a distribution that can either be an explicit or implicit distribution. The former problem dates back to \cite{deco1995high-order} and receives more attention in recent years with latest work such as variational autoencoder \cite{DBLP:journals/corr/KingmaW13}, Real-NVP \cite{2016arXiv160508803D}, normalizing flow model \cite{2018arXiv180703039K} and neural ordinary difference equations \cite{ricky2018ODE}. The training of these models is still based on the maximum likelihood principle or variational likelihood bound.
+In an alternative track, deep generative models grow popularity in literature and can be applied to different areas such as high-dimensional data representation, reinforcement learning, and semi-supervised learning, because of its efficient sampling of multi-mode distributions \cite{2017arXiv170100160G}. A generator in a deep generative model induces a distribution that can either be an explicit or implicit distribution. The former problem dates back to \cite{deco1995high-order} and receives more attention in recent years with latest work such as variational autoencoder \cite{DBLP:journals/corr/KingmaW13}, normalizing flows \cite{2016arXiv160508803D, 2018arXiv180703039K} and neural ordinary difference equations \cite{ricky2018ODE}. The training of explicit models is based on the maximum likelihood principle or variational likelihood bound. Chapter~\ref{chpt6:em-flow} and \ref{chpt7:genhmm} would give detailed treatment with modeling and learning with normalizing flows. Chapter~\ref{chapter9} will further discuss the implicit deep generative models and their learning.
 
-The latter case brings an implicit distribution, where the maximum likelihood principle is not applicable anymore. In this case, a state-of-art method is the generative adversarial model that employs a discriminator to play the role of divergence measure \cite{goodfellow2014gan, 2017arXiv170104862A, NIPS2016_6125}, which is essentially explained by a process of the minimization of the Jensen-Shannon divergence. Additionally, other sample-test based distances are employed as alternative methods for implicit model learning. Among this family, optimal transport is receiving more attention in recent years \cite{santambrogio2015optimal, 2013arXiv1306.0895C} in this track, which has also been applied for training of Boltzmann machine \cite{NIPS2016_6248} auto-encoders\cite{2017arXiv171101558T} and generative adversarial networks \cite{2017arXiv170107875A}.
+The latter case brings an implicit distribution, where the maximum likelihood principle is not applicable anymore. In this case, a state-of-art method is the generative adversarial model that employs a discriminator to play the role of divergence measure \cite{goodfellow2014gan, 2017arXiv170104862A, NIPS2016_6125}, which is essentially explained by a process of the minimization of the Jensen-Shannon divergence. Additionally, other sample-test based distances are employed as alternative methods for implicit model learning. Among this family, optimal transport is receiving more attention in recent years \cite{santambrogio2015optimal, 2013arXiv1306.0895C} in this track, which has also been applied for training of Boltzmann machine \cite{NIPS2016_6248} auto-encoders\cite{2017arXiv171101558T} and generative adversarial networks \cite{2017arXiv170107875A}. We would discuss this further in Chapter~\ref{chapter9}.
 
 
 
