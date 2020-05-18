@@ -409,7 +409,7 @@ where $\Vv$ and $\Ff$ are the set of variable nodes and the set of
 factor nodes in factor graph as defined in
 Definition~\ref{chpt2:def:factor-graph}, gives the (loopy) BP message-passing rule that has the same formula as in \eqref{chpt2:eq:loopy-bp}.
 
-The variational approaches would be further discussed and compared in Part~\ref{part:inference}.
+These variational approaches would be further discussed and compared in Chapter~\ref{chapter3} and \ref{chapter4} of Part~\ref{part:inference}.
 
 \section{Learning Principles}
 \label{chpt2:sec:learning-principles}
@@ -435,7 +435,8 @@ and
   \EE_{p^{\ast}(\bm{x})}\left[ \log{{p(\bm{x}; \bm{\theta})}} \right] \approx \Ll(\Dd; \bm{\theta}).
 \end{equation}
 
-The log-likelihood $\Ll(\Dd; \bm{\theta})$ is one of the most widely used loss for model learning. However, $\Ll(\Dd; \bm{\theta})$ is not always a feasible loss to compute since
+
+The log-likelihood $\Ll(\Dd; \bm{\theta})$ is one of the most widely used loss for model learning. However, $\Ll(\Dd; \bm{\theta})$ is not always a feasible loss to compute (see Chapter~\ref{chpt5:undirecteLearning} for more analyses) since
 \begin{itemize}
 \item it is often that exact computation of $p(\bm{x};\bm{\theta})$ is not possible; or
 \item there are some elements of $\bm{x}$ which are not observable (hidden or latent variables).
