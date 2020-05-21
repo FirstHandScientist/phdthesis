@@ -323,13 +323,13 @@ In the following section, we introduce the methods for the above tasks at a high
 \label{chpt2:sec:inference-mp}
 In this section, we briefly treat the exact inference of graphical models. Please see \cite{Bishop:2006:PRM:1162264, koller2009pgm, yedida2005constucting, yedidia2003understanding} for detailed discussions. In order to compute a marginal probability, we need to sum or integrate the joint probability distribution over some variables. This operation can be performed as a sequence of operations by a pre-defined ordering of the variables. Since the underline distribution of a graphic model (directed or undirected) is a product of factors, the sequence or order can be chosen in a way that facilitates the sum or integral operations. Thus the computation of the marginal probability is up to choose a specific ordering of remaining variables to eliminate (sum or integrate out) repeatedly. This brings the very fundamental exact inference method, \textit{variable elimination}.
 
-When we want to ask multiple queries (marginal probabilities) on a graphical model, we repetitively call the variable elimination method for each query until all queries are answered. The \textit{sum-product} algorithm is more efficient for this case. It is a \textit{message-passing} algorithm that operates on graphical models. More importantly, the intermediate results, the messages, are shared in all computations. Thus one call of this message-passing algorithm returns answers to multiple queries. The sum-product algorithm, also known as \textit{belief propagation}, has an iterative message update rule. A message update step from a factor $a$ to its neighboring variable node $i$ is 
+When we want to ask multiple queries (marginal probabilities) on a graphical model, we repetitively call the variable elimination method for each query until all queries are answered. The \textit{sum-product} algorithm is more efficient for this case. It is a \textit{message passing} algorithm that operates on graphical models. More importantly, the intermediate results, the messages, are shared in all computations. Thus one call of this message passing algorithm returns answers to multiple queries. The sum-product algorithm, also known as \textit{belief propagation}, has an iterative message update rule. A message update step from a factor $a$ to its neighboring variable node $i$ is 
 \begin{equation}\label{chpt2:eq:loopy-bp}
   m_{a\rightarrow i}(x_i) \propto \sum_{\bm{x}_{a} \backslash x_i}
   \phi_{a}(\bm{x}_{a}) \prod_{j \in a \backslash i} \prod_{a^{\prime} \in \mathrm{ne}_j
     \backslash a} m_{a^{\prime}\rightarrow j}(x_j),
 \end{equation}
-where $a^\prime, a \in \Ff$ and $\mathrm{ne}_i = \left\{ a | i \in a, a \in \Ff \right\}$ denotes the neighboring factors of the variable node $i$. The left-hand-side of $\propto$ is the updated message and the right-hand-side of $\propto$ is a function of factors and old messages in \eqref{chpt2:eq:loopy-bp}. The marginal for $x_i$ is simply $p(x_i)\propto\prod_{a\in\mathrm{ne}_i}m_{a\rightarrow i}(x_i)$ after all messages have been updated accordingly. For a tree-structured graph, the message-passing rule in \eqref{chpt2:eq:loopy-bp} with pre-defined ordering of sequential updates gives exact marginals.
+where $a^\prime, a \in \Ff$ and $\mathrm{ne}_i = \left\{ a | i \in a, a \in \Ff \right\}$ denotes the neighboring factors of the variable node $i$. The left-hand-side of $\propto$ is the updated message and the right-hand-side of $\propto$ is a function of factors and old messages in \eqref{chpt2:eq:loopy-bp}. The marginal for $x_i$ is simply $p(x_i)\propto\prod_{a\in\mathrm{ne}_i}m_{a\rightarrow i}(x_i)$ after all messages have been updated accordingly. For a tree-structured graph, the message passing rule in \eqref{chpt2:eq:loopy-bp} with pre-defined ordering of sequential updates gives exact marginals.
 
 However, when a graphical model is not tree-structured, the above methods can not give exact inference. If exact inference is still desired here, one may consider converting the graph of the graphical model into a clique tree, an acyclic graph whose nodes are maximal cliques, and apply the \textit{junction tree} algorithm.
 
@@ -363,7 +363,7 @@ where $\tilde{p}(\bm{x}; \bm{\theta}) =  \prod_{a \in \Ff} \psi_{a}(\bm{x}_{a}; 
 
 \subsection{Variational Free Energy and Mean Field}
 
-Mean field method, similar to the sum-product algorithm in Section~\ref{chpt2:sec:inference-mp}, is an iterative message-passing approach. 
+Mean field method, similar to the sum-product algorithm in Section~\ref{chpt2:sec:inference-mp}, is an iterative message passing approach. 
 The message update rule of mean field algorithm is described as follow.
 \begin{equation}\label{chpt2:eq:mf-update}
   \log{b_i(x_i)} \propto \sum_{a \in \mathrm{ne}_i} \sum_{\bm{x}_{a} \backslash x_i} \log{\phi_{a}}(\bm{x}_{a};\bm{\theta}_{a}) \prod_{j\in {a}\backslash i} b_j(x_j).
@@ -407,7 +407,7 @@ Due to the  non-single-node beliefs, there are consistency constrains $\sum_{\bm
 \end{align}
 where $\Vv$ and $\Ff$ are the set of variable nodes and the set of
 factor nodes in factor graph as defined in
-Definition~\ref{chpt2:def:factor-graph}, gives the (loopy) BP message-passing rule that has the same formula as in \eqref{chpt2:eq:loopy-bp}.
+Definition~\ref{chpt2:def:factor-graph}, gives the (loopy) BP message passing rule that has the same formula as in \eqref{chpt2:eq:loopy-bp}.
 
 These variational approaches would be further discussed and compared in Chapter~\ref{chapter3} and \ref{chapter4} of Part~\ref{part:inference}.
 
