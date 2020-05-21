@@ -17,46 +17,46 @@ In this chapter, we seek to use larger clusters in a graphical representation to
   \begin{tikzpicture}
     \begin{scope}[scale=0.7]
 
-    \tikzstyle{cnode} = [thick, draw=black, circle, inner sep = 1pt,  align=center]
-    \tikzstyle{nnode} = [thick, rectangle, rounded corners = 0pt,draw,inner sep = 2pt]
-    \node[cnode] (x1) at (0,0) {1};
-    \node[cnode] (x2) at (2,0) {2};
-    \node[cnode] (x3) at (4,0) {3};
+      \tikzstyle{cnode} = [thick, draw=black, circle, inner sep = 1pt,  align=center]
+      \tikzstyle{nnode} = [thick, rectangle, rounded corners = 0pt,draw,inner sep = 2pt]
+      \node[cnode] (x1) at (0,0) {1};
+      \node[cnode] (x2) at (2,0) {2};
+      \node[cnode] (x3) at (4,0) {3};
 
-    \node[cnode] (x4) at (0,-2) {4};
-    \node[cnode] (x5) at (2,-2) {5};
-    \node[cnode] (x6) at (4,-2) {6};
+      \node[cnode] (x4) at (0,-2) {4};
+      \node[cnode] (x5) at (2,-2) {5};
+      \node[cnode] (x6) at (4,-2) {6};
 
-    \node[nnode] (fa) at (1,0) {\small$A$};
-    \node[nnode] (fb) at (3,0) {\small$B$};
+      \node[nnode] (fa) at (1,0) {\small$A$};
+      \node[nnode] (fb) at (3,0) {\small$B$};
 
-    \node[nnode] (fc) at (0,-1) {\small$C$};
-    \node[nnode] (fd) at (2,-1) {\small$D$};
-    \node[nnode] (fe) at (4,-1) {\small$E$};
-        
-    \node[nnode] (ff) at (1,-2) {\small$F$};
-    \node[nnode] (fg) at (3,-2) {\small$G$};
+      \node[nnode] (fc) at (0,-1) {\small$C$};
+      \node[nnode] (fd) at (2,-1) {\small$D$};
+      \node[nnode] (fe) at (4,-1) {\small$E$};
+      
+      \node[nnode] (ff) at (1,-2) {\small$F$};
+      \node[nnode] (fg) at (3,-2) {\small$G$};
 
 
-    \draw[-] (x1) -- (fa);
-    \draw[-] (x1) -- (fc);
+      \draw[-] (x1) -- (fa);
+      \draw[-] (x1) -- (fc);
 
-    \draw[-] (x2) -- (fa);
-    \draw[-] (x2) -- (fb);
-    \draw[-] (x2) -- (fd);
+      \draw[-] (x2) -- (fa);
+      \draw[-] (x2) -- (fb);
+      \draw[-] (x2) -- (fd);
 
-    \draw[-] (x3) -- (fb);
-    \draw[-] (x3) -- (fe);
+      \draw[-] (x3) -- (fb);
+      \draw[-] (x3) -- (fe);
 
-    \draw[-] (x4) -- (fc);
-    \draw[-] (x4) -- (ff);
+      \draw[-] (x4) -- (fc);
+      \draw[-] (x4) -- (ff);
 
-    \draw[-] (x5) -- (fd);
-    \draw[-] (x5) -- (ff);
-    \draw[-] (x5) -- (fg);
+      \draw[-] (x5) -- (fd);
+      \draw[-] (x5) -- (ff);
+      \draw[-] (x5) -- (fg);
 
-    \draw[-] (x6) -- (fe);
-    \draw[-] (x6) -- (fg);
+      \draw[-] (x6) -- (fe);
+      \draw[-] (x6) -- (fg);
 
     \end{scope}
     \draw[dashed] (0, -1.8) -- (7.5, -1.8) (3.3, 0) -- (3.3, -1.8);
@@ -78,22 +78,22 @@ In this chapter, we seek to use larger clusters in a graphical representation to
       \node[rnode] (r02) at (3.7,0) {\small\begin{tabular}[x]{@{}c@{}}2, 3, 5, 6\\ $B,D,E,G$ \end{tabular}};
       \node[rnode] (r03) at (8,0) {\small\begin{tabular}[x]{@{}c@{}}1, 2, 3, 4, 5, 6\\ $A,B,C,E,F,G$ \end{tabular}};
       \begin{scope}[yshift=-0.2cm]
-      \node[rnode] (r11) at (0, -2.0) {\small\begin{tabular}[x]{@{}c@{}}1, 2\\ $A$ \end{tabular}};
-      \node[rnode] (r12) at (1.5, -2.0) {\small\begin{tabular}[x]{@{}c@{}}2, 3\\ $B$ \end{tabular}};
-      \node[rnode] (r13) at (3, -2.0) {\small\begin{tabular}[x]{@{}c@{}}1, 4\\ $C$ \end{tabular}};
-      \node[rnode] (r14) at (4.5, -2.0) {\small\begin{tabular}[x]{@{}c@{}}2, 5\\ $D$ \end{tabular}};
-      \node[rnode] (r15) at (6, -2.0) {\small\begin{tabular}[x]{@{}c@{}}3, 6\\ $E$ \end{tabular}};
-      \node[rnode] (r16) at (7.5, -2.0) {\small\begin{tabular}[x]{@{}c@{}}4, 5\\ $F$ \end{tabular}};
-      \node[rnode] (r17) at (9, -2.0) {\small\begin{tabular}[x]{@{}c@{}}5, 6\\ $G$ \end{tabular}};
+        \node[rnode] (r11) at (0, -2.0) {\small\begin{tabular}[x]{@{}c@{}}1, 2\\ $A$ \end{tabular}};
+        \node[rnode] (r12) at (1.5, -2.0) {\small\begin{tabular}[x]{@{}c@{}}2, 3\\ $B$ \end{tabular}};
+        \node[rnode] (r13) at (3, -2.0) {\small\begin{tabular}[x]{@{}c@{}}1, 4\\ $C$ \end{tabular}};
+        \node[rnode] (r14) at (4.5, -2.0) {\small\begin{tabular}[x]{@{}c@{}}2, 5\\ $D$ \end{tabular}};
+        \node[rnode] (r15) at (6, -2.0) {\small\begin{tabular}[x]{@{}c@{}}3, 6\\ $E$ \end{tabular}};
+        \node[rnode] (r16) at (7.5, -2.0) {\small\begin{tabular}[x]{@{}c@{}}4, 5\\ $F$ \end{tabular}};
+        \node[rnode] (r17) at (9, -2.0) {\small\begin{tabular}[x]{@{}c@{}}5, 6\\ $G$ \end{tabular}};
 
-      \begin{scope}[yshift=0.5cm]
-      \node[rnode] (r21) at (1, -4) {\small 1};
-      \node[rnode] (r22) at (2.5, -4) {\small 2};
-      \node[rnode] (r23) at (4, -4) {\small 3};
-      \node[rnode] (r24) at (5.5, -4) {\small 4};
-      \node[rnode] (r25) at (7, -4) {\small 5};
-      \node[rnode] (r26) at (8.5, -4) {\small 6};
-      \end{scope}
+        \begin{scope}[yshift=0.5cm]
+          \node[rnode] (r21) at (1, -4) {\small 1};
+          \node[rnode] (r22) at (2.5, -4) {\small 2};
+          \node[rnode] (r23) at (4, -4) {\small 3};
+          \node[rnode] (r24) at (5.5, -4) {\small 4};
+          \node[rnode] (r25) at (7, -4) {\small 5};
+          \node[rnode] (r26) at (8.5, -4) {\small 6};
+        \end{scope}
       \end{scope}
       % edge level0 to level1
       \draw[->] (r01.south) -- (r11.north);
@@ -168,15 +168,15 @@ We define some notations before going further. Since $\Gg_R$ is a hierarchical d
 $R^{[l]}_i\in \Rr_l$ denotes $R^{[l]}_i$ is the $i$-th region node in level $l$. This means $\Rr_0$ is a set of the top root regions that have no parents, i.e. the level $0$ regions. Also, $R^{[l]}$ means it can be any node in $\Rr_l$ and $R$ denotes a region node when it is not clear or doesn't matter which level it locates. Lastly, due to a region may be associated with both variable and factor, we denote the scope of $R$ by  $\bm{x}_R = \left\{ x_i| i \in R \right\}$.
 
 \begin{example}
-Take the top-right region graph in Figure~\ref{fig:factor-region-graphs} as an example. There are total two layers in the region graph, i.e., $\Rr_0$ and $\Rr_1$. We have $\Rr_0 = \left\{ R_1^{[0]}, R_2^{[0]} \right\}$ where $R_1^{[0]} = \left\{ 1, 2, 4, 5, A, C, D, F \right\}$ and $R_2^{[0]} = \left\{ 2, 3, 5, 6, B, D, E, G \right\}$. As for $\Rr_1$, there is only one region in it and it is $R_1^{[1]} = \left\{ 2, 5, D \right\}$. There are two directed edges, i.e., $\left( R_1^{[0]}, R_1^{[1]} \right)$ and $\left( R_2^{[0]}, R_1^{[1]} \right)$.
+  Take the top-right region graph in Figure~\ref{fig:factor-region-graphs} as an example. There are total two layers in the region graph, i.e., $\Rr_0$ and $\Rr_1$. We have $\Rr_0 = \left\{ R_1^{[0]}, R_2^{[0]} \right\}$ where $R_1^{[0]} = \left\{ 1, 2, 4, 5, A, C, D, F \right\}$ and $R_2^{[0]} = \left\{ 2, 3, 5, 6, B, D, E, G \right\}$. As for $\Rr_1$, there is only one region in it and it is $R_1^{[1]} = \left\{ 2, 5, D \right\}$. There are two directed edges, i.e., $\left( R_1^{[0]}, R_1^{[1]} \right)$ and $\left( R_2^{[0]}, R_1^{[1]} \right)$.
 \end{example}
 
 GBP operates on region graph $\Gg_R(\Rr,\Ee)$. A message is always sent from a parent region $P$ to a child region $R$, i.e. the directed edge $(P, R)\in \Ee$. Let us define the factors in region $R$ as $A_R = \left\{ a | a \in R \right\}$. $\Pp(R)$ denotes the set of parent regions of $R$. The descendants of $R$ is denoted by $\Dd(R)$ (excluding $R$). The descendants of $R$ including $R$ is denoted by $\hat{\Dd}(R) = \Dd(R) \cup R$. The message update rule from the parent region $P$ to the child region $R$ is
 \begin{align}
   m_{P\rightarrow R} \propto \frac{\sum_{\bm{x}_P\backslash
-    \bm{x}_R}\prod_{a\in A_P\backslash A_R}\phi_a(\bm{x}_a)\prod_{(I,J)
-    \in \Nn(P, R)}m_{I\rightarrow J}(\bm{x}_J)}{\prod_{(I,J)
-    \in \Hh(P, R)}m_{I\rightarrow J}(\bm{x}_J)},
+  \bm{x}_R}\prod_{a\in A_P\backslash A_R}\phi_a(\bm{x}_a)\prod_{(I,J)
+  \in \Nn(P, R)}m_{I\rightarrow J}(\bm{x}_J)}{\prod_{(I,J)
+  \in \Hh(P, R)}m_{I\rightarrow J}(\bm{x}_J)},
 \end{align}
 where
 \begin{align}
@@ -186,7 +186,7 @@ where
 By comparing the GBP with previously discussed mean field, loopy BP and $\alpha$-BP in Chapter~\ref{chapter2} and \ref{chapter3}, it can be seen that both the message update of GBP is more complex. The ordering or sequence of GBP message updates in a region graph also affects it performance (e.g., see \cite{yedida2005constucting}). After message passing phase, the belief for each region $R$, i.e., the approximation to marginal $p(\bm{x}_{R})$, is computed as
 \begin{align}
   b_R(\bm{x}_R) \propto \prod_{a\in A_R} \phi_a(\bm{x}_a) \prod_{P\in
-                       \Pp(R)} m_{P\rightarrow R}(\bm{x}_R) \prod_{D\in \Dd(R)} \prod_{P^{\prime} \in \Pp(D) \backslash \hat{\Dd}(R)} m_{P^{\prime}\rightarrow D}(\bm{x}_D).
+  \Pp(R)} m_{P\rightarrow R}(\bm{x}_R) \prod_{D\in \Dd(R)} \prod_{P^{\prime} \in \Pp(D) \backslash \hat{\Dd}(R)} m_{P^{\prime}\rightarrow D}(\bm{x}_D).
 \end{align}
 
 
@@ -226,9 +226,9 @@ The edges of the original factor graph $\Gg_F$ are preserved in the constructed 
 large regions,
 \begin{align}\label{apdix:eq:large-region}
   F_{R,L} &=\sum_{R\in \Rr_{L}} c_{R,a}
-                              \sum_{\bm{x}_R}b_R(\bm{x}_R) (E_R(\bm{x}_R;\bm{\theta}_R) + \ln{b_R}(\bm{x}_R))
-                              \nonumber \\
-                            & =\sum_{a\in \Ff} \sum_{\bm{x}_a} b_a(\bm{x}_a)\ln{\frac{b_a(\bm{x}_a)}{\phi_a(\bm{x}_a; \bm{\theta}_a)}}.
+            \sum_{\bm{x}_R}b_R(\bm{x}_R) (E_R(\bm{x}_R;\bm{\theta}_R) + \ln{b_R}(\bm{x}_R))
+            \nonumber \\
+          & =\sum_{a\in \Ff} \sum_{\bm{x}_a} b_a(\bm{x}_a)\ln{\frac{b_a(\bm{x}_a)}{\phi_a(\bm{x}_a; \bm{\theta}_a)}}.
 \end{align}
 And for the small regions, the free energy can be similarly obtained as
 \begin{equation}\label{apdix:eq:small-region}
@@ -257,41 +257,41 @@ Putting \eqref{apdix:eq:large-region} and \eqref{apdix:eq:small-region} together
     
     % level0 regions
     \begin{scope}[scale=0.6]
-    \node[cnode] (r01) at (1, 0) {\tiny$R_1^{[0]}$};
-    \node[cnode] (r02) at (1, -1) {\tiny$R_2^{[0]}$};
-    \node[cnode] (r03) at (1, -2) {\tiny$R_3^{[0]}$};
-    \node[cnode] (r04) at (1, -3) {\tiny$R_4^{[0]}$};
-    \node[cnode] (r05) at (1, -4) {\tiny$R_5^{[0]}$};
-    \node[label=below:$\Rr_0$, draw,rounded corners = 2pt, inner sep=1mm, fit=(r01) (r05)] {};
-  \end{scope}
+      \node[cnode] (r01) at (1, 0) {\tiny$R_1^{[0]}$};
+      \node[cnode] (r02) at (1, -1) {\tiny$R_2^{[0]}$};
+      \node[cnode] (r03) at (1, -2) {\tiny$R_3^{[0]}$};
+      \node[cnode] (r04) at (1, -3) {\tiny$R_4^{[0]}$};
+      \node[cnode] (r05) at (1, -4) {\tiny$R_5^{[0]}$};
+      \node[label=below:$\Rr_0$, draw,rounded corners = 2pt, inner sep=1mm, fit=(r01) (r05)] {};
+    \end{scope}
 
-  \draw[->] (nn.351.9) |- (r01);
-  \draw[->] (nn.340) |- (r02);
-  \draw[->] (nn.295) |- (r03);
-  \draw[->] (nn.210) |- (r04);
-  \draw[->] (nn.191) |- (r05);
+    \draw[->] (nn.351.9) |- (r01);
+    \draw[->] (nn.340) |- (r02);
+    \draw[->] (nn.295) |- (r03);
+    \draw[->] (nn.210) |- (r04);
+    \draw[->] (nn.191) |- (r05);
 
-  \draw[->] (em) -- (nn);
+    \draw[->] (em) -- (nn);
 
 
     % level 1 regions
     \begin{scope}[xshift=1.5cm, yshift=-0.2cm, scale=0.6]
-    \node[cnode] (r11) at (1, 0) {\tiny$R_1^{[1]}$};
-    \node[cnode] (r12) at (1, -1) {\tiny$R_2^{[1]}$};
-    \node[cnode] (r13) at (1, -2) {\tiny$R_3^{[1]}$};
-    \node[cnode] (r14) at (1, -3) {\tiny$R_4^{[1]}$};
-    \node[label=below:$\Rr_1$, draw, rounded corners = 2pt, inner sep=1mm, fit=(r11) (r14)] {};
+      \node[cnode] (r11) at (1, 0) {\tiny$R_1^{[1]}$};
+      \node[cnode] (r12) at (1, -1) {\tiny$R_2^{[1]}$};
+      \node[cnode] (r13) at (1, -2) {\tiny$R_3^{[1]}$};
+      \node[cnode] (r14) at (1, -3) {\tiny$R_4^{[1]}$};
+      \node[label=below:$\Rr_1$, draw, rounded corners = 2pt, inner sep=1mm, fit=(r11) (r14)] {};
     \end{scope}
 
     
     
     % level 1 regions
     \begin{scope}[xshift=3cm, yshift=-0.2cm, scale=0.6]
-    \node[cnode] (r21) at (1, 0) {\tiny$R_1^{[2]}$};
-    \node[cnode] (r22) at (1, -1) {\tiny$R_2^{[2]}$};
-    \node[cnode] (r23) at (1, -2) {\tiny$R_3^{[2]}$};
-    \node[cnode] (r24) at (1, -3) {\tiny$R_4^{[2]}$};
-    \node[label=below:$\Rr_2$, draw, rounded corners = 2pt, inner sep=1mm, fit=(r21) (r24)] {};
+      \node[cnode] (r21) at (1, 0) {\tiny$R_1^{[2]}$};
+      \node[cnode] (r22) at (1, -1) {\tiny$R_2^{[2]}$};
+      \node[cnode] (r23) at (1, -2) {\tiny$R_3^{[2]}$};
+      \node[cnode] (r24) at (1, -3) {\tiny$R_4^{[2]}$};
+      \node[label=below:$\Rr_2$, draw, rounded corners = 2pt, inner sep=1mm, fit=(r21) (r24)] {};
     \end{scope}
 
     \draw[->] (r01) -- (r11);
@@ -363,8 +363,13 @@ where $d(\cdot, \cdot)$ is distance metric or divergence to measure the mismatch
 
 
 \begin{example}
-We demonstrate a toy RENN in this example. As illustrated in Figure~\ref{fig:renn-illustration}, a three-level RENN takes embedding vectors as input and outputs the beliefs on $\Rr_0$ directly. The beliefs in other levels $\{\Rr_1$, $\Rr_2\}$ are computed as in \eqref{eq:l-level-beliefs}. Then the region-based free energy along with the penalty of region belief consistency is minimized w.r.t. $\bm{\omega}$.
+  We demonstrate a toy RENN in this example. As illustrated in Figure~\ref{fig:renn-illustration}, a three-level RENN takes embedding vectors as input and outputs the beliefs on $\Rr_0$ directly. The beliefs in other levels $\{\Rr_1$, $\Rr_2\}$ are computed as in \eqref{eq:l-level-beliefs}. Then the region-based free energy along with the penalty of region belief consistency is minimized w.r.t. $\bm{\omega}$.
 \end{example}
+
+\begin{remark}[Region-based Free Energy and the Partition Function]
+  We explained in Section~\ref{chpt2:sec:variational-inference} that Bethe free energy is an approximation to the negative log-partition function, i.e., $-\log{Z(\bm{\theta})}$. This relationship between free energy and partition function similarly exists for RENN.
+  After the energy minimization phase as stated in \eqref{eq:infer-F-all-belief}, the minimized region-based free energy $F_R(\Bb^{\ast};\bm{\theta})$ is an approximation to the negative log-partition $-\log{Z(\bm{\bm{\theta}})}$, where $\Bb^{\ast} = \left\{b_R(\bm{x}_R;\bm{\omega}^{\ast})| R \in \Rr \right\}$ with $\bm{\omega}^{\ast}$ as the parameter of RENN after the optimization phase.
+\end{remark}
 
 \subsection{Region Graph Construction for RENN}
 In this section we detail how to construct the region graph $\Gg_R$ for RENN.
@@ -396,7 +401,7 @@ Cluster variation method starts with the root regions $\Rr_0$. There are two req
 With $\Rr_0$ ready, the other sets of regions are generated hierarchically. To construct level-$1$ regions $\Rr_1$ from $\Rr_0$, we find out all the intersections between regions in $\Rr_0$, but omit any that are subregion of other intersection regions. Then level-$2$ regions $\Rr_2$ can be similarly constructed from $\Rr_1$. Assume there are $L$ such sets, then $\Rr = \Rr_0 \cup \Rr_1 \cup \cdots \cup \Rr_{L-1}$. The construction rule can be formulated as
 \begin{align}
   \Rr_l = &\{ R^{[l]}_i := R^{[l-1]}_j \cap R^{[l-1]}_k | R^{[l]}_i \not\subset R^{[l]}_n,~ \forall i \neq n, \nonumber \\
-  &R^{[l-1]}_j, R^{[l-1]}_k \in \Rr_{l-1} , j\neq k\}, l=1, 2, \cdots, L-1.
+          &R^{[l-1]}_j, R^{[l-1]}_k \in \Rr_{l-1} , j\neq k\}, l=1, 2, \cdots, L-1.
 \end{align}
 
 With the hierarchical region sets built, we need to draw the edges. The directed edges are always connected from regions in $\Rr_{l-1}$ to these in $\Rr_{l}$. For one region $R^{[l]}$ in $\Rr_l$, a directed edge is drawn from any superregion of $R^{[l]}$ in $\Rr_l$. This can be represented as
@@ -424,8 +429,8 @@ To explain the concept of \textit{tree-robust}, we need explain the concepts of 
 \end{definition}
 \begin{definition}\label{apdix:def:tree-exact}
   Let $T$ be a spanning tree of graph $\Gg$. A cycle basis $\Cc\Bb$ is \textit{tree exact} w.r.t. $T$ if there exists an ordering $\pi$ of the cycles in $\Cc\Bb$ such that
-\begin{equation*}
-  \left\{ C_{\pi(i)} \backslash C_{\pi(1)} \cup C_{\pi(2)} \cup \cdots \cup C_{\pi(i-1)} \right\} \neq \emptyset~~\mathrm{for}~~ i=2,\cdots, \mu.
+  \begin{equation*}
+    \left\{ C_{\pi(i)} \backslash C_{\pi(1)} \cup C_{\pi(2)} \cup \cdots \cup C_{\pi(i-1)} \right\} \neq \emptyset~~\mathrm{for}~~ i=2,\cdots, \mu.
   \end{equation*}
 \end{definition}
 Definition~\ref{apdix:def:tree-exact} tells us that if a cycle basis is tree exact w.r.t. $T$ and ordered properly, there is at least one edge of $C_{\pi}$ that has not appeared in any cycles preceding it, and meanwhile this edge does not appear in the spanning tree $T$.
@@ -445,14 +450,14 @@ We use two theorems from \cite{gelfand2012generalized} for choosing cycle basis 
   In a complete graph $\Gg$, construct a cycle basis as follows. Choose a node $i$ as the root. Create a 'star' spanning tree rooted at $i$. Then construct cycles of form $(i,j,k)$ from each off-tree edge $(j,k)$. The constructed basis is tree-robust.
 \end{theorem}
 
-Tree-robust root regions can also be constructed for general graphs, which can be seen as an extension from Theorem~\ref{thm:planar-tree-robust} and \ref{thm:complete-tree-robust}. For general graph case, it basically is to find a subgraph that is planar or compote graph, and then extract the corresponding tree-robust basis, after which extra cycles are added in by following Algorithm~\ref{apdix:alg:root-region-general-graph}.
+Tree-robust root regions can also be constructed for general graphs, which can be seen as an extension from Theorem~\ref{thm:planar-tree-robust} and \ref{thm:complete-tree-robust}. For general graph case, it basically is to find a subgraph that is planar or compote graph, and then extract the corresponding tree-robust basis, after which extra cycles are added in by following Algorithm~\ref{apdix:alg:root-region-general-graph}. To be more specific, the Algorithm~\ref{apdix:alg:root-region-general-graph} returns a partially tree-robust basis, since tree-robust condition for a general graph requires inspecting all subset of cycles in a candidate basis, which is usually prohibitive. 
 \begin{algorithm}[tb]
   \caption{Construct Root Regions from General Graphs.}
   \label{apdix:alg:root-region-general-graph}
   \begin{algorithmic}
     \STATE {\bfseries Input:} Pairwise Markov random field $p(\bm{x})$
     \STATE Draw the factor graph $\Gg_F$ of $p(\bm{x})$
-    \STATE Obtain graph $\Gg$ by preserving the variable nodes as they are and converting the factor nodes of $\Gg_F$ into edges
+    \STATE Obtain graph $\Gg$ by preserving the variable nodes as they are and converting the factor nodes of $\Gg_F$ into edges, i.e., the undirected graph of MRF representation
     \STATE Find the subgraph $\Gg_s$ of $\Gg$, such that $\Gg_s$ is planar or complete graph
     \STATE Add the tree-robust basis $\Cc\Bb(\Gg_s)$ of $\Gg_s$ into $\Rr_0$
     \STATE Marked all nodes as \textit{visited} and edged as \textit{used} in $\Gg_s$
@@ -483,7 +488,8 @@ Tree-robust root regions can also be constructed for general graphs, which can b
 
 \section{Experimental Results}
 
-We conducted a series of experiments to validate the proposed RENN model. The experiments are designed to verify RENN in inference problems. Analysis and experiments on MRF learning would be reserved to explain in Part learning.
+We conducted a series of experiments to validate the proposed RENN model. The experiments are designed to verify RENN in inference problems. 
+Apart from the inference experiments, we also carried out the MRF model learning experiments. Analysis and experiments on MRF learning are reserved to explain in Chapter~\ref{chpt5:undirecteLearning}.
 
 
 
@@ -493,50 +499,50 @@ We conducted a series of experiments to validate the proposed RENN model. The ex
   \begin{center}
     \begin{small}
       \begin{tabular}{lcccccccc}
-          \toprule
-          Metric & $n$ & Mean Field & Loopy BP & Damped BP & GBP & Inference Net & RENN \\
-          \midrule
-          \multirow{4}{*}{\begin{tabular}[x]{@{}c@{}}$\ell_1$\\error \end{tabular} }
-                 &    25   &$0.271 \pm 0.051$ &  $0.086 \pm 0.078$ & $0.084 \pm 0.076$ & $0.057 \pm 0.024$ & $0.111 \pm 0.072$ & \textbf{0.049} $\pm$ 0.078 \\
-          
-                 &    100   & $0.283 \pm 0.024$ &  $0.085 \pm 0.041$ & $0.062 \pm 0.024$ & $0.064 \pm 0.019$ & $0.074 \pm 0.034$ & \textbf{0.025} $\pm$ 0.011 \\
-          
-                 &    225   & $0.284 \pm 0.019$ &  $0.100 \pm 0.025$ & $0.076 \pm 0.025$ & $0.073 \pm 0.013$ & $ 0.073 \pm 0.012$ & \textbf{0.046} $\pm$ 0.011 \\
-          
-                 &    400   & $0.279 \pm 0.014$ &  $0.110 \pm 0.016$ & $0.090 \pm 0.016$ & $0.079 \pm 0.009$ & $ 0.083 \pm 0.009$ & \textbf{0.061} $\pm$ 0.009 \\
+        \toprule
+        Metric & $n$ & Mean Field & Loopy BP & Damped BP & GBP & Inference Net & RENN \\
+        \midrule
+        \multirow{4}{*}{\begin{tabular}[x]{@{}c@{}}$\ell_1$\\error \end{tabular} }
+               &    25   &$0.271 \pm 0.051$ &  $0.086 \pm 0.078$ & $0.084 \pm 0.076$ & $0.057 \pm 0.024$ & $0.111 \pm 0.072$ & \textbf{0.049} $\pm$ 0.078 \\
+        
+               &    100   & $0.283 \pm 0.024$ &  $0.085 \pm 0.041$ & $0.062 \pm 0.024$ & $0.064 \pm 0.019$ & $0.074 \pm 0.034$ & \textbf{0.025} $\pm$ 0.011 \\
+        
+               &    225   & $0.284 \pm 0.019$ &  $0.100 \pm 0.025$ & $0.076 \pm 0.025$ & $0.073 \pm 0.013$ & $ 0.073 \pm 0.012$ & \textbf{0.046} $\pm$ 0.011 \\
+        
+               &    400   & $0.279 \pm 0.014$ &  $0.110 \pm 0.016$ & $0.090 \pm 0.016$ & $0.079 \pm 0.009$ & $ 0.083 \pm 0.009$ & \textbf{0.061} $\pm$ 0.009 \\
 
-          \midrule
-          \multirow{4}{*}{\begin{tabular}[x]{@{}c@{}}Corre-\\lation\\ $\rho$ \end{tabular}}
-                 &   25    & 0.633 $\pm$ 0.197  &  0.903 $\pm$ 0.114  &  0.905 $\pm$ 0.113  &  0.923 $\pm$ 0.045  &  0.866$\pm$ 0.117 &  \textbf{0.951} $\pm$ 0.112 \\
-          
-                 &   100   & 0.582 $\pm$ 0.112  &  0.827 $\pm$ 0.134  &  0.902 $\pm$ 0.059  &  0.899 $\pm$ 0.043  &  0.903$\pm$ 0.049 &   \textbf{0.983} $\pm$ 0.012 \\
-          
-                 &   225   & 0.580 $\pm$ 0.080  &  0.801 $\pm$ 0.078  &  0.863 $\pm$ 0.088  &  0.869 $\pm$ 0.037  & 0.873 $\pm$ 0.037 &  \textbf{0.949} $\pm$ 0.022 \\
-          
-                 &   400   & 0.596 $\pm$ 0.054  &  0.779 $\pm$ 0.059  &  0.822 $\pm$ 0.047  &  0.852 $\pm$ 0.024  & 0.841 $\pm$ 0.028 &  \textbf{0.912} $\pm$ 0.025 \\
+        \midrule
+        \multirow{4}{*}{\begin{tabular}[x]{@{}c@{}}Corre-\\lation\\ $\rho$ \end{tabular}}
+               &   25    & 0.633 $\pm$ 0.197  &  0.903 $\pm$ 0.114  &  0.905 $\pm$ 0.113  &  0.923 $\pm$ 0.045  &  0.866$\pm$ 0.117 &  \textbf{0.951} $\pm$ 0.112 \\
+        
+               &   100   & 0.582 $\pm$ 0.112  &  0.827 $\pm$ 0.134  &  0.902 $\pm$ 0.059  &  0.899 $\pm$ 0.043  &  0.903$\pm$ 0.049 &   \textbf{0.983} $\pm$ 0.012 \\
+        
+               &   225   & 0.580 $\pm$ 0.080  &  0.801 $\pm$ 0.078  &  0.863 $\pm$ 0.088  &  0.869 $\pm$ 0.037  & 0.873 $\pm$ 0.037 &  \textbf{0.949} $\pm$ 0.022 \\
+        
+               &   400   & 0.596 $\pm$ 0.054  &  0.779 $\pm$ 0.059  &  0.822 $\pm$ 0.047  &  0.852 $\pm$ 0.024  & 0.841 $\pm$ 0.028 &  \textbf{0.912} $\pm$ 0.025 \\
 
-          \midrule
-          \multirow{4}{*}{\begin{tabular}[x]{@{}c@{}}$\log{Z}$ \\error\end{tabular}}
-                 &   25    & 2.512 $\pm$ 1.060  &  0.549 $\pm$ 0.373  &  0.557 $\pm$ 0.369  &  \textbf{0.169} $\pm$ 0.142  &  0.762 $\pm$ 0.439  &  0.240 $\pm$ 0.140 \\
+        \midrule
+        \multirow{4}{*}{\begin{tabular}[x]{@{}c@{}}$\log{Z}$ \\error\end{tabular}}
+               &   25    & 2.512 $\pm$ 1.060  &  0.549 $\pm$ 0.373  &  0.557 $\pm$ 0.369  &  \textbf{0.169} $\pm$ 0.142  &  0.762 $\pm$ 0.439  &  0.240 $\pm$ 0.140 \\
 
-                 &  100    & 13.09 $\pm$ 2.156  &  1.650 $\pm$ 1.414  &  1.457 $\pm$  1.365 &  \textbf{0.524} $\pm$ 0.313  &  2.836 $\pm$ 2.158  & 1.899 $\pm$ 0.495 \\
+               &  100    & 13.09 $\pm$ 2.156  &  1.650 $\pm$ 1.414  &  1.457 $\pm$  1.365 &  \textbf{0.524} $\pm$ 0.313  &  2.836 $\pm$ 2.158  & 1.899 $\pm$ 0.495 \\
 
-                 &  225    & 29.93 $\pm$ 4.679  &  3.348 $\pm$ 1.954  &  3.423 $\pm$ 2.157  &  \textbf{1.008} $\pm$ 0.653  &  3.249 $\pm$ 2.058  & 4.344 $\pm$ 0.813  \\
+               &  225    & 29.93 $\pm$ 4.679  &  3.348 $\pm$ 1.954  &  3.423 $\pm$ 2.157  &  \textbf{1.008} $\pm$ 0.653  &  3.249 $\pm$ 2.058  & 4.344 $\pm$ 0.813  \\
 
-                 &  400    & 51.81 $\pm$ 4.706  &  5.738 $\pm$ 2.107  &  5.873$\pm$ 2.211   &  \textbf{1.750} $\pm$ 0.869  &  3.953 $\pm$ 2.558  & 7.598 $\pm$ 1.146 \\
-          
-                 % \midrule
-                 % \multirow{4}{*}{Time}
-                 % &   25   &  0.259 $\pm$ 0.076  &  2.990 $\pm$ 4.563  &  1.591 $\pm$ 0.609  &  6.817 $\pm$ 0.339  &  5.253 $\pm$ 1.189  &  5.828 $\pm$ 2.372  \\
-                 % &  100   &  1.290 $\pm$ 0.205  &  57.10 $\pm$ 25.64 &  28.70 $\pm$ 24.62 & 46.89$ \pm$ 1.365 & 22.05 $\pm$ 10.53  & 22.63 $\pm$ 6.202 \\
+               &  400    & 51.81 $\pm$ 4.706  &  5.738 $\pm$ 2.107  &  5.873$\pm$ 2.211   &  \textbf{1.750} $\pm$ 0.869  &  3.953 $\pm$ 2.558  & 7.598 $\pm$ 1.146 \\
+        
+               % \midrule
+               % \multirow{4}{*}{Time}
+               % &   25   &  0.259 $\pm$ 0.076  &  2.990 $\pm$ 4.563  &  1.591 $\pm$ 0.609  &  6.817 $\pm$ 0.339  &  5.253 $\pm$ 1.189  &  5.828 $\pm$ 2.372  \\
+               % &  100   &  1.290 $\pm$ 0.205  &  57.10 $\pm$ 25.64 &  28.70 $\pm$ 24.62 & 46.89$ \pm$ 1.365 & 22.05 $\pm$ 10.53  & 22.63 $\pm$ 6.202 \\
 
-                 % &  225   &  3.838 $\pm$ 1.015  &  184.1 $\pm$ 3.648  &  124.2 $\pm$ 68.70  &  131.1 $\pm$ 3.440  &  36.43 $\pm$ 2.087  & 51.82 $\pm$ 2.431 \\
+               % &  225   &  3.838 $\pm$ 1.015  &  184.1 $\pm$ 3.648  &  124.2 $\pm$ 68.70  &  131.1 $\pm$ 3.440  &  36.43 $\pm$ 2.087  & 51.82 $\pm$ 2.431 \\
 
-                 % &  400   &  7.908 $\pm$ 1.508  & 335.3 $\pm$ 12.83   &  326.9 $\pm$ 27.56  &  253.7 $\pm$ 11.00   &  69.54 $\pm$ 5.140  & 103.9 $\pm$ 8.379 \\
-          
-          
-          \bottomrule
-        \end{tabular}
+               % &  400   &  7.908 $\pm$ 1.508  & 335.3 $\pm$ 12.83   &  326.9 $\pm$ 27.56  &  253.7 $\pm$ 11.00   &  69.54 $\pm$ 5.140  & 103.9 $\pm$ 8.379 \\
+        
+        
+        \bottomrule
+      \end{tabular}
     \end{small}
   \end{center}
 \end{sidewaystable}
@@ -547,53 +553,53 @@ We conducted a series of experiments to validate the proposed RENN model. The ex
   \begin{center}
     \begin{small}
       
-        \begin{tabular}{lcccccccc}
-          \toprule
-          Metric & $n$ & Mean Field & Loopy BP & Damped BP & GBP & Inference Net & RENN \\
-          \midrule
-          \multirow{4}{*}{L1}
-                 & 25   &  0.131 $\pm$ 0.080  &  \textbf{0.022} $\pm$ 0.017  &  0.022 $\pm$ 0.018  &  0.137 $\pm$ 0.026  &  0.043 $\pm$ 0.017  &  0.027 $\pm$ 0.014 \\
-                 & 100  &  0.130 $\pm$ 0.041  &  0.025 $\pm$ 0.014  &  0.025 $\pm$ 0.014  &  0.146 $\pm$ 0.020  &  0.046 $\pm$ 0.009  &  \textbf{0.017} $\pm$ 0.002  \\
+      \begin{tabular}{lcccccccc}
+        \toprule
+        Metric & $n$ & Mean Field & Loopy BP & Damped BP & GBP & Inference Net & RENN \\
+        \midrule
+        \multirow{4}{*}{L1}
+               & 25   &  0.131 $\pm$ 0.080  &  \textbf{0.022} $\pm$ 0.017  &  0.022 $\pm$ 0.018  &  0.137 $\pm$ 0.026  &  0.043 $\pm$ 0.017  &  0.027 $\pm$ 0.014 \\
+               & 100  &  0.130 $\pm$ 0.041  &  0.025 $\pm$ 0.014  &  0.025 $\pm$ 0.014  &  0.146 $\pm$ 0.020  &  0.046 $\pm$ 0.009  &  \textbf{0.017} $\pm$ 0.002  \\
 
-                 &225   &  0.135 $\pm$ 0.024  &  0.024 $\pm$ 0.010  &  0.023 $\pm$ 0.009  &  0.154 $\pm$ 0.012  &  0.052 $\pm$ 0.010  &  \textbf{0.017} $\pm$ 0.003 \\
+               &225   &  0.135 $\pm$ 0.024  &  0.024 $\pm$ 0.010  &  0.023 $\pm$ 0.009  &  0.154 $\pm$ 0.012  &  0.052 $\pm$ 0.010  &  \textbf{0.017} $\pm$ 0.003 \\
 
-                 &400   &  0.131 $\pm$ 0.020  &  0.020 $\pm$ 0.003  &  0.020 $\pm$ 0.003  &  0.158 $\pm$ 0.007  &  0.052 $\pm$ 0.007  &  \textbf{0.017} $\pm$ 0.001  \\
-          
-          
-          
-          \midrule
-          \multirow{4}{*}{\begin{tabular}[x]{@{}c@{}}Corre-\\lation\end{tabular}}
-                 & 25   &  0.849 $\pm$ 0.159  &  \textbf{0.992} $\pm$ 0.011  &  0.991 $\pm$ 0.012  &  0.798 $\pm$ 0.088  &  0.980 $\pm$ 0.015  & 0.988 $\pm$ 0.025  \\
-                 & 100  &  0.841 $\pm$ 0.087  &  0.988 $\pm$ 0.013  &  0.988 $\pm$ 0.012  &  0.788 $\pm$ 0.051  &  0.976 $\pm$ 0.013  &  \textbf{0.997} $\pm$0.001 \\
+               &400   &  0.131 $\pm$ 0.020  &  0.020 $\pm$ 0.003  &  0.020 $\pm$ 0.003  &  0.158 $\pm$ 0.007  &  0.052 $\pm$ 0.007  &  \textbf{0.017} $\pm$ 0.001  \\
+        
+        
+        
+        \midrule
+        \multirow{4}{*}{\begin{tabular}[x]{@{}c@{}}Corre-\\lation\end{tabular}}
+               & 25   &  0.849 $\pm$ 0.159  &  \textbf{0.992} $\pm$ 0.011  &  0.991 $\pm$ 0.012  &  0.798 $\pm$ 0.088  &  0.980 $\pm$ 0.015  & 0.988 $\pm$ 0.025  \\
+               & 100  &  0.841 $\pm$ 0.087  &  0.988 $\pm$ 0.013  &  0.988 $\pm$ 0.012  &  0.788 $\pm$ 0.051  &  0.976 $\pm$ 0.013  &  \textbf{0.997} $\pm$0.001 \\
 
-                 & 225  &  0.824 $\pm$ 0.057  &  0.989 $\pm$ 0.010  &  0.990 $\pm$ 0.010  &  0.764 $\pm$ 0.022  &  0.966 $\pm$ 0.016  &  \textbf{0.996} $\pm$ 0.001 \\
-          
-                 & 400  &  0.828 $\pm$ 0.043  &  0.993 $\pm$ 0.002  &  0.993 $\pm$ 0.002  &  0.759 $\pm$ 0.018  &  0.967 $\pm$ 0.013  &  \textbf{0.997} $\pm$ 0.001  \\
+               & 225  &  0.824 $\pm$ 0.057  &  0.989 $\pm$ 0.010  &  0.990 $\pm$ 0.010  &  0.764 $\pm$ 0.022  &  0.966 $\pm$ 0.016  &  \textbf{0.996} $\pm$ 0.001 \\
+        
+               & 400  &  0.828 $\pm$ 0.043  &  0.993 $\pm$ 0.002  &  0.993 $\pm$ 0.002  &  0.759 $\pm$ 0.018  &  0.967 $\pm$ 0.013  &  \textbf{0.997} $\pm$ 0.001  \\
 
-          \midrule
-          \multirow{4}{*}{\begin{tabular}[x]{@{}c@{}}$\log{Z}$ \\error\end{tabular}}
-                 & 25  &  2.113 $\pm$ 1.367  &  \textbf{0.170} $\pm$ 0.199  &  0.194 $\pm$ 0.188  &  0.605 $\pm$ 0.611  &  2.214 $\pm$ 0.775  &  0.649 $\pm$ 0.363  \\
+        \midrule
+        \multirow{4}{*}{\begin{tabular}[x]{@{}c@{}}$\log{Z}$ \\error\end{tabular}}
+               & 25  &  2.113 $\pm$ 1.367  &  \textbf{0.170} $\pm$ 0.199  &  0.194 $\pm$ 0.188  &  0.605 $\pm$ 0.611  &  2.214 $\pm$ 0.775  &  0.649 $\pm$ 0.363  \\
 
-                 &100  &  8.034 $\pm$ 2.523  &  \textbf{0.372} $\pm$ 0.427  &  0.415 $\pm$ 0.422  &  1.545 $\pm$ 1.081  &  11.14 $\pm$ 0.954  &  3.129 $\pm$ 0.520  \\
+               &100  &  8.034 $\pm$ 2.523  &  \textbf{0.372} $\pm$ 0.427  &  0.415 $\pm$ 0.422  &  1.545 $\pm$ 1.081  &  11.14 $\pm$ 0.954  &  3.129 $\pm$ 0.520  \\
 
-                 &225  &  17.923 $\pm$ 3.474 &  0.952 $\pm$ 1.037  &  \textbf{0.917} $\pm$ 0.922  &  3.143 $\pm$ 2.122  &  25.55 $\pm$ 2.025  &  7.473 $\pm$ 0.906  \\
+               &225  &  17.923 $\pm$ 3.474 &  0.952 $\pm$ 1.037  &  \textbf{0.917} $\pm$ 0.922  &  3.143 $\pm$ 2.122  &  25.55 $\pm$ 2.025  &  7.473 $\pm$ 0.906  \\
 
-                 &400  &  31.74 $\pm$ 4.766          &  \textbf{0.919} $\pm$ 0.684   &  1.011 $\pm$ 0.685  &  3.313 $\pm$ 1.872  &  46.61 $\pm$ 3.094  &  12.77 $\pm$ 0.991  \\
+               &400  &  31.74 $\pm$ 4.766          &  \textbf{0.919} $\pm$ 0.684   &  1.011 $\pm$ 0.685  &  3.313 $\pm$ 1.872  &  46.61 $\pm$ 3.094  &  12.77 $\pm$ 0.991  \\
 
-          
-                 % \midrule
-                 % \multirow{4}{*}{Time}
-                 % & 25  &  0.281 $\pm$ 0.129  &  0.937 $\pm$ 0.442  &  1.253 $\pm$ 0.403  &  6.982 $\pm$ 0.260  &  5.146 $\pm$ 0.398  &  5.341 $\pm$ 1.368  \\
+        
+               % \midrule
+               % \multirow{4}{*}{Time}
+               % & 25  &  0.281 $\pm$ 0.129  &  0.937 $\pm$ 0.442  &  1.253 $\pm$ 0.403  &  6.982 $\pm$ 0.260  &  5.146 $\pm$ 0.398  &  5.341 $\pm$ 1.368  \\
 
-                 % & 100 &  1.219 $\pm$ 0.314  &  6.339 $\pm$ 3.965  &  6.948 $\pm$ 1.664  &  49.64 $\pm$ 1.301  &  21.59 $\pm$ 4.703  &  31.79 $\pm$ 15.51  \\
-          
-                 % &125  &  3.539 $\pm$ 1.107  &  33.09 $\pm$ 48.62  &  17.85 $\pm$ 4.765  &  127.1 $\pm$ 3.547  &  56.99 $\pm$ 4.625  &  94.05 $\pm$ 38.64  \\
+               % & 100 &  1.219 $\pm$ 0.314  &  6.339 $\pm$ 3.965  &  6.948 $\pm$ 1.664  &  49.64 $\pm$ 1.301  &  21.59 $\pm$ 4.703  &  31.79 $\pm$ 15.51  \\
+        
+               % &125  &  3.539 $\pm$ 1.107  &  33.09 $\pm$ 48.62  &  17.85 $\pm$ 4.765  &  127.1 $\pm$ 3.547  &  56.99 $\pm$ 4.625  &  94.05 $\pm$ 38.64  \\
 
 
-                 % &400  &  6.313 $\pm$ 1.465  &  49.26 $\pm$ 65.20  &  33.07 $\pm$ 8.777  &  
-                 % 255.1 $\pm$ 10.13  &  157.3 $\pm$ 34.04  &  172.58 $\pm$ 27.08  \\
-          \bottomrule
-        \end{tabular}
+               % &400  &  6.313 $\pm$ 1.465  &  49.26 $\pm$ 65.20  &  33.07 $\pm$ 8.777  &  
+               % 255.1 $\pm$ 10.13  &  157.3 $\pm$ 34.04  &  172.58 $\pm$ 27.08  \\
+        \bottomrule
+      \end{tabular}
 
     \end{small}
   \end{center}
@@ -602,18 +608,16 @@ We conducted a series of experiments to validate the proposed RENN model. The ex
 
 \subsection{Experiment Setting and Evaluation Metrics}
 \label{subsec:exp-setting}
-Without loss of generality, our experiments are carried out on binary pairwise MRF (Ising model). This gives us $p(\bm{x}; \bm{\theta}) = \frac{1}{Z(\bm{\theta})}\exp{(\sum_{(i,j)\in \Ee_F} J_{ij} x_i x_j + \sum_{i\in \Vv}h_i x_i)}$, $\bm{x} \in \{-1, 1\}^{N}$, where $J_{ij}$ is the pairwise log-potential between node $i$ and $j$, $h_i$ is the node log-potential for node $i$. Then $\bm{\theta} = \left\{ J_{ij}, h_i| (i,j) \in \Ee_F, i \in \Vv \right\}$. $J_{ij}$ is always sampled from standard normal distribution, i.e. $J_{ij}\sim \mathsf{N}(0,1)$, meanwhile $h_i \sim \mathsf{N}(0, \gamma^{2})$.
+Without loss of generality, our experiments are carried out on binary pairwise MRF (Ising model). This gives us $p(\bm{x}; \bm{\theta}) = \frac{1}{Z(\bm{\theta})}\exp{(\sum_{(i,j)\in \Ee_F} J_{ij} x_i x_j + \sum_{i\in \Vv}h_i x_i)}$, $\bm{x} \in \{-1, 1\}^{N}$, where $J_{ij}$ is the pairwise log-potential between node $i$ and $j$, $h_i$ is the node log-potential for node $i$. Then $\bm{\theta} = \left\{ J_{ij}, h_i| (i,j) \in \Ee_F, i,j \in \Vv \right\}$. $J_{ij}$ is always sampled from standard normal distribution, i.e. $J_{ij}\sim \mathsf{N}(0,1)$, meanwhile $h_i \sim \mathsf{N}(0, \gamma^{2})$ with varying $\gamma$ in different experiment cases.
 
-In the inference experiments, we are interested into how well beliefs from RENN approximate true marginal distributions of $p(\bm{x};\bm{\theta})$. We quantity this by both the $\ell_1$ error ($\ell_1$-norm distance) and Pearson correlation coefficient $\rho$, between true marginals and beliefs of RENN. The marginal evaluations include both $p(x_i)$ and $p(x_i,x_j)$. In addition, we also quantify the $\log{Z}$ error as the absolute difference between true partition function and estimated value.
+In the inference experiments, we are interested into how well beliefs from RENN approximate true marginal distributions of $p(\bm{x};\bm{\theta})$. We quantity this by both the $\ell_1$ error ($\ell_1$-norm distance) and Pearson correlation coefficient $\rho$, between true marginals and beliefs of RENN. The marginal evaluations include both $p(x_i)$ and $p(x_i,x_j)$. In addition, we also quantify the $\log{Z}$ error as the absolute difference between true partition function and an approximated value, i.e., the region-based free energy for RENN or GBP while a counterpart free energy form for mean field or loopy BP as explained in Section~\ref{chpt2:sec:variational-inference}.
 
-Apart from the inference experiments, we also carried out the modeling learning experiments. We use the negative log-likelihood (NLL) to evaluate how well the model is learned, which is then compared with NLL of true model.
-
-In all experiments, for each evaluation of RENN, mean field, (loopy) BP \cite{mooij2007sufficient}, damped BP \cite{Pretti2005damping} with damping factor $0.5$, and GBP \cite{yedida2005constucting} as benchmarks, are all evaluated on the same MRF, which are then compared with RENN. Additionally, a recent neural network benchmark model, saddle-point Inference Net \cite{NIPS2019_9687} targeting at Bethe free energy, is also used as comparison. To make the comparison with Inference Net fair, RENN and Inference Net use the same neural network structures and hidden dimension. Each variable $x_i$ is associated with a learnable embedding vector $\bm{e}_i$. A transform layer \cite{AshishNIPS2017_7181} consumes $\bm{e}_i$ and output a hidden representation $\bm{h}_i$. The transform layer is shared by all embeddings. Then an affine layer followed by softmax consumes $[\bm{h}_1, \cdots, \bm{h}_N]$ and outputs beliefs.
+In all experiments, for each evaluation of RENN, mean field, (loopy) BP \cite{mooij2007sufficient}, damped BP \cite{Pretti2005damping} with damping factor $0.5$, and GBP \cite{yedida2005constucting} as benchmarks, are all evaluated on the same MRF, which are then compared with RENN. Additionally, a recent neural network benchmark model, saddle-point Inference Net \cite{NIPS2019_9687} targeting at Bethe free energy, is also used as a comparison. To make the comparison with Inference Net fair, RENN and Inference Net use the same neural network structures and hidden dimensions. Each variable $x_i$ is associated with a learnable embedding vector $\bm{e}_i$. A transform layer \cite{AshishNIPS2017_7181} consumes $\bm{e}_i$ and output a hidden representation $\bm{h}_i$. The transform layer is shared by all embeddings. Then an affine layer followed by softmax consumes $[\bm{h}_1, \cdots, \bm{h}_N]$ and outputs beliefs.
 
 \subsection{Inference on Grid Graphs}
 
-We first evaluate how well RENN can estimate the marginal distributions, compared with benchmark algorithms/models, w.r.t. marginal $\ell_1$ errors and Pearson correlation $\rho$, at different graph size $n$ and standard deviation $\gamma$ of $\{h_i\}$. At each evaluation for a given size $n$, $20$ MRFs are generated by sampling $\{J_{ij}\}$ and $\{h_i\}$. Then RENN and other candidate algorithms perform inference on these MRFs. Then the $\ell_1$ error and correlation $\rho$ between true and estimated marginal distributions are evaluated. The $\log{Z}$ error is also recorded.
-Experiments are carried out in large and small standard deviation of $\{h_i\}$ ($\gamma=0.1$, $\gamma=1$), which reflects the relative strength of standalone node log-potentials to pairwise log-potentials. The results are reported as 'mean $\pm$ standard deviation'.
+We first evaluate how well RENN can estimate the marginal distributions, compared with benchmark algorithms/models, w.r.t. marginal $\ell_1$ errors and Pearson correlation $\rho$, at different graph size $n$ and standard deviation $\gamma$ of $\{h_i\}$. At each evaluation for a given size $n$, $20$ MRFs are generated by sampling $\{J_{ij}\}$ and $\{h_i\}$. Then RENN and other candidate algorithms perform inference on these MRFs. The $\ell_1$ error and correlation $\rho$ between true and estimated marginal distributions are evaluated. The $\log{Z}$ error is also recorded.
+Experiments are carried out in large and small standard deviation of $\{h_i\}$ ($\gamma=0.1$, $\gamma=1$), which reflects the relative strength of standalone node log-potentials to pairwise log-potentials. The results are reported as 'mean $\pm$ standard deviation' in tables.
 
 \begin{table}[tp!]
   \caption{Inference with the \textit{infinite face} on grid, $n=25$.}
@@ -621,24 +625,24 @@ Experiments are carried out in large and small standard deviation of $\{h_i\}$ (
   \begin{center}
     \begin{small}
       
-        \begin{tabular}{llcc}
-          \toprule
-          $\gamma$ & Metric & GBP & RENN \\
-          \midrule
-          \multirow{3}{*}{0.1}
-                   & $\ell_1$ Error & 0.061 $\pm$ 0.025 & \textbf{0.025} $\pm$ 0.020 \\
+      \begin{tabular}{llcc}
+        \toprule
+        $\gamma$ & Metric & GBP & RENN \\
+        \midrule
+        \multirow{3}{*}{0.1}
+                 & $\ell_1$ Error & 0.061 $\pm$ 0.025 & \textbf{0.025} $\pm$ 0.020 \\
 
-                   & $\rho$   & 0.913 $\pm$ 0.049  &  \textbf{0.984} $\pm$ 0.021  \\
-                   & $\log{Z}$ Error & 3.564 $\pm$ 2.823  &  0.384 $\pm$ 0.223  \\
-          \midrule
-          \multirow{3}{*}{1}
-                   & $\ell_1$ Error & 0.145 $\pm$ 0.028  & \textbf{0.016} $\pm$ 0.010 \\
+                 & $\rho$   & 0.913 $\pm$ 0.049  &  \textbf{0.984} $\pm$ 0.021  \\
+                 & $\log{Z}$ Error & 3.564 $\pm$ 2.823  &  0.384 $\pm$ 0.223  \\
+        \midrule
+        \multirow{3}{*}{1}
+                 & $\ell_1$ Error & 0.145 $\pm$ 0.028  & \textbf{0.016} $\pm$ 0.010 \\
 
-                   & $\rho$   & 0.783 $\pm$ 0.091  &  \textbf{0.995} $\pm$ 0.010 \\
-                   & $\log{Z}$ Error & 0.825 $\pm$ 0.841  & 0.364 $\pm$ 0.201 \\
-          
-          \bottomrule
-        \end{tabular}
+                 & $\rho$   & 0.783 $\pm$ 0.091  &  \textbf{0.995} $\pm$ 0.010 \\
+                 & $\log{Z}$ Error & 0.825 $\pm$ 0.841  & 0.364 $\pm$ 0.201 \\
+        
+        \bottomrule
+      \end{tabular}
 
     \end{small}
   \end{center}
@@ -656,67 +660,67 @@ Experiments are carried out in large and small standard deviation of $\{h_i\}$ (
   \begin{center}
     \begin{small}
       
-        \begin{tabular}{lcccccccc}
-          \toprule
-          Metric & $\gamma$ & Mean Field & Loopy BP & Damped BP & GBP & Inference Net & RENN \\
-          \midrule
-          \multirow{4}{*}{\begin{tabular}[x]{@{}c@{}}$\ell_1$\\error\end{tabular}}
-          % pen1
-                 & 0.1   &  0.294 $\pm$ 0.061  &  0.120 $\pm$ 0.038  &  0.118 $\pm$ 0.034  &   0.237 $\pm$ 0.061  &  \textbf{0.109} $\pm$ 0.025  &  0.130 $\pm$ 0.085  \\
+      \begin{tabular}{lcccccccc}
+        \toprule
+        Metric & $\gamma$ & Mean Field & Loopy BP & Damped BP & GBP & Inference Net & RENN \\
+        \midrule
+        \multirow{4}{*}{\begin{tabular}[x]{@{}c@{}}$\ell_1$\\error\end{tabular}}
+        % pen1
+               & 0.1   &  0.294 $\pm$ 0.061  &  0.120 $\pm$ 0.038  &  0.118 $\pm$ 0.034  &   0.237 $\pm$ 0.061  &  \textbf{0.109} $\pm$ 0.025  &  0.130 $\pm$ 0.085  \\
 
-                 % pen2
-                 & 1     &  0.233 $\pm$ 0.133  &  0.200 $\pm$ 0.098  &  0.201 $\pm$ 0.098  &  0.246 $\pm$ 0.135  &  0.196 $\pm$ 0.061  &  \textbf{0.137} $\pm$ 0.117  \\
+               % pen2
+               & 1     &  0.233 $\pm$ 0.133  &  0.200 $\pm$ 0.098  &  0.201 $\pm$ 0.098  &  0.246 $\pm$ 0.135  &  0.196 $\pm$ 0.061  &  \textbf{0.137} $\pm$ 0.117  \\
 
-                 % pen3
-                 & 2     &  0.187 $\pm$ 0.131  &  0.176 $\pm$ 0.114  &  0.177 $\pm$ 0.113  &  0.247 $\pm$ 0.117  &  0.182 $\pm$ 0.084  &  \textbf{0.067} $\pm$ 0.045  \\
+               % pen3
+               & 2     &  0.187 $\pm$ 0.131  &  0.176 $\pm$ 0.114  &  0.177 $\pm$ 0.113  &  0.247 $\pm$ 0.117  &  0.182 $\pm$ 0.084  &  \textbf{0.067} $\pm$ 0.045  \\
 
-                 % pen3
-                 & 3     &  0.155 $\pm$ 0.120  &  0.145 $\pm$ 0.112  &  0.146 $\pm$ 0.112  &  0.204 $\pm$ 0.107  &  0.152 $\pm$ 0.079  &  \textbf{0.060} $\pm$ 0.038  \\
+               % pen3
+               & 3     &  0.155 $\pm$ 0.120  &  0.145 $\pm$ 0.112  &  0.146 $\pm$ 0.112  &  0.204 $\pm$ 0.107  &  0.152 $\pm$ 0.079  &  \textbf{0.060} $\pm$ 0.038  \\
 
-                 % pen3
-                 & 4     &  0.124 $\pm$ 0.115  &  0.120 $\pm$ 0.103  &  0.121 $\pm$ 0.102  &  0.194 $\pm$ 0.076  &  0.129 $\pm$ 0.071  &  \textbf{0.051} $\pm$ 0.050  \\
+               % pen3
+               & 4     &  0.124 $\pm$ 0.115  &  0.120 $\pm$ 0.103  &  0.121 $\pm$ 0.102  &  0.194 $\pm$ 0.076  &  0.129 $\pm$ 0.071  &  \textbf{0.051} $\pm$ 0.050  \\
 
-          
-          \midrule
-          \multirow{4}{*}{\begin{tabular}[x]{@{}c@{}}Corre-\\lation\\$\rho$\end{tabular}}
-                 & 0.1   & 0.262 $\pm$ 0.177  &  0.695 $\pm$ 0.104  &  0.698 $\pm$ 0.099  &  0.446 $\pm$ 0.196  &   0.720 $\pm$ 0.065  &  \textbf{0.741} $\pm$ 0.220  \\
+        
+        \midrule
+        \multirow{4}{*}{\begin{tabular}[x]{@{}c@{}}Corre-\\lation\\$\rho$\end{tabular}}
+               & 0.1   & 0.262 $\pm$ 0.177  &  0.695 $\pm$ 0.104  &  0.698 $\pm$ 0.099  &  0.446 $\pm$ 0.196  &   0.720 $\pm$ 0.065  &  \textbf{0.741} $\pm$ 0.220  \\
 
-                 & 1     & 0.465 $\pm$ 0.349  &  0.538 $\pm$ 0.292  &  0.538 $\pm$ 0.292  &  0.461 $\pm$ 0.331  &  0.639 $\pm$ 0.159   &  \textbf{0.769} $\pm$ 0.313  \\
+               & 1     & 0.465 $\pm$ 0.349  &  0.538 $\pm$ 0.292  &  0.538 $\pm$ 0.292  &  0.461 $\pm$ 0.331  &  0.639 $\pm$ 0.159   &  \textbf{0.769} $\pm$ 0.313  \\
 
-                 &  2    & 0.587 $\pm$ 0.300  &  0.619 $\pm$ 0.284  &  0.619 $\pm$ 0.282  &  0.457 $\pm$ 0.257  &   0.645 $\pm$ 0.175  &  \textbf{0.929} $\pm$ 0.118  \\
+               &  2    & 0.587 $\pm$ 0.300  &  0.619 $\pm$ 0.284  &  0.619 $\pm$ 0.282  &  0.457 $\pm$ 0.257  &   0.645 $\pm$ 0.175  &  \textbf{0.929} $\pm$ 0.118  \\
 
-                 &  3    & 0.657 $\pm$ 0.289  &  0.697 $\pm$ 0.267  &  0.697 $\pm$ 0.265  &  0.582 $\pm$ 0.218  &  0.697 $\pm$ 0.162   &  \textbf{0.936} $\pm$ 0.076  \\
+               &  3    & 0.657 $\pm$ 0.289  &  0.697 $\pm$ 0.267  &  0.697 $\pm$ 0.265  &  0.582 $\pm$ 0.218  &  0.697 $\pm$ 0.162   &  \textbf{0.936} $\pm$ 0.076  \\
 
-                 &  4    & 0.758 $\pm$ 0.257  &   0.778 $\pm$ 0.221 &  0.776 $\pm$ 0.221  &  0.597 $\pm$ 0.177  &  0.753 $\pm$ 0.178   &  \textbf{0.941} $\pm$ 0.099  \\
-          
-          
-          
-          \midrule
-          \multirow{4}{*}{\begin{tabular}[x]{@{}c@{}}$\log{Z}$ \\error\end{tabular}}
-                 & 0.1  & 8.402 $\pm$ 4.369  &  34.61 $\pm$ 2.439  &  34.74 $\pm$ 2.195  &  \textbf{1.763} $\pm$ 1.176  &  35.46 $\pm$ 1.651  &  3.171 $\pm$ 1.259   \\
+               &  4    & 0.758 $\pm$ 0.257  &   0.778 $\pm$ 0.221 &  0.776 $\pm$ 0.221  &  0.597 $\pm$ 0.177  &  0.753 $\pm$ 0.178   &  \textbf{0.941} $\pm$ 0.099  \\
+        
+        
+        
+        \midrule
+        \multirow{4}{*}{\begin{tabular}[x]{@{}c@{}}$\log{Z}$ \\error\end{tabular}}
+               & 0.1  & 8.402 $\pm$ 4.369  &  34.61 $\pm$ 2.439  &  34.74 $\pm$ 2.195  &  \textbf{1.763} $\pm$ 1.176  &  35.46 $\pm$ 1.651  &  3.171 $\pm$ 1.259   \\
 
-                 &  1   & 6.473 $\pm$ 3.737  &  45.91 $\pm$ 6.888  &  45.96 $\pm$ 6.927  &  \textbf{1.826} $\pm$ 2.024  &  51.87 $\pm$ 6.150  &  2.796 $\pm$ 1.194  \\
-          
-                 &  2   & 5.830 $\pm$ 2.979  &  75.35 $\pm$ 14.58  &  75.46 $\pm$ 14.57  &  3.080  $\pm$ 2.958  &  81.23 $\pm$ 12.939 &  \textbf{2.577} $\pm$ 1.845  \\
+               &  1   & 6.473 $\pm$ 3.737  &  45.91 $\pm$ 6.888  &  45.96 $\pm$ 6.927  &  \textbf{1.826} $\pm$ 2.024  &  51.87 $\pm$ 6.150  &  2.796 $\pm$ 1.194  \\
+        
+               &  2   & 5.830 $\pm$ 2.979  &  75.35 $\pm$ 14.58  &  75.46 $\pm$ 14.57  &  3.080  $\pm$ 2.958  &  81.23 $\pm$ 12.939 &  \textbf{2.577} $\pm$ 1.845  \\
 
-                 &  3   & 4.401 $\pm$ 2.522  &  111.0 $\pm$ 22.20  &  111.1 $\pm$ 22.17  &  3.205 $\pm$ 3.720  &  116.1 $\pm$ 19.76  &  \textbf{2.645} $\pm$ 1.507  \\
+               &  3   & 4.401 $\pm$ 2.522  &  111.0 $\pm$ 22.20  &  111.1 $\pm$ 22.17  &  3.205 $\pm$ 3.720  &  116.1 $\pm$ 19.76  &  \textbf{2.645} $\pm$ 1.507  \\
 
-                 &  4   & 3.037 $\pm$ 2.122  &  142.9 $\pm$ 25.58  &  143.1 $\pm$ 25.56  &  5.167 $\pm$ 5.249  &  147.2 $\pm$ 23.38  &  \textbf{1.820} $\pm$ 1.306  \\
+               &  4   & 3.037 $\pm$ 2.122  &  142.9 $\pm$ 25.58  &  143.1 $\pm$ 25.56  &  5.167 $\pm$ 5.249  &  147.2 $\pm$ 23.38  &  \textbf{1.820} $\pm$ 1.306  \\
 
-                 % \midrule
-                 % \multirow{4}{*}{Time}
-                 % & 0.1  &  0.270 $\pm$ 0.096  &  0.490 $\pm$ 0.315  &  0.590 $\pm$ 0.544  & 3.023 $\pm$ 0.122  &  4.644 $\pm$ 0.326  &  4.979 $\pm$ 1.612  \\
+               % \midrule
+               % \multirow{4}{*}{Time}
+               % & 0.1  &  0.270 $\pm$ 0.096  &  0.490 $\pm$ 0.315  &  0.590 $\pm$ 0.544  & 3.023 $\pm$ 0.122  &  4.644 $\pm$ 0.326  &  4.979 $\pm$ 1.612  \\
 
-                 % &  1   & 0.186 $\pm$ 0.059   &  0.302 $\pm$ 0.072  &  0.501 $\pm$ 0.112  &  2.854 $\pm$ 0.098  &  4.330 $\pm$ 0.423  &  4.905 $\pm$ 1.815  \\
+               % &  1   & 0.186 $\pm$ 0.059   &  0.302 $\pm$ 0.072  &  0.501 $\pm$ 0.112  &  2.854 $\pm$ 0.098  &  4.330 $\pm$ 0.423  &  4.905 $\pm$ 1.815  \\
 
-                 % &  2   & 0.111 $\pm$ 0.031   &  0.178 $\pm$ 0.028  &  0.315 $\pm$ 0.048  &  2.722 $\pm$ 0.099  &  4.529 $\pm$ 0.569  &  5.329 $\pm$ 1.725  \\
+               % &  2   & 0.111 $\pm$ 0.031   &  0.178 $\pm$ 0.028  &  0.315 $\pm$ 0.048  &  2.722 $\pm$ 0.099  &  4.529 $\pm$ 0.569  &  5.329 $\pm$ 1.725  \\
 
-                 % &  3   & 0.112 $\pm$ 0.072   &  0.155 $\pm$ 0.025  &  0.281 $\pm$ 0.057  &  2.671 $\pm$ 0.131  &  4.667 $\pm$ 1.217  &  4.477 $\pm$ 2.076  \\
+               % &  3   & 0.112 $\pm$ 0.072   &  0.155 $\pm$ 0.025  &  0.281 $\pm$ 0.057  &  2.671 $\pm$ 0.131  &  4.667 $\pm$ 1.217  &  4.477 $\pm$ 2.076  \\
 
-                 % &  4   & 0.098 $\pm$ 0.039   &  0.141 $\pm$ 0.026  &  0.279 $\pm$ 0.062  &  2.731 $\pm$ 0.110  &  5.091 $\pm$ 1.798  &  4.309 $\pm$ 1.152  \\
-          
-          \bottomrule
-        \end{tabular}
+               % &  4   & 0.098 $\pm$ 0.039   &  0.141 $\pm$ 0.026  &  0.279 $\pm$ 0.062  &  2.731 $\pm$ 0.110  &  5.091 $\pm$ 1.798  &  4.309 $\pm$ 1.152  \\
+        
+        \bottomrule
+      \end{tabular}
       
     \end{small}
   \end{center}
@@ -729,82 +733,82 @@ Experiments are carried out in large and small standard deviation of $\{h_i\}$ (
   \begin{center}
     \begin{small}
 
-        \begin{tabular}{lcccccccc}
-          \toprule
-          Metric & $\gamma$ & Mean Field & Loopy BP & Damped BP & GBP & Inference Net & RENN \\
-          \midrule
-          \multirow{4}{*}{\begin{tabular}[x]{@{}c@{}}$\ell_1$-\\error\end{tabular}}
-          % pen3
-                 & 0.1   &  0.303 $\pm$ 0.056  &  0.176 $\pm$ 0.039  &  0.174 $\pm$ 0.038  &  0.244 $\pm$ 0.047  &  0.174 $\pm$ 0.044  &  \textbf{0.169} $\pm$ 0.052  \\
+      \begin{tabular}{lcccccccc}
+        \toprule
+        Metric & $\gamma$ & Mean Field & Loopy BP & Damped BP & GBP & Inference Net & RENN \\
+        \midrule
+        \multirow{4}{*}{\begin{tabular}[x]{@{}c@{}}$\ell_1$-\\error\end{tabular}}
+        % pen3
+               & 0.1   &  0.303 $\pm$ 0.056  &  0.176 $\pm$ 0.039  &  0.174 $\pm$ 0.038  &  0.244 $\pm$ 0.047  &  0.174 $\pm$ 0.044  &  \textbf{0.169} $\pm$ 0.052  \\
 
-                 % pen2
-                 &  1    &  0.273 $\pm$ 0.086  &  0.239 $\pm$ 0.059  &  0.239 $\pm$ 0.059  &  0.260 $\pm$ 0.086  &  0.249 $\pm$ 0.067  &  \textbf{0.181} $\pm$ 0.092  \\
-          
-                 % pen2
-                 &  2    &  0.231 $\pm$ 0.079  &  0.222 $\pm$ 0.064  &  0.221 $\pm$ 0.064  &  0.249 $\pm$ 0.078  &  0.232 $\pm$ 0.069  &  \textbf{0.170} $\pm$ 0.109  \\
+               % pen2
+               &  1    &  0.273 $\pm$ 0.086  &  0.239 $\pm$ 0.059  &  0.239 $\pm$ 0.059  &  0.260 $\pm$ 0.086  &  0.249 $\pm$ 0.067  &  \textbf{0.181} $\pm$ 0.092  \\
+        
+               % pen2
+               &  2    &  0.231 $\pm$ 0.079  &  0.222 $\pm$ 0.064  &  0.221 $\pm$ 0.064  &  0.249 $\pm$ 0.078  &  0.232 $\pm$ 0.069  &  \textbf{0.170} $\pm$ 0.109  \\
 
-                 % pen3
-                 &  3    &  0.218 $\pm$ 0.042  &  0.204 $\pm$ 0.038  &  0.204 $\pm$ 0.038  &  0.247 $\pm$ 0.065  &  0.213 $\pm$ 0.051  &  \textbf{0.138} $\pm$ 0.106  \\
+               % pen3
+               &  3    &  0.218 $\pm$ 0.042  &  0.204 $\pm$ 0.038  &  0.204 $\pm$ 0.038  &  0.247 $\pm$ 0.065  &  0.213 $\pm$ 0.051  &  \textbf{0.138} $\pm$ 0.106  \\
 
-                 % pen1
-                 &  4    &  0.197 $\pm$0.049   &  0.181 $\pm$ 0.035  &  0.180 $\pm$ 0.034  &  0.210 $\pm$ 0.070  &  0.174 $\pm$ 0.030  &  \textbf{0.125} $\pm$ 0.050  \\
-          
-          
-          \midrule
-          \multirow{4}{*}{\begin{tabular}[x]{@{}c@{}}Corre-\\lation\\$\rho$\end{tabular}}
-                 & 0.1   &  0.231 $\pm$ 0.196  &  0.509 $\pm$ 0.056  &  0.510 $\pm$ 0.055  &  0.316 $\pm$ 0.207  &  0.506 $\pm$ 0.063  &  \textbf{0.539} $\pm$ 0.235  \\
+               % pen1
+               &  4    &  0.197 $\pm$0.049   &  0.181 $\pm$ 0.035  &  0.180 $\pm$ 0.034  &  0.210 $\pm$ 0.070  &  0.174 $\pm$ 0.030  &  \textbf{0.125} $\pm$ 0.050  \\
+        
+        
+        \midrule
+        \multirow{4}{*}{\begin{tabular}[x]{@{}c@{}}Corre-\\lation\\$\rho$\end{tabular}}
+               & 0.1   &  0.231 $\pm$ 0.196  &  0.509 $\pm$ 0.056  &  0.510 $\pm$ 0.055  &  0.316 $\pm$ 0.207  &  0.506 $\pm$ 0.063  &  \textbf{0.539} $\pm$ 0.235  \\
 
-                 &  1    &  0.381 $\pm$ 0.255  &  0.514 $\pm$ 0.185  &  0.515 $\pm$ 0.185  &  0.445 $\pm$ 0.223  &  0.533 $\pm$ 0.150  &  \textbf{0.756} $\pm$ 0.187  \\
-
-
-                 &  2    &  0.535 $\pm$ 0.207  &  0.569 $\pm$ 0.180  &  0.570 $\pm$ 0.179  &  0.480 $\pm$ 0.186  &  0.559 $\pm$ 0.176  &  \textbf{0.750} $\pm$ 0.261  \\
+               &  1    &  0.381 $\pm$ 0.255  &  0.514 $\pm$ 0.185  &  0.515 $\pm$ 0.185  &  0.445 $\pm$ 0.223  &  0.533 $\pm$ 0.150  &  \textbf{0.756} $\pm$ 0.187  \\
 
 
-                 &  3    &  0.586 $\pm$ 0.142  &  0.618 $\pm$ 0.134  &  0.619 $\pm$ 0.134  &  0.502 $\pm$ 0.144  &  0.613 $\pm$ 0.128  &  \textbf{0.853} $\pm$ 0.159  \\
-
-                 &  4    &  0.622 $\pm$ 0.166  &  0.658 $\pm$ 0.133  &  0.660 $\pm$ 0.132  &  0.564 $\pm$ 0.165  &  0.693 $\pm$ 0.060  &  \textbf{0.868} $\pm$ 0.053  \\
-
-          
-          \midrule
-          \multirow{4}{*}{\begin{tabular}[x]{@{}c@{}}$\log{Z}$ \\error\end{tabular}}
-                 & 0.1   &  24.45 $\pm$ 7.560  &  143.7 $\pm$ 9.297  &  145.5 $\pm$ 6.096  &  166.3 $\pm$ 11.98  &  148.5 $\pm$ 3.522  &  \textbf{12.57} $\pm$ 3.689  \\
-
-                 &  1    &  20.66 $\pm$ 5.451  &  178.7 $\pm$ 22.18  &  178.9 $\pm$ 21.88  &  153.3 $\pm$ 25.29  &  213.6 $\pm$ 12.75  &  \textbf{14.41} $\pm$ 4.135  \\
-
-                 &  2    &  16.04 $\pm$ 4.352  &  296.3 $\pm$ 44.41  &  296.9 $\pm$ 44.24  &  116.9 $\pm$ 32.72  &  335.1 $\pm$ 32.86  &  \textbf{13.37} $\pm$ 4.531  \\
+               &  2    &  0.535 $\pm$ 0.207  &  0.569 $\pm$ 0.180  &  0.570 $\pm$ 0.179  &  0.480 $\pm$ 0.186  &  0.559 $\pm$ 0.176  &  \textbf{0.750} $\pm$ 0.261  \\
 
 
-                 &  3    &  13.87 $\pm$ 6.554  &  432.7 $\pm$ 66.44  &  433.4 $\pm$ 66.30  &  100.2 $\pm$ 39.62  &  462.9 $\pm$ 53.61  &  \textbf{12.56} $\pm$ 6.046  \\
+               &  3    &  0.586 $\pm$ 0.142  &  0.618 $\pm$ 0.134  &  0.619 $\pm$ 0.134  &  0.502 $\pm$ 0.144  &  0.613 $\pm$ 0.128  &  \textbf{0.853} $\pm$ 0.159  \\
 
-                 &  4    &  \textbf{10.74} $\pm$ 7.385  &  565.7 $\pm$ 73.33  &  566.1 $\pm$ 73.13  &  106.0 $\pm$ 54.43  &  588.3 $\pm$ 62.58  &  14.72 $\pm$ 4.155  \\
-          
+               &  4    &  0.622 $\pm$ 0.166  &  0.658 $\pm$ 0.133  &  0.660 $\pm$ 0.132  &  0.564 $\pm$ 0.165  &  0.693 $\pm$ 0.060  &  \textbf{0.868} $\pm$ 0.053  \\
 
-                 % \midrule
-                 % \multirow{4}{*}{Time}
-                 % & 0.1   &  0.555 $\pm$ 0.135  &  1.705 $\pm$ 1.256  &  1.428 $\pm$ 0.400  &  13.68 $\pm$ 0.432  &  12.63 $\pm$ 0.592  &  15.26 $\pm$ 4.759  \\
+        
+        \midrule
+        \multirow{4}{*}{\begin{tabular}[x]{@{}c@{}}$\log{Z}$ \\error\end{tabular}}
+               & 0.1   &  24.45 $\pm$ 7.560  &  143.7 $\pm$ 9.297  &  145.5 $\pm$ 6.096  &  166.3 $\pm$ 11.98  &  148.5 $\pm$ 3.522  &  \textbf{12.57} $\pm$ 3.689  \\
 
-                 % &  1    &  0.457 $\pm$ 0.103  &  0.777 $\pm$ 0.167  &  1.285 $\pm$ 0.190  &  14.29 $\pm$ 0.487  &  12.45 $\pm$ 0.603  &  16.16 $\pm$ 5.695  \\
+               &  1    &  20.66 $\pm$ 5.451  &  178.7 $\pm$ 22.18  &  178.9 $\pm$ 21.88  &  153.3 $\pm$ 25.29  &  213.6 $\pm$ 12.75  &  \textbf{14.41} $\pm$ 4.135  \\
 
-                 % &  2    &  0.424 $\pm$ 0.101  &  0.630 $\pm$ 0.096  &  1.143 $\pm$ 0.196  &  14.76 $\pm$ 0.512  &  15.04 $\pm$ 1.106  &  14.74 $\pm$ 4.606  \\
+               &  2    &  16.04 $\pm$ 4.352  &  296.3 $\pm$ 44.41  &  296.9 $\pm$ 44.24  &  116.9 $\pm$ 32.72  &  335.1 $\pm$ 32.86  &  \textbf{13.37} $\pm$ 4.531  \\
 
-                 % &  3    &  0.377 $\pm$ 0.114  &  0.567 $\pm$ 0.118  &  1.084 $\pm$ 0.254  &  14.49 $\pm$ 0.392  &  15.62 $\pm$ 1.218  &  13.40 $\pm$ 3.070  \\
 
-                 % &  4    &  0.521 $\pm$ 0.475  &  0.543 $\pm$ 0.137  &  1.018 $\pm$ 0.171  &  14.00 $\pm$ 0.379  &  14.59 $\pm$ 5.254  &  14.24 $\pm$ 2.536 \\
-          
+               &  3    &  13.87 $\pm$ 6.554  &  432.7 $\pm$ 66.44  &  433.4 $\pm$ 66.30  &  100.2 $\pm$ 39.62  &  462.9 $\pm$ 53.61  &  \textbf{12.56} $\pm$ 6.046  \\
 
-          \bottomrule
-        \end{tabular}
+               &  4    &  \textbf{10.74} $\pm$ 7.385  &  565.7 $\pm$ 73.33  &  566.1 $\pm$ 73.13  &  106.0 $\pm$ 54.43  &  588.3 $\pm$ 62.58  &  14.72 $\pm$ 4.155  \\
+        
+
+               % \midrule
+               % \multirow{4}{*}{Time}
+               % & 0.1   &  0.555 $\pm$ 0.135  &  1.705 $\pm$ 1.256  &  1.428 $\pm$ 0.400  &  13.68 $\pm$ 0.432  &  12.63 $\pm$ 0.592  &  15.26 $\pm$ 4.759  \\
+
+               % &  1    &  0.457 $\pm$ 0.103  &  0.777 $\pm$ 0.167  &  1.285 $\pm$ 0.190  &  14.29 $\pm$ 0.487  &  12.45 $\pm$ 0.603  &  16.16 $\pm$ 5.695  \\
+
+               % &  2    &  0.424 $\pm$ 0.101  &  0.630 $\pm$ 0.096  &  1.143 $\pm$ 0.196  &  14.76 $\pm$ 0.512  &  15.04 $\pm$ 1.106  &  14.74 $\pm$ 4.606  \\
+
+               % &  3    &  0.377 $\pm$ 0.114  &  0.567 $\pm$ 0.118  &  1.084 $\pm$ 0.254  &  14.49 $\pm$ 0.392  &  15.62 $\pm$ 1.218  &  13.40 $\pm$ 3.070  \\
+
+               % &  4    &  0.521 $\pm$ 0.475  &  0.543 $\pm$ 0.137  &  1.018 $\pm$ 0.171  &  14.00 $\pm$ 0.379  &  14.59 $\pm$ 5.254  &  14.24 $\pm$ 2.536 \\
+        
+
+        \bottomrule
+      \end{tabular}
       
     \end{small}
   \end{center}
 \end{sidewaystable}
 
-Marginal approximation can be reflected by $\ell_1$ error and correlation coefficient $\rho$. The results are reported in Table~\ref{table:infer-grid-gamma0.1} and \ref{table:infer-grid-gamma1.0}. In all cases except one, beliefs of RENN outperform benchmark algorithms with large marginals. As expected, performances of loopy BP and its variant damped BP are similar in general while damped BP sometime gets better estimations. Both loopy BP and damped BP have better marginal estimations than mean field method in all of our considered scenarios. GBP outperforms loopy BP and damped BP at case $\gamma=0.1$, $h_i\sim \Nn(0,0.1^2)$, agreeing with the results at \cite{yedida2005constucting}, but performs poorly at case of $\gamma=1$. Similar phenomena happen to Inference Net, which has better estimations than loopy BP and damped BP in some cases of $\gamma=0.1$ but falls behind in all cases of $\gamma=1$.
+The marginal approximation can be reflected by $\ell_1$ error and correlation coefficient $\rho$. These two metrics also reflect the belief consistency since both univariate and pairwise marginals are used in evaluation computation. The results are reported in Table~\ref{table:infer-grid-gamma0.1} and \ref{table:infer-grid-gamma1.0}. In all cases except one, beliefs of RENN outperform benchmark algorithms with large marginals. As expected, performances of loopy BP and its variant damped BP are similar in general while damped BP sometimes gets better estimations. Both loopy BP and damped BP have better marginal estimations than mean field method in all of our considered scenarios. GBP outperforms loopy BP and damped BP at case $\gamma=0.1$, $h_i\sim \Nn(0,0.1^2)$, agreeing with the results at \cite{yedida2005constucting}, but performs poorly at case of $\gamma=1$. Similar phenomena happen to Inference Net, which has better estimations than loopy BP and damped BP in some cases of $\gamma=0.1$ but falls behind in all cases of $\gamma=1$.
 
 
-As for the error of partition function values, GBP gets the most accurate estimations when $\gamma=0.1$. $\log{Z}$ estimated by loopy BP and damped BP is better for $\gamma=1$. Partition function estimation by RENN is acceptable at different considered cases.
+As for the error of partition function values, GBP gets the most accurate estimations when $\gamma=0.1$. $\log{Z}$ estimated by loopy BP and damped BP is better for $\gamma=1$. Partition function estimation by RENN is competitive in different considered cases.
 
-\sloppy Note the region graphs in this set of experiments uses all faces of grid graph but the \textit{infinite face} (the perimeter circle). For instance, the region $\left\{1, 2, 3, 4, 5, 6, A, B, C ,E, F, G\right\}$ is obtained from the infinite face in the 2-by-3 grid in Figure~\ref{fig:factor-region-graphs}. By comparing Table~\ref{tab:infer-infinite-face} with the $n=25$ cases of Table~\ref{table:infer-grid-gamma0.1} and \ref{table:infer-grid-gamma1.0}, performance of RENN can be further better when we include the infinite face in building region graphs from grid. On the contrary, performance of GBP drops slightly after including the infinite face. But number of nodes in the region built from the infinite face would scale with the perimeter of grid graph. Since RENN already has reasonable good accuracy outperforming benchmark methods as shown in Table~\ref{table:infer-grid-gamma0.1} and \ref{table:infer-grid-gamma1.0}, we suggest to drop the infinite face in constructing region graphs from grids.
+\sloppy Note a region graph in this set of experiments uses all faces of a grid graph but the \textit{infinite face} (the perimeter circle). For instance, the region $\left\{1, 2, 3, 4, 5, 6, A, B, C ,E, F, G\right\}$ is obtained from the infinite face in the 2-by-3 grid in Figure~\ref{fig:factor-region-graphs}. By comparing Table~\ref{tab:infer-infinite-face} with the $n=25$ cases of Table~\ref{table:infer-grid-gamma0.1} and \ref{table:infer-grid-gamma1.0}, performance of RENN can be further better when we include the infinite face in building region graphs from grid. On the contrary, the performance of GBP drops slightly after including the infinite face. But the number of nodes in the region built from the infinite face would scale with the perimeter of a grid graph. Since RENN already has reasonable good accuracy outperforming benchmark methods as shown in Table~\ref{table:infer-grid-gamma0.1} and \ref{table:infer-grid-gamma1.0}, we suggest dropping the infinite face in constructing region graphs from grids.
 
 
 \subsection{Inference on Challenging Complete Graphs}
