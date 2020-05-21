@@ -1,13 +1,13 @@
 \chapter{Inference as Optimization: An Region-based Energy Method}
 \label{chapter4}
-In the previous chapter, we explained an iterative message passing algorithm and discussed the connection with mean field, belief propagation and tree-reweighted belief propagation. These methods fellow different message-passing rules (fix point iterations) that are manually developed. The manual efforts in implementation for a practical inference problem includes both the message-passing rule definition and also message update schedule, both of which make a significant difference in performance of approximate inference. However, on our way towards automated inference methods, we intend to reduce the manual efforts without degenerating their performance. In this chapter, we would discuss one promising way to realize this target. The principle idea is to do inference as solving an optimization problem, i.e. inference as optimization.
+In the previous chapter, we explained an iterative message passing algorithm and discussed the connection with mean field, belief propagation, and tree-reweighted belief propagation algorithms. These methods fellow different message passing rules (fixed-point iterations) that are manually developed. The manual efforts in implementation for a practical inference problem include both the message-passing rule definition and also message update schedule, both of which make a significant difference in the performance of approximate inference. However, on our way towards automated inference methods, we intend to reduce the manual efforts without degenerating their performance. In this chapter, we would discuss one promising way to realize this target. The principle idea is to do inference as solving an optimization problem, i.e. inference as optimization.
 
-In fact, we have touched this topic in \autoref{chpt2:sec:variational-inference}, where we were trying to interpret what message-passing updates of mean field and belief propagation are actually doing. It turns out that the message passing rules are fix-point iterations of optimization problems. Therefore mean field and belief propagation get the intuition of minimization of variational free energy. Take the most widely used belief propagation method as example, since the message-passing rule can be obtained from minimization of Bethe free energy cost, we may just as well solve the optimization problem by other optimization techniques such as gradient descent. But early attempt on this track showed that it might suffer from the stability for peaky potential functions compared to iterative message-passing method \cite{welling2001belief}.
+In fact, we have touched this topic in Section~\ref{chpt2:sec:variational-inference}, where we were trying to interpret what message passing updates of mean field and belief propagation are actually doing. It turns out that the message passing rules are fixed-point iterations as solutions to optimization problems. Therefore mean field and belief propagation get the intuition of minimization of variational free energy. Take the most widely used belief propagation method as an example, since the message passing rule can be obtained from the minimization of Bethe free energy cost, we may just as well solve the optimization problem by other optimization techniques such as gradient descent. But an early attempt on this track showed that it might suffer from the stability for peaky potential functions compared to iterative message passing method \cite{welling2001belief}.
 
 
-Another limitation lies on the Bethe approximation itself. When representing Bethe approximation in a factor graph (not necessary to be pairwise case), a factor node associated with a potential function is related with more than one random variable, while a variable node is associated with one random variable. When beliefs are propagated on the graph, only a univariate marginal distribution (associated with a variable node) can be propagated from one neighboring factor to another neighboring factor of the variable node. The interactions between variables can not be directly propagated as messages in the graph. This limitation actually affects the performance of Bethe approximation in general graphs, especially the loopy graphs.
+Another limitation lies in the Bethe approximation itself. When representing Bethe approximation in a factor graph (not necessary to be the pairwise case), a factor node associated with a potential function is related with more than one random variable, while a variable node is associated with one random variable. When beliefs are propagated on the graph, only a univariate marginal distribution (associated with a variable node) can be propagated from one neighboring factor to another neighboring factor of the variable node. The interactions between multiple variables can not be directly propagated as messages in the graph. This limitation actually affects the performance of Bethe approximation in general graphs, especially the loopy graphs.
 
-In this chapter, we seek to use larger clusters in graphical representation to overcome the above mentioned limitation. Along with that, we would bring the concept of inference as optimization into the alternative representation.
+In this chapter, we seek to use larger clusters in a graphical representation to overcome the above-mentioned limitation. Along with that, we would bring the concept of inference as optimization into the alternative representation.
 
 
 
@@ -152,24 +152,26 @@ In a MRF, the underlining probability distribution of its $N$-dimensional random
 \end{equation}
 where potential functions' index set is instantiated as $\Ff = \left\{ A, B, \cdots, M \right\}$. Here we explicitly denote that potential $\phi_a$ has its own parameter $\bm{\theta}_a$, and $\bm{\theta} = \{\bm{\theta}_a, a\in \Ff\}$. For notation simplicity, we define that each variable has $K$ states, i.e. $x_i \in \Xx_i$ with $|\Xx_i|=K$, where $|\cdot|$ denotes the cardinality.
 
-We have discussed that loopy BP as a message-passing algorithm operates on factor graphs (as the top-left example in Figure~\ref{fig:factor-region-graphs}) in section~\ref{chpt2:sec:variational-inference}. We then can compute the marginal distributions or most likely $\bm{x}$ of \eqref{eq:joint-px} with collection of messages after their propagation under rule \eqref{chpt2:eq:loopy-bp} or its variants discussed in chapter~\ref{chapter3}. The fundamental limitation of methods in this family that a message over a single variable is communicated instead of over pairs of variables or multiple variables (as stated at the beginning of this chapter). This issue can be relieved by using hyper-graph or cluster graph where a node is associated with multiple variables. Region graph is such kind of graphs, which was proposed by \cite{yedida2005constucting, DBLP:journals/corr/abs-1207-4158} in assistance of scheduling messages for generalized belief propagation (GBP). For illustration purpose, two alternative region graphs constructed from the same factor graph are shown in Figure~\ref{fig:factor-region-graphs}.
+We have discussed that loopy BP as a message-passing algorithm operates on factor graphs (as the top-left example in Figure~\ref{fig:factor-region-graphs}) in Section~\ref{chpt2:sec:variational-inference}. We then can compute the marginal distributions or most likely $\bm{x}$ of \eqref{eq:joint-px} with collection of messages after their propagation under rule \eqref{chpt2:eq:loopy-bp} or its variants discussed in Chapter~\ref{chapter3}. The fundamental limitation of methods in this family that a message over a single variable is communicated instead of over pairs of variables or multiple variables (as stated at the beginning of this chapter). This issue can be relieved by using a hyper-graph or cluster graph where a node is associated with multiple variables. Region graph is such kind of graphs, which was proposed by \cite{yedida2005constucting, DBLP:journals/corr/abs-1207-4158} to assist scheduling messages for generalized belief propagation (GBP). For the illustration purpose, two alternative region graphs constructed from the same factor graph are shown in Figure~\ref{fig:factor-region-graphs}.
 
-Before giving definition of region graph, we need to define \textit{region} first, which is on the basis of factor graph $\Gg_{\Ff}(\Vv \cup \Ff, \Ee_{\Ff})$ (definition~\ref{chpt2:def:factor-graph}).
+Before giving definition of region graph, we need to define \textit{region} first, which is on the basis of factor graph $\Gg_{\Ff}(\Vv \cup \Ff, \Ee_{\Ff})$ (Definition~\ref{chpt2:def:factor-graph}).
 \begin{definition}
   A \textit{region} $R$ is a set $V_R$ of variables nodes and a set $A_R$ of factor nodes, such that if a factor node $a$ belong to $A_R$, all the variables nodes neighboring $a$ are in $V_R$.
 \end{definition}
-Then, a region graph is defined as bellow.
+A region in a region graph acts a node and there are directed edges between regions which are defined according to specific rules. Formally, a region graph is defined as bellow.
 \begin{definition}\label{def:region-graph}
   A \textit{region graph} is  a directed graph $\Gg_R(\Rr, \Ee)$, where each vertex $R \in \Rr$ is defined as the joint set of variable and factor nodes in this region, i.e. $R = \left\{ i \in V_R, a \in A_R | i \in \Vv, a \in \Ff \right\}$. Each edge $e \in \Ee$ in $\Gg_R$ is directed from $R_p$ to $R_c$ such that $R_c \subset R_p$. 
 \end{definition}
 
 
 We define some notations before going further. Since $\Gg_R$ is a hierarchical directed graph, $\Rr_l$ denotes regions in level $l$, and 
-$R^{[l]}_i\in \Rr_l$ denotes $R^{[l]}_i$ is the $i$-th region node in level $l$. This means $\Rr_0$ is set of the top root regions that have no parents, i.e. the level $0$ regions. Also, $R^{[l]}$ means it can be any node in $\Rr_l$ and $R$ denotes a region node when it is not clear or doesn't matter which level it locates. Lastly, due to a region may be associated with both variable and factor, we denote the scope of $R$ by  $\bm{x}_R = \left\{ x_i| i \in R \right\}$.
+$R^{[l]}_i\in \Rr_l$ denotes $R^{[l]}_i$ is the $i$-th region node in level $l$. This means $\Rr_0$ is a set of the top root regions that have no parents, i.e. the level $0$ regions. Also, $R^{[l]}$ means it can be any node in $\Rr_l$ and $R$ denotes a region node when it is not clear or doesn't matter which level it locates. Lastly, due to a region may be associated with both variable and factor, we denote the scope of $R$ by  $\bm{x}_R = \left\{ x_i| i \in R \right\}$.
 
+\begin{example}
+Take the top-right region graph in Figure~\ref{fig:factor-region-graphs} as an example. There are total two layers in the region graph, i.e., $\Rr_0$ and $\Rr_1$. We have $\Rr_0 = \left\{ R_1^{[0]}, R_2^{[0]} \right\}$ where $R_1^{[0]} = \left\{ 1, 2, 4, 5, A, C, D, F \right\}$ and $R_2^{[0]} = \left\{ 2, 3, 5, 6, B, D, E, G \right\}$. As for $\Rr_1$, there is only one region in it and it is $R_1^{[1]} = \left\{ 2, 5, D \right\}$. There are two directed edges, i.e., $\left( R_1^{[0]}, R_1^{[1]} \right)$ and $\left( R_2^{[0]}, R_1^{[1]} \right)$.
+\end{example}
 
-GBP operates on region graph $\Gg_R(\Rr,\Ee)$. A message is always sent from a parent region $P$ to a child region $R$, i.e. directed edge $(P, R)\in \Ee$. Let us define the factors in region $R$ as $A_R = \left\{ a | a \in R \right\}$.
-The same as notation in paper, $\Pp(R)$ denotes the set of parent regions of $R$. The descendants of $R$ is denoted by $\Dd(R)$ (excluding $R$). The descendants of $R$ including $R$ is denoted by $\hat{\Dd}(R) = \Dd(R) \cup R$. The message update rule from the parent region $P$ to the child region $R$ is
+GBP operates on region graph $\Gg_R(\Rr,\Ee)$. A message is always sent from a parent region $P$ to a child region $R$, i.e. the directed edge $(P, R)\in \Ee$. Let us define the factors in region $R$ as $A_R = \left\{ a | a \in R \right\}$. $\Pp(R)$ denotes the set of parent regions of $R$. The descendants of $R$ is denoted by $\Dd(R)$ (excluding $R$). The descendants of $R$ including $R$ is denoted by $\hat{\Dd}(R) = \Dd(R) \cup R$. The message update rule from the parent region $P$ to the child region $R$ is
 \begin{align}
   m_{P\rightarrow R} \propto \frac{\sum_{\bm{x}_P\backslash
     \bm{x}_R}\prod_{a\in A_P\backslash A_R}\phi_a(\bm{x}_a)\prod_{(I,J)
@@ -181,8 +183,7 @@ where
   \Nn(P, R) &= \left\{ (I,J)\in \Ee | J \in \hat{\Dd}(P) \backslash \hat{\Dd}(R), I \not\in \hat{\Dd}(P)\right\},\nonumber \\
   \Hh(P, R) &= \left\{ (I,J) \in \Ee | J \in \hat{\Dd}(R), I \in \hat{\Dd}(P) \backslash \hat{\Dd}(R) \right\}.
 \end{align}
-
-The belief for each region $R$ is given by
+By comparing the GBP with previously discussed mean field, loopy BP and $\alpha$-BP in Chapter~\ref{chapter2} and \ref{chapter3}, it can be seen that both the message update of GBP is more complex. The ordering or sequence of GBP message updates in a region graph also affects it performance (e.g., see \cite{yedida2005constucting}). After message passing phase, the belief for each region $R$, i.e., the approximation to marginal $p(\bm{x}_{R})$, is computed as
 \begin{align}
   b_R(\bm{x}_R) \propto \prod_{a\in A_R} \phi_a(\bm{x}_a) \prod_{P\in
                        \Pp(R)} m_{P\rightarrow R}(\bm{x}_R) \prod_{D\in \Dd(R)} \prod_{P^{\prime} \in \Pp(D) \backslash \hat{\Dd}(R)} m_{P^{\prime}\rightarrow D}(\bm{x}_D).
@@ -192,8 +193,8 @@ The belief for each region $R$ is given by
 
 
 
-\section{Region-based free energy}
-Recall that BP corresponds to minimization of Bethe free energy, it is interesting to note that GBP also corresponding to a free energy defined over region graphs, i.e. \textit{region-based free energy}.
+\section{Region-based Free Energy}
+Recall that BP corresponds to the minimization of Bethe free energy (Section~\ref{chpt2:sec:variational-inference}), it is interesting to note that GBP also corresponding to a free energy defined over region graphs, i.e., \textit{region-based free energy}.
 For each region $R$ in a region graph, it has its own region energy, defined as follows.
 \begin{definition}
   Given a region $R$ in $\Gg$ and $\bm{\theta}_R=\{\bm{\theta}_a, a\in A_R\}$, the region energy is defined to be
@@ -201,7 +202,7 @@ For each region $R$ in a region graph, it has its own region energy, defined as 
     E_R(\bm{x}_R; \bm{\theta}_R) = - \sum_{a\in A_R} \ln{\phi_a(\bm{x}_a; \bm{\theta}_a)}.
   \end{equation}
 \end{definition}
-The region-based free energy is defined accordingly.
+The region-based free energy over a region graph $\Gg_R$ is defined over the region energies and also the region beliefs. Formally, the region-based free energy is defined as follows.
 \begin{definition}\label{def:region-free-energy}
   For any region graph $\Gg_R$, the region-based free energy is defined as
   \begin{equation}\label{eq:def-region-free-energy}
@@ -210,19 +211,17 @@ The region-based free energy is defined accordingly.
   where $b_R(\bm{x}_R)$ is the belief to region $R$, $\Bb$ is the set of region beliefs $\Bb = \left\{ b_R| R \in \Rr \right\}$, and integer $c_R \in \NN$ is the counting number for region $R$.
 \end{definition}
 
-Region-based free energy generalizes the well known Bethe free energy. Loopy BP is equivalent to minimizing of Bethe free energy.
-
+Region-based free energy is a more generalized free energy than the variational free energy discussed in Section~\ref{chpt2:sec:variational-inference}. For instance, Bethe free energy, corresponding loopy BP, can be viewed as a special case of region-based free energy.
 
 \subsection{Recover Bethe Free Energy from Region-based Free Energy}
 \label{apdix:sec:get-bethe-from-region-energy}
-As shown in \cite{yedida2005constucting},
-if we define two types of regions (large regions and small
-regions) directly from a factor graph $\Gg_F(\Vv \cup \Ff, \Ee_F)$, by defining the large regions and small regions as
+If we define two types of regions (large regions and small
+regions) directly from a factor graph $\Gg_F(\Vv \cup \Ff, \Ee_F)$, which is two-level region graph with large regions locate in root level (level 0) and small regions locate in the level 1, we have
 \begin{align}
   \Rr_{L} &= \left\{ a, \bm{x}_a| a\in \Ff \right\}, \nonumber \\
   \Rr_{S} &= \left\{ i | i \in \Vv \right\}.
 \end{align}
-For the large regions, we set counting number $c_{R,a}=1$, and for small regions each node $i$, set counting number $c_{R,i}=1-|\mathrm{ne}_i|$. Then we can recover the Bethe free energy from region-based free energy defined in 
+The edges of the original factor graph $\Gg_F$ are preserved in the constructed region graph with adding directions from a factor node to its neighboring variable nodes. For the large regions, we set counting number $c_{R,a}=1$, and for small regions each node $i$, set counting number $c_{R,i}=1-|\mathrm{ne}_i|$. Then we can recover the Bethe free energy from region-based free energy defined in 
 \eqref{eq:def-region-free-energy}. To be specific, for
 large regions,
 \begin{align}\label{apdix:eq:large-region}
@@ -235,7 +234,7 @@ And for the small regions, the free energy can be similarly obtained as
 \begin{equation}\label{apdix:eq:small-region}
   F_{R,S}  =  \sum_{i=1}^{N} (1- |\mathrm{ne}_i|) \sum_{x_i} b_i(x_i) \ln{b_i(x_i)}.
 \end{equation}
-Putting \eqref{apdix:eq:large-region} and \eqref{apdix:eq:small-region} together gives the Bethe free energy \ref{chpt2:bethe-free-energy}.
+Putting \eqref{apdix:eq:large-region} and \eqref{apdix:eq:small-region} together recovers the Bethe free energy \eqref{chpt2:bethe-free-energy}.
 
 
 
@@ -332,83 +331,87 @@ Putting \eqref{apdix:eq:large-region} and \eqref{apdix:eq:small-region} together
 
 
 In this section, we explain how the proposed region-based energy neural network (RENN) works.
-We are interested in finding marginal probabilities such as $p(\bm{x}_R)$. The belief $b_R(\bm{x}_R)$ can be understood as the estimation to $p(\bm{x}_R)$.
-Instead of directly optimize w.r.t. variables ${b_R(\bm{x}_R)}$ of interests, we use the reparameterization technique that are also used by recent works \cite{DBLP:journals/corr/KingmaW13, srikumar-etal-2012-amortizing, NIPS2019_9687, akbayrak2019reparameterization}, to model the values of interests to be the output of a neural network. We then optimize w.r.t. the parameters of the neural network.
+We are interested in finding marginal probabilities such as $p(\bm{x}_R)$. A region belief $b_R(\bm{x}_R)$ an approximation to $p(\bm{x}_R)$.
+Instead of propagating messages as GBP, or directly optimize w.r.t. variables ${b_R(\bm{x}_R)}$ of interests, we use the reparameterization technique that is also used by recent works \cite{DBLP:journals/corr/KingmaW13, srikumar-etal-2012-amortizing, NIPS2019_9687, akbayrak2019reparameterization}, to model the values of interests to be the output of a neural network. We then optimize w.r.t. the parameters of the neural network. This technique is called amortizing.
 
-Note that in RENN, the neural network only need to directly model beliefs on root regions $\Rr_0$. The beliefs of non-root regions $\Rr_l,~l>0$ could be obtained from root region beliefs according to the structure of the region graph. This can reduce the amount of neural network parameters compared to directly modeling beliefs of all regions.
+Note that in RENN, the neural network only needs to directly model beliefs on root regions $\Rr_0$. The beliefs of non-root regions $\Rr_l,~l>0$ could be obtained from root region beliefs according to the structure of the region graph. This can reduce the number of neural network parameters compared to directly modeling the beliefs of all regions.
 
 \subsection{Inference by RENN}
 \label{sec:infer-renn}
 
 For a root region $R^{[0]}\in \Rr_0$, our RENN has a corresponding vector representing its score $\bm{f}(\Gg_R, R^{[0]}; \bm{\omega}) \in \RR^{|{\bm{x}_{R^{[0]}}}| \times K}$, where $\bm{\omega}$ is the parameter of mapping $\bm{f}$ that is modeled by a neural network. We define the predicted belief on the root region node $R^{[0]}$ as
 \begin{equation}
-  b_{R^{[0]}}(\bm{x}_{R^{[0]}}; \bm{\omega}) = \sigma(\bm{f}(\Gg_R, R^{[0]}; \bm{\omega})), \forall~ {R^{[0]}} \in \Rr,
+  b_{R^{[0]}}(\bm{x}_{R^{[0]}}; \bm{\omega}) := \sigma(\bm{f}(\Gg_R, R^{[0]}; \bm{\omega})), \forall~ {R^{[0]}} \in \Rr,
 \end{equation}
-where $\sigma(\cdot)$ is the softmax function. The softmax function guarantees $b_{R^{[0]}} \in (0,1)^{|{\bm{x}_{R^{[0]}}}| \times K}$.
+where $\sigma(\cdot)$ is the softmax function.
 
-The representation maping $\bm{f}$ followed by the softmax function in a RENN only needs to directly output the beliefs on root regions $\Rr_0$.
+The representation mapping $\bm{f}$ followed by the softmax function in a RENN only needs to directly output the beliefs on root regions $\Rr_0$.
 For the rest regions $\left\{R \in \Rr \backslash \Rr_0 \right\}$ that are not root regions in the region graph, where $\backslash$ denotes the set exclusion, the RENN computes the belief as
 \begin{equation}\label{eq:l-level-beliefs}
   b_{R^{[l]}}(\bm{x}_{R^{[l]}}; \bm{\omega}) = \frac{1}{|\Pp(R^{[l]})|} \sum_{R_p\in  \Pp(R^{[l]})}\sum_{\bm{x}_{R_p}\backslash \bm{x}_{R^{[l]}}} b_{R_p}(\bm{x}_{R_p}; \bm{\omega}),
 \end{equation}
-where $\Pp(R^{[l]})$ is the set of parent regions of $R^{[l]}$ in region graph $\Gg_R$. The non-root region belief of RENN defined in this way comes with the intuition of typical iterative belief propagation methods. In BP and its variants, messages are passed to a variable node to reduce the mismatch of beliefs w.r.t. the variable node, which are sent from this node's neighbors in a factor graph. The message passing iteration of BP or its variants stops when this kind of mismatch w.r.t. every variable node is eliminated in the factor graph.
+where $\Pp(R^{[l]})$ is the set of parent regions of $R^{[l]}$ in region graph $\Gg_R$. The non-root region belief of RENN defined in this way comes with the intuition of typical iterative belief propagation methods. In BP and its variants, messages are passed to a variable node to reduce the mismatch of beliefs w.r.t. the variable node, which are sent from this node's neighbors in a factor graph. The message passing iteration of BP or its variants stops when this kind of mismatch w.r.t. every variable node is eliminated in the factor graph, i.e., converged.
 
-In RENN, we directly cast the mismatch between a non-root region belief $b_{R^{[l]}}(\bm{x}_{R^{[l]}}; \bm{\omega})$ and the marginalization from its parent region $\sum_{\bm{x}_{R_p}\backslash \bm{x}_R^{[l]}}b_{R_p}(\bm{x}_{R_p}; \bm{\omega})$ as a penalty in the cost function. As the mismatch penalty is close to zero, the non-root region belief gets close to marginalization calculated from its parent regions. Matching a region's belief with marginalization from its parent regions' beliefs is termed as region belief consistency in region graph.
+In RENN, we directly cast the mismatch between a non-root region belief $b_{R^{[l]}}(\bm{x}_{R^{[l]}}; \bm{\omega})$ and the marginalization from its parent region $\sum_{\bm{x}_{R_p}\backslash \bm{x}_R^{[l]}}b_{R_p}(\bm{x}_{R_p}; \bm{\omega})$ as a penalty in the cost function. As the mismatch penalty is close to zero, the non-root region belief gets close to marginalization calculated from its parent regions. Matching a region's belief with marginalization from its parent regions' beliefs is termed as region belief consistency in region graph. That is to say, apart from averaging effect from definition itself \eqref{eq:l-level-beliefs}, a hard-penalty is enforced straightforwardly in our cost.
 
 Different from GBP that minimizes region-based free energy by iterative message-passing, RENN minimizes the region-based free energy by optimizing w.r.t. the neural network parameter $\bm{\omega}$.
 Considering the region belief consistency, we summarize the cost function of RENN to include both the region-based free energy and mismatch penalty on non-root regions. This gives the optimization problem:
 \begin{equation}\label{eq:infer-F-all-belief}
   \umin{\bm{\omega}}{F_R(\Bb;\bm{\theta}) + \lambda \sum_{R\in \Rr \backslash \Rr_0} \sum_{R_p \in \Pp(R)} d( b_R, \sum_{\bm{x}_{R_p}\backslash \bm{x}_{R}} b_{R_p}(\bm{x}_{R_p}; \bm{\omega}))},
 \end{equation}
-where $d(\cdot, \cdot)$ is distance metric or divergence to measure the mismatch between the beliefs ($L_2$ distance is used in our experiments), $\lambda$ is the regulation parameter.
+where $d(\cdot, \cdot)$ is distance metric or divergence to measure the mismatch between the beliefs ($L_2$ distance is used in our experiments), $\lambda$ is a positive regulation parameter. In a word, a RENN takes embedding vectors as input and output beliefs directly by minimizing regularized region-based free energy. Embedding vectors are tunable variables (part of paramter $\bm{w}$), and would be explained in Section~\ref{subsec:exp-setting}, although not explicit in the objective function \eqref{eq:infer-F-all-belief}.
 
-As shown in Figure~\ref{fig:renn-illustration}, a three-level RENN takes embedding vectors as input and outputs the beliefs on $\Rr_0$ directly (embedding vectors would be explained in subsection~\ref{subsec:exp-setting}, although not explicitly included in the objective function \eqref{eq:infer-F-all-belief}). The beliefs in other levels $\{\Rr_1$, $\Rr_2\}$ are computed as in \eqref{eq:l-level-beliefs}. Then the region-based free energy along with the penalty of region belief consistency is minimized w.r.t. $\bm{\omega}$.
+
+\begin{example}
+We demonstrate a toy RENN in this example. As illustrated in Figure~\ref{fig:renn-illustration}, a three-level RENN takes embedding vectors as input and outputs the beliefs on $\Rr_0$ directly. The beliefs in other levels $\{\Rr_1$, $\Rr_2\}$ are computed as in \eqref{eq:l-level-beliefs}. Then the region-based free energy along with the penalty of region belief consistency is minimized w.r.t. $\bm{\omega}$.
+\end{example}
 
 \subsection{Region Graph Construction for RENN}
-In this section we would detail how to construct the region graph $\Gg_R$ for RENN.
-Informally, a region graph can be generated by firstly clustering the nodes in a factor graph in any way and then connect the clusters with directed edges. But it does not mean we can rely on an arbitrary region graph to do our inference. Conditions such as \textit{valid} region graph (would be discussed in the following subsection), and \textit{maxent-normality} \cite{yedida2005constucting,welling2005structured} have been proposed for region graphs. But these conditions do not gives rules of how to construct ''good'' region graphs.
+In this section we detail how to construct the region graph $\Gg_R$ for RENN.
+Informally, a region graph can be generated by firstly clustering the nodes in a factor graph in any way and then connect the clusters with directed edges as long as the resulted graph should fulfill the Definition~\ref{def:region-graph}. But it does not mean we can rely on an arbitrary region graph to do our inference. Conditions such as \textit{valid} region graph (would be discussed in the following subsection), and \textit{maxent-normality} \cite{yedida2005constucting,welling2005structured} have been proposed for region graphs. But these conditions do not gives rules of how to construct ''good'' region graphs.
 Our idea for this issue is to combine the cluster variation method \cite{PhysRev.81.988,morita1991cluster} with \textit{tree-robust} condition \cite{gelfand2012generalized} (that was originally developed to improve accuracy of GBP) for practical region graph construction.
 
+In what follows, we firstly explain the concept of valid region graphs. Then the method of region graph construction for RENN is detailed.
 
-\subsubsection{Determining the counting numbers}
+\subsubsection{Determining the Counting Numbers}
 \label{subsec:count-number}
-In Definition~\ref{def:region-free-energy}, region-based free energy is a function of counting numbers $\left\{ c_R \right\}$. The counting numbers here are used to balance each region's contribution to the free energy. According to \cite{yedida2005constucting}, the region-base free energy is \text{valid} if the following $1$-balanced conditions holds
+In Definition~\ref{def:region-free-energy}, region-based free energy is defined as a function of counting numbers $\left\{ c_R \right\}$. The counting numbers here are used to balance each region's contribution to the free energy. According to \cite{yedida2005constucting}, the region-base free energy is \text{valid} if the following $1$-balanced conditions holds
 \begin{equation}\label{eq:1-ballanced-condition}
   \sum_{R\in\Rr} c_R \delta_{R}(i)  = 1, \forall~ \mathrm{node}~ i~~ \mathrm{in} ~~\Gg_F,
 \end{equation}
-where $\delta_{R}(i)$ is the indicator function, equal to $1$ if and only if node $i$ defined in factor graph $\Gg_F$ is in region $R$ of region graph $\Gg_R$ and equal to $0$ otherwise. Note that node $i$ can be either a variable or factor node here. It can be seen that each node would be counted exactly once if the condition \eqref{eq:1-ballanced-condition} holds.
+where $\delta_{R}(i)$ is the indicator function, equal to $1$ if and only if node $i$ defined in factor graph $\Gg_F$ falls in the region $R$ of the region graph $\Gg_R$ and equal to $0$ otherwise. Note that node $i$ can be either a variable or factor node here. It can be seen that each node would be counted exactly once if the condition \eqref{eq:1-ballanced-condition} holds.
 
-Given a region graph $\Gg_R$, the counting numbers $\left\{ c_R \right\}$ can be constructed recursively as:
+Given a region graph $\Gg_R$, the counting numbers $\left\{ c_R \right\}$ can be constructed recursively as
 \begin{equation}
   c_R = 1 - \sum_{R_i \in \Aa(R)} c_{R_i}, \forall R,
 \end{equation}
 where $\Aa(R)$ denotes the ancestor set of region node $R$ in $\Gg_R$. This rule means the counting numbers of root regions are always $1$, since they do not have any ancestors.
 
 
-\subsubsection{Generating graph by Cluster Variation Method}
+\subsubsection{Generating Graph by Cluster Variation Method}
 \label{sec:cluster-variation-method}
-Cluster variation method was in introduced by Kikuchi and other physcists \cite{PhysRev.81.988,morita1991cluster}, which started with the intuition of approximating free energy by using larger set of variable nodes instead of the single-node factorization in mean field approximation.
+Cluster variation method was introduced by Kikuchi and other physicists \cite{PhysRev.81.988,morita1991cluster}, which started with the intuition of approximating free energy by using larger sets of variable nodes instead of the single-node factorization in mean field approximation.
 
 Cluster variation method starts with the root regions $\Rr_0$. There are two requirements for $\Rr_0$: i) every variable node $i$ of factor graph $\Gg_F$ is included in at least one region $R^{[0]}\in\Rr_0$; ii) there should be no region $R^{[0]}\in \Rr_0$ being a subregion of any other region in $\Rr_0$.
 With $\Rr_0$ ready, the other sets of regions are generated hierarchically. To construct level-$1$ regions $\Rr_1$ from $\Rr_0$, we find out all the intersections between regions in $\Rr_0$, but omit any that are subregion of other intersection regions. Then level-$2$ regions $\Rr_2$ can be similarly constructed from $\Rr_1$. Assume there are $L$ such sets, then $\Rr = \Rr_0 \cup \Rr_1 \cup \cdots \cup \Rr_{L-1}$. The construction rule can be formulated as
 \begin{align}
-  &\Rr_l = \{ R^{[l]}_i = R^{[l-1]}_j \cap R^{[l-1]}_k | R^{[l]}_i \not\subset R^{[l]}_n,~ \forall i \neq n, \nonumber \\
+  \Rr_l = &\{ R^{[l]}_i := R^{[l-1]}_j \cap R^{[l-1]}_k | R^{[l]}_i \not\subset R^{[l]}_n,~ \forall i \neq n, \nonumber \\
   &R^{[l-1]}_j, R^{[l-1]}_k \in \Rr_{l-1} , j\neq k\}, l=1, 2, \cdots, L-1.
 \end{align}
 
 With the hierarchical region sets built, we need to draw the edges. The directed edges are always connected from regions in $\Rr_{l-1}$ to these in $\Rr_{l}$. For one region $R^{[l]}$ in $\Rr_l$, a directed edge is drawn from any superregion of $R^{[l]}$ in $\Rr_l$. This can be represented as
 \begin{align}
-  \Ee = \{ e = (R^{[l-1]}, R^{[l]}) | R^{[l]} \subset R^{[l-1]}, R^{[l]} \in \Rr_l, R^{[l-1]} \in \Rr_{l-1} , \forall l\}.
+  \Ee = \{ e := (R^{[l-1]}, R^{[l]}) | R^{[l]} \subset R^{[l-1]}, R^{[l]} \in \Rr_l, R^{[l-1]} \in \Rr_{l-1} , \forall l\}.
 \end{align}
 
 
 
 \subsubsection{Root Region Construction}
 \label{sec:criteria-root-regions}
-In section~\ref{sec:cluster-variation-method}, we detailed the region graph construction steps by cluster variation method, starting from $\Rr_0$. In this section, we explain how to build the root region set $\Rr_0$. This is important since it totally decides from which we start building region graph.
+In Section~\ref{sec:cluster-variation-method}, we detailed the region graph construction steps by cluster variation method, starting from $\Rr_0$. In this section, we explain how to build the root region set $\Rr_0$. This is important since it totally decides from which we start building a region graph.
 We take the path of \cite{welling2005structured, gelfand2012generalized} for this issue.
 
-Specifically, we use the \textit{tree-robust} condition \cite{gelfand2012generalized} to build the root regions for our RENN. These root regions are then used to grow the other hierarchical levels of region graphs by cluster variation method in subsection~\ref{sec:cluster-variation-method}. Tree-robust condition was developed original for GBP to gain better approximations. GBP has better accuracy on tree-robust graphs than on non-tree-robust graphs. We would show in our experiment section that RENN outperforms GBP even in tree-robust graphs. 
+Specifically, we use the \textit{tree-robust} condition \cite{gelfand2012generalized} to build the root regions for our RENN. These root regions are then used to grow the other hierarchical levels of the region graph by cluster variation method in Section~\ref{sec:cluster-variation-method}. Tree-robust condition was developed originally for GBP to gain better approximations. GBP has better accuracy on tree-robust graphs than on non-tree-robust graphs. We would show in our experiment section that RENN outperforms GBP even in tree-robust graphs later on. 
 
 
 To explain the concept of \textit{tree-robust}, we need explain the concepts of \textit{cycle basis} and \textit{tree exact}, based on which the tree-robust is defined.
@@ -432,22 +435,17 @@ With the above concepts, we are ready to give the definition of tree-robust.
 \end{definition}
 
 
-
-% Although each root region of $\Gg_R$ can be any set of nodes clustered in any way, we restrict ourselves to construct root regions that are cycles of factor graph $\Gg_F$. Then constructing root regions for $\Gg_R$ becomes to construct a cycle-structured region sets. A cycle-structured region set becomes a cycle basis when it fulfills certain conditions (see Definition~\ref{apdix:def:cycle-basis} in supplementary file).
-
-We use two important theorems from \cite{gelfand2012generalized} for choosing cycle basis in two specific graph cases, i.e. planar graphs and complete graphs. A planar graph is a graph that can be embedded in the two-dimensional plain (it can be drawn on the plane in such a way that its edges intersect only at their nodes). In a complete graph, every pair of distinct nodes is connected by an unique edge.
+We use two theorems from \cite{gelfand2012generalized} for choosing cycle basis in two specific graph classes, i.e. planar graphs and complete graphs. A planar graph is a graph that can be embedded in the two-dimensional plain (it can be drawn on the plane in such a way that its edges intersect only at their nodes). In a complete graph, every pair of distinct nodes is connected by a unique edge.
 
 \begin{theorem}\label{thm:planar-tree-robust}
-  In a planar graph $\Gg$, the cycle basis comprised of the faces of graph $\Gg$ is tree-robust.
+  In a planar graph $\Gg$, the cycle basis comprised of the faces of the graph $\Gg$ is tree-robust.
 \end{theorem}
 
 \begin{theorem}\label{thm:complete-tree-robust}
   In a complete graph $\Gg$, construct a cycle basis as follows. Choose a node $i$ as the root. Create a 'star' spanning tree rooted at $i$. Then construct cycles of form $(i,j,k)$ from each off-tree edge $(j,k)$. The constructed basis is tree-robust.
 \end{theorem}
 
-Tree-robust root regions can also be constructed for general graphs, which can be seen as an extension from Theorem~\ref{thm:planar-tree-robust} and \ref{thm:complete-tree-robust}.
-
-Root regions of region graph $\Gg_R$ from planar and compete graphs are explained in section~\ref{sec:criteria-root-regions}. For general graph case, it basically is to find a subgraph that is planar or compote graph, and then extract the corresponding tree-robust basis, after which extra cycles are added in by following Algorithm~\ref{apdix:alg:root-region-general-graph}.
+Tree-robust root regions can also be constructed for general graphs, which can be seen as an extension from Theorem~\ref{thm:planar-tree-robust} and \ref{thm:complete-tree-robust}. For general graph case, it basically is to find a subgraph that is planar or compote graph, and then extract the corresponding tree-robust basis, after which extra cycles are added in by following Algorithm~\ref{apdix:alg:root-region-general-graph}.
 \begin{algorithm}[tb]
   \caption{Construct Root Regions from General Graphs.}
   \label{apdix:alg:root-region-general-graph}
