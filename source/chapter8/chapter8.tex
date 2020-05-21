@@ -60,7 +60,7 @@ where $p(\bm{x};\bm{\theta}) = p(\bm{g}(\bm{z}); \bm{\theta})$ with $\bm{\theta}
 \end{remark}
 
 \begin{remark}[Connection to auto-encoders]
-It is known that the variational lower bound of the likelihood function as in \eqref{chpt5:eq:lower-bound-F} is used to train variational auto-encoders, where an encoder and a decoder adjust their parameters to maximize the variational lower bound in the maximum likelihood principle. Since OT offers an alternative tool for modeling learning, it is also employed to train auto-encoders in likelihood-free settings, which shares similarities with the variational auto-encoders. See \cite{patrini2018sinkhornVAE, genevay2017gan,bousquet2017optimal} for detailed discussions.
+It is known that the variational lower bound of the likelihood function as in \eqref{chpt5:eq:lower-bound-F} is used to train variational auto-encoders, where an encoder and a decoder adjust their parameters to maximize the variational lower bound in the maximum likelihood principle. Since OT offers an alternative tool for modeling learning, it is also employed to train auto-encoders in likelihood-free settings, which shares similarities with the variational auto-encoders. See \cite{patrini2018sinkhornVAE, genevay2017gan,bousquet2017optimal, ambrogioni2018wasserstein} for detailed discussions.
 \end{remark}
 
 \section{EOT based Generative Models}
@@ -365,7 +365,7 @@ Different from graphical models discussed in previous chapters, an implicit mode
 
 Deep generative models that use the non-linear mappings of neural networks have received a lot of attentions as a branch of graphical models. The modeling capacity of deep generative models is impressive in high-dimensional space (e.g., image super-resolution \cite{ledig2017photo}, image de-noising \cite{CreswellB2017denoise, dilokthanakulmg2016gausian-vae}, image segmentation \cite{marvin2018crf}, speech generating \cite{ryan2018waveglow} etc.), but the learning of these models is not trivial. The learning difficulty lies in modeling challenge within the high-dimensionality itself or our trading more complex generators (for expressivity) with distribution tractability. Thus, works in pursuit of better understanding of deep generative models have been carried out, and also different model learning methods or costs have been proposed in relieving the learning difficulty.
 
-One leading family of deep generative models are the variational auto-encoders \cite{kingma2019vae}\cite{}, which use special choices of parameterization or generator structures to preserve the likelihood computation. A pre-defined inference task can still be carried out and sampling is also efficient in variational auto-encoders. In learning, these models are sensitive to the Monte Carlo estimation of the gradients, \textcolor{blue}{add variance issue analysis}
+One leading family of deep generative models are the variational auto-encoders \cite{kingma2019vae}\cite{}, which use special choices of parameterization (e.g., \cite{DBLP:journals/corr/KingmaW13}) or generator structures to preserve the likelihood computation (e.g., the variational inference by normalizing flows, see \ref{rezende2015variational, kingma2016IVF, TomczakW16vae-flow}). A pre-defined inference task can still be carried out and sampling is also efficient in variational auto-encoders. In learning, these models are sensitive to the Monte Carlo estimation of the gradients, \textcolor{blue}{add variance issue analysis}. If the restriction on special p HIM Hierarchical Implicit Models and Likelihood-Free Variational Inference
 
 A prominent example is generative adversarial network (GAN) \cite{NIPS2014_5423}, which comes with an implicit underlining distribution of the model.
 In the vanilla GAN, a generator produces synthetic samples and a discriminator endeavors to distinguish between real samples and synthetic samples. Generators and discriminators are both implemented using (deep) neural networks, and play an adversary game against each other using a \textit{min-max} optimization to learn parameters of neural networks. More intuitively speaking, for the generator, the game turns out be minimizing Jensen-Shannon divergence between target distribution (the induced distribution by the generator) when the discriminator is optimal.
@@ -402,163 +402,6 @@ generator. In addition to the above advantage, duality of EOT can be
 effectively solved and straightforwardly extended to parallel computation. 
 
 
-
-
-
-% However, Pixel representation of images does not induce meaningful
-% Euclidean distances\cite{ponce2011computer}. Thus applying Algorithm~\ref{algo-E-WL}
-% directly in $\Xx$ for problem in \eqref{eq-entropic-wsd} may not
-% guide $g$ to generate meaningfully semantic samples.
-% Assuming there is feature mapping for samples, then we
-% can apply Algorithm~\ref{algo-E-WL} in the feature domain to avoid the
-% above problem. To measure how semantically similar two
-% samples are, we define a similarity metric
-% 
-% \begin{equation}\label{def-similarity}
-%   d_f(y, x) \coloneqq \|f(y)-f(x)\|_{2,\mathcal{M}}^{2}.
-% \end{equation}
-% where $f: \Xx \rightarrow \Mm$, $\mathcal{M}\subset\mathbb{R}^{m}$, which is
-% parameterized by $\omega$, $\|\cdot\|_{2,\mathcal{M}}^{2}$ is the
-% corresponding squared Euclidean distance in feature space $\Mm$.
-% $f$ here maps the input patterns into the feature space $\Mm$ where
-% semantic distance is approximated. Since $f$ takes values in $\Xx$,
-% we try to learn a push-forward probability distribution $P$ in feature space $\Mm$, instead of
-% learning in $\Xx$ to avoid the instability problem of approximating
-% distribution in high-dimension domain.
-% 
-% However, $f$ usually is dataset-dependent. In order to get $f$ we use
-% triple loss to learn $f$ in \eqref{def-similarity}. We
-% assume samples from $P$ belong to positive class, and samples from
-% $g$'s induced distribution $Q$ belong to negative class. Samples from
-% same class share common features and should have small OT distance in
-% feature domain $\Mm$, while OT distance between different classes
-% should be large in $\Mm$. Then learning of $f$ is minimizing:
-% \begin{equation}\label{eq-sim-in}
-%   W_f(P, P) = \inf_{\pi_{\mathrm{in}} \in \Pi(P, P) }\dotp{\pi_{\mathrm{in}}}{M_{\mathrm{in}}} - \la H(\pi_{\mathrm{in}}),
-% \end{equation}
-% where $[M_{\mathrm{in}}]_{i,j} = d_f(x_i, \tilde{x}_j), x_i,
-% \tilde{x}_j \sim P$, while maximizing:
-% \begin{equation}\label{eq-sim-ex}
-%   W_f(P, Q) = \inf_{\pi_{\mathrm{ex}} \in \Pi(P, Q) }\dotp{\pi_{\mathrm{ex}}}{M_{\mathrm{ex}}} - \la H(\pi_{\mathrm{ex}}),
-% \end{equation}
-% where $[M_{\mathrm{ex}}]_{i,j} = d_f(x_i, y_j)$, $x_i \sim P, y_j\sim
-% Q$. Note \eqref{eq-sim-in} makes sense since two different random batchs of
-% samples from $P$ are used for large datasets.
-% 
-% 
-% Since both $W_f(P, P)$ and $W_f(P, Q)$ are
-% lowered bounded instead of upper bounded, similar to triplet loss used
-% in \cite{7298682}, feature mapping $f$ here is trained by minimizing a hinge loss
-% $\Ll_{f}(P, Q)$ while generator $g$ is trained by adversarially
-% minimizing $\Ll_{g}(P, Q)$, EOT distance between empirical and synthetic
-% samples:
-% \begin{align}
-    %     \Ll_f(P, Q) &= \max\left(0, W_f(P,P)- W_f(P,Q) + \gamma \right),
-                        %                         \nonumber \\
-    %     \Ll_g(P,Q) &= W_f(P,Q).
-                       %   \end{align}
-                       %                        where $\gamma>0$. Hinge adversarial loss here helps to balance the adversarial
-                       %                        training of the $f$ and $g$.
-                       %                        Note the our hinge adversarial loss shares similarity only in form to the self-attention
-                       %                        GAN\cite{2018arXiv180508318Z} and geometric GAN\cite{2017arXiv170502894L}
-                       %                        but is motivated differently and defined in different metric.
-                       %                        
-                       %                        Then the adversarial training between similarity mapping $f$ and
-                       %                        generator $g$ is alternatively minimizing:
-                       %                        \begin{align}
-                       %                      &\min_{f} \Ll_f(P, Q) = \min_{\omega} \Ll_f(P, Q)\nonumber \\
-    %                       &\min_{g} \Ll_g(P, Q) = \min_{\th} \Ll_{g}(P, Q)
-                              %   \end{align}
-                              %                               where $\omega$ is parameter of $f$. This is an
-                              %                               adversarial optimization approach using the EOT discussed in
-                              %                               Subsection \ref{subsec-gmeot}. We refer it as EOTGAN whose algorithm is summarized in Algorithm \ref{algo-eWGAN}.
-
-
-                              %                               Other techniques may be
-                              %                               used to even further to reduce the computation complexity bellow $\mathcal{O}(N^2)$\cite{2018arXiv180300567P}.
-
-                              %                               \textcolor{red}{We need to show Lipschitz form and what are the problems}
-
-                              %                               \subsection{Entropy-constrained  OT cost}
-
-                              %                               \subsection{Entropy-constrained OT GAN}
-
-
-                              %                               \subsection{Entropy-regularized OT}\label{subsec-wsd}
-
-                              %                               To relieve the computation burden, we are going to apply entropic
-                              %                               regulation to the original objective function of OT and employ the
-                              %                               Sinkhorn algorithm \cite{2013arXiv1306.0895C} for fast computation,
-                              %                               which provides accurate and stable computation, and can
-                              %                               be well parallelized on GPU execution. Additionally, the entropy
-                              %                               regularization allows smooth solution to the OT problem.
-                              %                               The Entropy-regularized OT (EOT) can be formulated as:
-                              %                               \begin{equation}
-                              %                               W(P,Q)=\min_{\pi\in \Pi(P,Q)} \dotp{\pi}{M} - \la H(\pi),
-                              %                               \end{equation}
-                              %                               where $[M]_{i,j} = d(x_i, y_j) = \normd{x_i - y_j}$ and $x_i, y_j$ are
-                              %                               samples of $P, Q$ respectively, $H(\pi) = \sum_{i,j} -\pi_{i,j}
-                              %                               \log(\pi_{i,j})$ and $\la \in \RR^{+}$ is the regulation parameter.
-                              %                               Using duality, the EOT problem can be formulated as
-                              %                               \begin{equation}
-                              %                               W(P,Q) = \max_{\al, \be \in \mathbb{R}^{N}} \al^{T}P + \beta^{T}Q -
-                              %                               \sum_{i,j} \lambda e^{ {\left( \al + \beta - [M]_{i,j} \right)}/{\la} }
-                              %                               \end{equation}
-
-                              % %                               \begin{prop}
-                              % %                                 \unsure{Minh, any analysis you want to put here? For the proposition?}
-                              % %                                 Let generator $g: \Zz \rightarrow \Xx$ be parameterized by $\th \in \Theta$
-                              % %                                 and $g$ is differentiable w.r.t $\th$. The subgradient of the entropy
-                              % %                                 regularized Wasserstain distance loss with respect to parameter of
-                              % %                                 generator $G$ is:
-                              % %                                 \begin{equation}
-                              % %                                   \pd{J(Q, P)}{\th} = (\pd{G}{\th})^{T} \alpha,
-                              % %                                 \end{equation}
-                              % %                                 where $\al$ is obtained by the following sinkhorn algorithm:
-
-                              % %                                 \begin{algorithm}
-                              % %                                   \caption{Computation of Entropy Regularized Wasserstein Loss}\label{algo-sinkhorn}
-                              % %                                   \begin{algorithmic}[1]
-                              % %                                     \Require{$M, \la, p, q$ \Comment{$p,q$ lies in probability simplex
-                              % %                                     for distribution $P, Q$.\\ $M_{i,j} = d(x_i, y_j)$ }}
-                              % %                                     \State $K = \exp(-M/\la)$
-                              % %                                     \State $x = ones(length(q))/length(q)$
-                              % %                                     \While{$x$ not converge}
-                              % %                                     \State $x \gets diag(1/q)*K*(p*(1./(K^{T}1./q)) $
-                              % %                                     \EndWhile\label{euclidendwhile}
-
-                              % %                                     \State $u \gets 1./x, v \gets q.*(1./K^{T}*u)$
-                              % %                                     \State $\pi \gets \mathrm{diag}(u)K \mathrm{diag}(v)$
-                              % %                                     \State $\al \gets -\la \log(u) + \la \ones^{T} \log(u)/length(q)*\ones$
-
-                              % %                                   \end{algorithmic}
-                              % %                                 \end{algorithm}
-                              % %                               \end{prop}
-
-
-    %     The optimal dual vector $\beta^{\ast}$
-    %     of \eqref{eq-dual-opt} is
-    %     actually a subgradient of $W(P,Q)$ w.r.t. $Q$. $\beta^{\ast}$ can be efficiently
-    %     computed by alternatively scaling the rows and columns of $M$ by
-    %     Sinkhorn algorithm\cite{2013arXiv1306.0895C, 2013arXiv1310.4375C}
-    %     , which gives a pair of
-    %     vectors $(u, v) \in \RR^n_{+} \times \RR^m_{+}$ that define the
-    %     optimal primary and dual arguments: $\pi^{\ast} =
-    %     \mathrm{diag}(u)e^{-M/\la}\mathrm{diag}(v), \beta^{\ast} = -\frac{\log(u)}{\la} +
-    %     \frac{\log(u)\mathds{1}_n}{n\la} \mathds{1}_n$.
-
-
-    % %     We show by a toy dataset in Subsection \ref{subsec-mg}, solving problem
-    % %     \eqref{eq-entropic-wsd} gives the distribution $Q$ represented by
-    % %     generator $g$, which is close to empirical distribution $P$. %According to
-    % %     \cite{2017arXiv170107875A}, the convergence of OT distance
-    % %     between $Q$ and $P$ guarantees their $KL$ divergence, i.e. $T(P,Q)
-    % %     \rightarrow 0$ implies $KL(P \| Q) \rightarrow 0$.
-
-
-
-    %     \input{section/sec-entropy-wgan}
-    %     \input{section/sec-experimental}
 
 
 
