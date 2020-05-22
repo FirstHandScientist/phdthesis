@@ -186,7 +186,7 @@ Learning MRF with RENN doesn't need iterative message propagation. Additionally,
 To make the comparison more concrete, we do the learning of MRFs, i.e. learning the model parameter $\bm{\theta}$, via different inference methods discussed.
 
 
-We do learning on two types of MRF graphs, grid (Table~\ref{tab:nll-training-grid-n5n10}) and complete graphs (Table~\ref{tab:nll-training-full-n3n4}). For both cases, we firstly sample the parameter set $\bm{\theta}^{\prime}$, then sample training and testing dataset from $p(\bm{x}; \bm{\theta}^{\prime})$. The true NLL of sampled datasets can be computed by $p(\bm{x}; \bm{\theta}^{\prime})$. We then train a randomly-initialized model with the obtained training dataset by using RENN (section~\ref{sec:model-learning-with-renn}). The trained model by RENN is evaluated with testing dataset w.r.t. NLL value, which is compared with trained models by other methods. We also include the comparison with exact inference where $Z(\bm{\theta})$ is computed exactly.
+We do learning on two types of MRF graphs, grid (Table~\ref{tab:nll-training-grid-n5n10}) and complete graphs (Table~\ref{tab:nll-training-full-n3n4}). For both cases, we firstly sample the parameter set $\bm{\theta}^{\prime}$, then sample training and testing dataset from $p(\bm{x}; \bm{\theta}^{\prime})$. The true NLL of sampled datasets can be computed by $p(\bm{x}; \bm{\theta}^{\prime})$. We then train a randomly-initialized model with the obtained training dataset by using RENN (Section~\ref{sec:model-learning-with-renn}). The trained model by RENN is evaluated with testing dataset w.r.t. NLL value, which is compared with trained models by other methods. We also include the comparison with exact inference where $Z(\bm{\theta})$ is computed exactly.
 In the grid graphs, there are $4000$ samples for training and $1000$ for testing. In the complete graph case, there are $2000$ samples for training and $1000$ samples for testing. 
 
 In the cases of grid graphs, the NLLs of most methods are close to the true NLL for small-sized graphs ($n=25,100$), with RENN reaching the lowest NNL. In the case of $n=255$, RENN outperforms all other methods significantly. Additionally, RENN is much faster. As shown in Table~\ref{tab:time-training}, loopy BP needs almost $335$s and damped BP needs about $525$s per epoch iteration, while RENN takes $16$s per epoch.
@@ -197,31 +197,31 @@ Neural network based methods parameterize the beliefs or marginal distributions 
 In the cases of complete graphs, the advantage of RENN is significant, compared with other methods as shown in Table~\ref{tab:nll-training-full-n3n4}. Other benchmark methods fall behind RENN by a distinct difference, given the size of graphs is relatively small. The results here actually agree with inference experiments shown in Table~\ref{tab:infer-full-n9} and \ref{tab:infer-full-n16}, where partition function estimations of other benchmark methods have much larger errors. As for the average time per epoch, neural network based models still are faster than iterative message-passing methods in general.
 
 
-\section{Discussion on Learning}
+\section{Further Discussion on Learning}
 
-The parameter learning becomes more challenge when variable vector $\bm{x}$ is \textit{partial observed}. Denote $\bm{x} = [\bm{x}_U, \bm{x}_O]$, where $\bm{x}_O$ is the observed part and $\bm{x}_U$ is unobserved part that is also known as latent variable. Then the joint distribution becomes $p(\bm{x}; \bm{\theta}) = p(\bm{x}_U, \bm{x}_O; \bm{\theta})$. Since it is only partially observed, we can not maximize the complete evidence log-likelihood as what we did in section~\ref{chpt5:sec:learning-mrf}. Instead, we marginalize the latent variable $\bm{x}_U$ out first
-\begin{equation}\label{chpt2:eq:patial-likelihood}
+The parameter learning becomes more challenge when variable vector $\bm{x}$ is \textit{partial observed}. Denote $\bm{x} = [\bm{x}_U, \bm{x}_O]$, where $\bm{x}_O$ is the observed part and $\bm{x}_U$ is unobserved part that is also known as hidden or latent variable. Then the joint distribution becomes $p(\bm{x}; \bm{\theta}) = p(\bm{x}_U, \bm{x}_O; \bm{\theta})$. Since it is only partially observed, we can not maximize the complete evidence log-likelihood as what we did in section~\ref{chpt5:sec:learning-mrf}. Instead, we marginalize the latent variable $\bm{x}_U$ out first
+\begin{equation}\label{chpt5:eq:patial-likelihood}
   l(\bm{x}_O; \bm{\theta}) = \log{\sum_{\bm{x}_U}p(\bm{x}_U, \bm{x}_O; \bm{\theta})} = \log{Z(\bm{x}_O;\bm{\theta})} - \log{Z(\bm{\theta})},
 \end{equation}
-where $Z(\bm{x}_O;\bm{\theta}) = \sum_{\bm{x}_O}\tilde{p}(\bm{x}; \bm{\theta})$. In general, there are two categories of methods in dealing with learning in partial observed scenarios:
+where $Z(\bm{x}_O;\bm{\theta}) = \sum_{\bm{x}_U}\tilde{p}(\bm{x}; \bm{\theta})$. In general, there are two categories of methods in dealing with learning in partial observed scenarios:
 \begin{itemize}
-\item Directly optimize $l(\bm{x}_O; \bm{\theta})$ w.r.t. $\bm{\theta}$. We need to be able to compute or estimate $l(\bm{x}_O; \bm{\theta})$. Essentially, it requires the gradient of $l(\bm{x}_O; \bm{\theta})$ which is a function of both $p(\bm{x}_a| \bm{x}_O; \bm{\theta})$ and $p(\bm{x}_a; \bm{\theta})$. Inference methods that we previously discussed, e.g., mean field, BP (and its variants), GBP, and RENN, would do the job.
+\item Directly optimize $l(\bm{x}_O; \bm{\theta})$ w.r.t. $\bm{\theta}$. We need to be able to compute or estimate $l(\bm{x}_O; \bm{\theta})$. Essentially, it requires the gradient of $l(\bm{x}_O; \bm{\theta})$ which is a function of both $p(\bm{x}_a| \bm{x}_O; \bm{\theta})$ and $p(\bm{x}_a; \bm{\theta})$. Inference methods that we previously discussed, e.g., mean field, BP (and its variants), GBP, and RENN, can be used to do the inference on (conditional) marginal distributions.
 \item Optimize the a lower bound of $l(\bm{x}_O; \bm{\theta})$. Methods such as (variational) EM, variational Bayes and variational auto-encoder (VAE) \cite{kingma2019vae} belongs to this category.
 \end{itemize}
 
-The first track is straightforward since it is to estimate the sub-partition function $Z(\bm{x}_O; \bm{\theta})$ and partition function $Z(\bm{x}; \bm{\theta})$ as done in section~\ref{sec:model-learning-with-renn} via RENN or other inference methods. Then do the maximization step sequentially. Note different from partition function $Z(\bm{\theta})$, the sub-partition function $Z(\bm{x}_O; \bm{\theta})$ is evidence-dependent, i.e. the inference has to be done per given evidence or sample  $\bm{x}_O$. 
+The first track is straightforward since it is to estimate the sub-partition function $Z(\bm{x}_O; \bm{\theta})$ and partition function $Z(\bm{x}; \bm{\theta})$ as done in Section~\ref{sec:model-learning-with-renn} via RENN or other inference methods. Then, do the step of model parameter learning sequentially. Note different from partition function $Z(\bm{\theta})$, the sub-partition function $Z(\bm{x}_O; \bm{\theta})$ is evidence-dependent, i.e. the inference has to be done per given evidence or sample  $\bm{x}_O$. 
 
-Alternative, we may work with a lower bound of $l(\bm{x}_O; \bm{\theta})$ instead. In this track, the most classical framework is EM, which can be well explained by our target of maximizing $l(\bm{x}_O; \bm{\theta})$. The intuition can be obtained by firstly observing that
+Alternative, we may work with a lower bound of $l(\bm{x}_O; \bm{\theta})$ instead. In this track, the most classical framework is EM, which can be well explained by our target of maximizing $l(\bm{x}_O; \bm{\theta})$. Recap the variational free energy $F_V$ in \eqref{chpt2:eq:variational-free-energy} in Section~\ref{chpt2:sec:variational-inference}. The intuition can be obtained by substituting the posterior $q(\bm{x}_U|\bm{x}_O)$ into the variational free energy and observing that
 \begin{align}
   F_V(q(\bm{x}_U|\bm{x}_O)) & = \mathrm{KL}(q(\bm{x}_U|\bm{x}_O) || p(\bm{x}_U|\bm{x}_O; \bm{\theta})) - \log{Z(\bm{x}_O; \bm{\theta})} \nonumber \\
                             &= \EE_{q(\bm{x}_U|\bm{x}_O)}\left[  \log{\frac{q(\bm{x}_U|\bm{x}_O)}{{p}(\bm{x}_U| \bm{x}_O; \bm{\theta})}} \right] - \log{Z(\bm{x}_O;\bm{\theta})} \nonumber \\
                             &= \EE_{q(\bm{x}_U|\bm{x}_O)}\left[ \log{\frac{q(\bm{x}_U|\bm{x}_O)}{\tilde{p}(\bm{x}_U, \bm{x}_O; \bm{\theta})}} \right],
 \end{align}
-similar to the variational free energy \eqref{chpt2:eq:variational-free-energy}. Here $\bm{x}_O$ is the clamped value of observation. Since
-\begin{equation}
-  \EE_{q(\bm{x}_U|\bm{x}_O)}\left[ \log{\frac{q(\bm{x}_U|\bm{x}_O)}{\tilde{p}(\bm{x}_U, \bm{x}_O; \bm{\theta})}} \right] \geq - \log{Z(\bm{x}_O; \bm{\theta})},
+where $\bm{x}_O$ is the clamped value of observation. Since KL divergence is non-negative,
+\begin{equation}\label{chpt5:eq:partial-obs-ineq}
+  \EE_{q(\bm{x}_U|\bm{x}_O)}\left[ \log{\frac{q(\bm{x}_U|\bm{x}_O)}{\tilde{p}(\bm{x}_U, \bm{x}_O; \bm{\theta})}} \right] \geq - \log{Z(\bm{x}_O; \bm{\theta})}.
 \end{equation}
-we have
+Substituting \eqref{chpt5:eq:partial-obs-ineq} into \eqref{chpt5:eq:patial-likelihood}, we have $l(\bm{x}_O; \bm{\theta})$ bounded from bellow
 \begin{align}\label{chpt5:eq:lower-bound-F}
   l(\bm{x}_O; \bm{\theta}) &\geq \EE_{q(\bm{x}_U|\bm{x}_O)}\left[ \log{\frac{\tilde{p}(\bm{x}_U, \bm{x}_O; \bm{\theta})}{q(\bm{x}_U|\bm{x}_O)}} \right] - \log{Z(\bm{\theta})} \nonumber \\
                            & = \EE_{q(\bm{x}_U|\bm{x}_O)}\left[ \log{\frac{{p}(\bm{x}_U, \bm{x}_O; \bm{\theta})}{q(\bm{x}_U|\bm{x}_O)}} \right] \nonumber \\
