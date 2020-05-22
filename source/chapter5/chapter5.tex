@@ -1,13 +1,14 @@
-\chapter{Learning with inference}
+\chapter{Learning with Inference}
 \label{chpt5:undirecteLearning}
-In Part~\ref{part:inference}, we have discussed different ways for inference, assuming a probabilistic graphical model is given. As introduced in chapter~\ref{chapter2}, learning graphical models includes structure learning and parameter learning. We restrict our discussion to the parameter learning of graphical models. From this chapter onward, we would focus on answering the question of how to decide the parameters of a probabilistic graphical model.
+In Part~\ref{part:background} and \ref{part:inference}, we have discussed different ways for inference. But these discussions are based on an assumption: \textit{a probabilistic graphical model is known or given}. From this chapter onward, we mainly focus on topics of the learning of a probabilistic graphical model.
+As introduced in Chapter~\ref{chapter2}, learning of a graphical model includes structure learning and parameter learning. We restrict our discussion to the parameter learning of graphical models. That is to say, answering the question of how to decide the parameters of a probabilistic graphical model.
 In this chapter, we mainly discuss the learning of undirected graphical models and leave the learning of directed graphical models for the coming chapters.
 
-As explained in section~\ref{chpt2:sec:learning-principles}, the most essential learning principle is \textit{maximal likelihood} that is derived from the minimization of KL-divergence. Since we do not have access to the true distribution $p^{\ast}(\bm{x})$, practical maximal likelihood learning is via tuning parameter $\bm{\theta}$ of model $p(\bm{x};\bm{\theta})$ using information of samples of $p^{\ast}(\bm{x})$, i.e. $\Dd = \left\{ \bm{x}^1, \bm{x}^2, \cdots, \bm{x}^{M}\right\}$.
+As explained in Section~\ref{chpt2:sec:learning-principles}, the most essential learning principle is \textit{maximal likelihood} that is derived from the minimization of KL-divergence. Since we do not have access to the true distribution $p^{\ast}(\bm{x})$, practical maximal likelihood learning is via tuning parameter $\bm{\theta}$ of model $p(\bm{x};\bm{\theta})$ using information of samples of $p^{\ast}(\bm{x})$, i.e. $\Dd = \left\{ \bm{x}^1, \bm{x}^2, \cdots, \bm{x}^{M}\right\}$.
 
-We would begin with the explanation of why inference is required in learning, after which MRF learning via RENN is explained. Numerical comparisons with classic message-passing methods w.r.t. learning is demonstrated afterwords. Topics on learning with hidden variables are then discussed.
+We would begin with the explanation of why inference is required in learning, after which MRF learning via RENN is explained. Numerical comparisons with learned MRFs via classic message-passing methods are demonstrated and discussed afterword. We also include learning with hidden variables, an important topic in graphical model learning, in this chapter.
 
-\section{Why does learning MRF requires inference?}
+\section{Why does learning of an MRF require inference?}
 \label{chpt5:sec:learning-mrf}
 Let us continue the discussion on learning in section~\ref{chpt2:sec:learning-principles}. Given a sample $\bm{x}$, the log-likelihood of this evidence is
 \begin{align}\label{chpt5:eq:one-sample-likely}
@@ -18,41 +19,40 @@ Without loss of generality, computing the gradient w.t.r. $\bm{\theta}_a$ gives
 \begin{align}\label{chpt5:eq:one-sample-likely-grad}
   \pd{l(\bm{x};\bm{\theta})}{\bm{\theta}_a} = \pd{\log{{\phi_a}(\bm{x}_a; \bm{\theta}_a)}}{\bm{\theta}_a} - \EE_{p(\bm{x}_a; \bm{\theta})}\left[ \pd{\log{{\phi_a}(\bm{x}_a; \bm{\theta}_a)}}{\bm{\theta}_a} \right].
 \end{align}
-Applying all sample from dataset $\Dd$, i.e.
+In \eqref{chpt5:eq:one-sample-likely-grad}, a computation trick is used, i.e., $\pd{f(x)}{x} = f(x) \pd{\log{f(x)}}{x}$ holds for a differentiable function $f(x)$. Applying all sample from dataset $\Dd$ to \eqref{chpt5:eq:one-sample-likely-grad} gives
 \begin{equation}
-  \Ll(\bm{\theta}) = \frac{1}{|\Dd |} \sum_{\bm{x} \in \Dd} l(\bm{x}; \bm{\theta}),
+  \Ll(\bm{\theta}) = \frac{1}{|\Dd |} \sum_{\bm{x} \in \Dd} l(\bm{x}; \bm{\theta}).
 \end{equation}
-we have
+We similarly have the gradient of $\Ll$ as
 \begin{equation}\label{chpt3:eq:likely-gradient-thetaa}
   \pd{\Ll(\bm{x};\bm{\theta})}{\bm{\theta}_a} = \frac{1}{|\Dd |} \sum_{\bm{x} \in \Dd}\pd{\log{{\phi_a}(\bm{x}_a; \bm{\theta}_a)}}{\bm{\theta}_a} - \EE_{p(\bm{x}_a; \bm{\theta})}\left[ \pd{\log{{\phi_a}(\bm{x}_a; \bm{\theta}_a)}}{\bm{\theta}_a} \right].
 \end{equation}
-In general, there is no closed-form solution in maximizing this log-likelihood $\Ll(\Dd; \bm{\theta})$. But it is intuitive to observe that the stationary point of ${\Ll(\bm{x};\bm{\theta})}$ is
+In general, there is no closed-form solution to the maximization problem of the log-likelihood $\Ll(\Dd; \bm{\theta})$. But it is intuitive to observe that the stationary point of ${\Ll(\bm{x};\bm{\theta})}$ is
 \begin{equation}\label{chpt5:eq:stationary-point-likely}
   \frac{1}{|\Dd |} \sum_{x \in \Dd}\pd{\log{{\phi_a}(\bm{x}_a; \bm{\theta}_a)}}{\bm{\theta}_a} = \EE_{p(\bm{x}_a; \bm{\theta})}\left[ \pd{\log{{\phi_a}(\bm{x}_a; \bm{\theta}_a)}}{\bm{\theta}_a} \right].
 \end{equation}
-The left-hand-side of \eqref{chpt5:eq:stationary-point-likely} is empirical expectation w.r.t. to the gradient of potential function $\phi_a$, while on the right-hand-side of \eqref{chpt5:eq:stationary-point-likely} the expectation is computed by support of the marginal distribution $p(\bm{x}_a; \bm{\theta})$. This stationary point is intuitively telling us that the maximum likelihood estimation is trying to enforce the equality of empirical expectation of gradient with each $\bm{\theta}_a$ and the model's expectation of that.
+The left-hand-side of \eqref{chpt5:eq:stationary-point-likely} is empirical expectation w.r.t. to the gradient of potential function $\phi_a$, while on the right-hand-side of \eqref{chpt5:eq:stationary-point-likely} the expectation is computed by the support of the marginal distribution $p(\bm{x}_a; \bm{\theta})$. This stationary point is intuitively telling us that the maximum likelihood estimation is trying to enforce the equality of empirical expectation of gradient with each $\bm{\theta}_a$ and the model's expectation of that.
 \begin{remark}
   If we instantiate $p(\bm{x};\bm{\theta})$ from exponential family and it is canonically parameterized, its potential $\phi_a(\bm{x}_a; \bm{\theta})$ is log-linear w.r.t. the sufficient statistics. The corresponding equation of \eqref{chpt5:eq:stationary-point-likely} in this case is reduced into \textit{moment matching}.
 
-  {For log-linear potential function $\phi_a$, $\forall ~a \in \Ff$, the first term of $l(\bm{x}; \bm{\theta})$ is linear w.r.t. $\bm{\theta}$ and the second term, i.e. $-\log{Z(\bm{\theta})}$, is concave. Thus the log-likelihood is concave and there is a unique globally optimal log-likelihood value. But this does not necessarily mean that there is always an unique globally optimum $\bm{\theta}^{\ast}$, since the parameterization of a MRF can be redundant.}
+  {For log-linear potential function $\phi_a$, $\forall ~a \in \Ff$, the first term of $l(\bm{x}; \bm{\theta})$ is linear w.r.t. $\bm{\theta}$ and the second term, i.e. $-\log{Z(\bm{\theta})}$, is concave. Thus the log-likelihood is concave and there is a unique globally optimal log-likelihood value. But this does not necessarily mean that there is always a unique globally optimum $\bm{\theta}^{\ast}$, since the parameterization of an MRF can be redundant. That is to say, in the case of over-parameterization of an MRF, there could exit multiple global optimums after maximum likelihood learning.}
   
 \end{remark}
 
-Apart from the classical techniques such as iterative proportional fitting \cite[section~6.1]{wainwright2008graphical}\cite{eric10-708ipf}, the wide used approach is gradient decent method by using \eqref{chpt3:eq:likely-gradient-thetaa}, in maximizing $\Ll(\Dd; \bm{\theta})$. Either way, the inference on marginal distribution $\left\{ p(\bm{x}_a; \bm{\theta}), a \in \Ff \right\}$ is inevitable.
+Apart from the classical techniques such as iterative proportional fitting \cite[Section~6.1]{wainwright2008graphical}\cite{eric10-708ipf}, the wide used approach is gradient decent method by using \eqref{chpt3:eq:likely-gradient-thetaa}, in maximizing $\Ll(\Dd; \bm{\theta})$. Either way, the inference on marginal distribution $\left\{ p(\bm{x}_a; \bm{\theta}), a \in \Ff \right\}$ is inevitable.
 
-Take the gradient decent method as example, we need to use one of the inference approaches introduced in Part~\ref{part:inference} to approximate the marginals $\left\{ p(\bm{x}_a; \bm{\theta}), a \in \Ff \right\}$, then do update of the parameter
+Take the gradient decent method as example, we need to use one of the inference approaches introduced in Part~\ref{part:background} and \ref{part:inference} to approximate the marginals $\left\{ p(\bm{x}_a; \bm{\theta}), a \in \Ff \right\}$, then do update of the parameter
 \begin{equation}
   \bm{\theta}_a \leftarrow \bm{\theta}_a + r \cdot \pd{\Ll(\bm{x};\bm{\theta})}{\bm{\theta}_a}, \forall~~a~\in~\Ff.
 \end{equation}
 
 \begin{remark}
-  When a MRF scales up, the number of parameters, i.e. elements of $\bm{\theta}$, could be large. If training data is limited, it may lead to overfitting. To address this issue, a typical trick is to add a zero-mean Gaussian prior to $\bm{\theta}$ as \textit{regularization}. Then log-likelihood of evidence $\bm{x}$ becomes 
+  When an MRF scales up, the number of parameters, i.e. elements of $\bm{\theta}$, could be large. If training data is limited, it may lead to overfitting. To address this issue, a typical trick is to use prior distribution to regulate the parameters. This principle comes from \textit{Bayesian learning} where prior that stands for domain knowledge and is usually subjective or biased, and likelihood from observations, form the objective function of learning together. Since the formulated joint likelihood of random variable $\bm{x}$ and $\bm{\theta}$ are proportional to the posterior of $\bm{\theta}$ given evidence, maximization of the joint is also termed as \textit{maximum a posterior}. Learning with prior offers the benefits at least in two folds: i). When the size of training data is small, the biased prior from domain knowledge has a stronger impact on the choice of model parameter $\bm{\theta}$ than likelihood from observations. ii). As the number of training samples increases, the prior's impact gets weaker and the likelihood of observations dominates. Therefore, employing prior can help avoid overfitting in the case of insufficient training data, while still allowing objective information from observations to affect the choice of model parameters. The latter dominates as there are richer training samples. For a concrete example, let us apply a zero-mean Gaussian prior distribution to $\bm{\theta}$. Then, the log-likelihood of dataset $\Dd$ becomes 
   \begin{equation}
-    l(\bm{x};\bm{\theta}) = \log{\tilde{p}(\bm{x}; \bm{\theta})} - \log{Z(\bm{\theta})} - \frac{\norm{\bm{\theta}}^2}{2\sigma^2},
+    \Ll(\bm{x};\bm{\theta}) = \sum_{\bm{x}\in \Dd}\left[ \log{\tilde{p}(\bm{x}; \bm{\theta})} - \log{Z(\bm{\theta})}  \right] - \frac{\norm{\bm{\theta}}^2}{2\sigma^2},
   \end{equation}
-  where $\sigma^2$ is variance of the Gaussian prior, which is free to determine. The rest analysis fellows.
-
-  {Alternatively, Laplacian prior is also commonly used. This bring a $\ell_1$-norm regularization over $\bm{\theta}$, which encourages sparsity.}
+  where $\sigma^2$ is the variance of the Gaussian prior, which is free to determine. The rest analysis fellows.
+Alternatively, Laplacian prior is also commonly used, which brings a $\ell_1$-norm regularization over $\bm{\theta}$, which encourages sparsity.}
 
 \end{remark}
 
