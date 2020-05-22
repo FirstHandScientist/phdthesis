@@ -3,57 +3,54 @@
 % set the path to figures in this section
 \graphicspath{{source/chapter3/}}
 
-Belief propagation (BP) is a meta message-passing algorithm for inference problems in probabilistic graphical models. BP answers queries by locally exchanging beliefs (statistical information) between nodes in a graphical model \cite{kschischang2001factor_graph, Bishop:2006:PRM:1162264}. In \autoref{chpt2:sec:variational-inference}, we introduced the classic belief propagation as the minimization of a free energy, instead of a iterative message-passing routine. Interestingly to note, the message-passing rule of BP was developed as early as $1986$ \cite{pearl1986b} and had been popularly used in different fields before the free energy optimization intuition was developed in literature \cite{yedidia2003understanding}.
+Belief propagation (BP) is a meta message-passing algorithm for inference problems in probabilistic graphical models. BP answers queries by locally exchanging beliefs (statistical information) between nodes in a graphical model \cite{kschischang2001factor_graph, Bishop:2006:PRM:1162264}. In Section~\ref{chpt2:sec:variational-inference}, we introduced the classic belief propagation as the minimization of free energy, instead of an iterative message-passing routine. Interesting to note, the message-passing rule of BP was developed as early as $1986$ \cite{pearl1986b} and had been popularly used in different fields before the free energy optimization intuition was developed in literature \cite{yedidia2003understanding}.
 
-BP can solve inference problems in linear-time exactly when graphs are loop-free or tree-structured \cite{kschischang2001factor_graph}. The message-passing routine of BP can be boiled down to variable elimination in tree-structured graphs\footnote{This applies to cases where systems themselves can be represented by tree-structured graphs, or cases where original graphs are not trees but becoming tree-structured after reorganized (such as clustering).}, the message scheduling of which corresponds to variable elimination order. The message scheduling can be omitted and equivalent exact inference results can be obtained, when beliefs are updated via message passing with division \cite[section~10.3]{koller2009pgm}. BP and its variants are widely applied in large computation systems due to their 'magic' of reducing the exponential number of operation for inference with enumeration into linear complexity. This is possible because 
+BP can solve inference problems in linear-time exactly when graphs are loop-free or tree-structured \cite{kschischang2001factor_graph}. The message-passing routine of BP can be boiled down into variable elimination in tree-structured graphs\footnote{This applies to cases where systems themselves can be represented by tree-structured graphs, or cases where original graphs are not trees but becoming tree-structured after reorganized (such as clustering).} and message scheduling, which corresponds to determining the variable elimination order. The message scheduling can be omitted and equivalent exact inference results can be obtained, when an alternative belief update algorithm is applied which is also known as Lauritzen-Spiegelhalter algorithm \cite[Section~10.3]{koller2009pgm}. BP and its variants are widely applied in large computation systems due to their 'magic' of reducing the exponential number of operations for inference with enumeration into linear complexity. This is possible because: 
 \begin{itemize}
-\item A underline distribution of a graphical model is usually factorized, each sub-expressions (factors) depends only on a small number of variables.
-\item The intermediary results are computed once and cached as messages, which are reused in coming computations. 
+\item An underline distribution of a graphical model is usually factorized, and each sub-expression (a factor) depends only on a small number of variables.
+\item The intermediate results are computed once and cached as messages, which are reused in coming computations. 
 \end{itemize}
 
-Inevitably, many real-world signals are naturally modeled by graph representations with loops. Surprisingly, although lost its original guarantees in loopy graphs, BP is still a practical method and gives reasonable good inference results by running it as if there was no loop, i.e. loopy BP. But its performance can vary from case to case and its behavior is not well understood in general. 
+Inevitably, many real-world signals are naturally modeled by graph representations with loops. Surprisingly, although lost its optimality guarantees in loopy graphs, loopy BP is still a practical method and gives reasonable good inference results by running it as if there ware no loops. But its performance can vary from case to case and its behavior is not well understood in general. 
 
-In this chapter, to gain more insights of BP in general graphs, we take the path of variational methods to develop an interpretable variant of BP, which is termed as $\alpha$-BP.
-The intuition of $\alpha$-BP starts with a surrogate distribution $q(\bm{x})$, i.e. an approximate distribution. $q(\bm{x})$ is assumed to be fully factorized and each factor of $q(\bm{x})$ actually represents a message in the graphical model with an underlining distribution $p(\bm{x})$. We derive a message-passing rule that is induced by minimizing a localized $\alpha$-divergence. The merits of $\alpha$-BP are as follows: i). {$\alpha$-BP is derived intuitively as localized minimization of $\alpha$-divergence between original distribution $p$ and surrogate distribution $q$}; ii). {$\alpha$-BP generalizes the standard BP, since the message-passing rule of BP is a special case of $\alpha$-BP}. iii). {$\alpha$}-BP can outperform BP in full-connected graphs while still maintaining simplicity of BP for inference.
+In this chapter, to gain more insights into BP in general graphs, we take a variational approach to develop an interpretable variant of BP, which is termed as $\alpha$-BP.
+The intuition of $\alpha$-BP starts with a surrogate distribution $q(\bm{x})$, which is an approximate distribution. $q(\bm{x})$ is assumed to be fully factorized, and each factor of $q(\bm{x})$ actually represents a message in the graphical model with an underlining distribution $p(\bm{x})$. We derive a message-passing rule that is induced by minimizing a localized $\alpha$-divergence. The merits of $\alpha$-BP are as follows: i). {$\alpha$-BP is derived intuitively as localized minimization of $\alpha$-divergence between original distribution $p$ and surrogate distribution $q$}; ii). {$\alpha$-BP generalizes the standard BP, since the message-passing rule of BP is a special case of $\alpha$-BP}. iii). {$\alpha$}-BP can outperform BP in complete (fully-connected) graphs while still maintaining the simplicity of BP for inference.
 
-Apart from the algorithmic perspective, another common issue of BP and its variants in general graphs is convergence. We devote \autoref{chpt3:sec:cnvg-thm} to convergence study of $\alpha$-BP. Sufficient conditions that guarantee the convergence of $\alpha$-BP to a unique fixed point, are studied and obtained. It turns out that the derived convergence conditions of $\alpha$-BP depend on both the graph and also the value of $\alpha$. This result suggests that proper choice of $\alpha$ can help to guarantee the convergence of $\alpha$-BP.
+Apart from the algorithmic perspective, another common issue of BP and its variants in general graphs is convergence. We devote Section~\ref{chpt3:sec:cnvg-thm} to a convergence study of $\alpha$-BP. Sufficient conditions that guarantee the convergence of $\alpha$-BP to a unique fixed point, are studied and obtained. It turns out that the derived convergence conditions of $\alpha$-BP depend on both the graph and also the value of $\alpha$. This result suggests that a proper choice of $\alpha$ can help to guarantee the convergence of $\alpha$-BP.
 
 \section{$\alpha$ Divergence}
 \label{chpt3:sec:alpha-divergence}
-Before we get into the algorithmic discussion, we firstly provide some preliminaries for the algorithmic intuition. As an extended discussion to \autoref{chpt2:sec:devergence}, we firstly introduce a more generalized divergence than $\mathrm{KL}$ divergence.
+Before we get into the algorithmic discussion, we firstly provide some preliminaries for the algorithmic intuition. As an extended discussion to Section~\ref{chpt2:sec:devergence}, we firstly introduce a more generalized divergence than $\mathrm{KL}$ divergence.
 
-Apart from the KL divergence, another divergence measure that generalizes KL divergence is $\alpha$-divergence. In fact, $\alpha$-divergence appeared in literature just one year later than KL divergence when Herman Chernoff initially defined it for likelihood-ratio test \cite{Chernoff1952measure}. Around a decade later, Alfr\'ed R\'enyi proposed his version of divergence as well \cite{renyi1961entropy}. In the 80s of last century, Amari extended Chernoff's version of $\alpha$-divergence \cite{amari1982differential}, which is widely used now in study the geometry of distribution manifolds. 
+Apart from the KL divergence, another divergence measure that generalizes KL divergence is $\alpha$-divergence. In fact, $\alpha$-divergence appeared in literature just one year later than KL divergence when Herman Chernoff initially defined it for likelihood-ratio tests \cite{Chernoff1952measure}. Around a decade later, Alfr\'ed R\'enyi proposed his version of divergence as well \cite{renyi1961entropy}. In the 80s of last century, Amari extended Chernoff's version of $\alpha$-divergence \cite{amari1982differential}, which is now widely used in studies of the geometry of distribution manifolds. 
 $\alpha$-divergence, similar to KL divergence, is a typical way to measure how different two measures characterized by densities $p$ and $q$ are. By following the notation \cite{Zhu95informationgeometric}, the definition of $\alpha$-divergence (Amari's version, with correction term to accommodate unnormalized measure) is as follows,
 \begin{equation}\label{chpt3:eq:alpha-divergence}
-  \Dd_{\alpha}(p \| q ) = \frac{\int \alpha p(\bm{x}) + (1-\alpha) q (\bm{x}) - p(\bm{x})^{\alpha} q(\bm{x})^{1-\alpha} d\bm{x}}{\alpha(1-\alpha)},
+  \Dd_{\alpha}(p \| q ) = \frac{\sum_{\bm{x}} \alpha p(\bm{x}) + (1-\alpha) q (\bm{x}) - p(\bm{x})^{\alpha} q(\bm{x})^{1-\alpha}}{\alpha(1-\alpha)},
 \end{equation}
-where $\alpha$ is the parameter of this divergence. Difference from the KL divergence definition in \autoref{chpt2:sec:devergence}, $p$ and $q$ here are not necessary to be normalized measure.
+where $\alpha$ is the parameter of this divergence. Different from the KL divergence definition in Section~\ref{chpt2:sec:devergence}, $p$ and $q$ here are not necessarily to be normalized measures.
 
-In \autoref{chpt2:sec:devergence}, KL divergence was defined over two normalized measure. Here we extend that definition to a generalized case where $p$ and $q$ are not necessarily normalized, as another way of characterizing difference of measures, is closely related with $\alpha$-divergence. KL divergence is defined as
+In Section~\ref{chpt2:sec:devergence}, the KL divergence was defined over two normalized measures. Here we extend that definition to a generalized case where $p$ and $q$ are not necessarily normalized, as an extended divergence from the normalized case. As shall be see, KL divergence is closely related with $\alpha$-divergence. KL divergence for general measures is defined as
 \begin{equation}\label{chpt3:eq:kl-divergence}
-  KL(p \| q) = \int p(\bm{x}) \log{\frac{p(\bm{x})}{q(\bm{x})}} d \bm{x}+ \int q(\bm{x}) - p(\bm{x}) d\bm{x},
+  \mathrm{KL}(p \| q) = \sum_{\bm{x}} p(\bm{x}) \log{\frac{p(\bm{x})}{q(\bm{x})}} + \sum_{\bm{x}} q(\bm{x}) - p(\bm{x}) ,
 \end{equation}
-where the $\int q(\bm{x}) - p(\bm{x}) d\bm{x}$ is a correction factor to accommodate possibly unnormalized $p$ and $q$.
-\begin{remark}
-  Note in \eqref{chpt3:eq:alpha-divergence} and \eqref{chpt3:eq:kl-divergence}, the integral should be replaced by sum for discrete $\bm{x}$.
-\end{remark}
+where the $\sum_{\bm{x}} q(\bm{x}) - p(\bm{x})$ is a correction factor to accommodate possibly unnormalized $p$ and $q$.
 \begin{remark}
   The KL divergence can be seen as a special case of $\alpha$-divergence, by observing $\lim_{\alpha \rightarrow 1}\Dd_{\alpha}(p \| q ) = KL(p\|q)$ and $\lim_{\alpha \rightarrow 0}\Dd_{\alpha}(p \| q ) = KL(q\|p)$ (applying L'H\^opital's rule to \eqref{chpt3:eq:alpha-divergence}).
 
-  Regarding basic properties of divergence measures, both $\alpha$-divergence and KL divergence are zero when $p=q$, and they are non-negative. 
+  Regarding the basic properties of divergence measures, both $\alpha$-divergence and KL divergence are zero when $p=q$, and they are non-negative. 
 \end{remark}
 
-Denote KL-projection by
+Denote the KL-projection by
 \begin{equation}
-  \text{proj}[p] = \uargmin{q \in \Qq} KL(p\|q),
+  \text{proj}[p] = \uargmin{q \in \Qq} \mathrm{KL}(p\|q),
 \end{equation}
-where $\Qq$ is a family of distribution $q$.
+where $\Qq$ is a family of distributions that $q$ belongs to.
 According to the stationary point equivalence Theorem in \cite{divergence-measures-and-message-passing}, $\text{proj}[p^{\alpha}q^{1- \alpha}]$ and $\Dd_{\alpha}(p\|q)$ have same stationary points (gradient is zero). This equivalence holds by assuming $\theta$ is parameter of $q(x)$ and observing
 \begin{align}
-  \pd{\mathrm{KL}(p\|q)}{\theta} &= \int \pd{q(\bm{x})}{\theta} - \int \frac{p(\bm{x})}{q(\bm{x})} \pd{q(\bm{x})}{\theta} d\bm{x}, \nonumber \\
-  \pd{\mathrm{\Dd_{\alpha}}(p\|q)}{\theta} &= \frac{1}{\alpha} \left( \int \pd{q(\bm{x})}{\theta} - \int \frac{p^{\prime}(\bm{x})}{q(\bm{x})} \pd{q(\bm{x})}{\theta} d\bm{x}  \right), \nonumber
+  \pd{\mathrm{KL}(p\|q)}{\theta} &= \sum_{\bm{x}} \pd{q(\bm{x})}{\theta} - \sum_{\bm{x}}\frac{p(\bm{x})}{q(\bm{x})} \pd{q(\bm{x})}{\theta} , \nonumber \\
+  \pd{\mathrm{\Dd_{\alpha}}(p\|q)}{\theta} &= \frac{1}{\alpha} \left( \sum_{\bm{x}} \pd{q(\bm{x})}{\theta} - \sum_{\bm{x}}\frac{p^{\prime}(\bm{x})}{q(\bm{x})} \pd{q(\bm{x})}{\theta} \right), \nonumber
 \end{align}
-with $p^{\prime}(\bm{x}) = p^{\alpha}(\bm{x})q^{1-\alpha}(\bm{x})$. Then it gives $\pd{\mathrm{\Dd_{\alpha}}(p\|q)}{\theta}  = \frac{1}{\alpha}\pd{\mathrm{KL}(p\|q)}{\theta}|_{p=p^{\prime}}$.
+with $p^{\prime}(\bm{x}) = p^{\alpha}(\bm{x})q(\bm{x})^{1-\alpha}$. Then it gives $\pd{\mathrm{\Dd_{\alpha}}(p\|q)}{\theta}  = \frac{1}{\alpha}\pd{\mathrm{KL}(p\|q)}{\theta}|_{p=p^{\prime}}$.
 
 A heuristic scheme to find $q^{\ast}$ minimizing $\Dd_{\alpha}(p\|q)$ starts with an initial $q$, and repeatedly updates $q$ via the projection on $\Qq$
 \begin{equation}\label{eq:fixed-point-iter}
@@ -61,6 +58,9 @@ A heuristic scheme to find $q^{\ast}$ minimizing $\Dd_{\alpha}(p\|q)$ starts wit
 \end{equation}
 This heuristic scheme is a fixed-point iteration, which does not guarantee to converge.
 
+\begin{remark}
+  We take $\bm{x}$ to be discrete by default in this section. The sum operation should be replaced by integral for continuous variable $\bm{x}$.
+\end{remark}
 
 \section{$\alpha$ Belief Propagation Algorithm}\label{sec:alpha-bp-factor-refine}
 
@@ -624,7 +624,7 @@ We then carry out a set of experiments in Figure~\ref{fig:log-error-iter-converg
 
 
 
-\subsection{Full-connected Graph Case: Application to MIMO Detection}
+\subsection{Complete Graph Case: Application to MIMO Detection}
 
 In this section, we show the application of $\alpha$-BP to a MIMO detection problem. For a MIMO system, the observation $\bm{y}$ is a linear function of channel $\bm{H}\in \RR^{N\times N}$ when unknown signal $\bm{x}$ need to be estimated,
 \begin{equation}\label{eq:linear-model}
