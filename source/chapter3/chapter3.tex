@@ -110,15 +110,15 @@ This heuristic scheme is a fixed-point iteration, which does not guarantee to co
 \end{figure}
 
 
-We consider a probability distribution over random vector $\bm{x} = \left(  x_1, x_2, \cdots,  x_N  \right)$, where each $x_i$ takes values in a discrete finite set $\Aa$. Let us denote the undirected graph of a pairwise MRF by $\Gg:=(\Vv, \Ee)$. $\Vv=\left[ 1 : N \right]$ is the node set associated with the index set of entries of $\bm{x}$. The graph contains undirected edges $\Ee \subset \Vv \times \Vv$, where a pair of $(s, t) \in \Ee$ if and only if nodes $v$ and $u$ are connected by an edge. In addition to the undirected edge set, let us also define the directed edge set induced from $\Gg$ by $\vec{\Ee}$. We have $\abs{\vec{\Ee}} = 2\abs{\Ee}$, where $\abs{\cdot}$ denotes the carnality. These directed edges serve the purpose of convergence analysis only.
+We consider a probability distribution over random vector $\bm{x} = \left(  x_1, x_2, \cdots,  x_N  \right)$, where $\bm{x} \in \bm{\Xx}$ and $\bm{\Xx}=\prod_{i=1}^N\Xx_i$. For explanation simplicity, we define that each domain is instantiated as the same discrete finite set $\Xx$, i.e., $\bm{\Xx}=\prod_{i=1}^N\Xx$ and $x_i \in \Xx$. Note $\alpha$-BP is applicable for the different domain setting $\bm{\Xx}=\prod_{i=1}^N\Xx_i$. Let us denote the undirected graph of a pairwise MRF by $\Gg:=(\Vv, \Ee)$. $\Vv=\left[ 1 : N \right]$ is the node set associated with the index set of entries of $\bm{x}$. The graph contains undirected edges $\Ee \subset \Vv \times \Vv$, where a pair of $(s, t) \in \Ee$ if and only if nodes $s$ and $t$ are connected by an edge. In addition to the undirected edge set, let us also define the directed edge set induced from $\Gg$ by $\vec{\Ee}$. We have $\abs{\vec{\Ee}} = 2\abs{\Ee}$, where $\abs{\cdot}$ denotes the carnality. These directed edges serve the purpose of convergence analysis only.
 
 
 
-The joint distribution of $\bm{x}$ can be formulated into a pairwise factorization form in a pairwise MRF as
+The joint distribution of $\bm{x}$ can be formulated as a pairwise factorization form in a pairwise MRF as
 \begin{equation}\label{eq:mrf}
   p(\bm{x}) \propto \prod_{{s\in \Vv}} \phi_s(x_s) \prod_{(s,t) \in \Ee} \phi_{st}(x_s, x_t),
 \end{equation}
-where $\phi_{s}: \Aa \rightarrow (0, \infty)$ and $\phi_{st}: \Aa \times \Aa \rightarrow (0, \infty)$ are factor potentials. Relation $\propto$ in \eqref{eq:mrf} indicates that a normalized factor is needed to turn the right-hand side into a distribution. Here the normalization is omitted. Note the joint of node set and edge set, i.e. $\Vv \cup \Ee$, instantiates the factor index set $\Ff$ of a general MRF in \eqref{chp2:eq:mrf-definition} here.
+where $\phi_{s}: \Xx \rightarrow (0, \infty)$ and $\phi_{st}: \Xx \times \Xx \rightarrow (0, \infty)$ are factor potentials. Relation $\propto$ in \eqref{eq:mrf} indicates that a normalized factor is needed to turn the right-hand side into a distribution. Here the normalization is omitted. Note the joint of node set and edge set, i.e. $\Vv \cup \Ee$, instantiates the factor index set $\Ff$ of a general MRF in \eqref{chp2:eq:mrf-definition} here.
 
 The factor graph representation of \eqref{eq:mrf} is shown in
 Figure~\ref{fig:factor-graph}. In the figure, $\Nn(s)$ is the set of variable nodes neighboring $x_s$ via
@@ -136,7 +136,7 @@ that is similarly factorized as the joint distribution $p(\bm{x})$. The distribu
 \begin{equation}
   \tilde{\phi}_{s,t}(x_s, x_t) := m_{st}(x_t) m_{ts}(x_s).
 \end{equation}
-We use the notation $m_{ts}(x_s)$ to denote the factor as a function of $x_s$. $m_{ts}: \Aa \rightarrow (0, \infty)$, serves as the message along directed edge $(t \rightarrow s)$ in our algorithm. Similarly we have factor or message $m_{st}(x_t)$. Then the marginal can be formulated straightforwardly as
+We use the notation $m_{ts}(x_s)$ to denote the factor as a function of $x_s$. $m_{ts}: \Xx \rightarrow (0, \infty)$, serves as the message along directed edge $(t \rightarrow s)$ in our algorithm. Similarly we have factor or message $m_{st}(x_t)$. Then the marginal can be formulated straightforwardly as
 \begin{equation}
   q_s(x_s) \propto \tilde{\phi}_s(x_s) \prod_{w\in \Nn(s)} m_{ws}(x_s).
 \end{equation}
@@ -191,7 +191,7 @@ Since KL-projection onto a fully factorized distribution reduces to matching the
   \sum_{\bm{x}\backslash x_s} q^{\backslash (t,s)}(\bm{x}) \tilde{\phi}_{ts}^{\mathrm{new}}(x_t, x_s) 
   \propto \sum_{\bm{x}\backslash x_s} q^{\backslash (t,s)}(\bm{x}) \phi_{ts}(x_t, x_s)^{\alpha_{ts}} \tilde{\phi}_{ts}(x_t, x_s)^{1-\alpha_{ts}}.
 \end{align}
-We use summation here. But it should be replaced by integral if $\Aa$ is a continuous set.
+We use summation here. But it should be replaced by integral if $\Xx$ is instantiated as a continuous set.
 Solving \eqref{eq:message-update} gives the message passing rule as
 \begin{align}\label{eq:message-rule-pairwise}
   {m}^{\text{new}}_{ts}(x_s) \propto  m_{ts}(x_s)^{1-\alpha_{ts}} \bigg[\sum_{x_t} \phi_{ts}(x_t, x_s)^{\alpha_{ts}} {m}_{st}(x_t)^{1-\alpha_{ts}}\tilde{\phi}_t(x_t) \prod_{w\in \Nn(t)\backslash s}m_{wt}(x_t) \bigg].
@@ -301,7 +301,7 @@ From the high-level perspective, we are going to use \textit{contraction} proper
 \end{definition}
 Definition~\ref{chpt3:def:contraction} tells us that an operator is a contraction if its application to two points in the space is guaranteed to decrease the distance between them by at least a constant $c < 1$. \textit{Thus, we essentially are going to show that the message update rule of $\alpha$-BP is actually a contraction, under which condition we would show that $\alpha$-BP converges}.
 
-We consider the case of binary $\Aa$, i.e. $\Aa=\left\{ -1, 1 \right\}$ to gain insight of $\alpha$-BP behaviors. The factor potentials are further detailed as
+We consider the case of binary $\Xx$, i.e. $\Xx=\left\{ -1, 1 \right\}$ to gain insight of $\alpha$-BP behaviors. The factor potentials are further detailed as
 \begin{align}
   \phi_{st}(x_s, x_t) &= \exp\left\{ \theta_{st}(x_s, x_t)\right\}, \nonumber \\
   \phi_{s}(x_s) &= \exp\left\{ \theta_{s}(x_s) \right\}.
@@ -329,7 +329,7 @@ For notation simplicity, we use $\theta_{ts}=\theta_{ts}(1, 1)$ and $\theta_s = 
 \end{theorem}
 
 \begin{proof}
-  Let us define $z_{ts}$ as the log ratio of belief from node $t$ to node $s$ on two states of $\Aa$, i.e.
+  Let us define $z_{ts}$ as the log ratio of belief from node $t$ to node $s$ on two states of $\Xx$, i.e.
   \begin{equation}\label{eq:log-ratio-uv}
     z_{ts} = \log\frac{m_{ts}(1)}{m_{ts}(-1)}.
   \end{equation}
@@ -568,11 +568,11 @@ by Erdos-R\'enyi (ER) model \cite{erdos1960}. In generating a graph by EP model,
 
 Note that the MRF joint probability in \eqref{eq:mrf} can be reformulated into
 \begin{equation}\label{eq:mrf_matrix_form}
-  p(\bm{x}) \propto \exp\{-\bm{x}^{T}\bm{J}\bm{x} - \bm{b}^{T}\bm{x}\}, \bm{x} \in \Aa^N,
+  p(\bm{x}) \propto \exp\{-\bm{x}^{T}\bm{J}\bm{x} - \bm{b}^{T}\bm{x}\}, \bm{x} \in \bm{\Xx},
 \end{equation}
 with $\phi_{ts}(x_t, x_s) = e^{- 2 J_{t,s} x_t x_s}$ and $\phi_s(x_s) = e^{ - J_{s,s} - b_s  x_s}$. $J$ here is the weighted adjacency matrix. In our experiments, we generate a random graph $\Gg = (\Vv, \Ee)$ with $\gamma$ by ER model and then associate potential factors to the graph. Specifically, factor $\phi_s(x_s)$ is associated to node $x_s$, $s \in \Vv$, and $\phi_{ts}$ to edge $(t, s) \in \Ee$. $J_{ts}$ is zero if these is no edge $(t, s)$.
 
-For this set of experiments, we set $\Aa = \left\{ -1, 1 \right\}$ and $N=16$. To specify \eqref{eq:mrf_matrix_form}, the non-zero entries of $\bm{J}$ is sampled from a Gaussian distribution $\mathsf{N}(0, \sigma^2)$, i.e. $J_{ts} \sim \mathsf{N}(0, \sigma^2)$ if $J_{ts}\neq 0$. For entries of $\bm{b}$, we use $b_t \in \mathsf{N}(0, (\sigma/4)^2)$.
+For this set of experiments, we set $\Xx = \left\{ -1, 1 \right\}$ and $N=16$. To specify \eqref{eq:mrf_matrix_form}, the non-zero entries of $\bm{J}$ is sampled from a Gaussian distribution $\mathsf{N}(0, \sigma^2)$, i.e. $J_{ts} \sim \mathsf{N}(0, \sigma^2)$ if $J_{ts}\neq 0$. For entries of $\bm{b}$, we use $b_t \in \mathsf{N}(0, (\sigma/4)^2)$.
 For each edge $(t,s) \in \Ee$, we set $\alpha_{ts}=\alpha$, i.e. the edges share a global value $\alpha$.
 
 Figure~\ref{fig:largest_singular} illustrate how the largest singular value of $\bm{M}(\bm{\alpha}, \bm{\theta})$ as defined in \eqref{eq:matrix_m} changes when the standard deviation $\sigma$ of potential factors increases. The behavior is illustrated with different values of $\alpha$ and the edge probability $\gamma$. For each curve, a point on the curve is the mean of $100$ realizations of random graphs as described above. The curves of Figure~\ref{fig:largest_singular} show in general that a larger standard deviation of potential factors of graph edges makes it more difficult to fulfill the convergence condition in Theorem~\ref{thm:normd}. This is also the case when a graph is denser as we raise the edge probability $\gamma$ in generating random graphs, by comparing the green and orange curves. The comparison between green and blue curves indicates that choice of $\alpha$ value in $\alpha$-BP also makes a difference, and its effect depends on the graph itself. How to tune $\alpha$ value to fulfill condition of Theorem~\ref{thm:normd} depends not only how dense ($\gamma$) the graph is, but also how potential factors spread out from each other.
@@ -628,7 +628,7 @@ We then carry out a set of experiments in Figure~\ref{fig:log-error-iter-converg
 
 In this section, we show the application of $\alpha$-BP to a MIMO detection problem. For a MIMO system, the observation $\bm{y}$ is a linear function of channel $\bm{H}\in \RR^{N\times N}$ when unknown signal $\bm{x}$ need to be estimated,
 \begin{equation}\label{eq:linear-model}
-  \bm{y} = \bm{H} \bm{x} + \bm{e}, \bm{x} \in \Aa^N,
+  \bm{y} = \bm{H} \bm{x} + \bm{e}, \bm{x} \in \bm{\Xx},
 \end{equation}
 where $\bm{e}$ is  noise modeled as Gaussian noise $ \bm{e} \sim \mathsf{N}\left( \bm{0}, \sigma^2_{w} \bm{I} \right)$. Here $\bm{I}$ is unitary matrix. In this case, the posterior of $\bm{x}$ can be written as:
 \begin{align}\label{eq:true-posterior}
@@ -640,9 +640,9 @@ Denote $\bm{S} = \bm{H}^T\bm{H}$, $\bm{h}_i$ as the $i$-th column of $\bm{H}$, a
   \phi_{i}(x_i) =& e^{- \frac{S_{i,i} x_i^2}{2 \sigma_w^2} + \frac{\langle {\bm{h}_i, \bm{y}}\rangle x_i}{\sigma_w^2} },\nonumber \\
   \phi_{ij}(x_i, x_j) =& e^{ -\frac{x_i S_{i,j} x_j}{\sigma_w^2} }.
 \end{align}
-Then it can be seen that \eqref{eq:true-posterior} is an instance of \eqref{eq:mrf}. We set $\Aa = \left\{ -1, 1 \right\}$, $N = 8$, and $\bm{H}\in \RR^{8 \times 8}$ sampled from Gaussian.
+Then it can be seen that \eqref{eq:true-posterior} is an instance of \eqref{eq:mrf}. We set $\Xx = \left\{ -1, 1 \right\}$, $N = 8$, and $\bm{H}\in \RR^{8 \times 8}$ sampled from Gaussian.
 
-We test the application of $\alpha$-BP to the MIMO signal detection numerically. We run the $\alpha$-BP, without the prior trick (Subsection~\ref{subsec:remark}) in Figure~\ref{fig:mimo_a} and with the prior in Figure~\ref{fig:mimo_b} (legend ``$\alpha$-BP$+$MMSE'') as estimation of minimum mean square error (MMSE). The reference results of MMSE and maximum a posterior (MAP, exhausted search) are also reported under the same conditions. MMSE estimator depends on Gaussian posterior $\mathsf{N}(\hat{\bm{\mu}}, \hat{\bm{\Sigma}})$, where $\hat{\bm{\mu}} = (\bm{H}^{T}\bm{H} + \sigma_w^2 \bm{I})^{-1}\bm{H}^{T}\bm{y}$ and $\hat{\bm{\Sigma}} = (\bm{H}^{T}\bm{H} + \sigma_w^2 \bm{I})^{-1}\sigma_w$. Detection of MMSE carried out by $\argmin_{x_i\in \Aa}\abs{x_i-\hat{\mu}_i}$.% The prior belief used in ``$\alpha$-BP$+$MMSE'' is $\hat{p}(x_i)=\Nn(\hat{{\mu}}_i, \hat{\bm{\Sigma}}_{i,i})$.
+We test the application of $\alpha$-BP to the MIMO signal detection numerically. We run the $\alpha$-BP, without the prior trick (Subsection~\ref{subsec:remark}) in Figure~\ref{fig:mimo_a} and with the prior in Figure~\ref{fig:mimo_b} (legend ``$\alpha$-BP$+$MMSE'') as estimation of minimum mean square error (MMSE). The reference results of MMSE and maximum a posterior (MAP, exhausted search) are also reported under the same conditions. MMSE estimator depends on Gaussian posterior $\mathsf{N}(\hat{\bm{\mu}}, \hat{\bm{\Sigma}})$, where $\hat{\bm{\mu}} = (\bm{H}^{T}\bm{H} + \sigma_w^2 \bm{I})^{-1}\bm{H}^{T}\bm{y}$ and $\hat{\bm{\Sigma}} = (\bm{H}^{T}\bm{H} + \sigma_w^2 \bm{I})^{-1}\sigma_w$. Detection of MMSE carried out by $\argmin_{x_i\in \Xx}\abs{x_i-\hat{\mu}_i}$.% The prior belief used in ``$\alpha$-BP$+$MMSE'' is $\hat{p}(x_i)=\Nn(\hat{{\mu}}_i, \hat{\bm{\Sigma}}_{i,i})$.
 
 Figure~\ref{fig:mimo_a} shows that BP even underperforms MMSE but $\alpha$-BP can outperform MMSE by assigning smaller value of $\alpha$.
 Note that MMSE requires the matrix inverse computation whose complexity is proportional to $N^3$, while the complexity of $\alpha$-BP increases linearly with $N$. Therefore $\alpha$-BP is superior to MMSE both performance-wise and complexity-wise.  
