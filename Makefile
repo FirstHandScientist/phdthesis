@@ -10,9 +10,9 @@ LATEXMKOPT=-pdf
 CONTINUOUS=-pvc
 
 MAIN=main
-SOURCES=$(MAIN).tex 
-#SOURCES=$(MAIN).tex Makefile yourothertexfiles
-FIGURES := $(shell find  images/* -type f)
+SOURCES=source
+
+
 
 
 all: clean-compile	
@@ -31,8 +31,7 @@ run:
 .refresh:
 	touch .refresh
 
-continuous: 
-	#$(MAIN).tex .refresh $(SOURCES) $(FIGURES)
+continuous: $(MAIN).tex .refresh $(SOURCES) 
 	$(LATEXMK) $(LATEXMKOPT) $(CONTINUOUS) \
 	-pdflatex="$(LATEX) $(LATEXOPT) $(NONSTOP) %O %S" $(MAIN)
 
