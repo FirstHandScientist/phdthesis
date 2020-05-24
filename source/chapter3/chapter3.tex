@@ -105,7 +105,7 @@ This heuristic scheme is a fixed-point iteration, which does not guarantee to co
       \draw[-] (xj) to (pajk);
     \end{tikzpicture}
     \vskip -0.1in
-    \caption{Graphic model illustration of $p(\bm{x})$ in \eqref{eq:mrf}.}\label{fig:factor-graph}
+    \caption{Factor graph illustration of $p(\bm{x})$ in \eqref{eq:mrf}.}\label{fig:factor-graph}
   \end{centering}
 \end{figure}
 
@@ -118,7 +118,7 @@ The joint distribution of $\bm{x}$ can be formulated as a pairwise factorization
 \begin{equation}\label{eq:mrf}
   p(\bm{x}) \propto \prod_{{s\in \Vv}} \phi_s(x_s) \prod_{(s,t) \in \Ee} \phi_{st}(x_s, x_t),
 \end{equation}
-where $\phi_{s}: \Xx \rightarrow (0, \infty)$ and $\phi_{st}: \Xx \times \Xx \rightarrow (0, \infty)$ are factor potentials. Relation $\propto$ in \eqref{eq:mrf} indicates that a normalized factor is needed to turn the right-hand side into a distribution. Here the normalization is omitted. Note the joint of node set and edge set, i.e. $\Vv \cup \Ee$, instantiates the factor index set $\Ff$ of a general MRF in \eqref{chp2:eq:mrf-definition} here.
+where $\phi_{s}: \Xx \rightarrow (0, \infty)$ and $\phi_{st}: \Xx \times \Xx \rightarrow (0, \infty)$ are factor potentials. Here the normalization is omitted. Note the union of the node set and the edge set, i.e. $\Vv \cup \Ee$, instantiates the factor index set $\Ff$ of a general MRF in \eqref{chp2:eq:mrf-definition} here.
 
 The factor graph representation of \eqref{eq:mrf} is shown in
 Figure~\ref{fig:factor-graph}. In the figure, $\Nn(s)$ is the set of variable nodes neighboring $x_s$ via
@@ -144,7 +144,7 @@ We use the notation $m_{ts}(x_s)$ to denote the factor as a function of $x_s$. $
 Now, we are going to use the heuristic scheme as in \eqref{eq:fixed-point-iter} to minimize the information loss by using a fully factorized $q(\bm{x})$ to represent $p(\bm{x})$. The information loss is measured by $\alpha$-divergence $\Dd_{\alpha}(p(\bm{x}) \| q(\bm{x}))$.
 
 
-We perform a factor-wise refinement procedure to update the factors of $q(\bm{x})$ such that $q(\bm{x})$ approximates $p(\bm{x})$. This approach is similar to the factor-wise refinement procedure of assumed density filtering\cite{ghosh2016assumed, opper1999bayesian} and expectation propagation \cite{divergence-measures-and-message-passing,Minka:2001:EPA:647235.720257}. Without loss of generality, we begin to refine the factor $\tilde{\phi}_{ts}(x_t, x_s)$ via $\alpha$-divergence characterized by $\alpha$-parameter assigned with $\alpha_{ts}$. Define $q^{\backslash (t,s)}(\bm{x})$ as the product of all other factors excluding $\tilde{\phi}_{ts}(x_t, x_s)$
+We perform a factor-wise refinement procedure to update the factors of $q(\bm{x})$ such that $q(\bm{x})$ approximates $p(\bm{x})$. This approach is similar to the factor-wise refinement procedure in assumed density filtering algorithm\cite{ghosh2016assumed, opper1999bayesian} and expectation propagation \cite{divergence-measures-and-message-passing,Minka:2001:EPA:647235.720257}. Without loss of generality, we begin to refine the factor $\tilde{\phi}_{ts}(x_t, x_s)$ via $\alpha$-divergence with its $\alpha$-parameter assignment as $\alpha_{ts}$. Define $q^{\backslash (t,s)}(\bm{x})$ as the product of all other factors excluding $\tilde{\phi}_{ts}(x_t, x_s)$
 \begin{align}
   q^{\backslash (t,s)}(\bm{x})
   = q(\bm{x})/\tilde{\phi}_{ts}(x_t,
@@ -173,7 +173,7 @@ we consider the following tractable problem
   \Dd_{\alpha_{ts}}\!\!\left( q^{\backslash (t,s)}\!(\bm{x}){\phi}_{ts}(x_t, x_s)
     \|q^{\backslash (t,s)}\!(\bm{x})\tilde{\phi}_{ts}^{\mathrm{new}}(x_t, x_s) \right),
 \end{equation}
-which searches for new factor $\tilde{\phi}_{ts}^{\mathrm{new}}(x_t, x_s)$ such $q$ can approximate $p$ better. In \eqref{eq:alpha-minimize-factor}, $\Dd_{\alpha_{ts}}(\cdot)$ denotes the $\alpha$-divergence with the correcponding parameter $\alpha_{ts}$. Note that the approximation \eqref{eq:alpha-minimize-factor} is accurate when $q^{\backslash (t,s)}(\bm{x})$ is equal to $p^{\backslash (t,s)}(\bm{x})$. 
+which searches for new factor $\tilde{\phi}_{ts}^{\mathrm{new}}(x_t, x_s)$ such $q$ can approximate $p$ better. In \eqref{eq:alpha-minimize-factor}, $\Dd_{\alpha_{ts}}(\cdot)$ denotes the $\alpha$-divergence with the parameter $\alpha_{ts}$. Note that the approximation \eqref{eq:alpha-minimize-factor} is accurate when $q^{\backslash (t,s)}(\bm{x})$ is equal to $p^{\backslash (t,s)}(\bm{x})$. 
 Using fixed-point update in \eqref{eq:fixed-point-iter}, the problem in \eqref{eq:alpha-minimize-factor} is equivalent to
 \begin{align}\label{eq:update-rule}
   q^{\backslash (t,s)}(\bm{x})\tilde{\phi}_{ts}^{\mathrm{new}}(x_t, x_s) \propto
@@ -191,7 +191,6 @@ Since KL-projection onto a fully factorized distribution reduces to matching the
   \sum_{\bm{x}\backslash x_s} q^{\backslash (t,s)}(\bm{x}) \tilde{\phi}_{ts}^{\mathrm{new}}(x_t, x_s) 
   \propto \sum_{\bm{x}\backslash x_s} q^{\backslash (t,s)}(\bm{x}) \phi_{ts}(x_t, x_s)^{\alpha_{ts}} \tilde{\phi}_{ts}(x_t, x_s)^{1-\alpha_{ts}}.
 \end{align}
-We use summation here. But it should be replaced by integral if $\Xx$ is instantiated as a continuous set.
 Solving \eqref{eq:message-update} gives the message passing rule as
 \begin{align}\label{eq:message-rule-pairwise}
   {m}^{\text{new}}_{ts}(x_s) \propto  m_{ts}(x_s)^{1-\alpha_{ts}} \bigg[\sum_{x_t} \phi_{ts}(x_t, x_s)^{\alpha_{ts}} {m}_{st}(x_t)^{1-\alpha_{ts}}\tilde{\phi}_t(x_t) \prod_{w\in \Nn(t)\backslash s}m_{wt}(x_t) \bigg].
@@ -201,9 +200,7 @@ As for the singleton factor $\tilde{\phi}_t(x_t)$, we can do the refinement proc
 \begin{equation}\label{eq:fix-factor-update}
   \tilde{\phi}_t^{\mathrm{new}}(x_t) \propto \phi_t(x_t)^{\alpha_{t}} \tilde{\phi}_t(x_t)^{1-\alpha_{t}},
 \end{equation}
-which is the belief from factor $\phi_t(x_t)$ to variable $x_t$. Here $\alpha_t$ is the local assignment of parameter $\alpha$ in $\alpha$-divergence in refining factor $\tilde{\phi}_t(x_t)$. Note, if
-we initialize $\tilde{\phi}_t(x_t) = \phi_t(x_t)$, then it remains the
-same in all iterations, which makes
+which is the belief from factor $\phi_t(x_t)$ to variable $x_t$. Here $\alpha_t$ is the local assignment of parameter $\alpha$ in $\alpha$-divergence in the refining factor $\tilde{\phi}_t(x_t)$. Note, if we initialize $\tilde{\phi}_t(x_t) = \phi_t(x_t)$, then it remains the same in all iterations, which makes
 \begin{align}\label{eq:message-rule}
   {m}^{\mathrm{new}}_{ts}(x_s) \propto
   m_{ts}(x_s)^{1-\alpha_{ts}} \bigg[\sum_{x_t} \phi_{ts}(x_t, x_s)^{\alpha_{ts}} {m}_{st}(x_t)^{1-\alpha_{ts}} {\phi}_t(x_t) \prod_{w\in \Nn(t)\backslash s}m_{wt}(x_t) \bigg].
@@ -220,13 +217,12 @@ As discussed in Section~\ref{chpt3:sec:alpha-divergence}, $\mathrm{KL}(p\|q)$ is
 which is exactly the messages of standard BP \cite{Bishop:2006:PRM:1162264}. From this point of view, we can say $\alpha$-BP is a generalization of BP. Additionally, the BP update rule in \eqref{chpt3:eq:bp-update-rule} actually corresponds to the fixed-point iteration assignment by solving the Bethe free energy minimization problem in \eqref{chpt2:bethe-free-energy}.
 
 
-Note although mean field method also uses fully-factorized approximation, it is obtained differently from $\alpha$-BP and its factorization differs from that of $\alpha$-BP. From another perspective, mean field methods is actually using information project from $p(\bm{x})$ to a fully-factorized space via KL divergence as explained in \autoref{chpt2:sec:variational-inference}.
-In addition, 
-$\alpha$-BP is different from standard BP with damping technique. The later case uses message update rule that differs from \eqref{chpt3:eq:bp-update-rule} slightly by the way of assigning  updated message. 
+Note although the mean field method also uses fully-factorized approximation, it is obtained differently from $\alpha$-BP and its factorization differs from that of $\alpha$-BP. From another perspective, mean field methods are actually using information projections from $p(\bm{x})$ to a fully-factorized space via KL divergence as explained in Section~\ref{chpt2:sec:variational-inference}.
+In addition, $\alpha$-BP is different from standard BP with damping technique. The latter case uses a message update rule that differs from \eqref{chpt3:eq:bp-update-rule} slightly in the way of assigning updated messages. 
 
 
-Additionally, $\alpha$-BP differs from the tree-reweighted belief propagation \cite{wainwright2008graphical} by the way of message update rule and also how algorithm is derived. 
-The tree-reweighted BP shares some similarity with $\alpha$-BP in formula of the message-passing rule, namely the pairwise log-potential functions are scaled by a weight and reweighted old messages appear in computation of new messages. But different from $\alpha$-BP, tree-reweighted BP is derived by obtaining an upper bound of log-partition function of $p(\bm{x})$ first via a Jensen's inequality and minimize the upper bound. The upper bound is
+Additionally, $\alpha$-BP differs from the tree-reweighted belief propagation \cite{wainwright2008graphical} in the way of message update rule and also how algorithm is derived. 
+The tree-reweighted BP shares some similarity with $\alpha$-BP in the formula of the message-passing rule, namely, the pairwise log-potential functions are scaled by a weight and reweighted old messages appear in the computation of new messages. But different from $\alpha$-BP, tree-reweighted BP is derived by obtaining an upper bound of log-partition function of $p(\bm{x})$ first via a Jensen's inequality and minimize the upper bound. The upper bound is
 \begin{align}
   F_T(q) =& \sum_{s\in\Vv}\sum_{x_s}q_s(x_s) \ln{\frac{q_s(x_s)}{\phi_s(x_s)}}  + \sum_{(s,t)\in\Ee}\mu_{st}\sum_{x_s, x_t} q_{st}(x_s, x_t) \ln\frac{q_{st}(x_s,x_t)}{q_s(x_s)q_t(x_t)} \nonumber \\
           & - \sum_{(s,t)\in\Ee}\sum_{x_s, x_t} q_{st}(x_s, x_t)\ln{\phi_{st}(x_t, x_t)},
@@ -238,7 +234,7 @@ The upper bound $F_T$ can be reduced into the Bethe free energy \eqref{chpt2:bet
 \begin{align}
   {m}^{\text{new}}_{ts}(x_s) \propto \sum_{x_t} \phi_{st}(x_s, x_t)^{1/\mu_{st}} {\phi}_t(x_t) \frac{\prod_{w\in \Nn(t)\backslash s}m_{wt}(x_t)^{\mu_{wt}} }{m_{st}(x_t)^{1-\mu_{st}}}.
 \end{align}
-In the message update rule, both pairwise potential factor and old messages are reweighted, which are different from the way of how pairwise potential factor and old message are reweighted in message update in \eqref{eq:message-rule}. Nevertheless, $\alpha$-BP is derived in the way that is different from tree-reweighted BP.
+In the message update rule, both pairwise potential factor and old messages are reweighted, which are different from the way of how pairwise potential factor and old message are reweighted in message update in \eqref{eq:message-rule}. Nevertheless, $\alpha$-BP is derived in a way that is different from tree-reweighted BP.
 
 \begin{figure}[!t]
   \begin{centering}
@@ -267,7 +263,7 @@ In the message update rule, both pairwise potential factor and old messages are 
 \end{figure}
 
 
-From the practical perspective of view, $\alpha$-BP as a meta algorithm can be used with other methods in hybrid way. Inspired by \cite{pseudo_priorBP2010} and assembling methods \cite{James:2014:ISL:2517747}, we can modify the graphical model shown in Figure~\ref{fig:factor-graph} by adding an extra factor potential $\hat{p}_s(x_s)$ to each $x_s$. The extra factor potential $\hat{p}_s(x_s)$ acts as prior information that can be obtained from other methods. In other words, this factor potential stands for our belief from exterior estimation. Then we can run our $\alpha$-BP on the modified graph. The modified graph is shown in Figure~\ref{fig:factor-graph-with-prior}.
+From the practical perspective, $\alpha$-BP as a meta algorithm can be used with other methods in a hybrid way. Inspired by \cite{pseudo_priorBP2010} and assembling methods \cite{James:2014:ISL:2517747}, we can modify the graphical model shown in Figure~\ref{fig:factor-graph} by adding an extra factor potential $\hat{p}_s(x_s)$ to each $x_s$. The extra factor potential $\hat{p}_s(x_s)$ acts as prior information that can be obtained from other methods. In other words, this factor potential stands for our belief from exterior estimation. Then we can run our $\alpha$-BP on the modified graph. The modified graph is shown in Figure~\ref{fig:factor-graph-with-prior}.
 
 % We summarize the $\alpha$-BP into the pseudo-code in Algorithm~\ref{alg:alphaBP}.
 
@@ -294,14 +290,14 @@ From the practical perspective of view, $\alpha$-BP as a meta algorithm can be u
 As pointed earlier, a key issue of BP and its variants is whether and when they converge. In this section, we discuss when $\alpha$-BP converges. 
 From the high-level perspective, we are going to use \textit{contraction} property to show when $\alpha$-BP does converge.
 \begin{definition}\label{chpt3:def:contraction}
-  For a number $c \in [0,1)$, an operator $G$ over a metric space $(\Delta, d(;))$ is $c$-contraction relative to the distance function $d(,)$ if for any $\bm{z}, \bm{z}^{\prime} \in \Delta$, we have
+  For a number $c \in [0,1)$, an operator $G$ over a metric space $(\Delta, d(,))$ is $c$-contraction relative to the distance function $d(,)$ if for any $\bm{z}, \bm{z}^{\prime} \in \Delta$, we have
   \begin{equation}
     d(G(\bm{z}), G(\bm{z}^{\prime})) \leq c d(\bm{z}, \bm{z}^{\prime}).
   \end{equation}
 \end{definition}
 Definition~\ref{chpt3:def:contraction} tells us that an operator is a contraction if its application to two points in the space is guaranteed to decrease the distance between them by at least a constant $c < 1$. \textit{Thus, we essentially are going to show that the message update rule of $\alpha$-BP is actually a contraction, under which condition we would show that $\alpha$-BP converges}.
 
-We consider the case of binary $\Xx$, i.e. $\Xx=\left\{ -1, 1 \right\}$ to gain insight of $\alpha$-BP behaviors. The factor potentials are further detailed as
+We consider the case of binary $\Xx$ with $\Xx=\left\{ -1, 1 \right\}$, to gain insights into the convergence behavior of $\alpha$-BP. The factor potentials are further detailed as
 \begin{align}
   \phi_{st}(x_s, x_t) &= \exp\left\{ \theta_{st}(x_s, x_t)\right\}, \nonumber \\
   \phi_{s}(x_s) &= \exp\left\{ \theta_{s}(x_s) \right\}.
@@ -312,7 +308,11 @@ Further assume the symmetric property of potentials
   \theta_{s}(x_s) &= - \theta_s(-x_s).
 \end{align}
 
-For notation simplicity, we use $\theta_{ts}=\theta_{ts}(1, 1)$ and $\theta_s = \theta_s(1)$. Denote by $\bm{\alpha}$ the vector of all local assignments of parameter $\alpha$, i.e. $\bm{\alpha} = \left(  \alpha_{ts} \right)_{(t ,s) \in \Ee }$, by $\bm{\theta}$ the vector of all parameters of potentials, i.e. $\bm{\theta} = \left(  \theta_{ts} \right)_{(t ,s) \in \Ee }$.  Define a matrix $\bm{M}(\bm{\alpha}, \bm{\theta})$ of size $\abs{\vec{\Ee}} \times \abs{\vec{\Ee}}$, in which its entries are indexed by directed edges $(t\rightarrow s)$, as
+\begin{example}
+\textcolor{blue}{an example that fulfills this property, exponential family or coding stuff (check with Ragnar)}
+\end{example}
+
+For notation simplicity, we use $\theta_{ts}=\theta_{ts}(1, 1)$ and $\theta_s = \theta_s(1)$. Denote by $\bm{\alpha}$ the vector of all local assignments of parameter $\alpha$, i.e. $\bm{\alpha} = \left(  \alpha_{ts} \right)_{(t ,s) \in \Ee }$, by $\bm{\theta}$ the vector of all parameters of the potentials, i.e. $\bm{\theta} = \left(  \theta_{ts} \right)_{(t ,s) \in \Ee }$.  Define a matrix $\bm{M}(\bm{\alpha}, \bm{\theta})$ of size $\abs{\vec{\Ee}} \times \abs{\vec{\Ee}}$, in which its entries are indexed by directed edges $(t\rightarrow s)$, as
 \begin{align}\label{eq:matrix_m}
   M_{(t\rightarrow s), (u \rightarrow v)} =
   \begin{cases}
@@ -358,7 +358,7 @@ For notation simplicity, we use $\theta_{ts}=\theta_{ts}(1, 1)$ and $\theta_s = 
     \Delta_{ts}(\bm{z}) = 2 \theta_s + (1 - \alpha_{ts}) z_{st} + \sum_{w\in \Nn(u)\backslash t} z_{wt}.
   \end{equation}
 
-  In the following, we use superscript ${(n)}$ to denotes the $n$-th iteration. Since $f_{ts}$ is continuous on $\RR^{\abs{\vec{\Ee}}}$ and differentiable, we have
+  In the following, we use superscript ${(n)}$ to denote the $n$-th iteration. Since $f_{ts}$ is continuous on $\RR^{\abs{\vec{\Ee}}}$ and differentiable, we have
   \begin{align}\label{eq:ratio_diff_at_n}
     & z_{ts}^{(n+1)} - z_{ts}^{(n)} \nonumber \\
     =& (1-\alpha_{ts}) (z_{ts}^{(n)} - z_{ts}^{(n-1)}) + f_{ts}(\bm{z}^{(n)}) - f_{ts}(\bm{z}^{(n-1)}) \nonumber \\
@@ -374,10 +374,10 @@ For notation simplicity, we use $\theta_{ts}=\theta_{ts}(1, 1)$ and $\theta_s = 
     \end{cases}
   \end{equation}
   
-  Our target here is to find the condition to make sequence $\left( z_{ts}^{(n+1)} - z_{ts}^{(n)} \right)$ to converge. To this aim we need to bound the term $\nabla f_{ts}(\bm{z}^{\lambda})^{T} (\bm{z}^{(n)} - \bm{z}^{(n-1)})$ in \eqref{eq:ratio_diff_at_n}. For this purpose, we need two auxiliary functions $H, G: \RR^2 \rightarrow \RR$ from lemma $4$ in \cite{roosta2008reweighed_sum_product}, which are cited herein for completeness
+  Our target here is to find the condition to make sequence $\left( z_{ts}^{(n+1)} - z_{ts}^{(n)} \right)$ to converge. To this aim we need to bound the term $\nabla f_{ts}(\bm{z}^{\lambda})^{T} (\bm{z}^{(n)} - \bm{z}^{(n-1)})$ in \eqref{eq:ratio_diff_at_n}. For this purpose, we need two auxiliary functions $H, G: \RR^2 \rightarrow \RR$ from Lemma~$4$ in \cite{roosta2008reweighed_sum_product}, which are given in the following for completeness,
   \begin{align}
-    H(\mu; \kappa) &:= \log \frac{exp(\mu + \kappa) +1}{exp(\mu) + exp(\kappa)}, \nonumber \\
-    G(\mu; \kappa) &:= \frac{exp(\mu + \kappa)}{exp(\mu + \kappa) + 1} - \frac{exp(\mu)}{exp(\mu) + exp(\kappa)} \nonumber \\
+    H(\mu; \kappa) &:= \log \frac{\exp(\mu + \kappa) +1}{\exp(\mu) + \exp(\kappa)}, \nonumber \\
+    G(\mu; \kappa) &:= \frac{\exp(\mu + \kappa)}{\exp(\mu + \kappa) + 1} - \frac{\exp(\mu)}{\exp(\mu) + \exp(\kappa)} \nonumber \\
                    &= \frac{\sinh{\kappa}}{\cosh{\kappa} + \cosh{\mu}},
   \end{align}
   where it holds that $\pd{H(\mu; \kappa)}{\mu} = G(\mu; \kappa)$. Further, it holds that
@@ -389,7 +389,7 @@ For notation simplicity, we use $\theta_{ts}=\theta_{ts}(1, 1)$ and $\theta_s = 
   \end{align}
   which implies
   \begin{equation}\label{eq:f-bound}
-    \bigg|{\pd{f_{ts}}{\Delta_{ts}}}\bigg| \leq \tanh(\alpha_{ts}\theta_{ts}).
+    \bigg|{\pd{f_{ts}}{\Delta_{ts}}}\bigg| \leq \tanh(\abs{\alpha_{ts}\theta_{ts}}).
   \end{equation}
   Combining \eqref{eq:ratio_diff_at_n}, \eqref{eq:F_pd}, \eqref{eq:eqv_aux_functions} and \eqref{eq:f-bound}, we have
   \begin{align}\label{eq:ratio_cvg_step}
@@ -407,7 +407,7 @@ For notation simplicity, we use $\theta_{ts}=\theta_{ts}(1, 1)$ and $\theta_s = 
   \begin{equation}\label{eq:ratio-update-ineq}
     \abs{\bm{z}^{(n+1)} - \bm{z}^{n}} \leq \bm{M}(\alpha, \bm{\theta})\abs{\bm{z}^{(n)} - \bm{z}^{n-1}},
   \end{equation}
-  where $\bm{M}(\bm{\alpha}, \bm{\theta})$ is defined in \eqref{eq:matrix_m}, and $\leq$ in \eqref{eq:ratio-update-ineq} denotes the element-wise inequality. From \eqref{eq:ratio-update-ineq}, we could further have
+  where $\bm{M}(\bm{\alpha}, \bm{\theta})$ is defined in \eqref{eq:matrix_m}, and $\leq$ in \eqref{eq:ratio-update-ineq} denotes the element-wise inequality. Also note that in \eqref{eq:ratio-update-ineq}, the $\abs{\cdot}$ operator on a vector is a bit abused and denotes the element-wise absolute operation on the vector. From \eqref{eq:ratio-update-ineq}, we could further have
   \begin{align}\label{eq:ine-normp-iteration}
     \norm{\bm{z}^{(n+1)} - \bm{z}^{n}}_{p} &\leq \norm{\bm{M}(\alpha, \bm{\theta})(\bm{z}^{(n)} - \bm{z}^{n-1})}_{p},               
   \end{align}
@@ -422,7 +422,7 @@ For notation simplicity, we use $\theta_{ts}=\theta_{ts}(1, 1)$ and $\theta_s = 
   $\bm{M}(\bm{\alpha}, \bm{\theta})$. If the largest singular value of $\bm{M}$ is less than $1$, the sequence
   $\left( \abs{\bm{z}^{(n+1)} - \bm{z}^{(n)}}\right)$ converges to zero in $\ell^2$-norm as $n \rightarrow \infty$. Therefore, for $\lambda^{\ast}(\bm{M})<1$, $\ell^2$-norm $\left(  \bm{z}^{(n)}  \right)$ is a Cauchy sequence and must converge. 
 
-  By concatenating local update function \eqref{eq:ratio-update}, we have a global update function $\bm{F} = \left(  F_{ts}  \right)_{ (t \rightarrow s) \in \vec{\Ee}}$, which defines a mapping from $\RR^{\abs{\vec{\Ee}}}$ to $\RR^{\abs{\vec{\Ee}}}$. $\bm{F}$ is a continuous function of $\bm{z}$, we have
+  By concatenating local update function \eqref{eq:ratio-update}, we have a global update function $\bm{F} = \left(  F_{ts}  \right)_{ (t \rightarrow s) \in \vec{\Ee}}$, which defines a mapping from $\RR^{\abs{\vec{\Ee}}}$ to $\RR^{\abs{\vec{\Ee}}}$. $\bm{F}$ is a continuous function of $\bm{z}$, and we have
   \begin{equation}
     \bm{F}(\lim_{n\rightarrow \infty}\bm{z}^{(n)}) = \lim_{n\rightarrow \infty}\bm{F}(\bm{z}^{(n)}).
   \end{equation}
@@ -453,18 +453,21 @@ For notation simplicity, we use $\theta_{ts}=\theta_{ts}(1, 1)$ and $\theta_s = 
     \normd{\bm{z}_0^{\ast} - \bm{z}_1^{\ast}} \leq
     \lambda^{\ast}(\bm{M})\normd{\bm{z}_0^{\ast} - \bm{z}_1^{\ast}},
   \end{equation}
-  which gives us $\bm{z}_0^{\ast} = \bm{z}_1^{\ast}$ and completes the uniqueness of the fixed point.
+  which gives us $\bm{z}_0^{\ast} = \bm{z}_1^{\ast}$ for $\lambda^{\ast}(\bm{M})<1$ and completes the uniqueness of the fixed point.
 \end{proof}
 
 \begin{remark}
-  From Theorem~\ref{thm:normd} we can see that, the sufficient condition for convergence of $\alpha$-BP is $\lambda^{\ast}(\bm{M}(\bm{\alpha}, \bm{\theta})) < 1$. It is interesting to notice that $\lambda^{\ast}(\bm{M}(\bm{\alpha}, \bm{\theta}))$ is a function of $\bm{\alpha}$ from $\alpha$-divergence and $\bm{\theta}$ from joint distribution $p(\bm{x})$. This means that whether $\alpha$-BP can converge depends on the graph $\Gg= (\Vv, \Ee)$ representing the problem $p(\bm{x})$ and also the choice of $\bm{\alpha}$. Therefore, proper choice of $\bm{\alpha}$ can guarantee the convergence of $\alpha$-BP if the sufficient condition can possibly be achieved for given $\bm{\theta}$.
+  From Theorem~\ref{thm:normd} we can see that the sufficient condition for convergence of $\alpha$-BP is $\lambda^{\ast}(\bm{M}(\bm{\alpha}, \bm{\theta})) < 1$. It is interesting to notice that $\lambda^{\ast}(\bm{M}(\bm{\alpha}, \bm{\theta}))$ is a function of $\bm{\alpha}$ from $\alpha$-divergence and $\bm{\theta}$ from joint distribution $p(\bm{x})$. This means that whether $\alpha$-BP can converge depends on the graph $\Gg= (\Vv, \Ee)$ representing the problem $p(\bm{x})$ and also the choice of $\bm{\alpha}$. Therefore, proper choice of $\bm{\alpha}$ can guarantee the convergence of $\alpha$-BP if the sufficient condition can possibly be achieved for given $\bm{\theta}$.
 \end{remark}
 
+\begin{remark}
+\textcolor{blue}{discussion on the quality of the fix point}
+\end{remark}
 
 Given the fact that $\alpha$-BP would converge if the condition in Theorem~\ref{thm:normd} is fulfilled, the largest singular value computation for large-sized graph could be nontrivial. We give alternative sufficient conditions for the convergence of $\alpha$-BP.
 
 \begin{corollary}
-  $\alpha$-BP would converge to a fixed point if the condition
+  $\alpha$-BP converges to a fixed point if the condition
   \begin{align}
     \umax{u \rightarrow v}  \abs{1-\alpha_{uv}} + \abs{1-\alpha_{vu}}\tanh{(\abs{\alpha_{vu} \theta_{vu}})} + \sum_{w \in \Nn(v) \backslash u} \tanh{(\abs{\alpha_{{vw}} \theta_{vw}})} < 1,
   \end{align}
@@ -472,7 +475,7 @@ Given the fact that $\alpha$-BP would converge if the condition in Theorem~\ref{
   \begin{align}
     \umax{t \rightarrow s} \abs{1-\alpha_{ts}} (1 + \tanh(\abs{\alpha_{ts} \theta_{ts}})) + (\abs{\Nn(t)}-1)\tanh(\abs{\alpha_{ts} \theta_{ts}}) < 1.
   \end{align}
-  is achieved, where $\abs{\Nn(t)}$ denotes the carnality of the set $\Nn(t)$. The associated fixed point is unique.
+  is satisfied, where $\abs{\Nn(t)}$ denotes the carnality of the set $\Nn(t)$. The associated fixed point is unique.
 \end{corollary}
 
 \begin{proof}
@@ -499,6 +502,9 @@ Given the fact that $\alpha$-BP would converge if the condition in Theorem~\ref{
   \end{align}
   When condition $\normu{\bm{M}} < 1$ is met, sequence $\left( \abs{\bm{z}^{(n+1)} - \bm{z}^{n}} \right)$ approaches to zero as $n\rightarrow \infty$. Similarly, condition $\normi{\bm{M}}<1$ can also guarantee the convergence to zero of sequence $\left( \abs{\bm{z}^{(n+1)} - \bm{z}^{n}} \right)$. The analysis for uniqueness of converged fixed point is similar to that in proof of Theorem~\ref{thm:normd}.
 \end{proof}
+\begin{remark}
+  \textcolor{blue}{interpretation of the results}
+\end{remark}
 
 % \section{$\alpha$-BP with Local $\alpha$ \textcolor{red}{change into
 % remark and discussion}}
