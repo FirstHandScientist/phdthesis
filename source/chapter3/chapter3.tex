@@ -303,13 +303,17 @@ We consider the case of binary $\Xx$ with $\Xx=\left\{ -1, 1 \right\}$, to gain 
   \phi_{s}(x_s) &= \exp\left\{ \theta_{s}(x_s) \right\}.
 \end{align}
 Further assume the symmetric property of potentials
-\begin{align}
+\begin{align}\label{chpt3:eq:symmetric-prop}
   \theta_{ts}(x_t, x_s) &= -\theta_{ts}(x_t, -x_s) = -\theta_{ts}(-x_t, x_s), \nonumber\\
   \theta_{s}(x_s) &= - \theta_s(-x_s).
 \end{align}
 
 \begin{example}
-\textcolor{blue}{an example that fulfills this property, exponential family or coding stuff (check with Ragnar)}
+  The Ising model, from statistical physics \cite{ising1925, PhysRev.65.117}, is such a model whose potentials fulfill the symmetric property in \eqref{chpt3:eq:symmetric-prop}. In the graph $\Gg = (\Vv, \Ee)$ of an Ising model, the random variable $x_s$ takes the spin value $\left\{ $-1$, $+1$ \right\}$. The values of $\bm{x}$ associated with the nodes of $\Gg$ might represent the orientations of magnets in a field or the states of particles of gas in the context of statistical physics. Two elements $x_t$ and $x_s$ of $\bm{x}$ are allowed to interact directly only if there is an edge between them directly, i.e., $(t, s) \in \Ee$. The potential factors of an Ising model is in exponential family. This leads the joint distribution
+  \begin{equation*}
+    p(\bm{x};\bm{\theta}) \propto \exp\left\{ \sum_{s\in \Vv} b_s x_s + \sum_{(t, s) \in \Ee} J_{ts} x_t x_s \right\},
+  \end{equation*}
+  the factors of which fulfill the symmetric property in \eqref{chpt3:eq:symmetric-prop}. \textcolor{blue}{an example that fulfills this property, exponential family or coding stuff (check with Ragnar)}
 \end{example}
 
 For notation simplicity, we use $\theta_{ts}=\theta_{ts}(1, 1)$ and $\theta_s = \theta_s(1)$. Denote by $\bm{\alpha}$ the vector of all local assignments of parameter $\alpha$, i.e. $\bm{\alpha} = \left(  \alpha_{ts} \right)_{(t ,s) \in \Ee }$, by $\bm{\theta}$ the vector of all parameters of the potentials, i.e. $\bm{\theta} = \left(  \theta_{ts} \right)_{(t ,s) \in \Ee }$.  Define a matrix $\bm{M}(\bm{\alpha}, \bm{\theta})$ of size $\abs{\vec{\Ee}} \times \abs{\vec{\Ee}}$, in which its entries are indexed by directed edges $(t\rightarrow s)$, as
@@ -337,13 +341,13 @@ For notation simplicity, we use $\theta_{ts}=\theta_{ts}(1, 1)$ and $\theta_s = 
   By combining the local message passing rule in \eqref{eq:message-rule} with \eqref{eq:log-ratio-uv}, we obtain a local update function $F_{ts}: \; \RR^{\abs{\vec{\Ee}}} \rightarrow \RR$ that maps $\bm{z} = \left( z_{ts} \right)_{(t \rightarrow s) \in \Ee}$ to updated $z_{ts}$, which can be expressed as
   % Substituting \eqref{eq:message-rule} into \eqref{eq:log-ratio-uv} gives
   % \begin{align}
-  %   &F_{ts}(\bm{z}) = (1- \alpha_{ts})z_{ts} + \\
-  %   &\log\frac{\exp\left\{ \alpha_{ts}\left[ \theta_{ts}(1,1) - \theta_{ts}(-1,1) \right] + \theta_t(1) - \theta_t(-1) + (1 - \alpha_{ts})z_{st} + \sum_{w\in \Nn(t)\backslash s} z_{wt} \right\}+1}
-  %   {\exp\left\{ \alpha_{ts}\left[ \theta_{ts}(1,-1) - \theta_{ts}(-1,1) \right] + \theta_t(1) - \theta_t(-1) + (1 - \alpha_{ts})z_{st} + \sum_{w\in \Nn(t)\backslash s} z_{wt} \right\} +
-  %   \exp\left\{ \alpha_{ts}\left[ \theta_{ts}(-1,-1) - \theta_{ts}(-1,1) \right] \right\}},
-  % \end{align}
-  % where $\bm{z}$ is vector with element entry $z_{vu}, v,u \in \Vv$.
-  % With the symmetric property, the log ratio updates for $z_{ts}$ can be reduced as
+      %       &F_{ts}(\bm{z}) = (1- \alpha_{ts})z_{ts} + \\
+      %               &\log\frac{\exp\left\{ \alpha_{ts}\left[ \theta_{ts}(1,1) - \theta_{ts}(-1,1) \right] + \theta_t(1) - \theta_t(-1) + (1 - \alpha_{ts})z_{st} + \sum_{w\in \Nn(t)\backslash s} z_{wt} \right\}+1}
+                        %                         {\exp\left\{ \alpha_{ts}\left[ \theta_{ts}(1,-1) - \theta_{ts}(-1,1) \right] + \theta_t(1) - \theta_t(-1) + (1 - \alpha_{ts})z_{st} + \sum_{w\in \Nn(t)\backslash s} z_{wt} \right\} +
+                        %                         \exp\left\{ \alpha_{ts}\left[ \theta_{ts}(-1,-1) - \theta_{ts}(-1,1) \right] \right\}},
+                        %     \end{align}
+                        %                         where $\bm{z}$ is vector with element entry $z_{vu}, v,u \in \Vv$.
+                        %                         With the symmetric property, the log ratio updates for $z_{ts}$ can be reduced as
   \begin{equation}\label{eq:ratio-update}
     F_{ts}(\bm{z}) = (1-\alpha_{ts}) z_{ts} + f_{ts}(\bm{z}),
   \end{equation}
@@ -461,18 +465,19 @@ For notation simplicity, we use $\theta_{ts}=\theta_{ts}(1, 1)$ and $\theta_s = 
 \end{remark}
 
 \begin{remark}
-\textcolor{blue}{discussion on the quality of the fix point}
+  \textcolor{blue}{discussion on the quality of the fix point}
+  The condition in Theorem~\ref{thm:normd} tells if $\alpha$-BP converges to a fixed point. However, it does not guarantee if the converged fixed point is a global optimum. Error analysis of BP and its variant is a challenging task. We discussed that the exact inference of BP in tree-structured graphs in Section~\ref{chpt2:sec:inference-mp}. The global optimum of loopy BP algorithm can be guaranteed in rare cares, e.g., a ferromagnetic Ising model in which neighbors prefer to be in aligned states\cite{frederic2019fast}.
 \end{remark}
 
 Given the fact that $\alpha$-BP would converge if the condition in Theorem~\ref{thm:normd} is fulfilled, the largest singular value computation for large-sized graph could be nontrivial. We give alternative sufficient conditions for the convergence of $\alpha$-BP.
 
-\begin{corollary}
+\begin{corollary}\label{chpt3:cor:converge}
   $\alpha$-BP converges to a fixed point if the condition
-  \begin{align}
+  \begin{align}\label{chpt3:cor:choose-col}
     \umax{u \rightarrow v}  \abs{1-\alpha_{uv}} + \abs{1-\alpha_{vu}}\tanh{(\abs{\alpha_{vu} \theta_{vu}})} + \sum_{w \in \Nn(v) \backslash u} \tanh{(\abs{\alpha_{{vw}} \theta_{vw}})} < 1,
   \end{align}
   is fulfilled or the condition
-  \begin{align}
+  \begin{align}\label{chpt3:cor:choose-row}
     \umax{t \rightarrow s} \abs{1-\alpha_{ts}} (1 + \tanh(\abs{\alpha_{ts} \theta_{ts}})) + (\abs{\Nn(t)}-1)\tanh(\abs{\alpha_{ts} \theta_{ts}}) < 1.
   \end{align}
   is satisfied, where $\abs{\Nn(t)}$ denotes the carnality of the set $\Nn(t)$. The associated fixed point is unique.
@@ -496,92 +501,48 @@ Given the fact that $\alpha$-BP would converge if the condition in Theorem~\ref{
   where we omit the parameters of $\bm{M}$ here for simplicity. We can expand the first multiplicand on the right hand side of \eqref{eq:row-col-norm-ineq} as follows
   \begin{align}
     \normu{\bm{M}} =& \umax{u \rightarrow v}{\sum_{t\rightarrow s} M_{(t\rightarrow s), (u\rightarrow v)}} \nonumber \\
-    =& \umax{u \rightarrow v}\abs{1-\alpha_{uv}} + \abs{1-\alpha_{vu}}\tanh{\abs{\alpha_{vu} \theta_{vu}}} + \sum_{w \Nn(v) \backslash u} \tanh{\abs{\alpha_{{vw}} \theta_{vw}}}, \nonumber \\
+    =& \umax{u \rightarrow v}\abs{1-\alpha_{uv}} + \abs{1-\alpha_{vu}}\tanh{\abs{\alpha_{vu} \theta_{vu}}} + \sum_{w\in \Nn(v) \backslash u} \tanh{\abs{\alpha_{{vw}} \theta_{vw}}}, \nonumber \\
     \normi{\bm{M}} =& \umax{t \rightarrow s}{\sum_{u\rightarrow v} M_{(t\rightarrow s), (u\rightarrow v)}} \nonumber \\
     =& \umax{t \rightarrow s} \abs{1-\alpha_{ts}} (1 + \tanh\abs{\alpha_{ts} \theta_{ts}}) + (\abs{\Nn(t)}-1)\tanh\abs{\alpha_{ts} \theta_{ts}}.
   \end{align}
   When condition $\normu{\bm{M}} < 1$ is met, sequence $\left( \abs{\bm{z}^{(n+1)} - \bm{z}^{n}} \right)$ approaches to zero as $n\rightarrow \infty$. Similarly, condition $\normi{\bm{M}}<1$ can also guarantee the convergence to zero of sequence $\left( \abs{\bm{z}^{(n+1)} - \bm{z}^{n}} \right)$. The analysis for uniqueness of converged fixed point is similar to that in proof of Theorem~\ref{thm:normd}.
 \end{proof}
-\begin{remark}
-  \textcolor{blue}{interpretation of the results}
+\begin{remark}[\textcolor{blue}{Interpretation to the Results}]
+  
+  Both Theorem~\ref{thm:normd} and Corollary~\ref{chpt3:cor:converge} offer sufficient conditions for convergence of $\alpha$-BP to a unique fixed point. The obtained results allow us to check if applying $\alpha$-BP in a certain configuration guarantees convergence without running the algorithm practically to try out, which saves computation resources when problems are at scales. To test the fulfillment of the conditions, the first step it to convert a problem to be solved into its pairwise MRF representation $\Gg(\Vv, \Ee)$. Secondly, construct the matrix $\bm{M}$ according to \eqref{eq:matrix_m}. Note the undirected edge set $\Ee$ of $\Gg$ is used to construct a directed edge set $\vec{\Ee}$ by assigning $(s\rightarrow t)$ and $(t\rightarrow s)$ with the same potential factor $\phi_{st}$ of $\Gg$. Thirdly, the condition fulfillment can be check by computing the largest singular value $\lambda^{\ast}(\bm{M})$ and testing $\lambda^{\ast}(\bm{M}) < 1$ as stated in Theorem~\ref{thm:normd}. Fulfilling this condition is to say that $\alpha$-BP is guaranteed to converge in the current setting.
+
+  The size of the constructed matrix $\bm{M}$ is $\abs{\vec{\Ee}} \times \abs{\vec{\Ee}}$. $\bm{M}$ could be pretty large if a graph $\Gg$ is large or dense, which might cast the computation issue of the largest singular value of this matrix. In this case, Corollary~\ref{chpt3:cor:converge} offers the conditions to avoid the computation of the largest singular value. To be specific, after constructing the matrix \eqref{eq:matrix_m}, Corollary~\ref{chpt3:cor:converge} allows column-wise tests of $\bm{M}$, i.e., the column value of matrix $\bm{M}$ returning the largest quantity according to \eqref{chpt3:cor:choose-col} should be smaller than $1$ to guarantee the convergence of $\alpha$-BP. Note for a column $(u\rightarrow v)$, the elements of $\bm{M}$ involved in the testing computation are the factors corresponding to edges connected to node $v$ in $\Gg$. Alternatively, row-wise test can be carried out according to \eqref{chpt3:cor:choose-row} with similar complexity.
 \end{remark}
-
-% \section{$\alpha$-BP with Local $\alpha$ \textcolor{red}{change into
-% remark and discussion}}
-% In previous sections, we have been discussing the $\alpha$-BP with a local $\alpha$ value for each factor in MRF. In this section, we would consider the case that MRF has its global $\alpha$. To be specific, when we do refinement of each factor $\phi_{st}(x_s, x_t)$ of \eqref{eq:mrf} in Section~\ref{sec:alpha-bp-factor-refine}, we use the same $\alpha$
-% for the problem in \eqref{eq:alpha-minimize-factor}. 
-% \begin{align}\label{eq:message-rule-global}
-%   {m}^{\text{new}}_{ts}(x_s) \propto & m_{ts}(x_s)^{1-\alpha} \bigg[
-%   \sum_{x_t} \phi_{ts}(x_t, x_s)^{\alpha} {m}_{st}(x_t)^{1-\alpha}\nonumber\\
-%   &{\phi}_t(x_t) \prod_{w\in \Nn(t)\backslash s}m_{wt}(x_t) \bigg].
-% \end{align}
-
-% There is a corresponding matrix
-% Define a sized $2\abs{\Ee} \times 2\abs{\Ee}$ matrix $\bm{M}^{\dagger}(\bm{\alpha}, \bm{\theta})$ with its entries index by edges $(t\rightarrow s)$, and of form
-% \begin{equation}
-%   M^{\dagger}_{(t\rightarrow s), (u \rightarrow v)} =
-%   \begin{cases}
-%     \abs{ 1 - \alpha}, &\quad u=t, v=s, \\
-%     \abs{ 1 - \alpha} \tanh\abs{ \alpha \theta_{ts}}, & \quad u = s, v =t, \\
-%     \tanh\abs{\alpha \theta}, & \quad u \in \Nn(t)\backslash s, v = t, \\
-%     0, & \quad \mathrm{otherwise},
-%   \end{cases}
-% \end{equation}
-
-
-% \begin{cor}\label{cor:global-alpha-bp}
-%   For an arbitrary pairwise Markov random field over binary variables,
-%   it the largest singular value of matrix $\bm{M}^{\dagger}(\bm{\alpha}, \bm{\theta})$ is less than one,
-%   then $\alpha$-BP converges to a fixed point. The associated fixed
-%   point is unique.
-% \end{cor}
-
-% Similar we also have the alternative sufficient condition for $\alpha$-BP with global $\alpha$ for message passing by \eqref{eq:message-rule-global}.
-
-% \begin{cor}
-%   $\alpha$-BP with global $\alpha$ would converge if any of the following conditions is fulfilled:
-%   \begin{equation}
-%     \umax{u \rightarrow v}\abs{1-\alpha} + \abs{1-\alpha}\tanh{\abs{\alpha \theta_{vu}}} + \sum_{w \Nn(v) \backslash u} \tanh{\abs{\alpha \theta_{vw}}} < 1,
-%   \end{equation}
-%   or
-%   \begin{equation}
-%     \umax{t \rightarrow s} \abs{1-\alpha} (1 + \tanh\abs{\alpha \theta_{ts}}) + (\abs{\Nn(t)}-1)\tanh\abs{\alpha \theta_{ts}} < 1.
-%   \end{equation}
-% \end{cor}
-
-% \textcolor{red}{analysis on async case of update compared to sync case}
-
 
 
 \section{Experiments}
 
-In this section, we firstly give the simulations for convergence condition of $\alpha$-BP explained in Theorem~\ref{thm:normd}. Then the application of $\alpha$-BP to a MIMO detection problem is demonstrated.
+In this section, we first give simulation results for the convergence condition of $\alpha$-BP explained in Theorem~\ref{thm:normd}. Then the application of $\alpha$-BP to a MIMO detection problem is demonstrated.
 
 \subsection{Simulated Results on Random Graphs}
 \begin{figure*}[!t]
-  % the first figure
   \centering
   \includegraphics[width=0.6\columnwidth]{figures/converge/contraction_vs_variance_r1-crop.pdf}
   \caption{The largest singular value of $\bm{M}$ defined in \eqref{eq:matrix_m} versus variance of potential parameter $\bm{\theta}$. A value of each curve is the mean of $100$ graph realizations.}
   \label{fig:largest_singular}
-  % the second figure
 \end{figure*}
 
 
 In this section simulations on random graphs are carried out
 to gain some insights on the $\alpha$-BP. The random graphs used here are generated
-by Erdos-R\'enyi (ER) model \cite{erdos1960}. In generating a graph by EP model, an edge between any two nodes is generated with probability $\gamma$, $\gamma \in (0,1)$.
+by the Erdos-R\'enyi (ER) model \cite{erdos1960}. In generating a graph by ER model, an edge between any two nodes is generated with probability $\gamma$, $\gamma \in (0,1)$.
 
 Note that the MRF joint probability in \eqref{eq:mrf} can be reformulated into
 \begin{equation}\label{eq:mrf_matrix_form}
   p(\bm{x}) \propto \exp\{-\bm{x}^{T}\bm{J}\bm{x} - \bm{b}^{T}\bm{x}\}, \bm{x} \in \bm{\Xx},
 \end{equation}
-with $\phi_{ts}(x_t, x_s) = e^{- 2 J_{t,s} x_t x_s}$ and $\phi_s(x_s) = e^{ - J_{s,s} - b_s  x_s}$. $J$ here is the weighted adjacency matrix. In our experiments, we generate a random graph $\Gg = (\Vv, \Ee)$ with $\gamma$ by ER model and then associate potential factors to the graph. Specifically, factor $\phi_s(x_s)$ is associated to node $x_s$, $s \in \Vv$, and $\phi_{ts}$ to edge $(t, s) \in \Ee$. $J_{ts}$ is zero if these is no edge $(t, s)$.
+with $\phi_{ts}(x_t, x_s) = e^{- 2 J_{t,s} x_t x_s}$ and $\phi_s(x_s) = e^{ - J_{s,s} x_s^2 - b_s  x_s}$. $\bm{J}$ here is the weighted adjacency matrix. In our experiments, we generate a random graph $\Gg = (\Vv, \Ee)$ with $\gamma$ by ER model and then associate potential factors to the graph. Specifically, factor $\phi_s(x_s)$ is associated to node $x_s$, $s \in \Vv$, and $\phi_{ts}$ to edge $(t, s) \in \Ee$. $J_{ts}$ is zero if these is no edge $(t, s)$.
 
-For this set of experiments, we set $\Xx = \left\{ -1, 1 \right\}$ and $N=16$. To specify \eqref{eq:mrf_matrix_form}, the non-zero entries of $\bm{J}$ is sampled from a Gaussian distribution $\mathsf{N}(0, \sigma^2)$, i.e. $J_{ts} \sim \mathsf{N}(0, \sigma^2)$ if $J_{ts}\neq 0$. For entries of $\bm{b}$, we use $b_t \in \mathsf{N}(0, (\sigma/4)^2)$.
+For this set of experiments, we set $\Xx = \left\{ -1, 1 \right\}$ and $N=16$. To specify \eqref{eq:mrf_matrix_form}, the non-zero entries of $\bm{J}$ are sampled from a Gaussian distribution $\mathsf{N}(0, \sigma^2)$, i.e. $J_{ts} \sim \mathsf{N}(0, \sigma^2)$ if $J_{ts}\neq 0$. For entries of $\bm{b}$, we use $b_t \in \mathsf{N}(0, (\sigma/4)^2)$.
 For each edge $(t,s) \in \Ee$, we set $\alpha_{ts}=\alpha$, i.e. the edges share a global value $\alpha$.
 
-Figure~\ref{fig:largest_singular} illustrate how the largest singular value of $\bm{M}(\bm{\alpha}, \bm{\theta})$ as defined in \eqref{eq:matrix_m} changes when the standard deviation $\sigma$ of potential factors increases. The behavior is illustrated with different values of $\alpha$ and the edge probability $\gamma$. For each curve, a point on the curve is the mean of $100$ realizations of random graphs as described above. The curves of Figure~\ref{fig:largest_singular} show in general that a larger standard deviation of potential factors of graph edges makes it more difficult to fulfill the convergence condition in Theorem~\ref{thm:normd}. This is also the case when a graph is denser as we raise the edge probability $\gamma$ in generating random graphs, by comparing the green and orange curves. The comparison between green and blue curves indicates that choice of $\alpha$ value in $\alpha$-BP also makes a difference, and its effect depends on the graph itself. How to tune $\alpha$ value to fulfill condition of Theorem~\ref{thm:normd} depends not only how dense ($\gamma$) the graph is, but also how potential factors spread out from each other.
+Figure~\ref{fig:largest_singular} illustrate how the largest singular value of $\bm{M}(\bm{\alpha}, \bm{\theta})$ as defined in \eqref{eq:matrix_m} changes when the standard deviation $\sigma$ of potential factors increases. The behavior is illustrated with different values of $\alpha$ and the edge probability $\gamma$. For each curve, a point on the curve is the mean of $100$ realizations of random graphs as described above. The curves of Figure~\ref{fig:largest_singular} show in general that a larger standard deviation of the potential factors of the graph edges makes it more difficult to fulfill the convergence condition in Theorem~\ref{thm:normd}. This is also the case when a graph is denser as we raise the edge probability $\gamma$ in generating random graphs, by comparing the green and orange curves. The comparison between green and blue curves indicates that the choice of $\alpha$ value in $\alpha$-BP also makes a difference, and its effect depends on the graph itself. Additionally, $\alpha$-BP with assignment $\alpha=0.5$ leads to flatter curves compared to standard BP ($\alpha=1$) and guarantees convergence for a larger range of $\sigma$, which corresponding a larger range of graphs.
+How to tune $\alpha$ value to fulfill the condition of Theorem~\ref{thm:normd} depends not only on how dense ($\gamma$) the graph is, but also how potential factors spread out from each other.
 
 \begin{figure*}[!t]
   \begin{subfigure}{0.5\textwidth}
@@ -590,23 +551,23 @@ Figure~\ref{fig:largest_singular} illustrate how the largest singular value of $
     \caption{}
     \label{fig:log-error-iter-diverse}
   \end{subfigure}
-  % the third figure
+               %                the third figure
   \begin{subfigure}{0.5\textwidth}
     \includegraphics[width=1\columnwidth]{figures/converge/converge_erp0_2_alpha_0_5_stn_0_1_vs_filter_true-crop.pdf}
     \caption{}
     \label{fig:log-error-iter-converge}
   \end{subfigure}
-  \caption{Numerical illustration on convergence, with normalized error ${\normd{\bm{m}^{(n)}-\bm{m}^{\ast}}}/{\normd{\bm{m}^{\ast}}}$ versus the number of iterations. Number of nodes $N=16$. \ref{fig:log-error-iter-diverse} parameter setting: $\gamma =0.4$, $\alpha = 1$ (equivalent to standard BP), $\sigma = 0.5$. \ref{fig:log-error-iter-converge} Parameter setting: $\gamma =0.2$, $\alpha = 0.5$, $\sigma = 0.1$.
+  \caption{Numerical illustration of convergence, with normalized error ${\normd{\bm{m}^{(n)}-\bm{m}^{\ast}}}/{\normd{\bm{m}^{\ast}}}$ versus the number of iterations. Number of nodes $N=16$. (a) Parameter setting: $\gamma =0.4$, $\alpha = 1$ (equivalent to standard BP), $\sigma = 0.5$. (b) Parameter setting: $\gamma =0.2$, $\alpha = 0.5$, $\sigma = 0.1$.
     Blue region denotes the range from minimum to maximum of the normalized error of $100$ graph realizations, whereas the curve stands for mean error of the $100$ realized graphs. }
   \label{fig:convergence}
 \end{figure*}
 
 
 
-To illustrate our developed convergence condition for $\alpha$-BP, we also observe how messages in a graph changes along belief propagation iterations. To be specific, we run our $\alpha$-BP with $200$ iterations on a graph, after which the messages in the graph are denoted by $\bm{m}^{\ast}$. $\bm{m}^{\ast}$ can be the converged messages if $\alpha$-BP has converged within the $200$ iterations. Then we measure the quantity $\normd{\bm{m}^{(n)} - \bm{m}^{\ast}}/\normd{\bm{m}^{\ast}}$ during the iterations. In Figure~\ref{fig:log-error-iter-diverse}, we generate $100$ random graphs by ER model with parameter setting as $\gamma =0.4$, $\alpha = 1$\footnote{$\alpha=1$ in $\alpha$-BP corresponding to standard BP.}, $\sigma = 0.5$. By referring to the curves in Figure~\ref{fig:largest_singular}, it can be inferred that this setting does not fulfill the condition in Theorem~\ref{thm:normd}. The log error changes versus iteration number $n$ for the $100$ graphs are shown in Figure~\ref{fig:log-error-iter-diverse}, in which the blue region indicates the range and the solid curve indicates the mean of the normalized errors. It is clear that Figure~\ref{fig:log-error-iter-diverse} does not show any sign of convergence within $200$ iterations.
+To illustrate our developed convergence condition for $\alpha$-BP, we also observe how messages in a graph changes along belief propagation iterations. To be specific, we run our $\alpha$-BP with $200$ iterations on a graph, after which the messages in the graph are denoted by $\bm{m}^{\ast}$. $\bm{m}^{\ast}$ can be the converged messages if $\alpha$-BP has converged within the $200$ iterations. Then we measure the quantity $\normd{\bm{m}^{(n)} - \bm{m}^{\ast}}/\normd{\bm{m}^{\ast}}$ during the iterations. In Figure~\ref{fig:log-error-iter-diverse}, we generate $100$ random graphs by ER model with parameter setting as $\gamma =0.4$, $\alpha = 1$\footnote{$\alpha=1$ in $\alpha$-BP corresponding to standard BP.}, $\sigma = 0.5$. By referring to the curves in Figure~\ref{fig:largest_singular}, it can be seen that this setting does not fulfill the condition in Theorem~\ref{thm:normd}. The log error changes versus iteration number $n$ for the $100$ graphs are shown in Figure~\ref{fig:log-error-iter-diverse}, in which the blue region indicates the range and the solid curve indicates the mean of the normalized errors. It is clear that Figure~\ref{fig:log-error-iter-diverse} does not show any sign of convergence within $200$ iterations.
 
 \begin{figure*}[!t]
-  % the first figure
+               %                the first figure
   \begin{subfigure}{0.5\textwidth}
     \includegraphics[width=1\columnwidth]{figures/alpha_compare_crop.pdf}
     \caption{}
@@ -632,11 +593,11 @@ We then carry out a set of experiments in Figure~\ref{fig:log-error-iter-converg
 
 \subsection{Complete Graph Case: Application to MIMO Detection}
 
-In this section, we show the application of $\alpha$-BP to a MIMO detection problem. For a MIMO system, the observation $\bm{y}$ is a linear function of channel $\bm{H}\in \RR^{N\times N}$ when unknown signal $\bm{x}$ need to be estimated,
+In this section, we show the application of $\alpha$-BP to a multiple input multiple output (MIMO) detection problem. For a MIMO system, the observation $\bm{y}$ is a linear function of the channel $\bm{H}\in \RR^{N\times N}$ when the unknown signal $\bm{x}$ needs to be detected,
 \begin{equation}\label{eq:linear-model}
   \bm{y} = \bm{H} \bm{x} + \bm{e}, \bm{x} \in \bm{\Xx},
 \end{equation}
-where $\bm{e}$ is  noise modeled as Gaussian noise $ \bm{e} \sim \mathsf{N}\left( \bm{0}, \sigma^2_{w} \bm{I} \right)$. Here $\bm{I}$ is unitary matrix. In this case, the posterior of $\bm{x}$ can be written as:
+where $\bm{e}$ is  noise modeled as Gaussian noise $ \bm{e} \sim \mathsf{N}\left( \bm{0}, \sigma^2_{w} \bm{I} \right)$. Here $\bm{I}$ is \textit{unitary} matrix. In this case, the posterior of $\bm{x}$ can be written as:
 \begin{align}\label{eq:true-posterior}
   p(\bm{x}|\bm{y}) &\propto e^{ - \frac{1}{2\sigma_w^2} \normd{\bm{Hx} - \bm{y}}^2 } \nonumber \\
                    & = e^{ - \frac{1}{2\sigma_w^2}\left[ \bm{x}^{T}\bm{H}^{T}\bm{H}\bm{x} - 2 \bm{y}^T\bm{H}\bm{x}  + \bm{y^T}\bm{y}  \right] }.
@@ -646,38 +607,39 @@ Denote $\bm{S} = \bm{H}^T\bm{H}$, $\bm{h}_i$ as the $i$-th column of $\bm{H}$, a
   \phi_{i}(x_i) =& e^{- \frac{S_{i,i} x_i^2}{2 \sigma_w^2} + \frac{\langle {\bm{h}_i, \bm{y}}\rangle x_i}{\sigma_w^2} },\nonumber \\
   \phi_{ij}(x_i, x_j) =& e^{ -\frac{x_i S_{i,j} x_j}{\sigma_w^2} }.
 \end{align}
-Then it can be seen that \eqref{eq:true-posterior} is an instance of \eqref{eq:mrf}. We set $\Xx = \left\{ -1, 1 \right\}$, $N = 8$, and $\bm{H}\in \RR^{8 \times 8}$ sampled from Gaussian.
+Then it can be seen that \eqref{eq:true-posterior} is an instance of \eqref{eq:mrf}. We set $\Xx = \left\{ -1, 1 \right\}$, $N = 8$, and let $\bm{H}\in \RR^{8 \times 8}$ be sampled from a Gaussian distribution.
 
 We test the application of $\alpha$-BP to the MIMO signal detection numerically. We run the $\alpha$-BP, without the prior trick (Subsection~\ref{subsec:remark}) in Figure~\ref{fig:mimo_a} and with the prior in Figure~\ref{fig:mimo_b} (legend ``$\alpha$-BP$+$MMSE'') as estimation of minimum mean square error (MMSE). The reference results of MMSE and maximum a posterior (MAP, exhausted search) are also reported under the same conditions. MMSE estimator depends on Gaussian posterior $\mathsf{N}(\hat{\bm{\mu}}, \hat{\bm{\Sigma}})$, where $\hat{\bm{\mu}} = (\bm{H}^{T}\bm{H} + \sigma_w^2 \bm{I})^{-1}\bm{H}^{T}\bm{y}$ and $\hat{\bm{\Sigma}} = (\bm{H}^{T}\bm{H} + \sigma_w^2 \bm{I})^{-1}\sigma_w$. Detection of MMSE carried out by $\argmin_{x_i\in \Xx}\abs{x_i-\hat{\mu}_i}$.% The prior belief used in ``$\alpha$-BP$+$MMSE'' is $\hat{p}(x_i)=\Nn(\hat{{\mu}}_i, \hat{\bm{\Sigma}}_{i,i})$.
 
 Figure~\ref{fig:mimo_a} shows that BP even underperforms MMSE but $\alpha$-BP can outperform MMSE by assigning smaller value of $\alpha$.
-Note that MMSE requires the matrix inverse computation whose complexity is proportional to $N^3$, while the complexity of $\alpha$-BP increases linearly with $N$. Therefore $\alpha$-BP is superior to MMSE both performance-wise and complexity-wise.  
-% $\alpha$-BP does not have this problem and still can outperform MMSE. 
+Note that MMSE has a higher computation complexity since it requires the matrix inverse computation whose complexity is proportional to $N^3$. Therefore $\alpha$-BP is superior to MMSE both performance-wise and complexity-wise.  
+                         %                          $\alpha$-BP does not have this problem and still can outperform MMSE. 
 However, there is still a big gap between $\alpha$-BP (even for $\alpha=0.5$) and MAP. This gap can be decreased further by using the prior trick discussed in Subsection~\ref{subsec:remark}. Figure~\ref{fig:mimo_b} exemplifies this effects by using prior belief from MMSE, $\hat{p}_i(x_i)\propto \exp\{-(x_i-\hat{\mu}_i)^2/(2\hat{\bm{\Sigma}}_{i,i})\}$, by modifying the graph as shown in Figure~\ref{fig:factor-graph-with-prior}, which comes with legend "$\alpha$-BP$+$MMSE". It is shown that larger performance gain is observed when $\alpha$-BP runs with prior belief.
 
 Additional, we also carry out the experiments where the proposed $\alpha$-BP is compared with mean field (legend 'MF'), BP with damping technique \cite{Pretti2005damping} (with legend 'Damped-BP'), and Tree-reweighted belief propagation \cite{wainwright2008graphical} (with legend 'TBP') in Figure~\ref{fig:mimo_c}. As expected, mean field method performs no better than BP. Damping technique improves BP's performance with a noticeable difference but still falls behind MMSE. The performance of tree-reweighted BP reaches that of MMSE in low ratio range of signal-to-noise variance but degenerates a lot in the high ratio range. The old message and potential factors are reweighted by the edge appearance probability in TBP to compute new messages. In TBP, the edge appearance probability is the probability that the edge exists in a randomly chosen spanning tree from all possible spanning trees of graph $\Gg$, which is usually expensive to compute.
 
 \section{Summary}
-In this chapter, we went through an alternative development of belief propagation. The alternative method was connected and compared with the classic approximate iterative inference methods, namely mean filed, loopy belief propagation and tree-reweighted belief propagation. The connection and comparison were made with regarding to both the high-level optimization objectives and the practical iterative update rules. All methods share a common methodology, \textit{inference an optimization}. Although they started from different optimization cost functions, the derived iterative update rules share similarity. The study enriches our insight of deterministic approximate inference approaches.
 
-Given the wide application of the family of belief propagation methods, when an implementation of them can have guaranteed convergence is a fundamental question, which is of practical interest in general. This issue was attempted in binary support case in this chapter via the method of contraction condition. The derived sufficient conditions for $\alpha$-BP gives us the preview about whether we can expect it to converge.
+In this chapter, we studied belief propagation in the way of $\alpha$-divergence minimization and proposed an alternative belief propagation method. The alternative method was connected and compared with the classic approximate iterative inference methods, namely mean filed, loopy belief propagation and tree-reweighted belief propagation. The connection and comparison were made with regard to both the high-level optimization objectives and the practical iterative update rules. All methods share a common interpretation, \textit{inference an optimization}, i.e., inference methods could be recovered from  optimization problems (free energy minimization or a divergence minimization). Although they started from different optimization cost functions, the derived iterative update rules share some similarities. The study enriches our insight into deterministic approximate inference approaches.
+
+Given the wide application of the family of belief propagation methods, when the implementation of them can have guaranteed convergence is a fundamental question, which is of practical interest in general. This issue was addressed in the binary support case in this chapter via the method of contraction condition. The derived sufficient conditions for $\alpha$-BP gives us sufficient conditions about whether we can expect it to converge. The sufficient conditions allow us to check if $\alpha$-BP is guaranteed to converge without actually running the algorithm for a given problem.
 
 Another essential question is about the error of deterministic approximate inference, compared with the exact answer. This problem is surely challenging. There is little work offering error-bounded methods in deterministic approximate inference family. Due to the lack of knowledge here, manual turning or trial-and-error is still not able to be avoided in practical system implementations. The development towards automated inference methods with at least less manual work is always an important direction in this track. 
 
 \section{Relevant Literature}
 
-Approximate inference are applicable to wide range of settings. The wide applications include but not limited to imaging processing \cite{zhang2013denoise}, multi-input-multi-output (MIMO) signal detection in digital communication \cite{cespedes2014ep,jeon2015optimality}, inference on structured lattice \cite{10.2307/25651244}, machine learning  \cite{2018arXiv180607066M, Lin:2015:DLM:2969239.2969280, yoon2019inferenceGraph}. The empirical success of  belief propagation (BP) rules came much earlier than its theoretical examination, which dates back to $80$s in last century\cite{pearl1986b}.
+Approximate inference is applicable to wide range of settings. The wide applications include but are not limited to imaging processing \cite{zhang2013denoise}, multi-input-multi-output (MIMO) signal detection in digital communication \cite{cespedes2014ep,jeon2015optimality}, inference on structured lattice \cite{10.2307/25651244}, and machine learning \cite{2018arXiv180607066M, Lin:2015:DLM:2969239.2969280, yoon2019inferenceGraph}. The empirical success of  belief propagation (BP) rules came much earlier than its theoretical examination, which dates back to $80$s in last century\cite{pearl1986b}.
 
-As a result of the representation power of probabilistic graphical models, graphs with loops are inevitable in real-world problems. Before there was any justification, problems represented by graphs with loops simply employ BP as if there was no loop, i.e. loopy BP.  Although loopy BP is still a practical method to do inference approximately, its performance varies from case to case and its behavior is not well understood in general. A direct workaround is to propagate messages on a manipulated graph instead of the original graph. The representative methods of this family are junction tree (clique tree) method \cite[section~10]{koller2009pgm} and generalized belief propagation (GBP)\cite{yedida2005constucting}. Although they both cluster multiple nodes of the original graph into a node in a hyper-graph (clique tree or region graph) and propagate message in the new graph. Junction tree provides a exact inference method while GBP is an approximate inference method. How to convert a general graph to a junction tree or region graph is not trivial, and structure of the converted graph makes significant difference in inference performance. Additionally, the former's complexity relies on tree-width (the size of the largest clique minuses one), which means that there is not too much gain by using junction tree than enumerating configurations in very dense graphs. For the latter, constructing a region graph itself is a challenging task and still need further study.
+As a result of the representation power of probabilistic graphical models, graphs with loops are inevitable in real-world problems. Before there was any justification, problems represented by graphs with loops simply employ BP as if there was no loop, i.e. loopy BP.  Although loopy BP is still a practical method to do inference approximately, its performance varies from case to case and its behavior is not well understood in general. A direct workaround is to propagate messages on a manipulated graph instead of the original graph. The representative methods of this family are junction tree (clique tree) method \cite[section~10]{koller2009pgm} and generalized belief propagation (GBP)\cite{yedida2005constucting}. Although they both cluster multiple nodes of the original graph into a node in a hyper-graph (clique tree or region graph) and propagate message in the new graph. Junction tree method provides an exact inference method while GBP is an approximate inference method. How to convert a general graph to a junction tree or region graph is not trivial, and the structure of the converted graph makes a significant difference in the inference performance. Additionally, the former's complexity relies on tree-width (the size of the largest clique minuses one), which means that there is not too much to gain by using junction tree compared to enumerating configurations in very dense graphs. For the latter, constructing a region graph itself is a challenging task and still needs further study.
 
 
-Apart from the work of transforming the problem represented by a loopy graph into one of a hyper-graph, research is more active in approximate methods. Starting from the stationary point explanation of Bethe free energy in \cite{Yedidia:2000:GBP:3008751.3008848}, variants of BP have been derived to improve BP in general graph. Fractional BP in \cite{Wiegerinck:2002:FBP:2968618.2968673} applies a correction coefficient to each factor and obtain a message passing rule similarly as minimization of Bethe free energy. 
-Generalized BP in \cite{Yedidia:2000:GBP:3008751.3008848} propagates belief between different regions of a graph; and damping BP in \cite{Pretti2005damping} updates beliefs by combining old and new beliefs. \cite{wainwright2008graphical} relaxes a Bethe free energy into an upper bound of partition function and the tree-reweighed BP is obtained. Technique such as damping is also explored to seek convergence of BP and its variants \cite{Pretti2005damping}.
-Another track falls to the variational method framework, introduced by Opper and Winther \cite{Opper:2000:GPC:1121900.1121911} and Minka \cite{Minka:2001:EPA:647235.720257, Minka:2001:FAA:935427}, namely expectation propagation (EP). In EP, a simpler factorized distribution defined in exponential distribution family is used to approximate the original complex distribution, and an intuitive factor-wise refinement procedure is used to find such an approximate distribution. The method intuitively minimizes a localized Kullback-Leibler (KL) divergence. This is discussed further in \cite{divergence-measures-and-message-passing} and  shows unifying view of message passing algorithms. The following work, stochastic EP by \cite{yingzhen2015sep}, explores EP's variant method for applications to large dataset.
+Apart from the work of transforming the problem represented by a loopy graph into one of a hyper-graph, research is more active in approximate methods. Starting from the stationary point explanation of Bethe free energy in \cite{Yedidia:2000:GBP:3008751.3008848}, variants of BP have been derived to improve BP in a general graph. Fractional BP in \cite{Wiegerinck:2002:FBP:2968618.2968673} applies a correction coefficient to each factor and obtain a message passing rule similarly as minimization of Bethe free energy. 
+Generalized BP in \cite{Yedidia:2000:GBP:3008751.3008848} propagates belief between different regions of a graph, and damping BP in \cite{Pretti2005damping} updates beliefs by combining old and new beliefs. \cite{wainwright2008graphical} relaxes a Bethe free energy into an upper bound of the partition function and the tree-reweighed BP is obtained. Technique such as damping is also explored to seek convergence of BP and its variants \cite{Pretti2005damping}.
+Another track falls to the variational method framework, introduced by Opper and Winther \cite{Opper:2000:GPC:1121900.1121911} and Minka \cite{Minka:2001:EPA:647235.720257, Minka:2001:FAA:935427}, namely expectation propagation (EP). In EP, a simpler factorized distribution defined in exponential distribution family is used to approximate the original complex distribution, and an intuitive factor-wise refinement procedure is used to find such an approximate distribution. The method intuitively minimizes a localized Kullback-Leibler (KL) divergence. This is discussed further in \cite{divergence-measures-and-message-passing} and shows a unifying view of message passing algorithms. The following work, stochastic EP by \cite{yingzhen2015sep}, explores EP's variant method for applications to large datasets.
 
-Due to the fundamental role of BP for probabilistic inference and related applications, research of seeking insight of BP performance and study on its convergence have been constantly carried out. \cite{weiss2000correctness} presents the convergence condition of BP in graphs containing a single loop. Work in \cite{heskes2004uniqueness} analyzes the Bethe free energy and offers sufficient conditions on uniqueness of BP fixed point.
-{Closely related to the content of this chapter, \cite{mooij2012sufficient-conditions} studies the sufficient conditions for BP convergence to a unique fixed point (as shall be seen in our paper, our convergence analysis is on a message-passing method that generalizes BP).}
-\cite{nima2013stochasticBP} proposes a BP algorithm for high-dimensional discrete space and gives the convergence conditions of it. \cite{frederic2019fast} shows that BP can converge to global optima of Bethe energy when BP runs in Ising models that are ferromagnetic (neighboring nodes prefer to be aligned).
+Due to the fundamental role of BP for probabilistic inference and related applications, research of seeking insight into BP performance and study on its convergence have been constantly carried out. \cite{weiss2000correctness} presents the convergence condition of BP in graphs containing a single loop. Work in \cite{heskes2004uniqueness} analyzes the Bethe free energy and offers sufficient conditions on the uniqueness of BP fixed point.
+{Closely related to the content of this chapter, \cite{mooij2012sufficient-conditions} studies the sufficient conditions for BP convergence to a unique fixed point ($\alpha$-BP generalizes BP).}
+\cite{nima2013stochasticBP} proposes a stochastic BP algorithm for high-dimensional discrete spaces and gives the convergence conditions of it. \cite{frederic2019fast} shows that BP can converge to global optima of Bethe energy when BP runs in Ising models that are ferromagnetic (neighboring nodes prefer to be aligned).
 There are also works trying to give insight on variant methods of BP. Namely,
 \cite{du2017convergenceBP, malioutov2006walk-sums} studies the convergence condition of Gaussian BP inference over distributed linear Gaussian models. \cite{roosta2008reweighed_sum_product} gives the convergence analysis of a reweighted BP algorithm, and offers the necessary and sufficient condition for subclasses of homogeneous graphical models with identical potentials.
 
