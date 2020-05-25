@@ -1,0 +1,28 @@
+* Comments part
+** TODO Global comments
+   - [ ] spacing after figures
+   - [ ] Capitalize section/chapter~ref
+
+** Chapter 4
+   DEADLINE: <2020-05-29 Fri>
+   :LOGBOOK:
+   CLOCK: [2020-05-25 Mon 17:27]--[2020-05-25 Mon 17:27] =>  0:00
+   :END:
+
+   - [ ] eq 3.10, 3.11. Not understanding comments
+   - [ ] eq 3.23
+   - [ ] eq 3.36, i think it is fine without abs insides, since p-norm operation gives the abs operation by default
+   - [ ] adding one example and two remarks
+   - [ ] Figure 3.3, pending
+   - [ ] corollary 1 comments on page 36 and page 34
+   - [ ] page 38 on performance of the prior trick
+
+* Thesis Schedule
+  
+** First round candidate filtering
+   SCHEDULED: <2020-05-29 Fri 10:00>
+   :LOGBOOK:
+   CLOCK: [2020-05-25 Mon 17:27]--[2020-05-25 Mon 17:27] =>  0:00
+   :END:
+
+   [[file:candidate_list.md][Candidate list]]
