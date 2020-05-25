@@ -1,9 +1,13 @@
+#+TAGS: @theis @work @schedule
+#+TAGS: theis work schedule
+#+TAGS: laptop car pc sailboat
+
 * Comments part
 ** TODO Global comments
    - [ ] spacing after figures
    - [ ] Capitalize section/chapter~ref
 
-** Chapter 4
+** Chapter 4 
    DEADLINE: <2020-05-29 Fri>
    :LOGBOOK:
    CLOCK: [2020-05-25 Mon 17:27]--[2020-05-25 Mon 17:27] =>  0:00
