@@ -15,12 +15,12 @@ SOURCES=source
 
 
 
-all: clean-compile	
+all: clean-compile
 
 clean-compile: clean compile .showerrors run
 
 compile:
-	$(LATEXMK) $(LATEXMKOPT) -pdflatex="$(LATEX) $(NONSTOP) $(LATEXOPT)  %O %S" $(MAIN) &> /tmp/errors
+	$(LATEXMK) $(LATEXMKOPT) -pdflatex="$(LATEX) $(NONSTOP) $(LATEXOPT) %O %S" $(MAIN) &> /tmp/errors
 
 run:
 	xdg-open $(MAIN).pdf
@@ -31,7 +31,7 @@ run:
 .refresh:
 	touch .refresh
 
-continuous: $(MAIN).tex .refresh $(SOURCES) 
+continuous: $(MAIN).tex .refresh $(SOURCES)
 	$(LATEXMK) $(LATEXMKOPT) $(CONTINUOUS) \
 	-pdflatex="$(LATEX) $(LATEXOPT) $(NONSTOP) %O %S" $(MAIN)
 
