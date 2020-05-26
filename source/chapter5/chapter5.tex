@@ -197,7 +197,7 @@ Neural network based methods parameterize the beliefs or marginal distributions 
 In the cases of complete graphs, the advantage of RENN is significant, compared with other methods as shown in Table~\ref{tab:nll-training-full-n3n4}. Other benchmark methods fall behind RENN by a distinct difference, given the size of graphs is relatively small. The results here actually agree with inference experiments shown in Table~\ref{tab:infer-full-n9} and \ref{tab:infer-full-n16}, where partition function estimations of other benchmark methods have much larger errors. As for the average time per epoch, neural network based models still are faster than iterative message-passing methods in general.
 
 
-\section{Further Discussion on Learning}
+\section{Further Discussion on Learning}\label{chpt5:sec:futher-dis-learning}
 
 The parameter learning becomes more challenge when variable vector $\bm{x}$ is \textit{partial observed}. Denote $\bm{x} = [\bm{x}_U, \bm{x}_O]$, where $\bm{x}_O$ is the observed part and $\bm{x}_U$ is unobserved part that is also known as hidden or latent variable. Then the joint distribution becomes $p(\bm{x}; \bm{\theta}) = p(\bm{x}_U, \bm{x}_O; \bm{\theta})$. Since it is only partially observed, we can not maximize the complete evidence log-likelihood as what we did in section~\ref{chpt5:sec:learning-mrf}. Instead, we marginalize the latent variable $\bm{x}_U$ out first
 \begin{equation}\label{chpt5:eq:patial-likelihood}
