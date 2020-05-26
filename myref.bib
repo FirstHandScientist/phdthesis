@@ -1231,15 +1231,6 @@ numpages = {10},
 location = {Long Beach, California, USA},
 series = {NIPS'17}
 }
-@incollection{NIPS2017_7136,
-title = {Hierarchical Implicit Models and Likelihood-Free Variational Inference},
-author = {Tran, Dustin and Ranganath, Rajesh and Blei, David},
-booktitle = {Advances in Neural Information Processing Systems 30},
-editor = {I. Guyon and U. V. Luxburg and S. Bengio and H. Wallach and R. Fergus and S. Vishwanathan and R. Garnett},
-pages = {5523--5533},
-year = {2017},
-publisher = {Curran Associates, Inc.},
-}
 @InProceedings{pmlr-v70-gilmer17a,
   title = 	 {Neural Message Passing for Quantum Chemistry},
   author = 	 {Justin Gilmer and Samuel S. Schoenholz and Patrick F. Riley and Oriol Vinyals and George E. Dahl},
@@ -2315,4 +2306,60 @@ doi = {10.1007/BF02980577},
   publisher = {American Physical Society},
   doi = {10.1103/PhysRev.65.117},
   url = {https://link.aps.org/doi/10.1103/PhysRev.65.117}
+}
+We propose a fast non-iterative approximate inference method that uses a feedforward network to implement efficient exact sampling from the variational posterior. The model and this inference network are trained jointly by maximizing a variational lower bound on the log-likelihood. Although the naive estimator of the inference network gradient is too high-variance to be useful, we make it practical by applying several straightforward model-independent variance reduction techniques. Applying our approach to training sigmoid belief networks and deep autoregressive networks, we show that it outperforms the wake-sleep algorithm on MNIST an
+
+@InProceedings{mnih14NVIL,
+  title = 	 {Neural Variational Inference and Learning in Belief Networks},
+  author = 	 {Andriy Mnih and Karol Gregor},
+  booktitle = 	 {Proceedings of the 31st International Conference on Machine Learning},
+  pages = 	 {1791--1799},
+  year = 	 {2014},
+  editor = 	 {Eric P. Xing and Tony Jebara},
+  volume = 	 {32},
+  number =       {2},
+  series = 	 {Proceedings of Machine Learning Research},
+  address = 	 {Bejing, China},
+  month = 	 {22--24 Jun},
+  publisher = 	 {PMLR},
+  pdf = 	 {http://proceedings.mlr.press/v32/mnih14.pdf},
+  url = 	 {http://proceedings.mlr.press/v32/mnih14.html},
+  abstract = 	 {Highly expressive directed latent variable models, such as sigmoid belief networks, are difficult to train on large datasets because exact inference in them is intractable and none of the approximate inference methods that have been applied to them scale well. We propose a fast non-iterative approximate inference method that uses a feedforward network to implement efficient exact sampling from the variational posterior. The model and this inference network are trained jointly by maximizing a variational lower bound on the log-likelihood. Although the naive estimator of the inference network gradient is too high-variance to be useful, we make it practical by applying several straightforward model-independent variance reduction techniques. Applying our approach to training sigmoid belief networks and deep autoregressive networks, we show that it outperforms the wake-sleep algorithm on MNIST and achieves state-of-the-art results on the Reuters RCV1 document dataset.}
+}
+@inproceedings{Li2020To,
+title={To Relieve Your Headache of Training an MRF, Take AdVIL},
+author={Chongxuan Li and Chao Du and Kun Xu and Max Welling and Jun Zhu and Bo Zhang},
+booktitle={International Conference on Learning Representations},
+year={2020},
+url={https://openreview.net/forum?id=Sylgsn4Fvr}
+}
+@misc{ranganath2015hierarchical,
+    title={Hierarchical Variational Models},
+    author={Rajesh Ranganath and Dustin Tran and David M. Blei},
+    year={2015},
+    eprint={1511.02386},
+    archivePrefix={arXiv},
+    primaryClass={stat.ML}
+}
+@article{adler2018banach,
+  author    = {Jonas Adler and
+               Sebastian Lunz},
+  title     = {Banach Wasserstein {GAN}},
+  journal   = {CoRR},
+  volume    = {abs/1806.06621},
+  year      = {2018},
+  url       = {http://arxiv.org/abs/1806.06621},
+  archivePrefix = {arXiv},
+  eprint    = {1806.06621},
+  timestamp = {Mon, 13 Aug 2018 16:46:52 +0200},
+  biburl    = {https://dblp.org/rec/journals/corr/abs-1806-06621.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
+}
+@misc{gemici2018primaldual,
+    title={Primal-Dual Wasserstein GAN},
+    author={Mevlana Gemici and Zeynep Akata and Max Welling},
+    year={2018},
+    eprint={1805.09575},
+    archivePrefix={arXiv},
+    primaryClass={stat.ML}
 }
