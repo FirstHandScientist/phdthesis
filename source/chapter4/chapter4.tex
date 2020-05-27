@@ -830,7 +830,7 @@ The other aspect is the feasible space of variational distribution $b$. For a ge
 
 In the coming section, i.e., Section~\ref{chpt5:undirecteLearning}, we would discuss the topic of learning MRF via the inference methods referred to in this section.
 
-\section{Literature}
+\section{Literature}\label{chpt4:sec:literature}
 
 The well-known standard belief propagation (BP) algorithm \cite{Pearl1982reverend,kschischang2001factor_graph} has been popularly used in exact inference problems of tree-structures graphs and approximate inference in general graphs (loopy BP), which was explained by the Bethe free energy minimization later on \cite{yedidia2003understanding}. The attempts in improving the approximate inference with BP and gaining better insight has been made, where the representative works are fractional BP \cite{Wiegerinck:2002:FBP:2968618.2968673}, tree-reweighted BP \cite{wainwright2008graphical}, generalized BP (GBP, , also known as parent-to-child algorithm) \cite{Yedidia:2000:GBP:3008751.3008848, yedida2005constucting}, etc. 
 GBP propagates messages between regions (clusters of nodes), is generally more accurate than loopy BP but is more complex than BP. Fix points of GBP that operate on region graphs, correspond to stationary points of region-based free energy of the region graphs. Depending on the graph size and potential functions, the iterative message-passing algorithms can take a long time to converge (if they can converge) before returning inference results. Inference results of these message-passing methods can degenerate significantly in dense graphs (graphs with too many circles).
