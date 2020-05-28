@@ -253,13 +253,12 @@ With such a solution framework ready, we detail the practical learning algorithm
 
 \section{Practical Solution to GenHMM}
 
-In this section, we detail the solution for realizing and learning GenHMM. % We begin with introducing flow model that we are going to use to model our generators $\{\bm{g}_{s, \kappa}| s\in\Ss, \kappa=1,2,\cdots, K\}$ for efficient likelihood computation. The learning method of HMM is followed then. 
-The convergence of GenHMM is also discussed in this section.
+In this section, we detail the solution for realizing and learning GenHMM. The convergence of GenHMM is also discussed in this section.
 
 
 \subsection{Realizing $\bm{g}_{s,\kappa}$ by a Flow Model}
 Each generator $\bm{g}_{s,\kappa}$ is realized as a feed-forward neural netowrk.
-We define generator $\bm{g}_{s,\kappa}$ as a $L$-layer flow model and formulate its mapping by layer-wise concatenation:
+We define generator $\bm{g}_{s,\kappa}$ as a $L$-layer flow model and formulate its mapping by layer-wise concatenation
 \begin{equation}
 \bm{g}_{s,\kappa}=\bm{g}_{s,\kappa}^{[L]}\circ \bm{g}_{s,\kappa}^{[L-1]}\circ \cdots \circ \bm{g}_{s,\kappa}^{[1]},
 \end{equation}
@@ -274,7 +273,7 @@ By decomposing the flow model into layer-wise mapping, the part of Jacobian matr
   \end{array}
 \end{equation}
 where $\nabla{\bm{f}_{s,\kappa}^{[l]}}$ is the Jacobian of the mapping from the $l$-th layer to the $(l-1)$-th layer, i.e., the inverse transformation.
-Then
+Then \eqref{chpt7:eq:change-variable-flow} can be further rewritten as
 \begin{equation}\label{chpt7:eq:change-variable-flow-layer}
   \log{p(\bm{x}| s, \kappa; \bm{\theta}_{s, \kappa})} = \log{p_{s,\kappa}(\bm{f}_{s, \kappa}(\bm{x}))} + \sum_{l=1}^{L}\log{\bigg| \det\left(\nabla{\bm{f}_{s,\kappa}^{[l]}}\right)\bigg|}.
 \end{equation}
@@ -282,8 +281,8 @@ Then
 
 \subsection{Learning of GenHMM}\label{subsec:optmGenHMM}
 In this section, we address the problem of learning GenHMM.
-\subsubsection{Generative Model Learning}
-The generative model learning is actually to solve the problem in \eqref{eq:generative-model-update}, which can be further divided into two subproblems: i) generator learning; ii) mixture weights of generators learning. Let us define notations:
+\subsubsection{Learning of Generators and Their Weights}
+The learning of mixture of generators is actually to solve the problem in \eqref{eq:generative-model-update}, which can be further divided into two subproblems: i) generator learning; ii) mixture weights of generators learning. Let us define notations:
 $\bm{\Pi} = \left\{  \bm{\pi}_{s}| s\in \Ss \right\}$, $\bm{\Theta}=\left\{ \bm{\theta}_s| s\in \Ss \right\}$. 
 Then the problem in \eqref{eq:generative-model-update} becomes
 \begin{align}\label{eq:sub-gm}
@@ -307,7 +306,7 @@ where $T^r$ is the length of the $r$-th sequential data. In \eqref{eq:obj-q-gen-
   &=  \frac{p(\kappa, \ubm{x}| s; \bm{H}^{\mathrm{old}})}{p(\ubm{x}| s,\bm{H}^{\mathrm{old}})} \nonumber \\
   & = \frac{\pi_{s, \kappa}^{\mathrm{old}} p(\bm{x}| s, \kappa, \bm{H}^{\mathrm{old}})}{\sum_{\kappa=1}^{K}  \pi_{s, \kappa}^{\mathrm{old}} p(\bm{x}| s, \kappa,\bm{H}^{\mathrm{old}})},
 \end{align}
-where the last equation is due to the fact that $\bm{x}_t$ among sequence $\ubm{x}$ only depends on $s_t, \kappa_t$. 
+where the last equation is due to the fact that $\bm{x}_t$ among sequence $\ubm{x}$ is conditional independent of $\bm{x}_{t^{\prime}}$ given $s_t$ and $\kappa_t$ for $t\neq t^{\prime}$. 
 
 By substituting \eqref{chpt7:eq:change-variable-flow-layer} into \eqref{eq:obj-q-gen-mix-log}, we have cost function for neural networks as
 \begin{align}\label{eq:obj-q-gen-mix}
@@ -315,7 +314,7 @@ By substituting \eqref{chpt7:eq:change-variable-flow-layer} into \eqref{eq:obj-q
   =& \frac{1}{R}\hspace{-3pt}\sum_{r=1}^{R}\hspace{-3pt} \sum_{t=1}^{{T}^{r}}\hspace{-3pt} \sum_{\smtr{s}{t}{r}=1}^{|\Ss|} \hspace{-3pt} \sum_{\smtr{\kappa}{t}{r}=1}^{K}p(\smtr{s}{t}{r}| \ubmr{x}{r}; \bm{H}^{\mathrm{old}})p(\smtr{\kappa}{t}{r}|\smtr{s}{t}{r}, \ubmr{x}{r}; \bm{H}^{\mathrm{old}}) \nonumber\\
   &\left[ \log\, p_{\smtr{s}{t}{r}, \smtr{\kappa}{t}{r}}(\bm{f}_{\smtr{s}{t}{r}, \smtr{\kappa}{t}{r}}(\bmtr{x}{t}{r})) + \sum_{l=1}^{L}\log\,| \det (\nabla{\bm{f}_{s,\kappa}^{[l]}})|\right].
 \end{align}
-The generators of GenHMM simply use standard Gaussian distribution for latent variables $\bm{z} \sim p_{s,\kappa}(\bm{z})$. Since training dataset can be too large to do whole-dataset iterations, batch-size stochastic gradient decent can be used to maximize $\Qq(\bm{\Theta; \bm{H}^{\mathrm{old}}})$ w.r.t. parameters of generators.
+The generators of GenHMM simply use standard Gaussian distribution for latent variables $\bm{z} \sim p_{s,\kappa}(\bm{z})$. Since training dataset can be too large to do whole-dataset iterations, batch-size stochastic gradient descent can be used to maximize $\Qq(\bm{\Theta; \bm{H}^{\mathrm{old}}})$ w.r.t. parameters of generators.
 
 In what follows we address the problem $\max_{\bm{\Pi}} \Qq(\bm{\Pi}; \bm{H}^{\mathrm{old}})$ in our generative model learning. The conditional distribution of hidden variable $\kappa$, $\pi_{s, \kappa} = p(\kappa | s; \bm{H})$, is obtained by solving the following problem
 \begin{align}\label{opm:pi}
@@ -346,7 +345,7 @@ where
 Here $p(s| \ubm{x}; \bm{H}^{\mathrm{old}})$ can be computed by forward-backward algorithm, while $p(\kappa | s, \ubm{x}; \bm{H}^{\mathrm{old}})$ is given by \eqref{eq:kappa-posterior}.
 
 
-With the generative model learning obtained, it remains to solve the initial distribution update and transition matrix update of HMM in GenHMM, i.e. the problem \eqref{eq:init-distribution-update} and \eqref{eq:transition-update}. These two problems are basically two constrained optimization problems. The solutions to them are available in literature \cite{Bishop:2006:PRM:1162264}. But to keep learning algorithm for GenHMM complete, we give the update rules for $\bm{q}$ and $\bm{A}$ as follows.
+With the generator learning obtained, it remains to solve the initial distribution update and transition matrix update of HMM in GenHMM, i.e. the problem \eqref{eq:init-distribution-update} and \eqref{eq:transition-update}. These two problems are basically two constrained optimization problems. The solutions to them are available in literature \cite{Bishop:2006:PRM:1162264}. But to keep the learning algorithm for GenHMM complete, we give the update rules for $\bm{q}$ and $\bm{A}$ as follows.
 
 \subsubsection{Initial Probability Update}
 The problem in \eqref{eq:init-distribution-update} can be reformulated as
@@ -371,8 +370,8 @@ The problem \eqref{eq:transition-update} can be reformulated as
 \begin{align}
   &\Qq(\bm{A}; \bm{H}^{\mathrm{old}})\nonumber \\
   % &= \sum_{r=1}^{R} \EE_{p(\ubmr{s}{r}| \ubmr{x}{r}; \bm{H}^{\mathrm{old}})} \left[\log\,\sum_{t=1}^{T^{(r)}-1}p(\smtr{s}{t+1}{r}|\smtr{s}{t}{r}; {A})\right] \nonumber\\
-  &= \sum_{r=1}^{R} \sum_{\ubmr{s}{r}}{p(\ubmr{s}{r}| \ubmr{x}{r}; \bm{H}^{\mathrm{old}})} \sum_{t=1}^{T^{r}-1}\log\,p(\smtr{s}{t+1}{r}|\smtr{s}{t}{r}; \bm{H}) \nonumber \\
-  &= \sum_{r=1}^{R} \hspace{-0.1cm}\sum_{t=1}^{T^{r}-1}\hspace{-0.1cm} \sum_{\smtr{s}{t}{r}=1}^{|\Ss|}\hspace{-0.05cm}\sum_{\smtr{s}{t+1}{r}=1}^{|\Ss|}\hspace{-0.2cm}{p(\smtr{s}{t}{r}, \smtr{s}{t+1}{r}| \ubmr{x}{r};\hspace{-0.05cm} \bm{H}^{\mathrm{old}})} \log\,p(\smtr{s}{t+1}{r}|\smtr{s}{t}{r}; \bm{H}).
+  =& \sum_{r=1}^{R} \sum_{\ubmr{s}{r}}{p(\ubmr{s}{r}| \ubmr{x}{r}; \bm{H}^{\mathrm{old}})} \sum_{t=1}^{T^{r}-1}\log\,p(\smtr{s}{t+1}{r}|\smtr{s}{t}{r}; \bm{H}) \nonumber \\
+  =& \sum_{r=1}^{R} \hspace{-0.1cm}\sum_{t=1}^{T^{r}-1}\hspace{-0.1cm} \sum_{\smtr{s}{t}{r}=1}^{|\Ss|}\hspace{-0.05cm}\sum_{\smtr{s}{t+1}{r}=1}^{|\Ss|}\hspace{-0.2cm}{p(\smtr{s}{t}{r}, \smtr{s}{t+1}{r}| \ubmr{x}{r};\hspace{-0.05cm} \bm{H}^{\mathrm{old}})} \log\,p(\smtr{s}{t+1}{r}|\smtr{s}{t}{r}; \bm{H}).
 \end{align}
 
 Since $\bm{A}_{i, j}  = p(\smtr{s}{t+1}{r}=j|\smtr{s}{t}{r}=i; \bm{H})$ is the element of transition matrix $\bm{A}$, the solution to the problem
@@ -396,7 +395,7 @@ In pursuit of representing a dataset by GenHMM,  we are interested if the learni
 \end{proposition}
 
 \begin{proof}
-  We begin with the comparison of loglikelihood evaluated under $\bm{H}^{\mathrm{new}}$ and $\bm{H}^{\mathrm{old}}$. The loglikelihood of dataset given by $\hat{p}(\ubm{x})$ can be reformulated as
+  We begin with the comparison of log-likelihood evaluated under $\bm{H}^{\mathrm{new}}$ and $\bm{H}^{\mathrm{old}}$. The log-likelihood of dataset given by $\hat{p}(\ubm{x})$ can be reformulated as
   \begin{align*}
     &\EE_{\hat{p}(\ubm{x})}\left[ \log\,p(\ubm{x};\bm{H}^{\mathrm{new}}) \right] \nonumber \\
     =& \EE_{\hat{p}(\ubm{x}),p(\ubm{s},\ubm{\kappa}| \ubm{x}; \bm{H}^{\mathrm{old}})}\left[ \log\,\frac{p(\ubm{x}, \ubm{s}, \ubm{\kappa}; \bm{H}^{\mathrm{new}})}{p(\ubm{s}, \ubm{\kappa}|\ubm{x}; \bm{H}^{\mathrm{old}})}\right]  \nonumber \\
@@ -485,12 +484,12 @@ In pursuit of representing a dataset by GenHMM,  we are interested if the learni
   \end{algorithmic}
 \end{algorithm}
 
-To summarize the learning solution in Section~\ref{subsec:optmGenHMM}, we wrap our algorithm into pseudocode as shown in Algorithm~\ref{algo:genhmm}. We use Adam \cite{DBLP:journals/corr/KingmaB14} optimizer for optimization w.r.t. the parameters of generators in GenHMM. As shown from line $6$ to $10$ in Algorithm~\ref{algo:genhmm}, the batch-size stochastic gradient decent can be naturally embedded into the learning algorithm of GenHMM.
+To summarize the learning solution in Section~\ref{subsec:optmGenHMM}, we wrap our algorithm into pseudocode as shown in Algorithm~\ref{algo:genhmm}. We use the Adam \cite{DBLP:journals/corr/KingmaB14} optimizer for optimization w.r.t. the parameters of generators in GenHMM. As shown from line $6$ to $10$ in Algorithm~\ref{algo:genhmm}, the batch-size stochastic gradient decent can be naturally embedded into the learning algorithm of GenHMM.
 
-As described by the pseudocode in Algorithm~\ref{algo:genhmm}, the learning of GenHMM is divided into optimizations w.r.t. to generators' parameters $\bm{\Theta}$, initial probability $\bm{q}$ of hidden state, transition matrix $\bm{A}$, and generator mixture weights $\bm{\Pi}$. Different from the optimization w.r.t. to $\bm{q}$, $\bm{A}$ and $\bm{\Pi}$, which have optimal solutions, generator learning usually cannot give optimal solution to problem $\max_{\bm{\Theta}} \Qq(\bm{\Theta}; \bm{H}^{\mathrm{old}})$. In fact, given that no optimal $\bm{\Theta}$ is obtained, learning of GenHMM can still converge as long as quantity $\Qq(\bm{\Theta}; \bm{H})$ are improving in iterations in Algorithm~\ref{algo:genhmm}, where the inequalities in Proposition~\ref{proposition1} still hold. Therefore optimal $\bm{\Theta}$ in each iteration is not required for convergence of GenHMM as long as the loss in $\eqref{eq:obj-q-gen-mix}$ is getting improved.
+As described by the pseudocode in Algorithm~\ref{algo:genhmm}, the learning of GenHMM is divided into optimizations w.r.t. to generators' parameters $\bm{\Theta}$, initial probability $\bm{q}$ of hidden state, transition matrix $\bm{A}$, and generator mixture weights $\bm{\Pi}$. Different from the optimization w.r.t. to $\bm{q}$, $\bm{A}$ and $\bm{\Pi}$, which have optimal solutions, generator learning usually cannot give optimal solution to problem $\max_{\bm{\Theta}} \Qq(\bm{\Theta}; \bm{H}^{\mathrm{old}})$. In fact, given that no optimal $\bm{\Theta}$ is obtained, learning of GenHMM can still converge as long as quantity $\Qq(\bm{\Theta}; \bm{H})$ are improving in iterations in Algorithm~\ref{algo:genhmm}, since the inequalities in Proposition~\ref{proposition1} still hold. Therefore optimal $\bm{\Theta}$ in each iteration is not required for convergence of GenHMM as long as the loss in $\eqref{eq:obj-q-gen-mix}$ is getting improved.
 \begin{remark}
   \label{chpt7:rmk:generative-discriminative}
-  {The above discussed maximum likelihood training is also known as generative training, which models the signal generating process with the defined generative model. An alternative training principle is discriminative training where a conditional distribution is modeled directly and optimized as the objective. Since generative models characterize a joint distribution, it is usually possible to train a generative model via discriminative training, with mildly alternating the objective function. On the contrast, it is usually not likely to train a discriminative model via generative training, since the direct conditional probability modeling of the discriminative model omits modeling distribution of the observable signal that is highly structured. These two training principles are possible to be used together at different training phases. For instance, apply the generative training firstly, and then a discriminative training phase for the generative-trained model which acts as a parameter fine-tuning phase \cite{hinton2012deepSpeech}. See detailed insightful discussion about these two principles by \cite{lasserre2006principled}.
+  {The above discussed maximum likelihood training is also known as generative training, which models the signal generating process with the defined generative model. An alternative training principle is discriminative training where a conditional distribution is modeled directly and optimized as the objective. Since a generative model characterizes a joint distribution, it is usually possible to train a generative model via discriminative training, with mildly alternating the objective function. On the contrast, it is usually not likely to train a discriminative model via generative training, since the direct conditional probability modeling of the discriminative model omits modeling distribution of the observable signal that is highly structured. These two training principles are possible to be used together at different training phases. For instance, apply the generative training firstly, and then a discriminative training phase for the generative-trained model which acts as a parameter fine-tuning phase \cite{hinton2012deepSpeech}. See detailed insightful discussion about these two principles by \cite{lasserre2006principled}.
   }
 \end{remark}
 
