@@ -694,36 +694,35 @@ It can be seen that the complexity in discriminative training of GenHMM increase
 The classes prior probabilities $p(\bm{H}_{i}),~i=1,2$ are infered from the training dataset. We use \textit{dGenHMM} to denote that GenHMM is finely tuned by discriminative training with objective \eqref{chpt7:eq:discriminative}, after default generative training phase.
 
 \subsection{Patient Dataset}
-The bedside monitor signals of $48$ premature infants which have been under care at a NICU in Karolinska University hospital have been collected.
-The sequential signals used are the Respiratory Frequency (RF), the beat to beat interval (RRi) and the blood oxygen saturation level ($Sp0_2$).
+The bedside monitor signals of $48$ premature infants who have been under care at a NICU in Karolinska University hospital have been collected.
+The sequential signals used are the Respiratory Frequency (RF), the beat to beat interval (RRi), and the blood oxygen saturation level ($Sp0_2$).
 All signals were sampled at $1$Hz and segmented into $20$ minutes time frames.
-Each time frame was then labelled based on information retrieved from the Electronic Health Records (EHR).
+Each time frame was then labeled based on information retrieved from the Electronic Health Records (EHR).
 Similar to heart rate observation system (HeRO) \cite{hicksHeartRateObservation2013, griffinHeartRateCharacteristics2005}, a logistic regession method using RRi, we aim at detecting septic events earlier than clinical suspicion of sepsis.
 In our study we use a threshold of $72$h prior to blood sample, to label a time frame as \textit{septic}, according to the practices in \cite{gurMathematicalAlgorithmDetection2014}.
 A time frame was retro-actively labeled $1$ if it occurred at most $72$h prior to clinical suspicion.
-A time frame was labeled $0$ if it occured during a day when no notes were entered in the infant's EHR.
-All time frames not labeled either $0$ or $1$ were discarded.
+A time frame was labeled $0$ if it occurred during a day when no notes were entered in the infant's EHR.
+Time frames not labeled either $0$ or $1$ were discarded.
 
 Our final dataset consists of $22$ patients, among which $13$ males and $9$ females.
 The birth weight was $1.61\pm1.10$ kg and the gestational age at birth $30.9\pm6.14$.
-Our dataset consisted in $3501$ time frames, among which 1774 with label $0$ and $1727$ with label $1$.
+Our dataset consisted of $3501$ time frames, among which 1774 with label $0$ and $1727$ with label $1$.
 All time frames have a constant size of $T=1200$ samples and are $3$-dimensional.
 
 \subsection{Experimental Setup}
-To make the experiments more interesting, we add a set of basedline methods in the comparisons.
-Baseline model HeRO is used, which uses the RRi singal for feature extraction and applies a logistic regression to the extracted features. See \cite{honore2020icassp} about detailed feature extraction.
-Pulse oximetry predictive score (POPS) \cite{sullivanEarlyPulseOximetry2018} uses mean, standard  deviation,  skewness,  kurtosis  and  min-maxcross correlation between RR-interval and $SpO2$ to compute a risk score. POPS is also a logistic regression method. 
-For the logistic regressions, optimal regularization parameter was found with cross-validation and grid search in the set $\{10^{-5}, \cdots, 10^{5}\}$.
+To make the experiments more interesting, we add a set of baseline methods in the comparisons.
+Baseline model HeRO is used, which uses the RRi signal for feature extraction and applies a logistic regression to the extracted features. See \cite{honore2020icassp} about detailed feature extraction.
+Pulse oximetry predictive score (POPS) \cite{sullivanEarlyPulseOximetry2018} uses mean, standard deviation, skewness, kurtosis, and min-max cross correlation between RR-interval and $SpO2$ to compute a risk score. POPS is also a logistic regression method. 
+For the logistic regressions, the optimal regularization parameter was found with cross-validation and grid search in the set $\{10^{-5}, \cdots, 10^{5}\}$.
 
-We performed binary classification by the maximum likelihood with GMM-HMM, GenHMM and dGenHMM as probabilistic models.
+We performed binary classification by the maximum likelihood with GMM-HMM, GenHMM, and dGenHMM as probabilistic models.
 The GMM-HMM hyper-parameters were the number of states and the number of Gaussians per state.
-% The number of Gaussians per states was varied between \{2,4,6,8,10,12\}.
 For GenHMM and dGenHMM, the hyper-parameters were the number of states, the number of flows per state, chain-length in each flow, the size of the networks in a coupling layer of a flow.
 Given our limited input dimension, the size of the networks in the coupling layers was fixed to $3$.
 The chain-length in the coupling layer of each flow was varied between $4$ and $8$.
 We varied the number of states in HMMs in $\{3,6,9\}$ and show the results in Table~\ref{table:results:HMM}.
 
-We repeated our experiments $3$ times and each time a random $30\%$ of the patients was left out for testing.
+We repeated our experiments $3$ times and each time a random $30\%$ of the patients were left out for testing.
 This lead to $2361 \pm 353$ time series in the training sets and $1140 \pm 353$ time series in the testing sets.
 We used a different set of input features to test our models in different conditions.
 HMMs are trained on raw time series and on raw time series with first and second order derivatives.
@@ -787,20 +786,20 @@ dGenHMM     & &                     &   0.70 $\pm$ 0.10  \\ \hline
 
 
 The HeRO reaches $57\%$ of correct classifications.
-It outperforms the POPS algorithms which reaches only $54\%$, which is method with the lowest performance here.
-As expected, the logistic classifiers are outperformed by Gaussian kernel SVM, ELM and our HMMs.
+It outperforms the POPS algorithms which reach only $54\%$, which is a method with the lowest performance here.
+As expected, the logistic classifiers are outperformed by Gaussian kernel SVM, ELM, and our HMMs.
 SVM and ELM both reach an accuracy of $60\%$ and comparable standard deviations of $4\%$ and $3\%$.
 This is lower than dGenHMM which reaches $70\%$ accuracy and outperforms both GenHMM $67\%$, and GMM-HMM $68\%$.
 These results are contrasted by the large standard deviation of dGenHMM $10\%$, which is larger than both GenHMM $4\%$ and GMM-HMM $3\%$.
 When the number of states increases to $n=6$ and $n=9$, GMM-HMM reaches $68\%$ and $69\%$ which outperforms GenHMM, and dGenHMM.
-When the raw sequential input is augmented with $1^{st}$ and $2^{nd}$ order derivatives, GMM-HMM reaches its highest performance at $75\%$ accuracy.
+When the raw sequential input is augmented with $1$-{st} and $2$-{nd} order derivatives, GMM-HMM reaches its highest performance at $75\%$ accuracy.
 GenHMM and dGenHMM also reach their highest performance with $69\%$ at $n=3$ and $72\%$ at $n=6$.
 
-Improved performance of GenHMM using discriminative training (dGenHMM) was significant for both $1^{st}$ and $2^{nd}$ order derivatives as argument to inputs.
+Improved performance of GenHMM using discriminative training (dGenHMM) was significant for both $1$-{st} and $2$-{nd} order derivatives as argument to inputs.
 This is encouraging, given that our current discriminative training consists of only one epoch, i.e. one-epoch fine-tuning.
-The performance of GMM-HMM is also significantly increased when adding $1^{st}$ and $2^{nd}$ order derivative, reaching higher than dGenHMM.
-This phenomenon is due to two aspects: i) model complexity; ii) dataset size. GMM-HMM is a simpler model compared to GenHMM. Besides, the number of samples in dataset is limited, i.e. only $3501$ time frames. These two major factors together explain why the performance of GMM-HMM increase while that of GenHMM decreases as $n$ increase from $3$ to $9$ (a increase of each corresponding model's complexity).
-Also discriminative trianing, dGenHMM, does improve the performance. The insufficient training data makes its final accuracy fall behind the much simpler model GMM-HMM.
+The performance of GMM-HMM is also significantly increased when adding $1$-{st} and $2$-{nd} order derivative, reaching higher than dGenHMM.
+This phenomenon is due to two aspects: i) model complexity; ii) dataset size. GMM-HMM is a simpler model compared to GenHMM. Besides, the number of samples in the dataset is limited, i.e. only $3501$ time frames. These two major factors together explain why the performance of GMM-HMM increases while that of GenHMM decreases as $n$ increases from $3$ to $9$ (an increase of each corresponding model's complexity).
+Also, discriminative training, dGenHMM, does improve performance. The insufficient training data makes its final accuracy fall behind the much simpler model GMM-HMM.
 
 \section{Summary}
 In this chapter, we discussed the representation and learning of a temporal model. With the simplification of Markov assumption and the concept of template, the HMMs, as simplified dynamic Bayesian networks, have a good balance between representation power and computation efficiency. Thus, they have been widely used in disciplines in practice. The modeling expressivity is further enriched by the introduction of normalizing flows. The developed GenHMM is a generic model and allows large freedom of customization, which can be employed for practical applications such as the demonstrated speech recognition and sepsis detection. Due to the presence of hidden variables, the learning of GenHMM is carried out within expectation maximization framework. Adaption is made to accommodate the neural network implementation of normalizing flows and large datasets in parameter learning.
