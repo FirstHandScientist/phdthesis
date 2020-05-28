@@ -4,7 +4,7 @@
 
 When learning with partially observed variables in graphical models, EM is one of the most widely used frameworks in practices. In directed graphical models, immediate relief is that we do not need to deal with the partition function $Z(\bm{\theta})$ anymore. However, it does not mean directed graphical models with partially observed variables are trivial to learn. The 'missing' data (corresponding to unobserved variables) still poses challenges in model learning, since we want to have the partial evidence (observed) well explained by our model while keeping its ability to track uncertainty of the 'unobserved' part.
 
-As discussed in section~\ref{chpt2:sec:learning-principles}, the presence of latent or hidden variables is either due to the data availability or abstraction of data generating. Once the dataset is given, the option left to us is the choice of the model that we plan to use to approximate the true distribution $p^{\ast}$ which actually generated the dataset. This process is to select one model from a set of models, i.e. hypothesis space, based on the likelihood criteria. If the hypothesis space is very limited, the ability to represent our true $p^{\ast}$ is limited, leading to the inherent error. This type of inherent limitation brings learning \textit{bias} before we start to fit the parameters.
+As discussed in Section~\ref{chpt2:sec:learning-principles}, the presence of latent or hidden variables is either due to the data availability or abstraction of data generating. Once the dataset is given, the option left to us is the choice of the model that we plan to use to approximate the true distribution $p^{\ast}$ which actually generated the dataset. This process is to select one model from a set of models, i.e. hypothesis space, based on the likelihood criteria. If the hypothesis space is very limited, the ability to represent our true $p^{\ast}$ is limited, leading to the inherent error. This type of inherent limitation brings learning \textit{bias} before we start to fit the parameters.
 Therefore, given that the dataset is large and representative enough, we hope that the hypothesis space is highly expressive such that we are more likely to be able to represent $p^{\ast}$ with a selected model from the hypothesis space. This naturally requires our model to be flexible and expressive.
 
 Gaussian mixture model has been successfully applied widely with EM framework, which also enjoys the closed-form update rule in iterations. The advantage comes with the limitation of linear dependency and free parameters that can be tuned, i.e. limitation of flexibility. To explore further, we discuss more flexible models beyond Gaussian in this chapter. We start by inducing the normalizing flows that are going to be used as probabilistic models in place of Gaussian models. A normalizing flow can consist of as many non-linear transformations as needed, and thus is highly flexible. Besides, likelihood computation ability remains and it allows efficient sampling in normalizing flow. But closed-form iterative update solutions are not available anymore. We, therefore, need to design the practical algorithms to model learning in EM framework.
@@ -188,7 +188,7 @@ The induced probability density function of $\bm{x} \in \mathbb{R}^N$ of the pro
                          &= \textstyle \sum_{k=1}^K \pi_k  p(\bm{g}(\bm{z};\boldsymbol{\theta}_k)).
 \end{align}
 We use $\bm{\Theta}$ to denote the set of all parameters $ \{\bm{\pi},\bm{\theta}_1, \dots, \bm{\theta}_K \}$, where $\bm{\pi} = \left\{ \pi_1, \hdots, \pi_K \right\}$ is the prior distribution of the generators. Note that $\pi_k \geq 0$ and $\sum_{k=1}^K \pi_k =1$. The mixture model
-in \eqref{eq:FirstMixtureModel} is called a generator mixture model (GenMM). The graphical model of GenMM is illustrated in Figure~\ref{chpt6:fig:genmm-graph}. The plate in this figure is common notation in template models (see \cite[section~6]{koller2009pgm}), denoting we can instantiate multiple tuple $(\bm{z}, \bm{x}, \bm{s})$ instances having dependency as illustrated. Furthermore, the
+in \eqref{eq:FirstMixtureModel} is called a generator mixture model (GenMM). The graphical model of GenMM is illustrated in Figure~\ref{chpt6:fig:genmm-graph}. The plate in this figure is common notation in template models (see \cite[Section~6]{koller2009pgm}), denoting we can instantiate multiple tuple $(\bm{z}, \bm{x}, \bm{s})$ instances having dependency as illustrated. Furthermore, the
 signal diagram of GenMM is illustrated in Figure~\ref{dia-emgm-nm}. The GenMM can be considered as a high-complexity model because each mixture component $p_k(\bm{x})$ has its own parameter set $\bm{\theta}_k$. 
 % the parameter $\boldsymbol{\theta}_k$ varies across $K$ mixture components.
 
@@ -220,7 +220,7 @@ Assume that a value $\bm{\Theta}^{\mathrm{old}}$ of the parameter set $\bm{\Thet
   \end{equation}
 \end{enumerate}
 
-For the GenMM in \eqref{eq:FirstMixtureModel}, realizing EM requires computation of $\gamma_k$ in the E-step and computation of the joint likelihood $\log{\pi_k p_k(\bm{x})}$ in the M-step. They require explicit computation of the conditional density $p_k(\bm{x}) =  p(\bm{g}_k(\bm{z})) =p(\bm{g}(\bm{z};\bm{\theta}_k))$. This is fulfilled by flow realization of generator $\bm{g}_k$. Since the chain-step transformations can be any complex mapping as discussed in section~\ref{chpt6:sec:flow}, they can be implemented by neural networks. The neural network implementation allows high flexibility of GenMM in representing complex-structured multi-modal data.
+For the GenMM in \eqref{eq:FirstMixtureModel}, realizing EM requires computation of $\gamma_k$ in the E-step and computation of the joint likelihood $\log{\pi_k p_k(\bm{x})}$ in the M-step. They require explicit computation of the conditional density $p_k(\bm{x}) =  p(\bm{g}_k(\bm{z})) =p(\bm{g}(\bm{z};\bm{\theta}_k))$. This is fulfilled by flow realization of generator $\bm{g}_k$. Since the chain-step transformations can be any complex mapping as discussed in Section~\ref{chpt6:sec:flow}, they can be implemented by neural networks. The neural network implementation allows high flexibility of GenMM in representing complex-structured multi-modal data.
 
 \subsubsection{EM Learning of GenMM}
 \label{sec-algo-genmm}
@@ -298,7 +298,7 @@ The update of prior follows the solution
 \begin{equation}\label{eq-pi-solution}
   \pi_k^{\mathrm{new}} = \frac{1}{\abs{\Dd}}\sum_{i=1}^{\abs{\Dd}}\gamma_k^{i}(\bm{\Theta}^{\mathrm{old}}).
 \end{equation}
-The detail to get the solution is derived in the section~\ref{subsubsec:Proof_for_update}. For a given dataset with empirical distribution $P_d(\bm{x})$,
+The detail to get the solution is derived in the Section~\ref{subsubsec:Proof_for_update}. For a given dataset with empirical distribution $P_d(\bm{x})$,
 $\gamma_k$ is evaluated with batch data in order to calculate the cost
 $\Qq\left(\bm{\Theta},\bm{\Theta}^{\mathrm{old}}\right)$ and to update the
 parameter $\bm{\theta}_k$ of $\bm{g}_k$. We accumulate the values of $\gamma_k$ of batches and
@@ -409,7 +409,7 @@ We have
 
 Similar to the case of GenMM, realization of the corresponding EM
 algorithm associated with LatMM in Figure~\ref{eq:SecondMixtureModel}
-also requires computing the posterior distribution $\ubar{\gamma}_k$ and the joint likelihood $\log{\pi_k p_k(\bm{x})}$. They require explicit computation of the conditional density function $p_k(\bm{x}) = p(\bm{g}(\bm{z};\bm{\theta})| s_k=1) = p(\bm{g}(\bm{z};\bm{\theta});\bm{\mu}_k, \bm{C}_k) $. In LatMM, $\bm{g}(\bm{z}): \mathbb{R}^N \rightarrow \mathbb{R}^N$ is also required to be invertible. Again $\bm{g}$ is instantiated from flow $\tilde{\bm{g}}$ in section~\ref{chpt6:sec:flow}. Then, the problem is how to learn the parameters of LatMM.
+also requires computing the posterior distribution $\ubar{\gamma}_k$ and the joint likelihood $\log{\pi_k p_k(\bm{x})}$. They require explicit computation of the conditional density function $p_k(\bm{x}) = p(\bm{g}(\bm{z};\bm{\theta})| s_k=1) = p(\bm{g}(\bm{z};\bm{\theta});\bm{\mu}_k, \bm{C}_k) $. In LatMM, $\bm{g}(\bm{z}): \mathbb{R}^N \rightarrow \mathbb{R}^N$ is also required to be invertible. Again $\bm{g}$ is instantiated from flow $\tilde{\bm{g}}$ in Section~\ref{chpt6:sec:flow}. Then, the problem is how to learn the parameters of LatMM.
 
 \begin{figure}
   \centering
@@ -504,7 +504,7 @@ the latent source $p(\bm{z})$ can be obtained by an affine transform from
 the standard Gaussian, {i.e.}, $\bm{z}_k \sim p_k(\bm{z})$ can be
 obtained by a linear layer of neural network with $\bm{z}_k = \bm{\mu}_k
 + \bm{\sigma}_k \bm{\epsilon}, \bm{\epsilon} \sim \mathsf{N}(\bm{0}, \bm{I})$.
-According to section~\ref{subsec-latmm}, the posterior and objective function in M-step of LatMM can be computed as
+According to Section~\ref{subsec-latmm}, the posterior and objective function in M-step of LatMM can be computed as
 \begin{align}\label{em-latmm-gamma}
   \ubar{\gamma}_k(\ubar{\bm{\Theta}}^{\mathrm{old}}) = \frac{\pi_k^{\mathrm{old}} p_k\left(\bm{z}\right)}{\sum_{j=1}^K\;\pi_j^{\mathrm{old}} p_j\left(\bm{z}\right)}\bigg|_{\bm{z}=\bm{f}(\bm{x})},
 \end{align}
@@ -516,7 +516,7 @@ According to section~\ref{subsec-latmm}, the posterior and objective function in
     +\log{p_k\left(\bm{f}(\bm{x}^{(i)}); \bm{\mu}_k, \bm{\sigma}_k^2\right)}\bigg], 
 \end{align}
 where $\bm{f}$ is the inverse of $\bm{g}$.
-Similar to section~\ref{sec-algo-genmm}, update of prior $\bm{\pi}$
+Similar to Section~\ref{sec-algo-genmm}, update of prior $\bm{\pi}$
 follows $\pi_k \leftarrow \EE_{\Dd}[ \ubar{\gamma}_k(\bm{x})
 ]$. However, we need to consider the following issue when learning the parameters of
 Gaussian mixture source $p(\bm{z}) = \sum_{k=1}^K \pi p_k(\bm{z})$. If a component of the mixture source overfits and collapses onto a data sample, the likelihood can be large but the parameter learning can be problematic. This problem is known as the singularity problem of Gaussian mixture \cite{Bishop:2006:PRM:1162264}.
@@ -733,7 +733,7 @@ In this section, we evaluate our proposed mixture models for generating samples 
 
 \subsection{Experimental setup}\label{sub:exp-setup}
 
-We use the flow-based neural network for implementing generators $\{\bm{g}_k\}_{k=1}^{K}$ in GenMM and $\bm{g}$ in LatMM. Specifically, we use the Glow structure \cite{2018arXiv180703039K} that is developed based on RealNVP \cite{2016arXiv160508803D} and NICE \cite{DBLP:journals/corr/DinhKB14}. As introduced in section~\ref{chpt6:sec:flow}, the operation in \eqref{chpt6:eq-gl-coupling} is a coupling
+We use the flow-based neural network for implementing generators $\{\bm{g}_k\}_{k=1}^{K}$ in GenMM and $\bm{g}$ in LatMM. Specifically, we use the Glow structure \cite{2018arXiv180703039K} that is developed based on RealNVP \cite{2016arXiv160508803D} and NICE \cite{DBLP:journals/corr/DinhKB14}. As introduced in Section~\ref{chpt6:sec:flow}, the operation in \eqref{chpt6:eq-gl-coupling} is a coupling
 layer. Since only a part of the input is mapped non-linearly after a coupling
 layer and the rest part remains the same, permutation \cite{2016arXiv160508803D} or $1\times 1$ convolution operation \cite{2018arXiv180703039K} is used to alternate the part of the signal that goes through identity mapping. In Glow structure, a basic \textit{flow step} is the concatenation of three layers: Actnorm (element-wise affine mapping)
 $\rightarrow$ $1\times 1$ Convolution (for permutation purpose)

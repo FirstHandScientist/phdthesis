@@ -12,7 +12,7 @@ We would begin with the explanation of why inference is required in learning, af
 
 \section{Why does learning of an MRF require inference?}
 \label{chpt5:sec:learning-mrf}
-Let us continue the discussion on learning in section~\ref{chpt2:sec:learning-principles}. Given a sample $\bm{x}$, the log-likelihood of this evidence is
+Let us continue the discussion on learning in Section~\ref{chpt2:sec:learning-principles}. Given a sample $\bm{x}$, the log-likelihood of this evidence is
 \begin{align}\label{chpt5:eq:one-sample-likely}
   l(\bm{x};\bm{\theta}) = \log{\tilde{p}(\bm{x}; \bm{\theta})} - \log{Z(\bm{\theta})}.
 \end{align}
@@ -199,7 +199,7 @@ In the cases of complete graphs, the advantage of RENN is significant, compared 
 
 \section{Further Discussion on Learning}\label{chpt5:sec:futher-dis-learning}
 
-The parameter learning becomes more challenge when variable vector $\bm{x}$ is \textit{partial observed}. Denote $\bm{x} = [\bm{x}_U, \bm{x}_O]$, where $\bm{x}_O$ is the observed part and $\bm{x}_U$ is unobserved part that is also known as hidden or latent variable. Then the joint distribution becomes $p(\bm{x}; \bm{\theta}) = p(\bm{x}_U, \bm{x}_O; \bm{\theta})$. Since it is only partially observed, we can not maximize the complete evidence log-likelihood as what we did in section~\ref{chpt5:sec:learning-mrf}. Instead, we marginalize the latent variable $\bm{x}_U$ out first
+The parameter learning becomes more challenge when variable vector $\bm{x}$ is \textit{partial observed}. Denote $\bm{x} = [\bm{x}_U, \bm{x}_O]$, where $\bm{x}_O$ is the observed part and $\bm{x}_U$ is unobserved part that is also known as hidden or latent variable. Then the joint distribution becomes $p(\bm{x}; \bm{\theta}) = p(\bm{x}_U, \bm{x}_O; \bm{\theta})$. Since it is only partially observed, we can not maximize the complete evidence log-likelihood as what we did in Section~\ref{chpt5:sec:learning-mrf}. Instead, we marginalize the latent variable $\bm{x}_U$ out first
 \begin{equation}\label{chpt5:eq:patial-likelihood}
   l(\bm{x}_O; \bm{\theta}) = \log{\sum_{\bm{x}_U}p(\bm{x}_U, \bm{x}_O; \bm{\theta})} = \log{Z(\bm{x}_O;\bm{\theta})} - \log{Z(\bm{\theta})},
 \end{equation}

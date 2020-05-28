@@ -44,7 +44,7 @@ $d$ is optimal. In optimal case of the discriminator, objective of
 
 
 \begin{remark}[Connection to Wassertein GAN]\label{chpt8:rmk:wgan}
-  It is interesting to note that the OT minimization can be connected to GANs via its duality form. According to Kantorovich-Rubinstein duality \cite[section~2.4]{2018arXiv180300567P}\cite{villani2008optimal},
+  It is interesting to note that the OT minimization can be connected to GANs via its duality form. According to Kantorovich-Rubinstein duality \cite[Section~2.4]{2018arXiv180300567P}\cite{villani2008optimal},
   \begin{equation}\label{chpt8:eq:kr-duality}
      T(p^{\ast},p) = \sup_{\|f\|_{L} \leq 1} \EE_{p^{\ast}(\bm{x})}\left[ f(\bm{x}) \right] -
   \EE_{p(\bm{x};\bm{\theta})}\left[ f(\bm{x}) \right],
@@ -100,7 +100,7 @@ where $\mathrm{diag}(\bm{u})$ is a matrix with diagonal entries from vector $\bm
 
 \subsection{EOT based Generative Models}
 
-In this subsection, we propose two generative models.
+In this section, we propose two generative models.
 We first develop an EOT based generative model handling signals/data directly. This models is referred to as EOT generative model (EOTGM). 
 In our second model, we use a
 representation mapping where EOT cost is used to optimize the
