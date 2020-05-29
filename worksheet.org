@@ -1,32 +1,67 @@
-#+TAGS: @theis @work @schedule
-#+TAGS: theis work schedule
-#+TAGS: laptop car pc sailboat
+#+FILETAGs: :work:thesis:
 
-* Comments part
+* Thesis Writing
+
+  ask someone to proofreading from phd students.
+  
 ** TODO Global comments
    - [ ] spacing after figures
-   - [ ] Capitalize section/chapter~ref
+   - [X] Capitalize section/chapter~ref
 
-** Chapter 4 
+
+** TODO Abstract writing and ACKs
+
+** Chapter 3 
    DEADLINE: <2020-05-29 Fri>
    :LOGBOOK:
    CLOCK: [2020-05-25 Mon 17:27]--[2020-05-25 Mon 17:27] =>  0:00
    :END:
 
-   - [ ] eq 3.10, 3.11. Not understanding comments
-   - [ ] eq 3.23
-   - [ ] eq 3.36, i think it is fine without abs insides, since p-norm operation gives the abs operation by default
+   - [X] eq 3.10, 3.11. Not understanding comments
+   - [X] eq 3.23
+   - [ ] eq 3.36, i think it is fine without abs insides, since p-norm operation gives the abs operation by default, I should use abs value notation over z - z
    - [ ] adding one example and two remarks
+   - [ ] quality of the fix point, add one example of coding about :
+   https://documents.epfl.ch/groups/i/ip/ipg/www/2010-2011/Statistical_Physics_for_Communication_and_Computer_Science/mct-new.pdf 
+   https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=910578 
    - [ ] Figure 3.3, pending
+   \textfloatset
+   https://tex.stackexchange.com/questions/60477/remove-space-after-figure-and-before-text
    - [ ] corollary 1 comments on page 36 and page 34
    - [ ] page 38 on performance of the prior trick
 
-* Thesis Schedule
-  
-** First round candidate filtering
-   SCHEDULED: <2020-05-29 Fri 10:00>
-   :LOGBOOK:
-   CLOCK: [2020-05-25 Mon 17:27]--[2020-05-25 Mon 17:27] =>  0:00
-   :END:
+** TODO Chapter 4
+   - [ ] Revision with comments
 
-   [[file:candidate_list.md][Candidate list]]
+** TODO Chapter 5
+   - [ ] Revision with comments
+
+** TODO Chapter 6
+
+** TODO Chapter 7
+   - [ ] Poofreading
+
+** TODO Chapter 8
+   - [ ] Poofreading
+   
+
+** Conclusion writing
+*** DONE Conclusion writing
+    CLOSED: [2020-05-27 Wed 16:00]
+*** TODO Conclusion polishing
+
+
+    
+* Thesis Schedule
+
+** TODO Candidate List
+   - [ ] Timo Koski, Professor emeritus of mathematical statistics, KTH, [Profile Page](https://people.kth.se/~tjtkoski/), [Google scholar](https://scholar.google.com/citations?hl=en&user=1CuzidAAAAAJ&view_op=list_works&sortby=pubdate). Or check his colleagues.
+     [KTH Mathematics](https://www.math.kth.se/matstat/staff_e.html) 
+   - [ ] https://people.epfl.ch/nicolas.macris 
+   - [ ] http://www.csc.kth.se/forskning/cb/cbp/homepages/eaurell/kth_homepage.html 
+   - [ ] https://www.kth.se/profile/azizpour 
+   - [ ] https://www.kth.se/profile/johnf
+   - [ ] https://scholar.google.com/citations?hl=en&user=wr3CtKAAAAAJ&view_op=list_works&sortby=pubdate
+   - [ ] https://www.chalmers.se/en/staff/Pages/henk-wymeersch.aspx , https://sites.google.com/site/hwymeers/ 
+   - uppsalar, there maybe groups
+
