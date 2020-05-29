@@ -747,7 +747,7 @@ GMM-HMM				&   0.68 $\pm$ 0.03 		&    \textbf{0.68} $\pm$ 0.03 			&   	\textbf{0
 GenHMM  				&   0.67 $\pm$ 0.04     	&    0.61 $\pm$ 0.08   		    &   	0.63 $\pm$ 0.08   \\
 dGenHMM 				&   \textbf{0.70} $\pm$ 0.10    	&	   0.67 $\pm$ 0.06      	    &  	    0.65 $\pm$ 0.04    \\
    \toprule
-                                        \multicolumn{4}{c}{Raw sequential input + $1^{st}$ and $2^{nd}$ order derivatives}\\
+                                        \multicolumn{4}{c}{Raw sequential input + $1$st and $2$ed order derivatives}\\
 \hline
 GMM-HMM				&   \textbf{0.75} $\pm$ 0.05 		&    \textbf{0.74} $\pm$ 0.08			&   	\textbf{0.74} $\pm$ 0.05  	\\
 GenHMM  				&   0.69 $\pm$ 0.07    	&    0.66 $\pm$ 0.06  		    &   	0.59 $\pm$ 0.08  \\
@@ -792,12 +792,12 @@ SVM and ELM both reach an accuracy of $60\%$ and comparable standard deviations 
 This is lower than dGenHMM which reaches $70\%$ accuracy and outperforms both GenHMM $67\%$, and GMM-HMM $68\%$.
 These results are contrasted by the large standard deviation of dGenHMM $10\%$, which is larger than both GenHMM $4\%$ and GMM-HMM $3\%$.
 When the number of states increases to $n=6$ and $n=9$, GMM-HMM reaches $68\%$ and $69\%$ which outperforms GenHMM, and dGenHMM.
-When the raw sequential input is augmented with $1$-{st} and $2$-{nd} order derivatives, GMM-HMM reaches its highest performance at $75\%$ accuracy.
+When the raw sequential input is augmented with $1$st and $2$nd order derivatives, GMM-HMM reaches its highest performance at $75\%$ accuracy.
 GenHMM and dGenHMM also reach their highest performance with $69\%$ at $n=3$ and $72\%$ at $n=6$.
 
-Improved performance of GenHMM using discriminative training (dGenHMM) was significant for both $1$-{st} and $2$-{nd} order derivatives as argument to inputs.
+Improved performance of GenHMM using discriminative training (dGenHMM) was significant for both $1$st and $2$nd order derivatives as argument to inputs.
 This is encouraging, given that our current discriminative training consists of only one epoch, i.e. one-epoch fine-tuning.
-The performance of GMM-HMM is also significantly increased when adding $1$-{st} and $2$-{nd} order derivative, reaching higher than dGenHMM.
+The performance of GMM-HMM is also significantly increased when adding $1$st and $2$nd order derivative, reaching higher than dGenHMM.
 This phenomenon is due to two aspects: i) model complexity; ii) dataset size. GMM-HMM is a simpler model compared to GenHMM. Besides, the number of samples in the dataset is limited, i.e. only $3501$ time frames. These two major factors together explain why the performance of GMM-HMM increases while that of GenHMM decreases as $n$ increases from $3$ to $9$ (an increase of each corresponding model's complexity).
 Also, discriminative training, dGenHMM, does improve performance. The insufficient training data makes its final accuracy fall behind the much simpler model GMM-HMM.
 
