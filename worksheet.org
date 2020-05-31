@@ -1,34 +1,37 @@
 #+FILETAGs: :work:thesis:
 
 * Thesis Writing
+  Notation explanation
+  [X]: stands for checked tasks
+  [ ]: stands for unfinished tasks
+  [-]: pending task. Revised but need a second check.
 
-  ask someone to proofreading from phd students.
-  
 ** TODO Global comments
    - [ ] spacing after figures
    - [X] Capitalize section/chapter~ref
-
+   - [X] Space after Figures/tables. \textfloatset, ref to [[https://tex.stackexchange.com/questions/60477/remove-space-after-figure-and-before-text][here]]
+   - [ ] Ask someone (phd students) to proofreading.
 
 ** TODO Abstract writing and ACKs
 
-** Chapter 3 
+** Chapter 3 [5/8]
    DEADLINE: <2020-05-29 Fri>
    :LOGBOOK:
    CLOCK: [2020-05-25 Mon 17:27]--[2020-05-25 Mon 17:27] =>  0:00
    :END:
 
-   - [X] eq 3.10, 3.11. Not understanding comments
-   - [X] eq 3.23
-   - [ ] eq 3.36, i think it is fine without abs insides, since p-norm operation gives the abs operation by default, I should use abs value notation over z - z
-   - [ ] adding one example and two remarks
+   [[file:comments/c3main.pdf][Commented file of Chapter 3]] (c3main.pdf)
+  
+   - [X] eq (3.10), (3.11). Not understanding comments
+   - [X] eq (3.23). Adding one example to symmetric property of potentials, i.e., the Ising model.
+   - [X] eq (3.36), +I think it is fine without abs insides, since p-norm operation gives the abs operation by default,+ I should use abs value notation over z - z. The correction is made.
+   - [-] Interpretation to Theorem and Corollary results. A remark is added.
    - [ ] quality of the fix point, add one example of coding about :
-   https://documents.epfl.ch/groups/i/ip/ipg/www/2010-2011/Statistical_Physics_for_Communication_and_Computer_Science/mct-new.pdf 
-   https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=910578 
+     - https://documents.epfl.ch/groups/i/ip/ipg/www/2010-2011/Statistical_Physics_for_Communication_and_Computer_Science/mct-new.pdf 
+     - https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=910578 
    - [ ] Figure 3.3, pending
-   \textfloatset
-   https://tex.stackexchange.com/questions/60477/remove-space-after-figure-and-before-text
-   - [ ] corollary 1 comments on page 36 and page 34
-   - [ ] page 38 on performance of the prior trick
+   - [X] corollary 1 comments on page 36 and page 34
+   - [X] page 38 on performance of the prior trick
 
 ** TODO Chapter 4
    - [ ] Revision with comments
