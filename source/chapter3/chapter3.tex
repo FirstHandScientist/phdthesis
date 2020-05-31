@@ -409,17 +409,17 @@ For notation simplicity, we use $\theta_{ts}=\theta_{ts}(1, 1)$ and $\theta_s = 
   
   Concatenating all $(t\rightarrow s) \in \vec{\Ee}$ for inequality \eqref{eq:ratio_cvg_step} gives
   \begin{equation}\label{eq:ratio-update-ineq}
-    \abs{\bm{z}^{(n+1)} - \bm{z}^{n}} \leq \bm{M}(\alpha, \bm{\theta})\abs{\bm{z}^{(n)} - \bm{z}^{n-1}},
+    \abs{\bm{z}^{(n+1)} - \bm{z}^{n}} \leq \bm{M}(\alpha, \bm{\theta})\abs{\bm{z}^{(n)} - \bm{z}^{(n-1)}},
   \end{equation}
   where $\bm{M}(\bm{\alpha}, \bm{\theta})$ is defined in \eqref{eq:matrix_m}, and $\leq$ in \eqref{eq:ratio-update-ineq} denotes the element-wise inequality. Also note that in \eqref{eq:ratio-update-ineq}, the $\abs{\cdot}$ operator on a vector is a bit abused and denotes the element-wise absolute operation on the vector. From \eqref{eq:ratio-update-ineq}, we could further have
   \begin{align}\label{eq:ine-normp-iteration}
-    \norm{\bm{z}^{(n+1)} - \bm{z}^{n}}_{p} &\leq \norm{\bm{M}(\alpha, \bm{\theta})(\bm{z}^{(n)} - \bm{z}^{n-1})}_{p},               
+    \norm{\bm{z}^{(n+1)} - \bm{z}^{n}}_{p} &\leq \norm{\bm{M}(\alpha, \bm{\theta})\abs{\bm{z}^{(n)} - \bm{z}^{(n-1)}}}_{p},               
   \end{align}
   where $1\leq p < \infty$, and $\norm{\cdot}_p$ denotes the ${\ell}^p$-norm.
 
   When applying $p=2$ to \eqref{eq:ine-normp-iteration}, we have
   \begin{align}\label{eq:ieq-largest-singular}
-    \normd{\bm{z}^{(n+1)} - \bm{z}^{(n)}} &\leq \normd{\bm{M}(\bm{\alpha}, \bm{\theta})(\bm{z}^{(n)} - \bm{z}^{(n-1)})} \nonumber \\
+    \normd{\bm{z}^{(n+1)} - \bm{z}^{(n)}} &\leq \normd{\bm{M}(\bm{\alpha}, \bm{\theta})\abs{\bm{z}^{(n)} - \bm{z}^{(n-1)}}} \nonumber \\
                                           &\leq \lambda^{\ast}(\bm{M})\normd{\bm{z}^{(n)} - \bm{z}^{(n-1)}},
   \end{align}
   where $\lambda^{\ast}(\bm{M})$ denotes the largest singular value of matrix
