@@ -63,7 +63,6 @@ These problems can be treated nicely with probabilistic models via Bayesian logi
     \label{fig:mrf-communication}
   \end{subfigure}
   \caption{Different perspectives on probabilistic graphic models. \ref{fig:dag-coronavirus} A directed graphical model (Bayesian network) for Example~\ref{example-corona}. \ref{fig:mrf-communication} A toy undirected graphical model (Markov random field).}
-  \hspace{1cm}
 \end{figure}
 
 
@@ -93,7 +92,6 @@ The advantage of its representation power is one of the reasons that lead to its
   \end{tikzpicture}
   \caption{Two key aspects in practical graphical models.}
   \label{fig:intro-pgm}
-  \hspace{1cm}
 \end{figure}
 
 A probabilistic graphical model coupled with its underlying distribution is a powerful tool for effective inference, apart from its advantage of representation power. It allows us to answer queries with the help of the underlining distribution when practical inference algorithms are provided, which meets our need for reasoning with uncertainty. In addition to inference, probabilistic graphical models also support learning from data. With a certain amount of data available, a probabilistic graphical model can be learned to explain the observed data better in addition to align with our subjective understanding of a domain, e.g., our prior knowledge. The learned graphical model can serve to do inference with higher confidence in return. The interplay between inference and learning in probabilistic graphical models is illustrated in Figure~\ref{fig:intro-pgm}. As would become clear in Part~\ref{part:learning}, the inference may be needed to carry out model learning as well, apart from the above mutual-benefiting interaction.
