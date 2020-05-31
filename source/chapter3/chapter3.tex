@@ -464,8 +464,7 @@ For notation simplicity, we use $\theta_{ts}=\theta_{ts}(1, 1)$ and $\theta_s = 
 \end{remark}
 
 \begin{remark}
-  \textcolor{blue}{discussion on the quality of the fix point}
-  The condition in Theorem~\ref{thm:normd} tells if $\alpha$-BP converges to a fixed point. However, it does not guarantee if the converged fixed point is a global optimum. Error analysis of BP and its variant is a challenging task. We discussed that the exact inference of BP in tree-structured graphs in Section~\ref{chpt2:sec:inference-mp}. The global optimum of loopy BP algorithm can be guaranteed in rare cares, e.g., a ferromagnetic Ising model in which neighbors prefer to be in aligned states\cite{frederic2019fast}.
+  The condition in Theorem~\ref{thm:normd} tells if $\alpha$-BP converges to a fixed point. However, it does not guarantee if the converged fixed point is a global optimum. Error analysis of BP and its variant is a challenging task. We discussed that the exact inference of BP in tree-structured graphs in Section~\ref{chpt2:sec:inference-mp}. The global optimum of the loopy BP algorithm can be guaranteed in rare cares. For instance, a ferromagnetic Ising model in which neighbors prefer to be in aligned states can get guaranteed global optimum with loopy BP\cite{frederic2019fast}. A successful application of (loopy) BP with bounded errors lies in coding theory, e.g., running a BP decoder on a graph whose structure (degrees of nodes) fulfills certain constraints can have its error bounded \cite{richardson2001}\cite[Section~7.2]{richardson2008}. 
 \end{remark}
 
 Given the fact that $\alpha$-BP would converge if the condition in Theorem~\ref{thm:normd} is fulfilled, the largest singular value computation for large-sized graph could be nontrivial. We give alternative sufficient conditions for the convergence of $\alpha$-BP.
