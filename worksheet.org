@@ -7,14 +7,13 @@
   [-]: pending task. Revised but need a second check.
 
 ** TODO Global comments
-   - [ ] spacing after figures
    - [X] Capitalize section/chapter~ref
    - [X] Space after Figures/tables. \textfloatset, ref to [[https://tex.stackexchange.com/questions/60477/remove-space-after-figure-and-before-text][here]]
    - [ ] Ask someone (phd students) to proofreading.
 
 ** TODO Abstract writing and ACKs
 
-** Chapter 3 [5/8]
+** TODO Chapter 3 [5/8]
    DEADLINE: <2020-05-29 Fri>
    :LOGBOOK:
    CLOCK: [2020-05-25 Mon 17:27]--[2020-05-25 Mon 17:27] =>  0:00
@@ -26,12 +25,16 @@
    - [X] eq (3.23). Adding one example to symmetric property of potentials, i.e., the Ising model.
    - [X] eq (3.36), +I think it is fine without abs insides, since p-norm operation gives the abs operation by default,+ I should use abs value notation over z - z. The correction is made.
    - [-] Interpretation to Theorem and Corollary results. A remark is added.
-   - [ ] quality of the fix point, add one example of coding about :
+   - [-] quality of the fix point, add one example of coding about :
      - https://documents.epfl.ch/groups/i/ip/ipg/www/2010-2011/Statistical_Physics_for_Communication_and_Computer_Science/mct-new.pdf 
      - https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=910578 
+       I added a Remark discussing some cases (special graphs or graph structures) where error analysis of BP has been studied, at the end of Theorem 1.
    - [ ] Figure 3.3, pending
+     - Yeah, the order of legend was generated random in the figure where I used a python library. I am leaving the trivial issue pended.
    - [X] corollary 1 comments on page 36 and page 34
    - [X] page 38 on performance of the prior trick
+   - [ ] Studying Corollary 1 with consideration of the presence of the edge/connection probability? (Comment triggered by the pre-fixed edge probability in ER model)
+     - yes, I agree that by further taking the edge probability into result (3.43) or (3.44). I also realized this after briefing the LDPC code references in above item. It could be useful when there is application scenarios with random connections of graphs. In practices, when a problem is given, its graphical model is usually fixed. For there cases, it may not be useful to have a convergence condition for random graphs. I am pending this. We can come back to it if the said conditions turn out to be useful for applications.
 
 ** TODO Chapter 4
    - [ ] Revision with comments
