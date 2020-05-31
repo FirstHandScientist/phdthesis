@@ -51,7 +51,7 @@ $d$ is optimal. In optimal case of the discriminator, objective of
 \end{equation}
 $\|f\|_L$ is a constraint for $f$ such that $f$ belong to the 1-Lipschitz function
 family. That is to say, $f$ in \eqref{chpt8:eq:kr-duality} can be any function from the 1-Lipschitz function
-family (which is different from the binary discriminator in \eqref{chpt8:eq:eq-gan}). Then minimization of the OT distance is formulated as a min-max problem \cite{2017arXiv170107875A}, termed as Wasserstein GAN (WGAN),
+family (which is different from the binary discriminator in \eqref{chpt8:eq:eq-gan}) that maximizes the objective in \eqref{chpt8:eq:kr-duality}. Then minimization of the OT distance is formulated as a min-max problem \cite{2017arXiv170107875A}, termed as Wasserstein GAN (WGAN),
 \begin{equation}\label{chpt8:eq:eq-wgan}
   \min_{\bm{g}} \max_{\|f\|_{L} \leq 1} \EE_{\bm{x} \sim p^{\ast}(\bm{x})}\left[ f(\bm{x}) \right] -
   \EE_{\bm{z}\sim p(\bm{z})}\left[ f(\bm{g}(\bm{z})) \right],
@@ -84,7 +84,7 @@ to a requirement that the joint distribution $\pi$ has a high entropy.
 \end{equation}
 where $\bm{\alpha},\bm{\beta}$ are dual variables, $(\cdot)^{\intercal}$ means transpose, $\alpha_i$ is the $i$th element of $\bm{\alpha}$, and $\beta_i$ is the $j$th element of $\bm{\beta}$
 
-One benefit of having the dual variables is that the optimal dual vector $\bm{\beta}^{\ast}$
+One benefit of having the dual variables in this form is that the optimal dual vector $\bm{\beta}^{\ast}$
 of \eqref{eq-dual-wsd} is a subgradient of $W(p^{\ast},p)$ with respect to $p$. Thus, if we can efficiently obtain the optimal dual vector $\bm{\beta}^{\ast}$, we can learning our model distribution $p(\bm{x}; \bm{\theta})$ via the subgradient $\bm{\beta}^{\ast}$.
 
 There is a computationally efficient algorithm called Sinkhorn
@@ -98,16 +98,15 @@ solve~\eqref{eq-dual-wsd}, which alternatively scales the rows and columns of ma
 where $\mathrm{diag}(\bm{u})$ is a matrix with diagonal entries from vector $\bm{u}$ and $\mathds{1}_N$ is a column vector with ones.
 
 
-\subsection{EOT based Generative Models}
+\subsection{Two Generative Models Derived from EOT}
 
 In this section, we propose two generative models.
-We first develop an EOT based generative model handling signals/data directly. This models is referred to as EOT generative model (EOTGM). 
+We first develop an EOT based generative model handling signals/data directly. This model is termed as EOT generative model (EOTGM). 
 In our second model, we use a
 representation mapping where EOT cost is used to optimize the
-generative model and representation mapping jointly. The second model is referred as EOT based GAN (EOTGAN).
-% In our EOT based GAN, we have a generator, but do not have an explicit discriminator. Instead we use a representation mapping where EOT cost is used to optimize the generator function and representation function jointly. We first develop an EOT based algorithm for generative model learning that can handle signals/data directly. Then we develop second algorithm that can handle representation features. The second algorithm is referred to as EOT based GAN (EOTGAN). 
+generative model and representation mapping jointly. The second model is named as EOT based GAN (EOTGAN).
 
-\subsubsection{EOT based generative model (EOTGM)}\label{subsec-gmeot}
+\subsubsection{EOTGM}\label{subsec-gmeot}
 {Although the true probability distribution $p^{\ast}(\bm{x})$ is not available but its empirical distribution is available, i.e. the dataset. We carry on using the notation $p^{\ast}(\bm{x})$ as the target distribution. $p(\bm{x};\bm{\theta})$ is the probability distribution of our model induced by a generator $\bm{g}: \bm{\Zz} \rightarrow \bm{\Xx}$, where $\bm{\Zz}$ is the support set of latent distribution $p(\bm{z})$. The generator $\bm{g}$ is implemented by a neural network and maps latent signal $\bm{z} \in \bm{\Zz}$ to signal in $\bm{\Xx}$, i.e., $\bm{g}(\bm{z}) \in \bm{\Xx}$. The latent distribution is assumed to be known. The mapped signal $\bm{g}(\bm{z}) \sim p(\bm{x};\bm{\theta})$ since $\bm{g}$ induces the model distribution. Actually, the parameter of $p(\bm{x};\bm{\theta})$ is the parameter of the generator $\bm{g}$. Applying EOT cost to learn $p(\bm{x}; \bm{\theta})$ is equivalent to minimizing $W(p^{\ast}, p)$ w.r.t. the generator $g$}
 \begin{equation}\label{eq-entropic-model}
   \underset{\bm{g}:\bm{\mathcal{Z}}\to \bm{\Xx}}{\argmin}\, W(p^{\ast}, p) = \underset{\bm{\theta}}{\argmin}\, W(p^{\ast}, p).
@@ -118,8 +117,7 @@ optimize the generator $\bm{g}$ such that the induced distribution $p(\bm{x};\bm
   \nabla_{\bm{\theta}}W(p^{\ast}, p) = \left(\nabla_{\bm{\theta}}p\right)^{T} \bm{\beta}^{\ast}.
 \end{equation}
 Alternatively the optimization problem \eqref{eq-entropic-model} can be addressed by solving $\argmin_{g}\dotp{\pi^{\ast}}{\bm{M}} $ iteratively using auto-gradient functions in PyTorch\cite{pytorch} or
-TensorFlow\cite{tensorflow}, where $\pi^{\ast}$ is primary optimal
-variable to \eqref{eq-entropic-wsd} given by \eqref{eq-dual-opt}. We
+TensorFlow\cite{tensorflow}, where $\pi^{\ast}$ is the solution to the primary problem \eqref{eq-entropic-wsd} given by \eqref{eq-dual-opt}. We
 propose Algorithm~\ref{algo-E-WL} to learn distribution $p^{\ast}$
 via minimizing the EOT loss w.r.t parameter $\bm{\th}$ of generator function $\bm{g}$.
 \begin{algorithm}[!t]
@@ -141,7 +139,7 @@ via minimizing the EOT loss w.r.t parameter $\bm{\th}$ of generator function $\b
   \end{algorithmic}
 \end{algorithm}
 
-\subsubsection{EOT based GAN (EOTGAN)}
+\subsubsection{EOTGAN}
 
 In this section, we consider representation learning (feature
 learning) with which the usage of EOT is more meaningful than that
@@ -158,7 +156,6 @@ meaningful. An element of the cost matrix $\bm{M_f}$ in representation domain (f
 \end{equation}
 
 Our new objective is joint learning of generator $\bm{g}$ and representation $\bm{f}$. A natural question is how to construct $\bm{f}$ function? {Inspired by the triplet loss in \cite{7298682} aiming at larger distance between distinct classes than in-class distance, we may consider two virtual classes labeled by $p^{\ast}(\bm{x})$ and $p(\bm{x};\bm{\theta})$.
-% Then samples from the same class share more similarity and thus should have smaller distance in $\Mm$.
 This means that the representation function $\bm{f}$ should have the algebraic property: $ d_{\bm{f}}(\bm{x}_1, \tilde{\bm{x}}_1) + \gamma \leq d_{\bm{f}}(\bm{x}_1, \bm{x}_2) $ for $\gamma > 0$, where $\bm{x}_1, \tilde{\bm{x}}_1 \in \bm{\Xx}_1$ are two samples from distribution $p^{\ast}$ and $\bm{x}_2$ is a generated signal from distribution $p(\bm{x};\bm{\theta})$, i.e., an output of $\bm{g}$. Meanwhile, $\bm{g}$ tries to mitigate this distinction.}
 
 Following the above idea, let us denote the mapped distribution via $\bm{f}$ by $p^{\ast}_{\bm{f}}$ and $p_{\bm{f}}$, respectively. Let $\bm{M}_{\bm{f}}$ be the cost matrix in representation domain and its elements $M_{\bm{f},{i,j}} = d_{\bm{f}}(\bm{x}^{i}_1, \bm{x}^{j}_2)$, $\bm{x}^{i} \sim p^{\ast}(\bm{x}), \bm{x}^{j}\sim p(\bm{x}; \bm{\theta})$. Then we learn $\bm{f}$ and $\bm{g}$ using alternative optimization, as follows. 
@@ -176,7 +173,7 @@ Following the above idea, let us denote the mapped distribution via $\bm{f}$ by 
     W(p^{\ast}_{\bm{f}}, p_{\bm{f}}).
   \end{equation}
 \end{itemize} 
-Both $W(p^{\ast}_{\bm{f}}, p^{\ast}_{\bm{f}})$and $W(p^{\ast}_{\bm{f}}, p_{\bm{f}})$ have lower bounds, but no upper bounds. 
+Both $W(p^{\ast}_{\bm{f}}, p^{\ast}_{\bm{f}})$ and $W(p^{\ast}_{\bm{f}}, p_{\bm{f}})$ have lower bounds, but no upper bounds. 
 We combine the step 1 in above using a hinge loss and define the following costs.
 \begin{equation}
   \begin{array}{rl}
@@ -226,7 +223,7 @@ The algorithm steps of EOTGAN are shown in Algorithm \ref{algo-eWGAN}.
   \end{algorithmic}
 \end{algorithm}
 
-\subsubsection{Advantage of EOT against OT}
+\begin{remark}[Discussion on OT and EOT]
 
 Usage of entropy regularization in EOT avoids the need for Kantorovich-Rubinstein duality
 of OT, thus is free from Lipschitz constraint. In literature, several methods endeavor to
@@ -246,6 +243,7 @@ algorithm, the computation complexity scales as $\mathcal{O}(N^2)$ \cite{2013arX
 On the other hand, solving OT cost using interior-point methods has a computational requirement as 
 $\mathcal{O}(N^3\log{N})$. 
 
+\end{remark}
 
 \section{Experimental Results}
 We perform experiments to verify our arguments on loss choice and algorithms. We evaluate our
@@ -257,7 +255,7 @@ Similar to Section~\ref{chpt6:sec:eval-metrics}, the Inception Score (IS) \cite{
 where $\bm{x}\sim q$ indicates synthetic sample from distribution $q$ under testing, $p(c|\bm{x})$ is the conditional distribution of class $c$, and $p(c) = \int_{\bm{x}}p(c|\bm{x})q(\bm{x}) \,d \bm{x} $ is the marginal class distribution computed with $q$. Large IS score means generated samples contain clear objects. Generative models with high IS can output high diversity of samples. Apart from KL-based metric, an alternative common metric is Frechet Inception Distance (FID)\cite{2017arXiv170608500H}. FID measures the OT distance of two probability distribution by assuming the two distributions are Gaussian, in which case, the closed-form solution is available. Smaller FID means the generated samples are more similar to empirical samples. In short, high IS and low FID are better.
 
 
-\subsection{Evauation of EOTGM using toy dataset}\label{subsec-mg}
+\subsection{Evauation of EOTGM Using Toy Dataset}\label{subsec-mg}
 
 {We firstly evaluate our proposed EOTGM on a toy dataset sampled from a known probability distribution: two-dimensional four-mixture Gaussian. This mixture Gaussian is our target distribution to learn, i.e., $p^{\ast}(\bm{x})$. The generator $\bm{g}$ uses a neural network with structure: Input $\rightarrow$ Dense $256$ $\rightarrow$ ReLU $\rightarrow$ Dense $256$ $\rightarrow$ ReLU $\rightarrow$ Dense $256$ $\rightarrow$ ReLU$\rightarrow$Dense $2$. The parameter $\bm{\theta} $ of $\bm{g}$ here is the set of parameters of this neural network. Latent distribution $p(\bm{z})$ used here is standard Gaussian: $\mathsf{N}\left(\bigl(\begin{smallmatrix}& 0\\
     &0\end{smallmatrix}\bigr) ,\bigl( \begin{smallmatrix}1 & 0\\ 0 &
@@ -282,11 +280,10 @@ The toy dataset is used by Algorithm~\autoref{algo-E-WL} (EOTGM) to train $\bm{g
   \end{subfigure}
   \caption{Demonstration of sampling. (a) Toy distribution learning ($4$-mixture Gaussians) using EOTGM. Real samples (red '+') and contour
     (red curve), versus generated samples (blue 'o') and contour (blue curve) by $\bm{g}$. (b) Generated samples by EOTGAN for MNIST dataset.}
-    \vspace{0.4cm}
 \end{figure*}
 
 
-\subsection{Evaluation of generative models using MNIST}
+\subsection{Evaluation of Generative Models Using MNIST}
 In this section, we evaluate both the generative models using MNIST dataset.
 The representation mapping $\bm{f}$ in EOTGAN adapts two converlutional layers
 appended with fully connected layers\footnote{$32$ Conv2d $5 \times5$
@@ -320,7 +317,6 @@ of IS and FID. In addition, we put EOTGM (Algorithm~\autoref{algo-E-WL}) in comp
   \end{subfigure}
   \caption{Comparison of IS and FID (on MNIST) versus mixing ratio $r$. (For each model at a certain mixture ratio, $5$ experiments are independently performed. Each solid curve with markers plots the mean of $5$ experiments with shaded areas denoting the range of corresponding results.}
   \label{fig-tra-score}
-  \vspace{0.4cm}
 \end{figure*}
 
 
@@ -338,7 +334,7 @@ IS measures how certain a classifier assigns a class label to a given
 generated sample. The larger IS is, the better the generative model
 is. We plot IS versus $r$ for different models in
 Figure~\ref{fig-tra-is}. IS scores of all four tested models drop with
-increasing portion of synthetic samples in
+an increasing portion of synthetic samples in
 $\mathcal{S}_{\mathrm{syn}}$, which is consistent with intuition. IS
 of EOTGAN drops at the slowest rate among the four models as more
 synthetic samples, for larger $r$, are mixed into test data. It shows
@@ -356,7 +352,7 @@ even faster, which means the samples generated by these two models are
 less similar to the empirical samples.
 
 \section{Summary}
-In this chapter, we took a different path from previous chapters and considered the learning of an implement probabilistic generative model. An implicit model offers larger freedom in choosing a generator that induces the model distribution, but brings the challenges of model learning due to the loss of tractability of likelihood. Thus optimal transport was introduced and employed to formulate the cost. Optimal transport distance used in learning the model also has interesting connections with generative adversarial networks and auto-encoder-like models. With an entropy-regularization, optimal transport cost can be computed more efficiently. Two learning algorithms based on the entropy-regularized optimal transport cost were then discussed and demonstrated. 
+In this chapter, we took a different path from previous chapters and considered the learning of implement probabilistic generative models. An implicit model offers larger freedom in choosing a generator that induces the model distribution, but brings the challenges of model learning due to the loss of tractability of likelihood. Thus optimal transport was introduced and employed to formulate the cost. Optimal transport distance used in learning the model also has interesting connections with generative adversarial networks and auto-encoder-like models. With an entropy-regularization, the optimal transport cost can be computed more efficiently. Two learning algorithms based on the entropy-regularized optimal transport cost were then discussed and demonstrated. 
 
 Different from graphical models discussed in previous chapters, an implicit model has its advantage of flexible generator choice and efficient sampling (or generating sampling), sampling from which is usually a feed-forward pass of the generator once learned. Thus, an implicit model has its application domains where the above-mentioned properties are merited more than explicit form and likelihood tractability of the model's distribution. 
 
