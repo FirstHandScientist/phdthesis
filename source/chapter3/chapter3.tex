@@ -313,7 +313,7 @@ Further assume the symmetric property of potentials
   \begin{equation*}
     p(\bm{x};\bm{\theta}) \propto \exp\left\{ \sum_{s\in \Vv} b_s x_s + \sum_{(t, s) \in \Ee} J_{ts} x_t x_s \right\},
   \end{equation*}
-  the factors of which fulfill the symmetric property in \eqref{chpt3:eq:symmetric-prop}. \textcolor{blue}{an example that fulfills this property, exponential family or coding stuff (check with Ragnar)}
+  the factors of which fulfill the symmetric property in \eqref{chpt3:eq:symmetric-prop}.
 \end{example}
 
 For notation simplicity, we use $\theta_{ts}=\theta_{ts}(1, 1)$ and $\theta_s = \theta_s(1)$. Denote by $\bm{\alpha}$ the vector of all local assignments of parameter $\alpha$, i.e. $\bm{\alpha} = \left(  \alpha_{ts} \right)_{(t ,s) \in \Ee }$, by $\bm{\theta}$ the vector of all parameters of the potentials, i.e. $\bm{\theta} = \left(  \theta_{ts} \right)_{(t ,s) \in \Ee }$.  Define a matrix $\bm{M}(\bm{\alpha}, \bm{\theta})$ of size $\abs{\vec{\Ee}} \times \abs{\vec{\Ee}}$, in which its entries are indexed by directed edges $(t\rightarrow s)$, as
@@ -507,7 +507,7 @@ Given the fact that $\alpha$-BP would converge if the condition in Theorem~\ref{
   \end{align}
   When condition $\normu{\bm{M}} < 1$ is met, sequence $\left( \abs{\bm{z}^{(n+1)} - \bm{z}^{n}} \right)$ approaches to zero as $n\rightarrow \infty$. Similarly, condition $\normi{\bm{M}}<1$ can also guarantee the convergence to zero of sequence $\left( \abs{\bm{z}^{(n+1)} - \bm{z}^{n}} \right)$. The analysis for uniqueness of converged fixed point is similar to that in proof of Theorem~\ref{thm:normd}.
 \end{proof}
-\begin{remark}[\textcolor{blue}{Interpretation to the Results}]
+\begin{remark}[Interpretation to the Results]
   
   Both Theorem~\ref{thm:normd} and Corollary~\ref{chpt3:cor:converge} offer sufficient conditions for convergence of $\alpha$-BP to a unique fixed point. The obtained results allow us to check if applying $\alpha$-BP in a certain configuration guarantees convergence without running the algorithm practically to try out, which saves computation resources when problems are at scales. To test the fulfillment of the conditions, the first step it to convert a problem to be solved into its pairwise MRF representation $\Gg(\Vv, \Ee)$. Secondly, construct the matrix $\bm{M}$ according to \eqref{eq:matrix_m}. Note the undirected edge set $\Ee$ of $\Gg$ is used to construct a directed edge set $\vec{\Ee}$ by assigning $(s\rightarrow t)$ and $(t\rightarrow s)$ with the same potential factor $\phi_{st}$ of $\Gg$. Thirdly, the condition fulfillment can be check by computing the largest singular value $\lambda^{\ast}(\bm{M})$ and testing $\lambda^{\ast}(\bm{M}) < 1$ as stated in Theorem~\ref{thm:normd}. Fulfilling this condition is to say that $\alpha$-BP is guaranteed to converge in the current setting.
 
