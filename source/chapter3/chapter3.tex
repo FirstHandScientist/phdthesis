@@ -484,17 +484,17 @@ Given the fact that $\alpha$-BP would converge if the condition in Theorem~\ref{
 \begin{proof}
   Setting $p=1$ to \eqref{eq:ine-normp-iteration}, we have
   \begin{equation}
-    \normu{\bm{z}^{(n+1)} - \bm{z}^{n}} \leq \normu{\bm{M}(\alpha, \bm{\theta})(\bm{z}^{(n)} - \bm{z}^{n-1})}.
+    \normu{\bm{z}^{(n+1)} - \bm{z}^{n}} \leq \normu{\bm{M}(\alpha, \bm{\theta})\abs{\bm{z}^{(n)} - \bm{z}^{(n-1)}}}.
   \end{equation}
   Furthermore, from \eqref{eq:ine-normp-iteration}, we also have
   \begin{equation}
-    \normi{\bm{z}^{(n+1)} - \bm{z}^{n}} \leq \normi{\bm{M}(\alpha, \bm{\theta})(\bm{z}^{(n)} - \bm{z}^{n-1})},
+    \normi{\bm{z}^{(n+1)} - \bm{z}^{n}} \leq \normi{\bm{M}(\alpha, \bm{\theta})\abs{\bm{z}^{(n)} - \bm{z}^{(n-1)}}},
   \end{equation}
   where $\norm{\cdot}_{\infty}$ denotes the $\ell^{\infty}$-norm.
   Then we have
   \begin{align}\label{eq:row-col-norm-ineq}
-    \normu{\bm{z}^{(n+1)} - \bm{z}^{n}} &\leq \normu{\bm{M}}\normu{(\bm{z}^{(n)} - \bm{z}^{n-1})}, \nonumber \\
-    \normi{\bm{z}^{(n+1)} - \bm{z}^{n}} &\leq \normi{\bm{M}}\normi{(\bm{z}^{(n)} - \bm{z}^{n-1})},
+    \normu{\bm{z}^{(n+1)} - \bm{z}^{n}} &\leq \normu{\bm{M}}\normu{\bm{z}^{(n)} - \bm{z}^{(n-1)}}, \nonumber \\
+    \normi{\bm{z}^{(n+1)} - \bm{z}^{n}} &\leq \normi{\bm{M}}\normi{\bm{z}^{(n)} - \bm{z}^{(n-1)}},
   \end{align}
   where we omit the parameters of $\bm{M}$ here for simplicity. We can expand the first multiplicand on the right hand side of \eqref{eq:row-col-norm-ineq} as follows
   \begin{align}
