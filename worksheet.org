@@ -6,15 +6,19 @@
   [ ]: stands for unfinished tasks
   [-]: pending task. Revised but need a second check.
 
+
+** TODO Sync my second-check list to google/drive to for Ragnar to check
+
 ** TODO Global comments
    - [X] Capitalize section/chapter~ref
    - [X] Space after Figures/tables. \textfloatset, ref to [[https://tex.stackexchange.com/questions/60477/remove-space-after-figure-and-before-text][here]]
    - [ ] Ask someone (phd students) to proofreading.
 
+     
 ** TODO Abstract writing and ACKs
 
-** TODO Chapter 3 [5/8]
-   DEADLINE: <2020-05-29 Fri>
+** DONE Chapter 3 [5/8]
+   CLOSED: [2020-06-04 Thu 19:44] DEADLINE: <2020-05-29 Fri>
    :LOGBOOK:
    CLOCK: [2020-05-25 Mon 17:27]--[2020-05-25 Mon 17:27] =>  0:00
    :END:
@@ -57,17 +61,39 @@
 *** TODO Conclusion polishing
 
 
+
+* TODO Candidate List
+  - [ ] Timo Koski, Professor emeritus of mathematical statistics, KTH, [Profile Page](https://people.kth.se/~tjtkoski/), [Google scholar](https://scholar.google.com/citations?hl=en&user=1CuzidAAAAAJ&view_op=list_works&sortby=pubdate). Or check his colleagues.
+    [KTH Mathematics](https://www.math.kth.se/matstat/staff_e.html) 
+  - [ ] https://people.epfl.ch/nicolas.macris 
+  - [ ] http://www.csc.kth.se/forskning/cb/cbp/homepages/eaurell/kth_homepage.html 
+  - [ ] https://www.kth.se/profile/azizpour 
+  - [ ] https://www.kth.se/profile/johnf
+  - [ ] https://scholar.google.com/citations?hl=en&user=wr3CtKAAAAAJ&view_op=list_works&sortby=pubdate
+  - [ ] https://www.chalmers.se/en/staff/Pages/henk-wymeersch.aspx , https://sites.google.com/site/hwymeers/ 
+  - uppsalar, there maybe groups
+
+
+* Schedule for Defense
+
+  Schedule following: [KTH public defense of doctoral thesis](https://intra.kth.se/en/eecs/forskarutbildning/public-defence-of-doctoral-thesis-1.813458)
+  - [X] **March**: course credit fulfilling check.
+  - [X] **March**: Check with Ragnar about the preliminary drafting stuff. 
+  - [X] **March**: ~~preliminary Content organizing~~ We decide revise content organizing while along writing content.
+  - [X] **March-May**: Finish the first complete draft of thesis.
+    - [X] **March-April**: Introduction, Background, Inference Part finished
+    - [X] **April-May**: Learning Part,
+    - [ ]abstract, acknowledgements
+  - [X] **March-May**: Finish the first complete draft of thesis.
+
+  - Considering that summer break **16 June -- 14 August** is not taken into account into KTH public defense procedure
     
-* Thesis Schedule
+  - [ ] **Mid June -- Mid August** parallel tasks:
+    - [ ] **Before 15 August** committee member confirm. Lars and Ragnar.
+    - [ ] quality reviewer contact. Lars and Ragnar
+    - [OnGoing Now] **June-August**: Improving and revising thesis.
 
-** TODO Candidate List
-   - [ ] Timo Koski, Professor emeritus of mathematical statistics, KTH, [Profile Page](https://people.kth.se/~tjtkoski/), [Google scholar](https://scholar.google.com/citations?hl=en&user=1CuzidAAAAAJ&view_op=list_works&sortby=pubdate). Or check his colleagues.
-     [KTH Mathematics](https://www.math.kth.se/matstat/staff_e.html) 
-   - [ ] https://people.epfl.ch/nicolas.macris 
-   - [ ] http://www.csc.kth.se/forskning/cb/cbp/homepages/eaurell/kth_homepage.html 
-   - [ ] https://www.kth.se/profile/azizpour 
-   - [ ] https://www.kth.se/profile/johnf
-   - [ ] https://scholar.google.com/citations?hl=en&user=wr3CtKAAAAAJ&view_op=list_works&sortby=pubdate
-   - [ ] https://www.chalmers.se/en/staff/Pages/henk-wymeersch.aspx , https://sites.google.com/site/hwymeers/ 
-   - uppsalar, there maybe groups
-
+  - [ ] **17--19 August** (34th week) Start the standard process (10-week procedure). Revise eISP, thesis preliminary version, advance reviewer.
+  - [ ] **14--18 September** (38th week) eISP in right status, advance reviewer and preliminary version to thesis to advance reviewer ... preprint of thesis
+  - [ ] **28 September -- 9 October** (40th-41th week) Lars, Ragnar work with doctoral-education-support for arrangement stuff. Thesis digital processing and printing.
+  - [ ] **Mid October--7th November, the 45th week** (The time ranges to tolerate the availability of committee) Defense.
