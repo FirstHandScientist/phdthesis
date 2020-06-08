@@ -13,3 +13,13 @@ auto/*
 *.out
 *.synctex.gz
 *.el
+.refresh
+candidate_list.md
+comments/
+main.fdb_latexmk
+main.fls
+main.run.xml
+main.toc
+unsrt.bst
+worksheet.pdf
+worksheet.tex
