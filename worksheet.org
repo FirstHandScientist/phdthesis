@@ -3,15 +3,17 @@
 * Thesis Writing
   Notation explanation
   [X]: stands for checked tasks
-  [ ]: stands for unfinished tasks
-  [-]: pending task. Revised but need a second check.
+  [ ]: stands for original statement used
+  [-]: Pending or partial revised task. Please check.
 
 
 ** TODO Sync my second-check list to google/drive to for Ragnar to check
 
-** TODO Global comments
+** TODO Global Items
    - [X] Capitalize section/chapter~ref
    - [X] Space after Figures/tables. \textfloatset, ref to [[https://tex.stackexchange.com/questions/60477/remove-space-after-figure-and-before-text][here]]
+   - [X] Definition formation 1.1,... 4.1
+   - [ ] The first paragraph of each section/subsection does not indent. I should fix.
    - [ ] Ask someone (phd students) to proofreading.
 
      
@@ -40,9 +42,17 @@
    - [ ] Studying Corollary 1 with consideration of the presence of the edge/connection probability? (Comment triggered by the pre-fixed edge probability in ER model)
      - yes, I agree that by further taking the edge probability into result (3.43) or (3.44). I also realized this after briefing the LDPC code references in above item. It could be useful when there is application scenarios with random connections of graphs. In practices, when a problem is given, its graphical model is usually fixed. For there cases, it may not be useful to have a convergence condition for random graphs. I am pending this. We can come back to it if the said conditions turn out to be useful for applications.
 
-** TODO Chapter 4
-   - [ ] Revision with comments
-
+** Chapter 4
+   - [X] Fix eq(4.3), added explanation
+   - [-] An example has been add after eq(4.4), showing message update and belief calculation in GBP
+   - [ ] eq(4.6). The inside term can be formulated in term of KL divergence. I follow the typical definition of region-based free energy. The current definition is fine.
+   - eq(4.12), Ragnar questioned where the true b_R comes from. 
+     b_R here is belief from RENN. It is an estimation instead of ground truth. The regularization is to enforce belief consistency.
+   - Ragnar question after eq(4.3). The counting numbers are to balance the each region's energy to the overall region-based free energy. I do not see how this is connected to trees.
+     However, a region graph is a hypergraph and is tree-structured by definition. You may see a region graph as a DAG.
+   - Response to comment on page 57:
+     L2 distance is used for belief regularization in cost function. L1 distance is used for assessment of marginals. It is not typo.
+   - [ ] Fix eq(4.7) large {{a, x_a}}, small {{i}}
 ** TODO Chapter 5
    - [ ] Revision with comments
 
