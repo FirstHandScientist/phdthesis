@@ -361,7 +361,7 @@ Putting \eqref{apdix:eq:large-region} and \eqref{apdix:eq:small-region} together
 
 In this section, we explain how the proposed region-based energy neural network (RENN) works.
 We are interested in finding marginal probabilities such as $p(\bm{x}_R)$. A region belief $b_R(\bm{x}_R)$ is an approximation to $p(\bm{x}_R)$.
-Instead of propagating messages as GBP, or directly optimizing w.r.t. variables ${b_R(\bm{x}_R)}$ of interest, we use the reparameterization technique that is also used by recent works \cite{DBLP:journals/corr/KingmaW13, srikumar-etal-2012-amortizing, NIPS2019_9687, akbayrak2019reparameterization}, to model the values of interest to be the output of a neural network. We then optimize w.r.t. the parameters of the neural network. This technique is called amortizing.
+Instead of propagating messages as GBP, or directly optimizing with regard to variables ${b_R(\bm{x}_R)}$ of interest, we use the reparameterization technique that is also used by recent works \cite{DBLP:journals/corr/KingmaW13, srikumar-etal-2012-amortizing, NIPS2019_9687, akbayrak2019reparameterization}, to model the values of interest to be the output of a neural network. We then optimize with regard to the parameters of the neural network. This technique is called amortizing.
 
 Note that in RENN, the neural network only needs to directly model the beliefs on root regions $\Rr_0$. The beliefs of non-root regions $\Rr_l,~l>0$ could be obtained from root region beliefs according to the structure of the region graph. This can reduce the number of neural network parameters compared to directly modeling the beliefs of all regions.
 
@@ -379,11 +379,11 @@ For the rest of the regions $\left\{R \in \Rr \backslash \Rr_0 \right\}$ that ar
 \begin{equation}\label{eq:l-level-beliefs}
   b_{R^{[l]}}(\bm{x}_{R^{[l]}}; \bm{\omega}) := \frac{1}{|\Pp(R^{[l]})|} \sum_{R_p\in  \Pp(R^{[l]})}\sum_{\bm{x}_{R_p}\backslash \bm{x}_{R^{[l]}}} b_{R_p}(\bm{x}_{R_p}; \bm{\omega}),
 \end{equation}
-where $\Pp(R^{[l]})$ is the set of parent regions of $R^{[l]}$ in the region graph $\Gg_R$. The non-root region belief of RENN defined in this way comes with the intuition of typical iterative belief propagation methods. In BP and its variants, messages are passed to a variable node to reduce the mismatch of beliefs w.r.t. the variable node, which are sent from this node's neighbors in a factor graph. The message passing iteration of BP or its variants stops when this kind of mismatch w.r.t. every variable node is eliminated in the factor graph, i.e., it has converged.
+where $\Pp(R^{[l]})$ is the set of parent regions of $R^{[l]}$ in the region graph $\Gg_R$. The non-root region belief of RENN defined in this way comes with the intuition of typical iterative belief propagation methods. In BP and its variants, messages are passed to a variable node to reduce the mismatch of beliefs with regard to the variable node, which are sent from this node's neighbors in a factor graph. The message passing iteration of BP or its variants stops when this kind of mismatch with regard to every variable node is eliminated in the factor graph, i.e., it has converged.
 
 In RENN, we directly cast the mismatch between a non-root region belief $b_{R^{[l]}}(\bm{x}_{R^{[l]}}; \bm{\omega})$ and the marginalization from its parent region $\sum_{\bm{x}_{R_p}\backslash \bm{x}_R^{[l]}}b_{R_p}(\bm{x}_{R_p}; \bm{\omega})$ as a penalty in the cost function. As the mismatch penalty is close to zero, the non-root region belief gets close to marginalization calculated from its parent regions. Matching a region's belief with marginalization from its parent regions' beliefs is termed as region belief consistency in the region graph. That is to say, apart from the averaging effect from definition \eqref{eq:l-level-beliefs} itself, a hard-penalty is enforced straightforwardly in our cost.
 
-Different from GBP that minimizes region-based free energy by iterative message-passing, RENN minimizes the region-based free energy by optimizing w.r.t. the neural network parameter $\bm{\omega}$.
+Different from GBP that minimizes region-based free energy by iterative message-passing, RENN minimizes the region-based free energy by optimizing with regard to the neural network parameter $\bm{\omega}$.
 Considering the region belief consistency, we summarize the cost function of RENN to include both the region-based free energy and mismatch penalty on non-root regions. This gives the optimization problem:
 \begin{equation}\label{eq:infer-F-all-belief}
   \umin{\bm{\omega}}{F_R(\Bb;\bm{\theta}) + \lambda \sum_{R\in \Rr \backslash \Rr_0} \sum_{R_p \in \Pp(R)} d( b_R, \sum_{\bm{x}_{R_p}\backslash \bm{x}_{R}} b_{R_p}(\bm{x}_{R_p}; \bm{\omega}))},
@@ -392,7 +392,7 @@ where $d(\cdot, \cdot)$ is a distance metric or divergence to measure the mismat
 
 
 \begin{example}
-  We demonstrate a toy RENN in this example. As illustrated in Figure~\ref{fig:renn-illustration}, a three-level RENN takes embedding vectors as input and outputs the beliefs on $\Rr_0$ directly. The beliefs in other levels $\{\Rr_1$, $\Rr_2\}$ are computed as in \eqref{eq:l-level-beliefs}. Then the region-based free energy along with the penalty of region belief consistency is minimized w.r.t. $\bm{\omega}$.
+  We demonstrate a toy RENN in this example. As illustrated in Figure~\ref{fig:renn-illustration}, a three-level RENN takes embedding vectors as input and outputs the beliefs on $\Rr_0$ directly. The beliefs in other levels $\{\Rr_1$, $\Rr_2\}$ are computed as in \eqref{eq:l-level-beliefs}. Then the region-based free energy along with the penalty of region belief consistency is minimized with regard to $\bm{\omega}$.
 \end{example}
 
 \begin{remark}[Region-based Free Energy and the Partition Function]
@@ -457,15 +457,15 @@ To explain the concept of \textit{tree-robust}, we need to explain the concepts 
   set of edges appearing an odd number of times in $\Cc\Bb_C$ comprise the cycle $C$.
 \end{definition}
 \begin{definition}\label{apdix:def:tree-exact}
-  Let $T$ be a spanning tree of graph $\Gg$. A cycle basis $\Cc\Bb$ is \textit{tree exact} w.r.t. $T$ if there exists an ordering $\pi$ of the cycles in $\Cc\Bb$ such that
+  Let $T$ be a spanning tree of graph $\Gg$. A cycle basis $\Cc\Bb$ is \textit{tree exact} with regard to $T$ if there exists an ordering $\pi$ of the cycles in $\Cc\Bb$ such that
   \begin{equation*}
     \left\{ C_{\pi(i)} \backslash C_{\pi(1)} \cup C_{\pi(2)} \cup \cdots \cup C_{\pi(i-1)} \right\} \neq \emptyset~~\mathrm{for}~~ i=2,\cdots, \mu.
   \end{equation*}
 \end{definition}
-Definition~\ref{apdix:def:tree-exact} tells us that if a cycle basis is tree exact w.r.t. $T$ and ordered properly, there is at least one edge of $C_{\pi}$ that has not appeared in any cycles preceding it, and meanwhile this edge does not appear in the spanning tree $T$.
+Definition~\ref{apdix:def:tree-exact} tells us that if a cycle basis is tree exact with regard to $T$ and ordered properly, there is at least one edge of $C_{\pi}$ that has not appeared in any cycles preceding it, and meanwhile this edge does not appear in the spanning tree $T$.
 With the above concepts, we are ready to give the definition of tree-robust.
 \begin{definition}
-  A cycle basis $\Cc\Bb$ is tree-robust if it is tree exact w.r.t. all spanning trees of $\Gg$.
+  A cycle basis $\Cc\Bb$ is tree-robust if it is tree exact with regard to all spanning trees of $\Gg$.
 \end{definition}
 
 
@@ -645,7 +645,7 @@ In all experiments, for each evaluation of RENN, mean field, (loopy) BP \cite{mo
 
 \subsection{Inference on Grid Graphs}
 
-We first evaluate how well RENN can estimate the marginal distributions, compared with benchmark algorithms/models, w.r.t. marginal $\ell_1$ errors and Pearson correlation $\rho$, for different graph size $n$ and standard deviation $\gamma$ of $\{h_i\}$. At each evaluation for a given size $n$, $20$ MRFs are generated by sampling $\{J_{ij}\}$ and $\{h_i\}$. Then RENN and other candidate algorithms perform inference on these MRFs. The $\ell_1$ error and correlation $\rho$ between true and estimated marginal distributions are evaluated. The $\log{Z}$ error is also recorded.
+We first evaluate how well RENN can estimate the marginal distributions, compared with benchmark algorithms/models, with regard to marginal $\ell_1$ errors and Pearson correlation $\rho$, for different graph size $n$ and standard deviation $\gamma$ of $\{h_i\}$. At each evaluation for a given size $n$, $20$ MRFs are generated by sampling $\{J_{ij}\}$ and $\{h_i\}$. Then RENN and other candidate algorithms perform inference on these MRFs. The $\ell_1$ error and correlation $\rho$ between true and estimated marginal distributions are evaluated. The $\log{Z}$ error is also recorded.
 Experiments are carried out in large and small standard deviation of $\{h_i\}$ ($\gamma=0.1$, $\gamma=1$), which reflects the relative strength of standalone node log-potentials to pairwise log-potentials. The results are reported as 'mean $\pm$ standard deviation' in tables.
 
 \begin{table}[tp!]
@@ -843,7 +843,7 @@ As for the error of partition function values, GBP gets the most accurate estima
 
 In this section, we evaluate RENN in comparison with benchmark methods on more challenging graphs, i.e. complete graphs in which every two nodes are connected by a unique edge. Due to the high complexity, we carry out the inference experiments on complete graphs of size $n=9$ and $n=16$ but with a richer setting of $\gamma$, to be able to track the true marginals and partition functions exactly, which are used to evaluate candidate methods.
 
-For marginal distribution estimations, RENN still outperforms all other benchmark methods except for one case at $\gamma=0.1$ in size-$9$ graph, as shown in Table~\ref{tab:infer-full-n9} and \ref{tab:infer-full-n16}. In the case of $\gamma=0.1$ in Table~\ref{tab:infer-full-n9}, Inference Net outperforms RENN w.r.t. $\ell_1$ error, i.e. $0.109$ versus $0.130$, but falls behind RENN w.r.t. correlation $\rho$ ($0.720$ versus $0.741$) and $\log{Z}$ estimation significantly ($35.46$ versus $3.171$).
+For marginal distribution estimations, RENN still outperforms all other benchmark methods except for one case at $\gamma=0.1$ in size-$9$ graph, as shown in Table~\ref{tab:infer-full-n9} and \ref{tab:infer-full-n16}. In the case of $\gamma=0.1$ in Table~\ref{tab:infer-full-n9}, Inference Net outperforms RENN with regard to $\ell_1$ error, i.e. $0.109$ versus $0.130$, but falls behind RENN with regard to correlation $\rho$ ($0.720$ versus $0.741$) and $\log{Z}$ estimation significantly ($35.46$ versus $3.171$).
 
 In the complete graphs, GBP does not have an advantage over loopy BP and damped BP any more, RENN operating on the same region graphs as those for GBP, gives consistently better marginal distribution estimations. Also, generally speaking, the performance of Inference Net is close to loopy BP and damped in most cases of complete graphs.
 
