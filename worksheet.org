@@ -9,11 +9,12 @@
 
 ** TODO Sync my second-check list to google/drive to for Ragnar to check
 
-** TODO Global Items
+** Global Items
    - [X] Capitalize section/chapter~ref
    - [X] Space after Figures/tables. \textfloatset, ref to [[https://tex.stackexchange.com/questions/60477/remove-space-after-figure-and-before-text][here]]
    - [X] Definition formation 1.1,... 4.1
-   - [ ] The first paragraph of each section/subsection does not indent. I should fix.
+   - [X] The first paragraph of each section/subsection does not indent. I should fix.
+   - [X] fix 'maximal likelihood' --> 'maximum likelihood'
    - [ ] Ask someone (phd students) to proofreading.
 
      
@@ -45,7 +46,7 @@
 ** Chapter 4
    - [X] Fix eq(4.3), added explanation
    - [-] An example has been add after eq(4.4), showing message update and belief calculation in GBP
-   - [ ] eq(4.6). The inside term can be formulated in term of KL divergence. I follow the typical definition of region-based free energy. The current definition is fine.
+   - eq(4.6). The inside term can be formulated in term of KL divergence. I follow the typical definition of region-based free energy. The current definition is fine.
    - eq(4.12), Ragnar questioned where the true b_R comes from. 
      b_R here is belief from RENN. It is an estimation instead of ground truth. The regularization is to enforce belief consistency.
    - Ragnar question after eq(4.3). The counting numbers are to balance the each region's energy to the overall region-based free energy. I do not see how this is connected to trees.
@@ -54,7 +55,14 @@
      L2 distance is used for belief regularization in cost function. L1 distance is used for assessment of marginals. It is not typo.
    - [ ] Fix eq(4.7) large {{a, x_a}}, small {{i}}
 ** TODO Chapter 5
-   - [ ] Revision with comments
+   - [ ] Cannot recognize the comment on 'We would begin with the explanation of why inference ...' the last paragraph in preamble of chapter 5.
+   - [ ] *important* I re-did the math and still think the current eq(5.2) (5.4) (5.5) are correct.
+   - The question on the remark after eq(5.5).
+     Yes, I think a exponential distribution can always be written as log-linear in terms of product between sufficient statistics and natural parameters.
+     reference: wainwright2008graphical chapter3 and wiki on exponential family
+   - Chapter 5 is supposed to be a transition chapter connecting Inference and Learning, thus I am not planning literature section for this chapter, since all following chapters are about learning.
+
+
 
 ** TODO Chapter 6
 
