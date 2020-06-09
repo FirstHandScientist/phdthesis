@@ -15,6 +15,7 @@
    - [X] Definition formation 1.1,... 4.1
    - [X] The first paragraph of each section/subsection does not indent. I should fix.
    - [X] fix 'maximal likelihood' --> 'maximum likelihood'
+   - [ ] thesis --> dissertation
    - [ ] Ask someone (phd students) to proofreading.
 
      
