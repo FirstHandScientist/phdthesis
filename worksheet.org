@@ -2,49 +2,69 @@
 
 * Thesis Writing
   Notation explanation
-  [X]: stands for checked tasks
-  [ ]: stands for original statement used
-  [-]: Pending or partial revised task. Please check.
+  - [X]: stands for checked tasks
+  - [ ]: to be done, or stands for original statement is preferred or used, or intact due to confusion in understanding comments
+  - [-]: partial revised or pending task. Please check.
 
+  +text+: strike out text
 
-** TODO Sync my second-check list to google/drive to for Ragnar to check
-
+Click [[file:main.pdf][the latest version]] to open the latest version of thesis.
+  
+** TODO I need to sync this to a online doc for Ragnar
+  
 ** Global Items
    - [X] Capitalize section/chapter~ref
    - [X] Space after Figures/tables. \textfloatset, ref to [[https://tex.stackexchange.com/questions/60477/remove-space-after-figure-and-before-text][here]]
    - [X] Definition formation 1.1,... 4.1
    - [X] The first paragraph of each section/subsection does not indent. I should fix.
    - [X] fix 'maximal likelihood' --> 'maximum likelihood'
-   - [ ] thesis --> dissertation
+   - [X] thesis --> dissertation
    - [ ] Ask someone (phd students) to proofreading.
 
      
 ** TODO Abstract writing and ACKs
+   - [X] Abstract
+   - [ ] Acknowledgement
 
-** DONE Chapter 3 [5/8]
+** Chapter 2
+   Click [[file:comments/c12main.pdf][comments on Chapter1,2]] to open commented file.
+
+   - [X] maximal clique comment in defining MRF, an remark is added after eq(2.3), please check
+   - [X] directed and undirected graphical model comparison, comment made on their representation power, thus I did revision. Please check the transition paragraph (discussion from Bayesian network to MRF), right before Example 2.1
+   - [X] fix error in eq(2.4). Check if still have difficulty in reading (2.4) (2.5) (2.6)
+   - [X] toy model in from three-node to four-node case
+   - [X] Section 2.4 Exact Inference is newly added according to comments. Please check
+   
+
+** DONE Chapter 3 [4/8]
    CLOSED: [2020-06-04 Thu 19:44] DEADLINE: <2020-05-29 Fri>
    :LOGBOOK:
    CLOCK: [2020-05-25 Mon 17:27]--[2020-05-25 Mon 17:27] =>  0:00
    :END:
 
-   [[file:comments/c3main.pdf][Commented file of Chapter 3]] (c3main.pdf)
+   Click [[file:comments/c3main.pdf][Commented file of Chapter 3]] (c3main.pdf) to open the commented file for this chapter.
   
    - [X] eq (3.10), (3.11). Not understanding comments
+     - [update] This is cleared during our meeting.
    - [X] eq (3.23). Adding one example to symmetric property of potentials, i.e., the Ising model.
-   - [X] eq (3.36), +I think it is fine without abs insides, since p-norm operation gives the abs operation by default,+ I should use abs value notation over z - z. The correction is made.
-   - [-] Interpretation to Theorem and Corollary results. A remark is added.
+   - [X] eq (3.36), +I think it is fine without abs insides, since p-norm operation gives the abs operation by default,+ 
+     - [update] I should use abs value notation over z - z. The correction is made.
+   - [-] Interpretation to Theorem and Corollary results. A remark is added (Remark 3.5 in the revised version)
    - [-] quality of the fix point, add one example of coding about :
      - https://documents.epfl.ch/groups/i/ip/ipg/www/2010-2011/Statistical_Physics_for_Communication_and_Computer_Science/mct-new.pdf 
      - https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=910578 
-       I added a Remark discussing some cases (special graphs or graph structures) where error analysis of BP has been studied, at the end of Theorem 1.
+     - [update] I added a Remark discussing some cases (special graphs or graph structures) where error analysis of BP has been studied, at the end of Theorem 1 (Remark 3.4 in revised).
    - [ ] Figure 3.3, pending
      - Yeah, the order of legend was generated random in the figure where I used a python library. I am leaving the trivial issue pended.
-   - [X] corollary 1 comments on page 36 and page 34
    - [X] page 38 on performance of the prior trick
-   - [ ] Studying Corollary 1 with consideration of the presence of the edge/connection probability? (Comment triggered by the pre-fixed edge probability in ER model)
+     - cleared in meeting
+   - [ ] corollary 1 comments on page 36 and page 34
+     - Studying Corollary 1 with consideration of the presence of the edge/connection probability? (Comment triggered by the pre-fixed edge probability in ER model)
      - yes, I agree that by further taking the edge probability into result (3.43) or (3.44). I also realized this after briefing the LDPC code references in above item. It could be useful when there is application scenarios with random connections of graphs. In practices, when a problem is given, its graphical model is usually fixed. For there cases, it may not be useful to have a convergence condition for random graphs. I am pending this. We can come back to it if the said conditions turn out to be useful for applications.
 
 ** Chapter 4
+   Click [[file:comments/c45main.pdf][commented Chapter 4,5]] to open your comments on Chapter 4,5
+
    - [X] Fix eq(4.3), added explanation
    - [-] An example has been add after eq(4.4), showing message update and belief calculation in GBP
    - eq(4.6). The inside term can be formulated in term of KL divergence. I follow the typical definition of region-based free energy. The current definition is fine.
@@ -54,7 +74,8 @@
      However, a region graph is a hypergraph and is tree-structured by definition. You may see a region graph as a DAG.
    - Response to comment on page 57:
      L2 distance is used for belief regularization in cost function. L1 distance is used for assessment of marginals. It is not typo.
-   - [ ] Fix eq(4.7) large {{a, x_a}}, small {{i}}
+   - [X] +Fix eq(4.7) large {{a, x_a}}, small {{i}}+
+
 ** TODO Chapter 5
    - [ ] Cannot recognize the comment on 'We would begin with the explanation of why inference ...' the last paragraph in preamble of chapter 5.
    - [ ] *important* I re-did the math and still think the current eq(5.2) (5.4) (5.5) are correct.
@@ -63,21 +84,21 @@
      reference: wainwright2008graphical chapter3 and wiki on exponential family
    - Chapter 5 is supposed to be a transition chapter connecting Inference and Learning, thus I am not planning literature section for this chapter, since all following chapters are about learning.
 
-
-
 ** TODO Chapter 6
 
+
 ** TODO Chapter 7
-   - [ ] Poofreading
+
 
 ** TODO Chapter 8
-   - [ ] Poofreading
+
    
 
 ** Conclusion writing
 *** DONE Conclusion writing
     CLOSED: [2020-05-27 Wed 16:00]
-*** TODO Conclusion polishing
+*** DONE Conclusion polishing
+    CLOSED: [2020-06-10 Wed 10:12]
 
 
 
