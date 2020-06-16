@@ -19,6 +19,7 @@ Click [[file:main.pdf][the latest version]] to open the latest version of thesis
    - [X] The first paragraph of each section/subsection does not indent. I should fix.
    - [X] fix 'maximal likelihood' --> 'maximum likelihood'
    - [X] thesis --> dissertation
+   - [ ] Capitalization of section titles
    - [ ] Ask someone (phd students) to proofreading.
 
      
@@ -102,17 +103,47 @@ Click [[file:main.pdf][the latest version]] to open the latest version of thesis
 
 
 
-* TODO Candidate List
-  - [ ] Timo Koski, Professor emeritus of mathematical statistics, KTH, [Profile Page](https://people.kth.se/~tjtkoski/), [Google scholar](https://scholar.google.com/citations?hl=en&user=1CuzidAAAAAJ&view_op=list_works&sortby=pubdate). Or check his colleagues.
-    [KTH Mathematics](https://www.math.kth.se/matstat/staff_e.html) 
-  - [ ] https://people.epfl.ch/nicolas.macris 
-  - [ ] http://www.csc.kth.se/forskning/cb/cbp/homepages/eaurell/kth_homepage.html 
-  - [ ] https://www.kth.se/profile/azizpour 
-  - [ ] https://www.kth.se/profile/johnf
-  - [ ] https://scholar.google.com/citations?hl=en&user=wr3CtKAAAAAJ&view_op=list_works&sortby=pubdate
-  - [ ] https://www.chalmers.se/en/staff/Pages/henk-wymeersch.aspx , https://sites.google.com/site/hwymeers/ 
-  - uppsalar, there maybe groups
+* TODO Committee Candidate List
 
+  Search a bit more.
+
+  For a grading committee consisting of three members, at least two members must be sourced outside of KTH. For a grading committee consisting of five members, at least three members must be sourced outside of KTH. Clarification: the opponent is not in the grading committee
+
+  - [ ] Timo Koski, Professor emeritus of mathematical statistics, KTH,
+    [[https://people.kth.se/~tjtkoski/][KTHProfile Page]],
+    [[https://scholar.google.com/citations?hl=en&user=1CuzidAAAAAJ&view_op=list_works&sortby=pubdate][Google scholar]]. Or check his colleagues.
+    [[https://www.math.kth.se/matstat/staff_e.html][KTH Mathematics]]
+    Seems retired 
+
+  - [Preferred] Erik Aurell, KTH
+    keywords: Biological, PhysicsNon-equilibrium Physics, Inference, Big Data
+    [[http://www.csc.kth.se/forskning/cb/cbp/homepages/eaurell/kth_homepage.html][kth page]]
+
+  - [ ] Nicolas Macris, EPFL
+    Keywords, Theory of error correcting codes, statistical mechanics and information theory
+    [[https://people.epfl.ch/nicolas.macris][Page]]
+    
+  - [ ] Hossein Azizpour, Assistant Professor in Machine Learning, Division of Robotics, Perception, and Learning (RPL)
+    Deep learning, understanding its techniques, and advancing them particularly through equpping them with reasoning, inductive biases, uncertainty estimation and knowledge transfer.
+    [[https://www.kth.se/profile/azizpour][Page]]
+
+  - [ ] John Folkesson, Associate Professor and Docent at  the division of Robots Perception and Learning, KTH
+    In the area of mobile robotics
+    [[https://www.kth.se/profile/johnf][Page]]
+
+  - [ ] Hedvid kjellstrom, KTH 
+    Keywords: Computer Vision, Machine Learning, Representation Learning, Human Behavior, Animal Behavior
+    [[https://scholar.google.com/citations?hl=en&user=wr3CtKAAAAAJ&view_op=list_works&sortby=pubdate][Google scholar]]
+    
+  - [ ] Henk Wymeersch, Communication Systems, Chalmers
+    [[https://www.chalmers.se/en/staff/Pages/henk-wymeersch.aspx][Page]] ,
+    [[https://sites.google.com/site/hwymeers/][Google site]]
+    
+  - uppsalar, there maybe groups
+  
+  - [ ] Bogdan Savchynskyy, Senior Researcher and Group Leader (Akademischer Rat) at Visual Learning Lab, Universität Heidelberg
+    [[https://hci.iwr.uni-heidelberg.de/vislearn/people/bogdan/][Page]]
+    
 
 * Schedule for Defense
 
