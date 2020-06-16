@@ -124,7 +124,7 @@ layer signal $\bm{h}$ and model a part of it directly as standard Gaussian to re
   In contrast to the above finite-chain flow where $L$ is a discrete finite integer, the method developed in \cite{ricky2018ODE} introduced a continuous-transformation of variables by solving an ordinary differential equation (ODE). Comparing to the discrete finite chain of transformation in normalizing flow, ODE can be viewed as a continuous chain of variable transformation. The inverse mapping and Jacobian determinant are not required in ODE method. But ODE needs to solve differentiation equations which is also challenging.
 \end{remark}
 
-\section{Generator mixture model and EM training}
+\section{Generator Mixture Model and EM Training}
 \label{chpt6:sec:generator-mix-em}
 \begin{figure}[tp!]
   \centering
@@ -178,10 +178,8 @@ layer signal $\bm{h}$ and model a part of it directly as standard Gaussian to re
 \end{figure}
 
 In this section, we introduce a generative model that is a mixture of $K$ flow models. All the $K$ flow models have a common input latent variable $\bm{z} \in \mathbb{R}^N$. Here, a flow $\bm{g}_k(\bm{z}): \mathbb{R}^N
-\rightarrow \mathbb{R}^N$ is a instance of $\tilde{\bm{g}}$. $\bm{g}_k$ acts as the $k$-th generator and depends on a set of parameters $\bm{\theta}_k$ as
-$\bm{g}_k(\bm{z})=\bm{g}(\bm{z};\boldsymbol{\theta}_k)$. For
-simplicity, we assume that all $K$ generators have the same
-chain structure. Furthermore, the distribution of $\bm{z}$ is fixed as Gaussian $\mathsf{N}(\bm{0},\bm{I})$.
+\rightarrow \mathbb{R}^N$ is an instance of $\tilde{\bm{g}}$. $\bm{g}_k$ acts as the $k$-th generator and depends on a set of parameters $\bm{\theta}_k$ as
+$\bm{g}_k(\bm{z})=\bm{g}(\bm{z};\boldsymbol{\theta}_k)$. We denote the induced probability density function by $\bm{g}_k$ as $p(\bm{x})|_{\bm{x}=\bm{g}_k(\bm{z})}:=p_k(\bm{x})$, i.e. $p_k(\bm{x})=p(\bm{g}_k(\bm{z}))$. For simplicity, we assume that all $K$ generators have the same chain structure. Furthermore, the distribution of $\bm{z}$ is fixed as Gaussian $\mathsf{N}(\bm{0},\bm{I})$.
 The induced probability density function of $\bm{x} \in \mathbb{R}^N$ of the proposed mixture model with $K$ mixture components is given as:
 \begin{align}\label{eq:FirstMixtureModel}
   p(\bm{x};\bm{\Theta})  &= \textstyle\sum_{k=1}^K \pi_k  p_k(\bm{x}) \nonumber\\
@@ -189,11 +187,11 @@ The induced probability density function of $\bm{x} \in \mathbb{R}^N$ of the pro
                          &= \textstyle \sum_{k=1}^K \pi_k  p(\bm{g}(\bm{z};\boldsymbol{\theta}_k)).
 \end{align}
 We use $\bm{\Theta}$ to denote the set of all parameters $ \{\bm{\pi},\bm{\theta}_1, \dots, \bm{\theta}_K \}$, where $\bm{\pi} = \left\{ \pi_1, \hdots, \pi_K \right\}$ is the prior distribution of the generators. Note that $\pi_k \geq 0$ and $\sum_{k=1}^K \pi_k =1$. The mixture model
-in \eqref{eq:FirstMixtureModel} is called a generator mixture model (GenMM). The graphical model of GenMM is illustrated in Figure~\ref{chpt6:fig:genmm-graph}. The plate in this figure is common notation in template models (see \cite[Section~6]{koller2009pgm}), denoting we can instantiate multiple tuple $(\bm{z}, \bm{x}, \bm{s})$ instances having dependency as illustrated. Furthermore, the
+in \eqref{eq:FirstMixtureModel} is called a generator mixture model (GenMM). The graphical model of GenMM is illustrated in Figure~\ref{chpt6:fig:genmm-graph}. The plate in this figure is common notation in template models (see \cite[Section~6]{koller2009pgm}), denoting that we can instantiate multiple tuple $(\bm{z}, \bm{x}, \bm{s})$ instances having dependency as illustrated. Furthermore, the
 signal diagram of GenMM is illustrated in Figure~\ref{dia-emgm-nm}. The GenMM can be considered as a high-complexity model because each mixture component $p_k(\bm{x})$ has its own parameter set $\bm{\theta}_k$. 
 % the parameter $\boldsymbol{\theta}_k$ varies across $K$ mixture components.
 
-The maximum likelihood estimation problem is
+Assuming that the data in $\Dd$ is sampled i.i.d. from $p^{\ast}$, the maximum likelihood estimation problem is
 \begin{equation}\label{eq:max-genmm}
   \hat{\bm{\Theta}} = \uargmax{\bm{\Theta}}{\log{\prod_{\bm{x}^{i} \in \Dd} p(\bm{x}^{i};\bm{\Theta})}},
 \end{equation}
@@ -221,9 +219,9 @@ Assume that a value $\bm{\Theta}^{\mathrm{old}}$ of the parameter set $\bm{\Thet
   \end{equation}
 \end{enumerate}
 
-For the GenMM in \eqref{eq:FirstMixtureModel}, realizing EM requires computation of $\gamma_k$ in the E-step and computation of the joint likelihood $\log{\pi_k p_k(\bm{x})}$ in the M-step. They require explicit computation of the conditional density $p_k(\bm{x}) =  p(\bm{g}_k(\bm{z})) =p(\bm{g}(\bm{z};\bm{\theta}_k))$. This is fulfilled by flow realization of generator $\bm{g}_k$. Since the chain-step transformations can be any complex mapping as discussed in Section~\ref{chpt6:sec:flow}, they can be implemented by neural networks. The neural network implementation allows high flexibility of GenMM in representing complex-structured multi-modal data.
+For the GenMM in \eqref{eq:FirstMixtureModel}, realizing EM requires computation of $\gamma_k$ in the E-step and computation of the joint likelihood $\log{\pi_k p_k(\bm{x})}$ in the M-step. They require explicit computation of the conditional density $p_k(\bm{x}) =  p(\bm{g}_k(\bm{z})) =p(\bm{g}(\bm{z};\bm{\theta}_k))$. This is fulfilled by flow realization of generator $\bm{g}_k$. Since the chain-step transformations can be any invertible complex mapping as discussed in Section~\ref{chpt6:sec:flow}, they can be implemented by neural networks. The neural network implementation allows high flexibility of GenMM in representing complex-structured multi-modal data.
 
-\subsubsection{EM Learning of GenMM}
+\subsection{EM Learning of GenMM}
 \label{sec-algo-genmm}
 The mixture model GenMM is illustrated in Figure~\ref{dia-emgm-nm},
 where $K$ generators with a certain prior distribution share the same
@@ -244,12 +242,7 @@ Recall that $ \bm{\Theta}= \{\bm{\pi},\bm{\theta}_1, \dots, \bm{\theta}_K \}$ an
 \item[(b)] optimizing with regard to $\bm{\pi}$.
 \end{itemize}
 
-Finding a closed-form solution for the problem $\argmax{\{\bm{\theta}_k\}_{k=1}^{K}}{ \mathcal{Q} (\bm{\Theta},\bm{\Theta}^{\mathrm{old}})}$ is not feasible in general. Instead, we do the batch-size gradient decent to optimize with regard to $\{\bm{\theta}_k\}_{k=1}^{K}$.
-Further, optimization in the batch fashion leads to a practical problem as follows. 
-Since $\bm{\theta}_k$ is the parameter set of neural networks $\bm{g}_k$, one update step of gradient decent would update the generator $\bm{g}_k$ and we would lose the old mixture model parameter set $\bm{\Theta}^{\mathrm{old}}$ that is needed to compute the posteriors $\gamma_k(\bm{\Theta}^{\mathrm{old}})$ and to update $\bm{\pi}$. Thus, in learning GenMM, we maintain two such models with parameter sets $\bm{\Theta}$ and $\bm{\Theta}^{\mathrm{old}}$, respectively. At the beginning of an EM step, $\bm{\Theta} = \bm{\Theta}^{\mathrm{old}}$. While we optimize $\{\bm{\theta}_k\}_{k=1}^{K}$ of $\bm{\Theta}$ with batch-size gradient decent, we use the model with old parameter set $\bm{\Theta}^{\mathrm{old}}$ to do posterior computation and update of $\bm{\pi}$. At the end of the EM step, the old parameter set is replaced by the updated one: $\bm{\Theta}^{\mathrm{old}}\gets \bm{\Theta}$.
-
-
-\begin{algorithm}[t]
+\begin{algorithm}[!t]
   \caption{EM for learning GenMM}\label{flow-algo-em}
   \begin{algorithmic}[1]
     \STATE {\bfseries Input:}
@@ -289,7 +282,14 @@ Since $\bm{\theta}_k$ is the parameter set of neural networks $\bm{g}_k$, one up
   \end{algorithmic}
 \end{algorithm}
 
-Then we discuss the optimization of the prior distribution $\bm{\pi}$. The optimization problem is 
+
+Finding a closed-form solution for the problem $\argmax{\{\bm{\theta}_k\}_{k=1}^{K}}{ \mathcal{Q} (\bm{\Theta},\bm{\Theta}^{\mathrm{old}})}$ is not feasible in general. Instead, we use the batch-size gradient decent to optimize with regard to $\{\bm{\theta}_k\}_{k=1}^{K}$.
+Further, optimization in the batch fashion leads to a practical problem as follows. 
+Since $\bm{\theta}_k$ is the parameter set of the neural networks $\bm{g}_k$, one update step of gradient decent would update the generator $\bm{g}_k$ and we would lose the old mixture model parameter set $\bm{\Theta}^{\mathrm{old}}$ that is needed to compute the posteriors $\gamma_k(\bm{\Theta}^{\mathrm{old}})$ and to update $\bm{\pi}$. Thus, in learning GenMM, we maintain two such models with parameter sets $\bm{\Theta}$ and $\bm{\Theta}^{\mathrm{old}}$. At the beginning of an EM step, $\bm{\Theta} = \bm{\Theta}^{\mathrm{old}}$. While we optimize $\{\bm{\theta}_k\}_{k=1}^{K}$ of $\bm{\Theta}$ with batch-size gradient decent, we use the model with old parameter set $\bm{\Theta}^{\mathrm{old}}$ to do posterior computation and update of $\bm{\pi}$. At the end of the EM step, the old parameter set is replaced by the updated one: $\bm{\Theta}^{\mathrm{old}}\gets \bm{\Theta}$.
+
+
+
+Next, we discuss the optimization of the prior distribution $\bm{\pi}$. The optimization problem is 
 \begin{equation}\label{eq-pi-update1}
   \bm{\pi}^{\mathrm{new}} = \uargmax{\bm{\pi}}{ \mathcal{Q}
     (\bm{\Theta},\bm{\Theta}^{\mathrm{old}})}, \,\,
@@ -311,7 +311,7 @@ We summarize the EM algorithm for GenMM in Algorithm~\ref{flow-algo-em}.
 In implementation, to avoid numerical computation problem, $\log{p(\bm{g}(\bm{z}; \bm{\theta}_k))}$ is
 scaled by the dimension of signal $\bm{x}$ in order to compute $\gamma_k$. 
 
-\subsubsection{Details for Update of $\pi$}
+\subsection{Detailed Derivation of the Update for $\pi$}
 \label{subsubsec:Proof_for_update}
 
 The optimization of $\bm{\pi}$ is addressed in the following Lagrangian form
@@ -341,7 +341,7 @@ $
 \pi_k = \frac{1}{\lambda}
 \sum_{i=1}^{n}\gamma_k^{i}(\bm{\Theta}^{\mathrm{old}}), \forall k.
 $
-With condition $\sum_{k=1}^{K}\pi_k =1$, we have
+With the condition $\sum_{k=1}^{K}\pi_k =1$, we have
 $
 \lambda = \sum_{k=1}^{K}\sum_{i=1}^{\abs{\Dd}}\gamma_k^{i}(\bm{\Theta}^{\mathrm{old}}) =\abs{\Dd}.
 $
@@ -353,8 +353,8 @@ $
 Note that the updated prior parameter $\pi_k$
 is non-negative due to the non-negativity of the posterior $\gamma_k^{i}$.
 
-\subsection{On Convergence of GenMM}
-Now we analysis the convergence behaviour of GenMM. Under some conditions, GenMM converges. In what follows we present the convergence arguments.
+\subsection{On the Convergence of GenMM}
+Now we analysis the convergence behaviour of GenMM. Under the conditions that we present as follows, GenMM converges. 
 
 \begin{proposition}
   Assume that for all $k$, the parameters $\bm{\theta}_k$ are in a compact set such that the corresponding mapping $\bm{g}_k$ is invertible. Assume further that all generator mappings fulfill that $\bm{f}_k$ and $\frac{\partial \bm{f}_k}{\partial \bm{x}}$ are continuous functions of $\bm{\theta}_k$. Then GenMM converges. 
@@ -363,7 +363,9 @@ Now we analysis the convergence behaviour of GenMM. Under some conditions, GenMM
 \end{proposition}
 \begin{proof}
   Assume that the assumption holds. Then the determinant term $\det(\bm{J})$ in \eqref{chpt6:eq:change-var} is a continuous function of $\bm{\theta}_k$. Due to \eqref{chpt6:eq:change-var} and the continuity of Gaussian density $p(\bm{z})$, the probability density function $p_k(\bm{x})$ is a continuous function of $\bm{\theta}_k$. Therefore, $p(\bm{x})$ given in \eqref{eq:FirstMixtureModel} is a continuous function of $\bm{\Theta}$. Denote the likelihood in \eqref{eq:max-genmm} as $\Ll(\bm{\Theta})=\log \textstyle\prod_{i} p(\bm{x}^{(i)};\bm{\Theta})$. The maximum value of $\Ll(\bm{\Theta})$ is bounded due to continuity of $p(\bm{x})$ with regard to $\bm{\Theta}$.
-  Define $\hat{F}(\bm{\Theta}) = \Qq\left(\bm{\Theta},\bm{\Theta}^{\mathrm{old}}\right) - \sum_{i=1}^{\abs{\Dd}}\sum_{k=1}^{K}\gamma_k^{i}(\bm{\Theta}^{\mathrm{old}}) \log\gamma_k^{(i)}(\bm{\Theta}^{\mathrm{old}})$ (note $\hat{F}$ is the empirical version of lower bound in \eqref{chpt5:eq:lower-bound-F}). It is well known that $\hat{F}(\bm{\Theta})$ is a lower bound on the likelihood function $\Ll(\bm{\Theta})$, i.e. $\Ll(\bm{\Theta}) \geq \hat{F}(\bm{\Theta})$. Note that the essence of EM algorithm is that the likelihood function value is elevated by increasing the value of its lower bound $\hat{F}(\bm{\Theta})$. Since the maximum value of the log-likelihood $\Ll(\bm{\Theta})$ is finite, $\hat{F}(\bm{\Theta})$ can not grow unbounded.
+  Define $\hat{F}(\bm{\Theta}) = \Qq\left(\bm{\Theta},\bm{\Theta}^{\mathrm{old}}\right) - \sum_{i=1}^{\abs{\Dd}}\sum_{k=1}^{K}\gamma_k^{i}(\bm{\Theta}^{\mathrm{old}}) \log\gamma_k^{(i)}(\bm{\Theta}^{\mathrm{old}})$ (note $\hat{F}$ is the empirical version of lower bound in \eqref{chpt5:eq:lower-bound-F}). It is well known that $\hat{F}(\bm{\Theta})$ is a lower bound on the likelihood function $\Ll(\bm{\Theta})$, i.e. $\Ll(\bm{\Theta}) \geq \hat{F}(\bm{\Theta})$.
+
+  Note that the essence of EM algorithm is that the likelihood function value is elevated by increasing the value of its lower bound $\hat{F}(\bm{\Theta})$. Since the maximum value of the log-likelihood $\Ll(\bm{\Theta})$ is finite, $\hat{F}(\bm{\Theta})$ can not grow unbounded.
   % Actually the maximization of $\Ll(\bm{\Phi})$ solved by EM is done by keeping increasing a lower bound of likelihood $\Ll(\bm{\Phi})$: 
   % .
   % The inequality  always holds.
@@ -375,7 +377,7 @@ Now we analysis the convergence behaviour of GenMM. Under some conditions, GenMM
 
 \section{A low-complexity model}
 There are $K$ flow generators implemented as neural networks in GenMM, which makes GenMM a high-complexity model.
-We now propose a low-complexity model where parameters are shared. This is motivated by many machine learning setups where model parameters are shared across model components. For example, this technique is applied as the use of shared covariance matrices in a tied Gaussian mixture model, in linear discriminant analysis \cite{bellegarda1990tiedmixture, Kimball:1993:UTD:1075671.1075694, Bishop:2006:PRM:1162264}, and use of common subspace in non-negative matrix factorization \cite{Gupta2013}. Based on the idea of sharing parameters, we propose a low-complexity model which we refer to as a latent mixture model as follows.
+We now propose a low-complexity model where parameters are shared. This is motivated by many machine learning setups where model parameters are shared across model components. For example, this technique is applied as the use of shared covariance matrices in a tied Gaussian mixture model, in linear discriminant analysis \cite{bellegarda1990tiedmixture, Kimball:1993:UTD:1075671.1075694, Bishop:2006:PRM:1162264}, and the use of a common subspace in non-negative matrix factorization \cite{Gupta2013}. Based on the idea of sharing parameters, we propose a low-complexity model which we refer to as a latent mixture model as follows.
 
 \subsection{Latent mixture model}\label{subsec-latmm}
 
@@ -383,7 +385,7 @@ In this generative model, we use a latent variable $\bm{z}$ that has the followi
 \begin{equation}
   p(\bm{z}) = \sum_{k=1}^K \pi_k p_k(\bm{z}), % = \sum_{k=1}^K \pi_k \mathcal{N}(\bm{z};\bm{\mu}_k,\bm{C}_k),
 \end{equation}
-where $p_k(\bm{z})$ is probability density function of Gaussian distribution $\mathsf{N}(\bm{z};\bm{\mu}_k,\bm{C}_k)$ with mean $\bm{\mu}_k$ and covariance $\bm{C}_k$.
+where $p_k(\bm{z})$ is probability density function of a Gaussian distribution $\mathsf{N}(\bm{z};\bm{\mu}_k,\bm{C}_k)$ with mean $\bm{\mu}_k$ and covariance $\bm{C}_k$.
 The data $\bm{x}$ is
 assumed to be generated in the model using a single neural network
 $\bm{g}(\bm{z}): \mathbb{R}^N \rightarrow \mathbb{R}^N$ as
@@ -439,7 +441,7 @@ also requires computing the posterior distribution $\ubar{\gamma}_k$ and the joi
 \end{figure}
 
 
-\subsubsection{EM Algorithm for LatMM}
+\subsection{EM Algorithm for LatMM}
 \begin{algorithm}[t]
   \caption{EM for learning LatMM}\label{flow-algo-sem}
   \begin{algorithmic}[1]
@@ -505,7 +507,7 @@ the latent source $p(\bm{z})$ can be obtained by an affine transform from
 the standard Gaussian, {i.e.}, $\bm{z}_k \sim p_k(\bm{z})$ can be
 obtained by a linear layer of neural network with $\bm{z}_k = \bm{\mu}_k
 + \bm{\sigma}_k \bm{\epsilon}, \bm{\epsilon} \sim \mathsf{N}(\bm{0}, \bm{I})$.
-According to Section~\ref{subsec-latmm}, the posterior and objective function in M-step of LatMM can be computed as
+According to Section~\ref{subsec-latmm}, the posterior and objective function in M-step of LatMM can be respectively computed as
 \begin{align}\label{em-latmm-gamma}
   \ubar{\gamma}_k(\ubar{\bm{\Theta}}^{\mathrm{old}}) = \frac{\pi_k^{\mathrm{old}} p_k\left(\bm{z}\right)}{\sum_{j=1}^K\;\pi_j^{\mathrm{old}} p_j\left(\bm{z}\right)}\bigg|_{\bm{z}=\bm{f}(\bm{x})},
 \end{align}
@@ -520,7 +522,7 @@ where $\bm{f}$ is the inverse of $\bm{g}$.
 Similar to Section~\ref{sec-algo-genmm}, update of prior $\bm{\pi}$
 follows $\pi_k \leftarrow \EE_{\Dd}[ \ubar{\gamma}_k(\bm{x})
 ]$. However, we need to consider the following issue when learning the parameters of
-Gaussian mixture source $p(\bm{z}) = \sum_{k=1}^K \pi p_k(\bm{z})$. If a component of the mixture source overfits and collapses onto a data sample, the likelihood can be large but the parameter learning can be problematic. This problem is known as the singularity problem of Gaussian mixture \cite{Bishop:2006:PRM:1162264}.
+Gaussian mixture source $p(\bm{z}) = \sum_{k=1}^K \pi p_k(\bm{z})$. If a component of the mixture source overfits and collapses onto a data sample, the likelihood can be large and the parameter learning can be problematic. This problem is known as the singularity problem of Gaussian mixture \cite{Bishop:2006:PRM:1162264}.
 We avoid this problem by using the following alternatives:
 \begin{itemize}
 \item Assume that for each $\forall k=1, 2, \cdots, K$, there is a parameter prior distribution for $\bm{C}_k=\mathrm{diag}(\bm{\sigma}_k^2)$.
@@ -555,7 +557,7 @@ To get a less complex model than GenMM, another new model can be derived by modi
 Therefore several new models can be derived using our proposed models, GenMM and LatMM. In spite of the scope and potential, the development of an analytical methodology to derive new model architectures turns out to be challenging. Traditionally the development is trial-and-error driven. Development of new model architectures by combining GenMM and LatMM is not to be pursued here.   
 
 
-\section{Experiments Results}\label{sec:experiments}
+\section{Experimental Results}\label{sec:experiments}
 % \begin{figure*}[!ht]
 %   \captionsetup[subfigure]{justification=centering}
 %   \centering
@@ -705,7 +707,7 @@ In this section, we evaluate our proposed mixture models for generating samples 
     \caption{Dataset Fashion-MNIST}
     \label{fig-genmm-fsh-nll-curve}
   \end{subfigure}
-  \caption{NLL (Unit: nat/pixel) of GenMM versus training epochs with different number of mixture component $k$. (a) $10000$ images from MNIST is used for training, (b) $10000$ images from Fashion-MNIST is used for training.}
+  \caption{NLL (Unit: nat/pixel) of GenMM versus training epochs with different number of mixture component $K$. (a) $10000$ images from MNIST is used for training, (b) $10000$ images from Fashion-MNIST is used for training.}
   \label{fig:genmm-nll}
 \end{figure*}
 
@@ -727,7 +729,7 @@ In this section, we evaluate our proposed mixture models for generating samples 
     \label{fig-latmm-fsh-nll-curve}
   \end{subfigure}
   
-  \caption{NLL (Unit: nat/pixel) of LatMM versus training epochs with different number of mixture component $k$. (a) $10000$ images from MNIST is used for training, (b) $10000$ images from Fashion-MNIST is used for training.}
+  \caption{NLL (Unit: nat/pixel) of LatMM versus training epochs with different number of mixture component $K$. (a) $10000$ images from MNIST is used for training, (b) $10000$ images from Fashion-MNIST is used for training.}
   \label{fig:latmm-nll}
 \end{figure*}
 
@@ -878,7 +880,7 @@ In addition, the prior distribution $\bm{\pi}$ update in both GenMM and LatMM is
 \end{figure*}
 
 \subsection{Evaluation of Proposed Models}\label{chpt6:sec:eval-metrics}
-In order to see if the proposed algorithms of GenMM and LatMM help to improve probability distribution modeling capacity, we assess our proposed algorithms with varying number of mixtures ($K$). Since our models are explicit models, the negative log likelihood (NLL) is used for comparison of our models. Apart from NLL, another four different metrics are used in the assessment of models.
+In order to see if the proposed algorithms of GenMM and LatMM help to improve the probability distribution modeling capacity, we assess our proposed algorithms with varying number of mixtures ($K$). Since our models are explicit models, the negative log likelihood (NLL) is used for comparison of our models. Apart from NLL, another four different metrics are used in the assessment of models.
 The metrics are Inception Score (IS) \cite{NIPS2016_6125,2018arXiv180101973B,2018arXiv180607755X}, Frechet
 Inception Distance (FID) \cite{2017arXiv170608500H}, Maximum Mean
 Discrepancy (MMD) \cite{2018arXiv180607755X} and two-sample test based 1-Nearest
@@ -906,7 +908,7 @@ we train a ResNet on datasets MNIST and Fashion-MNIST, respectively, as the feat
   \end{tabular} 
 \end{table}
 
-The NLL curves of GenMM and LatMM models during model training phase are shown in Figure~\ref{fig:genmm-nll} and Figure~\ref{fig:latmm-nll}, respectively. Subsets of MNIST and Fashion-MNIST are used to train our mixture models in order to assess their performance with regard to NLL when a different number of mixture components $K$ is used. All the curves in Figure~\ref{fig:genmm-nll} and Figure~\ref{fig:latmm-nll} show that NLL decreases as training epoch number increases in general. There is fluctuation of these decreasing NLL curves due to: (a) the iteration of E-step and M-step of EM, and (b) the use of batch-size gradient in optimization at M-step. In each figure of Figure~\ref{fig:genmm-nll} and Figure~\ref{fig:latmm-nll}, a NLL curve corresponding to a larger total number of mixture components, $K$, reaches a smaller NLL value after training for the same number of epochs. The results are consistent since as $K$ increases, both GenMM and LatMM have smaller NLL. These results confirm our hypothesis that mixture models fit real data better. The lowest NLL values of curves in Figure~\ref{fig:genmm-nll} in training GenMM models are reported in Figure~\ref{tab:lowestNLLgenMM}.
+The NLL curves of GenMM and LatMM models during model training phase are shown in Figure~\ref{fig:genmm-nll} and Figure~\ref{fig:latmm-nll}, respectively. Subsets of MNIST and Fashion-MNIST are used to train our mixture models in order to assess their performance with regard to NLL when a different number of mixture components $K$ is used. All the curves in Figure~\ref{fig:genmm-nll} and Figure~\ref{fig:latmm-nll} show that NLL decreases as the training epoch number increases in general. There is fluctuation of these decreasing NLL curves due to: (a) the iteration of E-step and M-step of EM, and (b) the use of batch-size gradient in the optimization at the M-step. In each figure of Figure~\ref{fig:genmm-nll} and Figure~\ref{fig:latmm-nll}, a NLL curve corresponding to a larger total number of mixture components, $K$, reaches a smaller NLL value after training for the same number of epochs. The results are consistent since as $K$ increases, both GenMM and LatMM have smaller NLL. These results are consistent with our common sense that mixture models fit real data better. The lowest NLL values of curves in Figure~\ref{fig:genmm-nll} in training GenMM models are reported in Figure~\ref{tab:lowestNLLgenMM}.
 
 \begin{figure*}[!t]
   \captionsetup[subfigure]{justification=centering}
@@ -1010,12 +1012,12 @@ observed that IS increases with the number of mixtures $K$. The IS
 improvement shows a saturation and decreasing trend for GenMM when
 $K=9$. The FID, MMD, and 1NN scores show a decreasing trend with the
 increase of $K$. Their trends also saturate with increase in $K$. The
-trends obey a statistical knowledge that performance improves with
-the increase in the model complexity, and then deteriorates if the model
-complexity continues to increase. As that in Figure~\ref{fig-scores-k}, similar trends are also observed in Figure~\ref{fig-scores-k-FashionMNIST}. In some cases, performance for $K=3$ is poorer than $K=1$. We assume that the random initialization of parameters in mixture models has a high influence in this regard. 
+trends obey common practice that performance improves with
+increasing model complexity, and then deteriorates if the model
+complexity continues to increase. As in Figure~\ref{fig-scores-k}, similar trends are also observed in Figure~\ref{fig-scores-k-FashionMNIST}. In some cases, performance for $K=3$ is poorer than $K=1$. We assume that the random initialization of parameters in the mixture models has a high influence in this regard. 
 Considering the trends in all the scores for both the figures, we can conclude that GenMM and LatMM can model the underlying distributions of data and the mixture models are good.
 
-\subsection{Sample Generating and Interpolation}
+\subsection{Sample Generation and Interpolation}
 
 
 \begin{figure*}[!ht]
@@ -1081,7 +1083,7 @@ Considering the trends in all the scores for both the figures, we can conclude t
 
 Next we show generated samples from the proposed models trained with MNIST and Fashion-MNIST in Figure~\ref{fig-demo-samples}. In the figure, we show generated samples from GenMM and LatMM for MNIST and Fashion-MNIST datasets. We use different values of $K$ to generate images. It can be observed that LatMM is able to produce good quality image samples as GenMM. While we argue that LatMM has a lower level of complexity than GenMM, it is seen that LatMM works well in practice.    
 
-In the second experiment, we explore power of invertibility for interpolation in the latent domain. We use samples from MNIST and Fashion-MNIST datasets for this `interpolation' experiment. In Figure~\ref{fig-interpo}, we have six subfigures. For each subfigure, the first row and the last row are comprised of the real (true) data samples from MNIST and Fashion-MNIST dataset. In each column, we find latent codes corresponding to the real samples of the first row and the last row, $\bm{z}_1, \bm{z}_2$. This is possible as the neural networks are invertible. Then, we perform a convex combination of the two latent codes as $\alpha \bm{z}_1 + (1- \alpha)\bm{z}_2$, where $0 < \alpha <1$. The latent code produced by the convex combination is used to generate a new sample using the trained models. All other rows except the first and the last rows of the figure are the generated samples by varying $\alpha$. In Figure~\ref{fig-interpo}, we observe the change visually from the first row to last row - how the first row slowly changes to the last row. We use GenMM for Figure~\ref{fig-interpo-genmm1}, \ref{fig-interpo-genmm2}, \ref{fig-interpo-genmm3}, and LatMM for Figure~\ref{fig-interpo-latmm1}, \ref{fig-interpo-latmm2}, \ref{fig-interpo-latmm3}. Interpolation experiment for LatMM is easier than GenMM. GenMM has a set of neural network generators $\{ \bm{g}_k(\bm{z}) \}_{k=1}^K$ and a fixed Gaussian distribution for latent variable $\bm{z}$. We compute $\gamma_k$ for a real image $\bm{x}$, and then find the latent code $\bm{z}$ of $\bm{x}$ using $\bm{g}_{k^{*}}^{-1}(\bm{x})=\bm{f}_{k^{*}}(\bm{x})$, where $k^{*} = \arg \max_{k} \gamma_k$. For two real images (one image is in the first row and the second image in the last row), we find the corresponding latent codes, compute their convex combination as interpolation, and then pass the computed latent code through a generator $\bm{g}_k(\bm{z})$ to produce a generated sample $\bm{x}$. Identity of the generator of GenMM is chosen as $k^{*}$ corresponding to the image of the first row if $\alpha < 0.5$, or to the image of the last row if $\alpha \geq 0.5$.
+In the second experiment, we explore the power of invertibility for interpolation in the latent domain. We use samples from MNIST and Fashion-MNIST datasets for this `interpolation' experiment. In Figure~\ref{fig-interpo}, we have six subfigures. For each subfigure, the first row and the last row contain the real (true) data samples from MNIST and Fashion-MNIST dataset. In each column, we find latent variables corresponding to the real samples of the first row and the last row, $\bm{z}_1, \bm{z}_2$. This is possible as the neural networks are invertible. Then, we perform a convex combination of the two latent variables as $\alpha \bm{z}_1 + (1- \alpha)\bm{z}_2$, where $0 < \alpha <1$. The latent code, i.e. the latent variable, produced by the convex combination is used to generate a new sample using the trained models. All other rows except the first and the last rows of the figure are the generated samples by varying $\alpha$. In Figure~\ref{fig-interpo}, we observe the change visually from the first row to last row, i.e. how the first row slowly changes to the last row. We use GenMM for Figure~\ref{fig-interpo-genmm1}, \ref{fig-interpo-genmm2}, \ref{fig-interpo-genmm3}, and LatMM for Figure~\ref{fig-interpo-latmm1}, \ref{fig-interpo-latmm2}, \ref{fig-interpo-latmm3}. Interpolation experiment for LatMM is easier than GenMM. GenMM has a set of neural network generators $\{ \bm{g}_k(\bm{z}) \}_{k=1}^K$ and a fixed Gaussian distribution for latent variable $\bm{z}$. We compute $\gamma_k$ for a real image $\bm{x}$, and then find the latent code $\bm{z}$ of $\bm{x}$ using $\bm{g}_{k^{*}}^{-1}(\bm{x})=\bm{f}_{k^{*}}(\bm{x})$, where $k^{*} = \arg \max_{k} \gamma_k$. For two real images (one image is in the first row and the second image in the last row), we find the corresponding latent codes, compute their convex combination as interpolation, and then pass the computed latent code through a generator $\bm{g}_k(\bm{z})$ to produce a generated sample $\bm{x}$. Identity of the generator of GenMM is chosen as $k^{*}$ corresponding to the image of the first row if $\alpha < 0.5$, or to the image of the last row if $\alpha \geq 0.5$.
 
 \begin{figure*}[!ht]
   \captionsetup[subfigure]{justification=centering}
@@ -1259,16 +1261,16 @@ The maximum likelihood based classification experiment as described above is car
 Figure~\ref{fig:class-letter}, \ref{fig:class-satimage} and \ref{fig:class-norb} show the train and test accuracy changing along with the training epoch on dataset Letter and Satimage, respectively. For each dataset, the accuracy curves versus epoch trained with GenMM at different values of $K$ are shown. In these sets of figures, all accuracy curves climb and flatten around some value, as training epoch increases. Train accuracy is either coincident with, or above test accuracy curve at different training phases. For each set of figures on a given dataset, the gap between train and test curve is smaller as a larger number of mixture components is used. As $K$ increases, the test curve flattens at a larger accuracy value. This again speaks for validation of our proposed models and also the advantage of using our mixture models for practical tasks.
 
 \section{Summary}
-In this chapter, we considered the learning problem in the presence of incomplete data (or unobserved variables) in directed graphs. We introduced normalizing flows that ware implemented as neural networks to model the conditional distributions, in order to increase modeling flexibility. Building a model more expressively helps reduces the inherent bias in modeling. The proposed models allow both exact likelihood computation and also efficient sampling.
+In this chapter, we considered the learning problem in the presence of incomplete data (or unobserved variables) in directed graphs. We introduced normalizing flows that were implemented as neural networks to model the conditional distributions, in order to increase modeling flexibility. Building a model more expressively helps reducing the inherent bias in modeling. The proposed models allow both exact likelihood computation and also efficient sampling.
 
-Learning methods of the proposed models ware proposed. Due to the presence of neural network based flows in conditional distribution modeling, expectation maximization was tailored to adapt to their learning and the maximization step was approximately solved with back-propagation technique. The approximation was also partially due to the fact that batch-based optimization had to been used to accommodate large datasets. From the perspective of the numerical evaluations, the proposed models are valid. The numerical results show that the normal statistical behavior of modeling performance versus model complexity remains valid. More expressive models benefit the applications to data representation (data generating) and classification.
+Learning methods of the proposed models were proposed. Due to the presence of neural network based flows in conditional distribution modeling, expectation maximization was tailored to adapt to their learning and the maximization step was approximately solved with back-propagation technique. The approximation was also partially due to the fact that batch-based optimization had to been used to accommodate large datasets. From the perspective of the numerical evaluations, the proposed models are valid. The numerical results show that the normal statistical behavior of modeling performance versus model complexity remains valid. More expressive models benefit the applications to data representation (data generating) and classification.
 
 The considered models in this chapter assume that an observation instance with its unobserved variable is independent of other observation instances (with their corresponding hidden variables). This assumption could bring poor models when the true signal is temporal and the independence does not hold. In the next chapter, we would consider how to model and learn a model where this independence is gone. 
 
 \section{Related Work}
 
-Using mixture models to get gain in modeling flexibility is a typical technique, which is especially useful when the target dataset is multi-modal. This gain comes with unobserved variables. The unobserved variables usually are related to the abstraction of data modal, which helps us interpret the data. But they also pose challenges in model learning. In literature, expectation maximization \cite{dempster1977maximum} is a standard approach for learning parameters of an explicit mixture model where the likelihood is tractable. Gaussian mixture model is the most classic one in this framework \cite{Bishop:2006:PRM:1162264}.
-Apart from explicit likelihood, when sufficient statistics are explicitly present in a model, stochastic EM \cite{cappe2009sem} is applicable to accommodate large datasets. Instead of computing expectation step with regard to every datum, stochastic EM carries out expectation step with regard to a randomly selected datum to reduce the complexity of vanilla EM. The benefit of reduced complexity comes with the drawback of increased variance in parameter learning. This issue triggered the stochastic EM with variance reduction\cite{chen2018emvr} and fast incremental EM \cite{karimi2019incrementalEM} methods.
+Using mixture models to get gain in modeling flexibility is a common technique, which is especially useful when the target dataset is multi-modal. This gain comes with unobserved variables. The unobserved variables usually are related to the abstraction of data, which helps us interpret the data. But they also pose challenges in model learning. In the literature, expectation maximization \cite{dempster1977maximum} is a standard approach for learning parameters of an explicit mixture model where the likelihood is tractable. The Gaussian mixture model is the most classic one in this framework \cite{Bishop:2006:PRM:1162264}.
+Apart from the explicit likelihood, when sufficient statistics are explicitly present in a model, stochastic EM \cite{cappe2009sem} is applicable to accommodate large datasets. Instead of computing expectation step with regard to every datum, stochastic EM carries out expectation step with regard to a randomly selected datum to reduce the complexity of vanilla EM. The benefit of reduced complexity comes with the drawback of increased variance in parameter learning. This issue triggered the stochastic EM with variance reduction\cite{chen2018emvr} and fast incremental EM \cite{karimi2019incrementalEM} methods.
 
 
 When likelihood is not tractable (e.g., implicit probabilistic models), different objectives need to be designed to guide the modeling learning. Generative adversarial networks (GANs) have gained increasing attention in this track \cite{NIPS2014_5423, NIPS2016_6125, 2018arXiv180508318Z, salimans2018improving}.
@@ -1276,7 +1278,7 @@ GANs are efficient for generating samples and successful in several applications
 an input to the generator neural network of the GAN, and the output of the neural network is considered to be a data sample from an implicit distribution. The implicit distraction targets at approximating the underlying distribution of the given dataset, via the guidance of a discriminator.
 To capture diversity in data (multi-modal), the usage of multiple generators has been considered. For instance, multiple Wasserstein GANs \cite{2017arXiv170107875A} are used in \cite{2018arXiv180600880K} with appropriate mutual information based regularization to encourage the diversity of samples generated by different GANs.
 A mixture GAN approach is proposed in \cite{hoang2018mgan} using multiple generators and multi-classification solution to
-encourage diversity of samples. Multi-agent diverse GAN \cite{DBLP:journals/corr/GhoshKNTD17} similarly employs $k$ generators, but uses a $(k+1)$-class discriminator instead of a typical binary discriminator to increase the diversity of generated samples. These works are implicit probability distribution modeling and thus empirical or appropriate methods have to been used to cope with the unobserved random variable. For instance, extra neural networks are used to model the posterior of the unobserved variables \cite{donahue2017adversarial, dumoulin2017adversarially}. 
+encourage diversity of samples. Multi-agent diverse GAN \cite{DBLP:journals/corr/GhoshKNTD17} similarly employs $k$ generators, but uses a $(k+1)$-class discriminator instead of a typical binary discriminator to increase the diversity of generated samples. These works are implicit probability distribution modeling and thus empirical or appropriate methods have to be used to cope with the unobserved random variable. For instance, extra neural networks are used to model the posterior of the unobserved variables \cite{donahue2017adversarial, dumoulin2017adversarially}. 
 
 
 Another track of mixture modeling is based on the ensembling method that combines weaker learners together to boost the overall performance \cite{grover2017aaai_boost,2017arXiv170102386T}. In this approach, mixture models are obtained as follows. Based on how well the current-step mixture model captures the underlying distribution, a new generative model is trained to compensate for the miss-captured part. However, measuring the difference between the current-step mixture model and the underlying distribution of the dataset quantitatively is a nontrivial task, especially when the likelihood is not tractable. In addition, since incremental building components are used in the mixture modeling, parallel training of model components is not allowed.
