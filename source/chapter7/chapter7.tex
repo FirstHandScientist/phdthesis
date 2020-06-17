@@ -241,7 +241,8 @@ where the decomposed optimization problems are
 We can see that the solution of $\bm{H}$ depends on the posterior probability $p(\ubm{s}| \ubm{x}; \bm{H})$.
 
 \begin{remark}[On posterior]\label{chpt7:rmk:posterior}
-  Although the principle here in dealing with the hidden variables is similar to that in Section~\ref{chpt6:sec:generator-mix-em}, new issues arise for dynamic systems. Due to the presence of incomplete observations (hidden variables), we need to 'complete' the missing information by evaluating the posteriors of hidden variables for each partial observation $\bm{x}_t$. In GenHMM, for each $\ubm{x}$, there are missing hidden sequences ($\ubm{s}$, $\ubm{\kappa}$). Although the evaluation of the posterior according to Bayes theorem is straightforward, the computational complexity of $p(\ubm{s}| \ubm{x}; \bm{H})$ grows exponentially with the length of $\ubm{s}$. Therefore, we employ forward-backward algorithm \cite{Bishop:2006:PRM:1162264} to do the posterior computation efficiently. As we will detail in the next section, what is needed to formulate the problem, are actually the $p(s| \ubm{x}; \bm{H})$ and $p(s, \kappa| \ubm{x}; \bm{H})$. For the joint posterior $p(s, \kappa| \ubm{x}; \bm{H})$, it can be computed by the Bayes rule when posterior of hidden state is available.
+  Although the principle here in dealing with the hidden variables is similar to that in Section~\ref{chpt6:sec:generator-mix-em}, new issues arise for dynamic systems. Due to the presence of incomplete observations (hidden variables), we need to 'complete' the missing information by evaluating the posteriors of hidden variables for each partial observation $\bm{x}_t$. In GenHMM, for each $\ubm{x}$, there are missing hidden sequences ($\ubm{s}$, $\ubm{\kappa}$). Although the evaluation of the posterior according to Bayes theorem is straightforward, the computational complexity of $p(\ubm{s}| \ubm{x}; \bm{H})$ grows exponentially with the length of $\ubm{s}$. Therefore, we employ forward-backward algorithm \cite{Bishop:2006:PRM:1162264}, i.e. a message passing algorithm for chains which computes exact marginal probabilities, to do the posterior computation efficiently. The forward-backward algorithm can be recovered from the generic message passing rule \eqref{chpt2:eq:loopy-bp} in Section~\ref{chpt2:sec:inference-mp}.
+As we will detail in the next section, what is needed to formulate the problem, are actually the $p(s| \ubm{x}; \bm{H})$ and $p(s, \kappa| \ubm{x}; \bm{H})$. For the joint posterior $p(s, \kappa| \ubm{x}; \bm{H})$, it can be computed by the Bayes rule when posterior of hidden state is available.
 \end{remark}
 \begin{remark}[Connection to other methods or models]\label{chpt7:rmk:connections}
   The forward-background algorithm mentioned in Remark~\ref{chpt7:rmk:posterior} does exact inference to posteriors, i.e. the exact computation of posterior probabilities. At times, the posterior inference is addressed by approximate inference. For instance, it might be due to the modeling of a dynamic system that does not allow exact inference. \cite{yuan2007thesis} applies expectation propagation \cite{Minka:2001:EPA:647235.720257} to non-linear dynamic models with continuous hidden states.
@@ -262,11 +263,12 @@ We define generator $\bm{g}_{s,\kappa}$ as a $L$-layer flow model and formulate 
 \begin{equation}
 \bm{g}_{s,\kappa}=\bm{g}_{s,\kappa}^{[L]}\circ \bm{g}_{s,\kappa}^{[L-1]}\circ \cdots \circ \bm{g}_{s,\kappa}^{[1]},
 \end{equation}
-where superscript $[l]$ denotes the layer index and $\circ$ denotes mapping concatenation. As detailed in Section~\ref{chpt6:sec:flow}, generator $\bm{g}_{s,\kappa}$ is invertible and denote its inverse mapping as $\bm{f}_{s,\kappa}=\bm{g}_{s,\kappa}^{-1}$. Then \eqref{chpt7:eq:change-variable} can be rewritten as
+where superscript $[l]$ denotes the layer index and $\circ$ denotes mapping concatenation. As detailed in Section~\ref{chpt6:sec:flow}, generator $\bm{g}_{s,\kappa}$ is invertible, and we denote its inverse mapping as $\bm{f}_{s,\kappa}=\bm{g}_{s,\kappa}^{-1}$. Then \eqref{chpt7:eq:change-variable} can be rewritten as
 \begin{equation}\label{chpt7:eq:change-variable-flow}
-  \log{p(\bm{x}| s, \kappa; \bm{\theta}_{s, \kappa})} = \log{p_{s,\kappa}(\bm{f}_{s, \kappa}(\bm{x}))} + \log{\bigg| \det\left( \pd{\bm{f}_{s,\kappa}(\bm{x})}{\bm{z}} \right)\bigg|}.
+  \log{p(\bm{x}| s, \kappa; \bm{\theta}_{s, \kappa})} = \log{p_{s,\kappa}(\bm{f}_{s, \kappa}(\bm{x}))} + \log{\bigg| \det\left( \pd{\bm{f}_{s,\kappa}(\bm{x})}{\bm{z}} \right)\bigg|},
 \end{equation}
-By decomposing the flow model into layer-wise mapping, the part of Jacobian matrix determinant becomes
+where $\bm{z}=\bm{f}_{s,\kappa}(\bm{x})$.
+By decomposing the flow model into layer-wise mappings, the Jacobian matrix determinant becomes
 \begin{equation}\label{eq:cat-jacobian}
   \begin{array}{rl}
     \mathrm{det}(\nabla{\bm{f}_{s,\kappa}}) = \prod_{l=1}^L \det (\nabla{\bm{f}_{s,\kappa}^{[l]}}),
@@ -282,7 +284,7 @@ Then \eqref{chpt7:eq:change-variable-flow} can be further rewritten as
 \subsection{Learning of GenHMM}\label{subsec:optmGenHMM}
 In this section, we address the problem of learning GenHMM.
 \subsubsection{Learning of Generators and Their Weights}
-The learning of mixture of generators is actually to solve the problem in \eqref{eq:generative-model-update}, which can be further divided into two subproblems: i) generator learning; ii) mixture weights of generators learning. Let us define notations:
+Learning of a mixture of generators is actually equivalent to solving the problem in \eqref{eq:generative-model-update}, which can be further divided into two subproblems: i) generator learning and ii) mixture weight learning for the generators. Let us define some notations:
 $\bm{\Pi} = \left\{  \bm{\pi}_{s}| s\in \Ss \right\}$, $\bm{\Theta}=\left\{ \bm{\theta}_s| s\in \Ss \right\}$. 
 Then the problem in \eqref{eq:generative-model-update} becomes
 \begin{align}\label{eq:sub-gm}
@@ -294,7 +296,7 @@ where
   \Qq(\bm{\Theta}; \bm{H}^{\mathrm{old}}) &=\EE_{\hat{p}(\ubm{x}),p(\ubm{s},\ubm{\kappa}| \ubm{x}; \bm{H}^{\mathrm{old}})}\left[  \log\,p(\ubm{x}| \ubm{s},\ubm{\kappa}; \bm{H})\right].
 \end{align}
 
-We firstly address the generator learning problem, i.e. $\umax{\bm{\Theta}} \Qq(\bm{\Theta}; \bm{H}^{\mathrm{old}})$. This is boiled down to maximize the cost function of neural networks that can be formulated as
+We firstly address the generator learning problem, i.e. $\umax{\bm{\Theta}} \Qq(\bm{\Theta}; \bm{H}^{\mathrm{old}})$. This boils down to maximizing the cost function of neural networks that can be formulated as
 \begin{align}\label{eq:obj-q-gen-mix-log}
   &\Qq(\bm{\Theta}; \bm{H}^{\mathrm{old}}) \nonumber \\
   = &\frac{1}{R}\sum_{r=1}^{R}\sum_{\ubmr{s}{r}}\sum_{\ubmr{\kappa}{r}}{p(\ubmr{s}{r}, \ubmr{\kappa}{r}| \ubmr{x}{r}; \bm{H}^{\mathrm{old}})} \sum_{t=1}^{{T}^{r}}\log\,p(\bmtr{x}{t}{r} | \smtr{s}{t}{r}, \smtr{\kappa}{t}{r}; \bm{H}) \nonumber \\
@@ -308,13 +310,13 @@ where $T^r$ is the length of the $r$-th sequential data. In \eqref{eq:obj-q-gen-
 \end{align}
 where the last equation is due to the fact that $\bm{x}_t$ among sequence $\ubm{x}$ is conditional independent of $\bm{x}_{t^{\prime}}$ given $s_t$ and $\kappa_t$ for $t\neq t^{\prime}$. 
 
-By substituting \eqref{chpt7:eq:change-variable-flow-layer} into \eqref{eq:obj-q-gen-mix-log}, we have cost function for neural networks as
+By substituting \eqref{chpt7:eq:change-variable-flow-layer} into \eqref{eq:obj-q-gen-mix-log}, we have the cost function for the neural networks as
 \begin{align}\label{eq:obj-q-gen-mix}
   &\Qq(\bm{\Theta}; \bm{H}^{\mathrm{old}}) \nonumber \\
   =& \frac{1}{R}\hspace{-3pt}\sum_{r=1}^{R}\hspace{-3pt} \sum_{t=1}^{{T}^{r}}\hspace{-3pt} \sum_{\smtr{s}{t}{r}=1}^{|\Ss|} \hspace{-3pt} \sum_{\smtr{\kappa}{t}{r}=1}^{K}p(\smtr{s}{t}{r}| \ubmr{x}{r}; \bm{H}^{\mathrm{old}})p(\smtr{\kappa}{t}{r}|\smtr{s}{t}{r}, \ubmr{x}{r}; \bm{H}^{\mathrm{old}}) \nonumber\\
   &\left[ \log\, p_{\smtr{s}{t}{r}, \smtr{\kappa}{t}{r}}(\bm{f}_{\smtr{s}{t}{r}, \smtr{\kappa}{t}{r}}(\bmtr{x}{t}{r})) + \sum_{l=1}^{L}\log\,| \det (\nabla{\bm{f}_{s,\kappa}^{[l]}})|\right].
 \end{align}
-The generators of GenHMM simply use standard Gaussian distribution for latent variables $\bm{z} \sim p_{s,\kappa}(\bm{z})$. Since training dataset can be too large to do whole-dataset iterations, batch-size stochastic gradient descent can be used to maximize $\Qq(\bm{\Theta; \bm{H}^{\mathrm{old}}})$ with regard to parameters of generators.
+The generators of GenHMM simply use standard Gaussian distribution for latent variables $\bm{z} \sim p_{s,\kappa}(\bm{z})$. Since the training dataset can be too large to do whole-dataset iterations, batch-size stochastic gradient descent can be used to maximize $\Qq(\bm{\Theta; \bm{H}^{\mathrm{old}}})$ with regard to parameters of generators.
 
 In what follows we address the problem $\max_{\bm{\Pi}} \Qq(\bm{\Pi}; \bm{H}^{\mathrm{old}})$ in our generative model learning. The conditional distribution of hidden variable $\kappa$, $\pi_{s, \kappa} = p(\kappa | s; \bm{H})$, is obtained by solving the following problem
 \begin{align}\label{opm:pi}
@@ -345,7 +347,7 @@ where
 Here $p(s| \ubm{x}; \bm{H}^{\mathrm{old}})$ can be computed by forward-backward algorithm, while $p(\kappa | s, \ubm{x}; \bm{H}^{\mathrm{old}})$ is given by \eqref{eq:kappa-posterior}.
 
 
-With the generator learning obtained, it remains to solve the initial distribution update and transition matrix update of HMM in GenHMM, i.e. the problem \eqref{eq:init-distribution-update} and \eqref{eq:transition-update}. These two problems are basically two constrained optimization problems. The solutions to them are available in literature \cite{Bishop:2006:PRM:1162264}. But to keep the learning algorithm for GenHMM complete, we give the update rules for $\bm{q}$ and $\bm{A}$ as follows.
+With the generator learning obtained, it remains to solve the initial distribution update and transition matrix update of HMM in GenHMM, i.e. the problem \eqref{eq:init-distribution-update} and \eqref{eq:transition-update}. These two problems are basically two constrained optimization problems. The solutions to them are available in the literature \cite{Bishop:2006:PRM:1162264}. But to keep the learning algorithm for GenHMM complete, we give the update rules for $\bm{q}$ and $\bm{A}$ as follows.
 
 \subsubsection{Initial Probability Update}
 The problem in \eqref{eq:init-distribution-update} can be reformulated as
@@ -388,7 +390,7 @@ where
   \bar{\xi}_{i,j} = \sum_{r= 1}^{R} \sum_{t= 1}^{T^{r}-1}{p(\smtr{s}{t}{r}=i, \smtr{s}{t+1}{r}=j| \ubmr{x}{r}; \bm{H}^{\mathrm{old}})}.
 \end{equation}
 \subsection{On Convergence of GenHMM}
-In pursuit of representing a dataset by GenHMM,  we are interested if the learning solution discussed in Section~\ref{subsec:optmGenHMM} would converge. The properties on GenHMM's convergence are analyzed as follows.
+In pursuit of representing a dataset by GenHMM,  we are interested if the learning solution discussed in Section~\ref{subsec:optmGenHMM} would converge. The properties of GenHMM's convergence are analyzed as follows.
 
 \begin{proposition}\label{proposition1}
   Assume that parameter $\bm{\Theta} = \left\{ \bm{\theta}_{s,\kappa}| s\in \Ss, \kappa=1, 2, \cdots, K \right\}$ is in a compact set,  $\bm{f}_{s,\kappa}$ and  ${\nabla\bm{f}_{s,\kappa}}$ are continuous with regard to ${\bm\theta}_{s,\kappa}$ in GenHMM. Then GenHMM converges.
@@ -399,7 +401,7 @@ In pursuit of representing a dataset by GenHMM,  we are interested if the learni
   \begin{align*}
     &\EE_{\hat{p}(\ubm{x})}\left[ \log\,p(\ubm{x};\bm{H}^{\mathrm{new}}) \right] \nonumber \\
     =& \EE_{\hat{p}(\ubm{x}),p(\ubm{s},\ubm{\kappa}| \ubm{x}; \bm{H}^{\mathrm{old}})}\left[ \log\,\frac{p(\ubm{x}, \ubm{s}, \ubm{\kappa}; \bm{H}^{\mathrm{new}})}{p(\ubm{s}, \ubm{\kappa}|\ubm{x}; \bm{H}^{\mathrm{old}})}\right]  \nonumber \\
-    & +\EE_{\hat{p}(\ubm{x})}\left[ KL(p(\ubm{s}, \ubm{\kappa}|\ubm{x}; \bm{H}^{\mathrm{old}})\|p(\ubm{s}, \ubm{\kappa}|\ubm{x}; \bm{H}^{\mathrm{new}})) \right],
+    & +\EE_{\hat{p}(\ubm{x})}\left[ \mathrm{KL}(p(\ubm{s}, \ubm{\kappa}|\ubm{x}; \bm{H}^{\mathrm{old}})\|p(\ubm{s}, \ubm{\kappa}|\ubm{x}; \bm{H}^{\mathrm{new}})) \right],
   \end{align*}
   where the first term on the right hand side of the above inequality can be further written as
   \begin{align*}
@@ -429,7 +431,7 @@ In pursuit of representing a dataset by GenHMM,  we are interested if the learni
     &\EE_{\hat{p}(\ubm{x}),p(\ubm{s},\ubm{\kappa}| \ubm{x}; \bm{H}^{\mathrm{old}})}\left[ \log\,\frac{p(\ubm{x}, \ubm{s}, \ubm{\kappa}; \bm{H}^{\mathrm{new}})}{p(\ubm{s}, \ubm{\kappa}|\ubm{x}; \bm{H}^{\mathrm{old}})}\right] 
     \geq \EE_{\hat{p}(\ubm{x}),p(\ubm{s},\ubm{\kappa}| \ubm{x}; \bm{H}^{\mathrm{old}})}\left[ \log\,\frac{p(\ubm{x}, \ubm{s}, \ubm{\kappa}; \bm{H}^{\mathrm{old}})}{p(\ubm{s}, \ubm{\kappa}|\ubm{x}; \bm{H}^{\mathrm{old}})}\right].
   \end{align*}
-  Due to $KL(p(\ubm{s}, \ubm{\kappa}|\ubm{x};
+  Due to $\mathrm{KL}(p(\ubm{s}, \ubm{\kappa}|\ubm{x};
   \bm{H}^{\mathrm{old}})\|p(\ubm{s}, \ubm{\kappa}|\ubm{x};
   \bm{H}^{\mathrm{old}}))=0$, we have
   \begin{align*}
@@ -438,7 +440,7 @@ In pursuit of representing a dataset by GenHMM,  we are interested if the learni
            \bm{H}^{\mathrm{old}})}\left[ \log\,\frac{p(\ubm{x},
            \ubm{s}, \ubm{\kappa}; \bm{H}^{\mathrm{old}})}{p(\ubm{s},
            \ubm{\kappa}|\ubm{x}; \bm{H}^{\mathrm{old}})}\right] \nonumber \\
-           &+ \EE_{\hat{p}(\ubm{x})}\left[ KL(p(\ubm{s}, \ubm{\kappa}|\ubm{x}; \bm{H}^{\mathrm{old}})\|p(\ubm{s}, \ubm{\kappa}|\ubm{x}; \bm{H}^{\mathrm{old}})) \right]
+           &+ \EE_{\hat{p}(\ubm{x})}\left[ \mathrm{KL}(p(\ubm{s}, \ubm{\kappa}|\ubm{x}; \bm{H}^{\mathrm{old}})\|p(\ubm{s}, \ubm{\kappa}|\ubm{x}; \bm{H}^{\mathrm{old}})) \right]
       \nonumber \\
     = & \EE_{\hat{p}(\ubm{x})}\left[ \log\,p(\ubm{x};\bm{H}^{\mathrm{old}}) \right].
   \end{align*}
@@ -484,17 +486,17 @@ In pursuit of representing a dataset by GenHMM,  we are interested if the learni
   \end{algorithmic}
 \end{algorithm}
 
-To summarize the learning solution in Section~\ref{subsec:optmGenHMM}, we wrap our algorithm into pseudocode as shown in Algorithm~\ref{algo:genhmm}. We use the Adam \cite{DBLP:journals/corr/KingmaB14} optimizer for optimization with regard to the parameters of generators in GenHMM. As shown from line $6$ to $10$ in Algorithm~\ref{algo:genhmm}, the batch-size stochastic gradient decent can be naturally embedded into the learning algorithm of GenHMM.
+We summarize the learning solution in Section~\ref{subsec:optmGenHMM} in the pseudocode as shown in Algorithm~\ref{algo:genhmm}. We use the Adam optimizer \cite{DBLP:journals/corr/KingmaB14} for optimization with regard to the parameters of generators in GenHMM. As shown from line $6$ to $10$ in Algorithm~\ref{algo:genhmm}, the batch-size stochastic gradient decent can be naturally embedded into the learning algorithm of GenHMM.
 
-As described by the pseudocode in Algorithm~\ref{algo:genhmm}, the learning of GenHMM is divided into optimizations with regard to generators' parameters $\bm{\Theta}$, initial probability $\bm{q}$ of hidden state, transition matrix $\bm{A}$, and generator mixture weights $\bm{\Pi}$. Different from the optimization with regard to $\bm{q}$, $\bm{A}$ and $\bm{\Pi}$, which have optimal solutions, generator learning usually cannot give optimal solution to problem $\max_{\bm{\Theta}} \Qq(\bm{\Theta}; \bm{H}^{\mathrm{old}})$. In fact, given that no optimal $\bm{\Theta}$ is obtained, learning of GenHMM can still converge as long as quantity $\Qq(\bm{\Theta}; \bm{H})$ are improving in iterations in Algorithm~\ref{algo:genhmm}, since the inequalities in Proposition~\ref{proposition1} still hold. Therefore optimal $\bm{\Theta}$ in each iteration is not required for convergence of GenHMM as long as the loss in $\eqref{eq:obj-q-gen-mix}$ is getting improved.
+As described by the pseudocode in Algorithm~\ref{algo:genhmm}, the learning of GenHMM is divided into optimizations with regard to generators' parameters $\bm{\Theta}$, initial probability $\bm{q}$ of hidden state, transition matrix $\bm{A}$, and generator mixture weights $\bm{\Pi}$. Different from the optimization with regard to $\bm{q}$, $\bm{A}$ and $\bm{\Pi}$, which have optimal solutions, generator learning usually cannot give optimal solution to the problem $\max_{\bm{\Theta}} \Qq(\bm{\Theta}; \bm{H}^{\mathrm{old}})$. In fact, given that no optimal $\bm{\Theta}$ is obtained, learning of GenHMM can still converge as long as quantity $\Qq(\bm{\Theta}; \bm{H})$ are improving in iterations in Algorithm~\ref{algo:genhmm}, since the inequalities in Proposition~\ref{proposition1} still hold. Therefore optimal $\bm{\Theta}$ in each iteration is not required for convergence of GenHMM as long as the loss in $\eqref{eq:obj-q-gen-mix}$ is getting improved.
 \begin{remark}
   \label{chpt7:rmk:generative-discriminative}
-  {The above discussed maximum likelihood training is also known as generative training, which models the signal generating process with the defined generative model. An alternative training principle is discriminative training where a conditional distribution is modeled directly and optimized as the objective. Since a generative model characterizes a joint distribution, it is usually possible to train a generative model via discriminative training, with mildly alternating the objective function. On the contrast, it is usually not likely to train a discriminative model via generative training, since the direct conditional probability modeling of the discriminative model omits modeling distribution of the observable signal that is highly structured. These two training principles are possible to be used together at different training phases. For instance, apply the generative training firstly, and then a discriminative training phase for the generative-trained model which acts as a parameter fine-tuning phase \cite{hinton2012deepSpeech}. See detailed insightful discussion about these two principles by \cite{lasserre2006principled}.
+  {The above discussed maximum likelihood training is also known as generative training, which models the signal generating process with the defined generative model. An alternative training principle is discriminative training where a conditional distribution is modeled directly and optimized as the objective. Since a generative model characterizes a joint distribution, it is usually possible to train a generative model via discriminative training, with mildly alternating the objective functions. On the contrary, it is usually not likely to train a discriminative model via generative training, since the direct conditional probability modeling of the discriminative model omits modeling the distribution of the observable signal that is highly structured. These two training principles are possible to be used together at different training phases. For instance, apply the generative training firstly, and then a discriminative training phase for the generative-trained model which acts as a parameter fine-tuning phase \cite{hinton2012deepSpeech}. See detailed insightful discussion about these two principles by \cite{lasserre2006principled}.
   }
 \end{remark}
 
 \section{Application to Speech Recognition}\label{chpt:7:sec:app-speech-recog}
-To show the validity of our model, we implement our model in PyTorch and test it with speech sequential data. We first discuss the experimental setups and then show the experimental results. 
+To show the validity of our model, we implement our model in PyTorch and test it with speech sequential data. We first discuss the experimental setup and then show the experimental results. 
 
 \subsection{Experimental Setup}
 The dataset used for sequential data modeling and classification is TIMIT where the speech signal is sampled at $16$kHz.
@@ -504,7 +506,7 @@ We performed experiments in two cases: i) full $61$-phoneme classification case;
 For extraction of feature vectors, we use $25$ms frame length and $10$ms frame shift to convert soundtracks into standard Mel-frequency cepstral coefficients (MFCCs) features. Experiments using the deltas and delta-deltas of the features are also carried out.
 
 
-Our experiments are performed for: i) standard classification tasks (Table~\ref{tab:acc-classification39f_a}, \ref{tab:acc-classification39f_b}, \ref{tab:acc-classification13f_a}, \ref{tab:acc-classification13f_b}), ii) classification under noise perturbation (table~\ref{tab:acc-classification39f_noise_snr}, \ref{tab:acc-classification39f_noise_type}). The criterion used to report the results includes accuracy, precision and F1 scores.
+Our experiments are performed for: i) standard classification tasks (Table~\ref{tab:acc-classification39f_a}, \ref{tab:acc-classification39f_b}, \ref{tab:acc-classification13f_a}, \ref{tab:acc-classification13f_b}), ii) classification under noise perturbation (Table~\ref{tab:acc-classification39f_noise_snr}, \ref{tab:acc-classification39f_noise_type}). The criterion used to report the results includes accuracy, precision and F1 scores.
 In all experiments, generators $\left\{\bm{g}_{s,\kappa}|s\in \Ss, \kappa=1, 2, \cdots, K \right\}$ of GenHMM are implemented as flow models. Specifically, our generator structure follows that of a RealNVP described in \cite{2016arXiv160508803D}.
 As discussed, the coupling layer as shown in \eqref{chpt6:eq-gl-coupling} maps a part of its input signal identically.
 The implementation is such that layer $l+1$ would alternate the input signal order of layer $l$ such that no signal remains the same after two consecutive coupling layers.
@@ -579,7 +581,7 @@ Transition matrix $\bm{A}$ is initialized as an upper triangular matrix for GenH
 
 We firstly show the phoneme classification using 39 dimensional MFCC features (MFCC coefficients, deltas, and delta-deltas), to validate one possible usage of our proposed model. Since generative training is carried out in our experiments, GMM-HMM is trained and tested as a reference model in our experiments. Training and testing of GMM-HMM are in the same condition as GenHMMs are trained and tested. Dataset usage for GenMM and GMM-HMM is the same, and the number of states for GMM-HMM is the same as that for GenHMM in modeling each phoneme. Apart from setting the reference model, we also run the experiment comparisons with different total numbers of mixture components.
 
-Table \ref{tab:acc-classification39f_a} and \ref{tab:acc-classification39f_b} shows the results for this experiments, in which we test both the folded $39$-phoneme classification case (the conventional way) in Table~\ref{tab:acc-classification39f_a} and the $61$-phoneme classification case in Table~\ref{tab:acc-classification39f_b}. As shown in both $61$-phoneme and $39$-phoneme cases, GenHMM gets significantly higher accuracy than GMM-HMM for the same number of mixture components. The comparisons with regarding to precision and F1 scores show similar trends and also demonstrate significant improvement of GenHMM's performance. As our expectation, GenHMM has better modeling capacity of sequential data since we bring in the neural network based generators into GenHMM, which should be able to represent complex relationships between states of HMM and sequential data. Apart from the gain of using neural network based generative models, there are also increases of accuracy, precision, and F1 scores as the number of mixture components in GenHMM is increased from $K=1$ to $K=5$. The sequential dependency of data is modeled by HMM itself, while each state of HMM can have a better representation using a mixture probabilistic model if data represented by the state is multi-mode. Comparing the results in $39$-phoneme and $61$-phoneme cases, GenHMM gets higher accuracy for $39$-phoneme classification than it does for $61$-phoneme classification. The total training dataset size remains the same as $61$ phonemes are folded into $39$ phonemes. There are less training data available per phonemes and more classes to be recognized in the $61$-phoneme case, which makes the task more challenging.
+Table \ref{tab:acc-classification39f_a} and \ref{tab:acc-classification39f_b} shows the results for this experiments, in which we test both the folded $39$-phoneme classification case (the conventional way) in Table~\ref{tab:acc-classification39f_a} and the $61$-phoneme classification case in Table~\ref{tab:acc-classification39f_b}. As shown in both $61$-phoneme and $39$-phoneme cases, GenHMM gets significantly higher accuracy than GMM-HMM for the same number of mixture components. The comparisons with regard to precision and F1 scores show similar trends and also demonstrate significant improvement of GenHMM's performance. As our expectation, GenHMM has better modeling capacity of sequential data since we bring in the neural network based generators into GenHMM, which should be able to represent complex relationships between states of HMM and sequential data. Apart from the gain of using neural network based generative models, there are also increases of accuracy, precision, and F1 scores as the number of mixture components in GenHMM is increased from $K=1$ to $K=5$. The sequential dependency of data is modeled by HMM itself, while each state of HMM can have a better representation using a mixture probabilistic model if data represented by the state is multi-mode. Comparing the results in $39$-phoneme and $61$-phoneme cases, GenHMM gets higher accuracy for $39$-phoneme classification than it does for $61$-phoneme classification. The total training dataset size remains the same as $61$ phonemes are folded into $39$ phonemes. There are less training data available per phonemes and more classes to be recognized in the $61$-phoneme case, which makes the task more challenging.
 
 \begin{table}
   \caption{Test accuracy table for $13$ dimensional features and folded $39$ phonemes.}\label{tab:acc-classification13f_a}
@@ -622,7 +624,7 @@ Table \ref{tab:acc-classification39f_a} and \ref{tab:acc-classification39f_b} sh
   \vspace{0.5cm}
 \end{table}
 
-Similar experiments are carried out by using only the MFCC coefficients as feature input (excluding deltas and delta-deltas). The results are shown in Table~\ref{tab:acc-classification13f_a} and \ref{tab:acc-classification13f_b}. The superior performance of GenHMM remains compared with reference model GMM-HMM, with regarding accuracy, precision, and F1 scores. The gain by using mixture generators is also presented in this set of experiments while the difference between $61$-phoneme and $39$-phoneme cases is similar to the set of experiments in Table~\ref{tab:acc-classification39f_a} and \ref{tab:acc-classification39f_b}.
+Similar experiments are carried out by using only the MFCC coefficients as feature input (excluding deltas and delta-deltas). The results are shown in Table~\ref{tab:acc-classification13f_a} and \ref{tab:acc-classification13f_b}. The superior performance of GenHMM remains compared with reference model GMM-HMM, with regard to accuracy, precision, and F1 scores. The gain by using mixture generators is also presented in this set of experiments while the difference between $61$-phoneme and $39$-phoneme cases is similar to the set of experiments in Table~\ref{tab:acc-classification39f_a} and \ref{tab:acc-classification39f_b}.
 
 \begin{table}
   \caption{Test accuracy table of perturbation with white noise ($K=3$, folded $39$ phonomes).}
@@ -690,8 +692,8 @@ This discriminative training is performed by maximizing the conditional probabil
 \begin{equation} \label{chpt7:eq:discriminative}
 \umax{\left\{ \bm{H}_i, i=1, \cdots \abs{\Yy} \right\}}{}\sum_{(\ubm{x},\bm{y})} \log \frac{p(\ubm{x}\mid\bm{H}_{{y}})p(\bm{H}_{{y}})}{\sum_{y^{\prime}}p(\ubm{x}\mid\bm{H}_{y^{\prime}})p(\bm{H}_{y^{\prime}})}.
 \end{equation}
-It can be seen that the complexity in discriminative training of GenHMM increases as $\abs{\Yy}$ is large, since the marginal $p(\ubm{x})= \sum_{y^{\prime}}p(\ubm{x}\mid\bm{H}_{y^{\prime}})p(\bm{H}_{y^{\prime}})$ has to be evaluated for each sequential sample. But for this sepsis detection, there are two classes, i.e. $\Yy = \left\{ 1,2 \right\}$ and thus the computation is affordable.
-The classes prior probabilities $p(\bm{H}_{i}),~i=1,2$ are infered from the training dataset. We use \textit{dGenHMM} to denote that GenHMM is finely tuned by discriminative training with objective \eqref{chpt7:eq:discriminative}, after default generative training phase.
+It can be seen that the complexity in discriminative training of GenHMM increases as $\abs{\Yy}$ is large, since the marginal $p(\ubm{x})= \sum_{y^{\prime}}p(\ubm{x}\mid\bm{H}_{y^{\prime}})p(\bm{H}_{y^{\prime}})$ has to be evaluated for each sequential sample. But for this sepsis detection, there are two classes, i.e. $\Yy = \left\{0, 1 \right\}$ and thus the computation is affordable.
+The classes prior probabilities $p(\bm{H}_{i}),~i=0, 1$ are infered from the training dataset. We use \textit{dGenHMM} to denote that GenHMM is finely tuned by discriminative training with objective \eqref{chpt7:eq:discriminative}, after default generative training phase.
 
 \subsection{Patient Dataset}
 The bedside monitor signals of $48$ premature infants who have been under care at a NICU in Karolinska University hospital have been collected.
@@ -728,7 +730,7 @@ We used a different set of input features to test our models in different condit
 HMMs are trained on raw time series and on raw time series with first and second order derivatives.
 For logistic regression models, HeRO is trained with $3$-dimensional features, and POPS with $10$-dimensional features.
 The results associated with these two sets of features are presented in Table~\ref{table:results:Lin}.
-Extreme learning machines (ELM) and support vector machine (SVM) with a gaussian kernel trained on the raw time series data are also added into the comparison.
+Extreme learning machines (ELM) and support vector machine (SVM) with a Gaussian kernel trained on the raw time series data are also added into the comparison.
 
 \subsection{Numerical Results}
 The results for the HMMs are presented in Table~\ref{table:results:HMM} and the comparison with other benchmarks are presented in Table~\ref{table:results:Lin}.
@@ -747,7 +749,7 @@ GMM-HMM				&   0.68 $\pm$ 0.03 		&    \textbf{0.68} $\pm$ 0.03 			&   	\textbf{0
 GenHMM  				&   0.67 $\pm$ 0.04     	&    0.61 $\pm$ 0.08   		    &   	0.63 $\pm$ 0.08   \\
 dGenHMM 				&   \textbf{0.70} $\pm$ 0.10    	&	   0.67 $\pm$ 0.06      	    &  	    0.65 $\pm$ 0.04    \\
    \toprule
-                                        \multicolumn{4}{c}{Raw sequential input + $1$st and $2$ed order derivatives}\\
+                                        \multicolumn{4}{c}{Raw sequential input + $1$st and $2$nd order derivatives}\\
 \hline
 GMM-HMM				&   \textbf{0.75} $\pm$ 0.05 		&    \textbf{0.74} $\pm$ 0.08			&   	\textbf{0.74} $\pm$ 0.05  	\\
 GenHMM  				&   0.69 $\pm$ 0.07    	&    0.66 $\pm$ 0.06  		    &   	0.59 $\pm$ 0.08  \\
@@ -804,21 +806,21 @@ Also, discriminative training, dGenHMM, does improve performance. The insufficie
 \section{Summary}
 In this chapter, we discussed the representation and learning of a temporal model. With the simplification of Markov assumption and the concept of template, the HMMs, as simplified dynamic Bayesian networks, have a good balance between representation power and computation efficiency. Thus, they have been widely used in disciplines in practice. The modeling expressivity is further enriched by the introduction of normalizing flows. The developed GenHMM is a generic model and allows large freedom of customization, which can be employed for practical applications such as the demonstrated speech recognition and sepsis detection. Due to the presence of hidden variables, the learning of GenHMM is carried out within expectation maximization framework. Adaption is made to accommodate the neural network implementation of normalizing flows and large datasets in parameter learning.
 
-In increasing the representation power of modeling, GenHMM relies on enriching the flexibility of conditional probability models. Alternative options lie with the template model design. In fact, template is the core concept for more general object-relational modeling of probabilistic graphical models. Generally speaking, any object-relation can be used to define a skeleton that functions as a template. Then ground probabilistic graphical models can be formed by assembling the instances from skeletons or templates. The results models can be rich and representative for general object-relation modeling. The sequential instances concatenation shown in the chapter is one way of the general modeling process. It is suggested to bear the learning complexity in mind when making use of flexible representation of template models. It may be the case that the best representation brings prohibitive inference or learning complexity. Therefore, the modeling accuracy and inference/learning complexity should be jointly considered when designing models for practical applications.
+In increasing the representation power of modeling, GenHMM relies on enriching the flexibility of conditional probability models. Alternative options lie with the template model design. In fact, template is the core concept for more general object-relational modeling of probabilistic graphical models. Generally speaking, any object-relation can be used to define a skeleton that functions as a template. Then ground probabilistic graphical models can be formed by assembling the instances from skeletons or templates. The resulting models can be rich and representative for general object-relation modeling. The sequential instances concatenation shown in this chapter is one way of the general modeling process. It is suggested to bear the learning complexity in mind when making use of flexible representation of template models. It may be the case that the best representation brings prohibitive inference or learning complexity. Therefore, the modeling accuracy and inference/learning complexity should be jointly considered when designing models for practical applications.
 
-\section{Literature Work}
+\section{Related Work}
 Probabilistic models of temporal processes are challenging topics in pattern recognition and machine learning, which can be generalized to a wide range of problems of sequential dependency beyond temporal signals.
-The various applications cover but not limited to reinforcement learning \cite{ding2018reinforcementhmm,levine2018reinforcementReview}, natural language modeling \cite{khan2016survey,Hariyanti_2019}, biological sequence analysis such as proteins \cite{ASHWIN20172} and DNA \cite{ren2015dna}, etc.
+The various applications cover but are not limited to reinforcement learning \cite{ding2018reinforcementhmm,levine2018reinforcementReview}, natural language modeling \cite{khan2016survey,Hariyanti_2019}, biological sequence analysis such as proteins \cite{ASHWIN20172} and DNA \cite{ren2015dna}, etc.
 The study on temporal process modeling goes back many years.
 Hidden Markov models (HMMs) were discussed as early as in $1980$s by \cite{rabiner1986intro_hmm}, and further by \cite{rabiner1989tutorialhmm}.
 The generalization of HMMs into probabilistic graphical models, dynamic Bayesian networks, was proposed around the same period in \cite{dean1989reasoning}.
 
-The classic way is to use a Gaussian mixture model (GMM) per state of HMM \cite{juang1986maximum}, where GMMs are used to connect states of HMM to sequential data input. GMM based HMM (GMM-HMM) has become a standard model for sequential data modeling, and been employed widely for practical applications, especially in speech recognition \cite{gales2008application,chatterjee2011auditory}.
+The classic way is to use a Gaussian mixture model (GMM) per state of HMM \cite{juang1986maximum}, where GMMs are used to connect states of HMM to sequential data input. GMM based HMM (GMM-HMM) has become a standard model for sequential data modeling, and has been employed widely for practical applications, especially in speech recognition \cite{gales2008application,chatterjee2011auditory}.
 
-To represent data in nonlinear manifolds, research attempting at training HMM with neural networks has been carried out to boost the modeling capacity of HMM. A successful work of this track has brought deep neural network (DNN) that is defined by restrictive Boltzmann machines (RBMs) \cite{Hinton2012} into HMM based models \cite{hinton2012deepSpeech,li2013hybrid,Miao2013ImprovingLC}. RBM based HMM is trained with a hierarchical scheme consisting of multiple steps of unsupervised learning, formatting of a classification network, and then supervised learning. The hierarchical procedure comes from the empirical expertise in this domain. The hierarchical learning scheme of RBM/DNN based HMM consists of: i) RBMs are trained one after the other in an unsupervised fashion and are stacked together as one deep neural network model, ii) then a final softmax layer is added to the stack of RBMs to represent the probability of an HMM state given a data input, iii) a discriminative training is performed for the final tuning of the model at the final stage.
+To represent data in nonlinear manifolds, research attempting at training HMM with neural networks has been carried out to boost the modeling capacity of HMM. A successful work of this track has brought a deep neural network (DNN) that is defined by restrictive Boltzmann machines (RBMs) \cite{Hinton2012} into HMM based models \cite{hinton2012deepSpeech,li2013hybrid,Miao2013ImprovingLC}. RBM based HMM is trained with a hierarchical scheme consisting of multiple steps of unsupervised learning, formatting of a classification network, and then supervised learning. The hierarchical procedure comes from the empirical expertise in this domain. The hierarchical learning scheme of RBM/DNN based HMM consists of: i) An RBMs are trained one after the other in an unsupervised fashion and are stacked together as one deep neural network model, ii) then a final softmax layer is added to the stack of RBMs to represent the probability of an HMM state given a data input, iii) a discriminative training is performed for the final tuning of the model at the final stage.
 
-With the prevalence of deep learning, further works on neural network based temporal models are present in literature. A representative track is the hybrid method of temporal neural network models and HMM. In \cite{liu2019lstmHmmHyb,buys2018bridging,vik2016rnnHmm}, a long short-term memory (LSTM) model/recurrent neural network (RNN) is combined with HMM as hybrid. A hierarchical training is carried out by: i) training an HMM first, ii) then doing modified training of LSTM using trained HMM. This hierarchical training procedure is motivated by the intuition of using LSTM or RNN to fill in the gap where HMM can not learn.
-Another successful exploration is motivated by hierarchical HMM \cite{fine1998hierarchicalHMM}, a variant of HMM that tries to model complex multi-scale structures of hidden variables in sequential signal modeling. Work hierarchical multiscale RNN \cite{chung2016hmRNN} and variational temporal abstraction \cite{kim2019variational} use neural networks to infer the multi-scale structures of hidden variables, where applications of language models and navigations are demonstrated successfully.
+With the prevalence of deep learning, further works on neural network based temporal models are present in the literature. A representative track is the hybrid method of temporal neural network models and HMM. In \cite{liu2019lstmHmmHyb,buys2018bridging,vik2016rnnHmm}, a long short-term memory (LSTM) model/recurrent neural network (RNN) is combined with HMM as hybrid. A hierarchical training is carried out by: i) training an HMM first, ii) then doing modified training of LSTM using trained HMM. This hierarchical training procedure is motivated by the intuition of using LSTM or RNN to fill in the gap where HMM can not learn.
+Another successful exploration is motivated by hierarchical HMM \cite{fine1998hierarchicalHMM}, a variant of HMM that tries to model complex multi-scale structures of hidden variables in sequential signal modeling. Work on hierarchical multiscale RNN \cite{chung2016hmRNN} and variational temporal abstraction \cite{kim2019variational} use neural networks to infer the multi-scale structures of hidden variables, where applications of language models and navigations are demonstrated successfully.
 
 
 %%% Local Variables:

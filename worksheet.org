@@ -19,7 +19,7 @@ Click [[file:main.pdf][the latest version]] to open the latest version of thesis
    - [X] The first paragraph of each section/subsection does not indent. I should fix.
    - [X] fix 'maximal likelihood' --> 'maximum likelihood'
    - [X] thesis --> dissertation
-   - [ ] Capitalization of section titles
+   - [X] Capitalization of section titles
    - [ ] Ask someone (phd students) to proofreading.
 
      
@@ -86,10 +86,22 @@ Click [[file:main.pdf][the latest version]] to open the latest version of thesis
    - Chapter 5 is supposed to be a transition chapter connecting Inference and Learning, thus I am not planning literature section for this chapter, since all following chapters are about learning.
 
 ** TODO Chapter 6
+   - [-] revising introducing part for better motivated
+     - [X] made changes on emphasizing purpose of increasing flexibility of models
+     - [ ] interpolation experiment. It is for illustration of abstraction in latent space and test the invertibility? can not think more on it.
+
+   - [X] section numbering: original depth 2 --> depth 3
+   - [-] mixture model in eq (6.9) is defined as a mixture of x. Each component of the mixture should be a density function of x=g_k(z), i.e., p(x=g_k(z)). p denotes the pdf value for any random variable as its argument. Besides, there is no p_z^k for the GenMM model since there is only one latent Gaussian. The randomness then comes from the identity variable as shown in Figure 6.2.
+     - [X] Added a bit more explanation before (6.9) for p_k(x). 
+     - [ ] explanation in meeting
 
 
 ** TODO Chapter 7
-
+   - [explanation] There is no need to explicit mention discrete state variables since a dynamic model with continuous latent variable is known as linear dynamical system
+   - [explanation] response to the comment right placed after (7.8)
+     - Correct, in the inference/computation of posteriors in GenHMM, there is no approximation since forward-backward algorithm is used for the posterior of hidden states computation. Forward-backward algorithm is a message passing algorithm that does exact inference for linear chains.
+     - I have added explanation i Remark 7.2 and made connection to the corresponding part in Chapter 2
+     
 
 ** TODO Chapter 8
 
