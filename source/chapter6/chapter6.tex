@@ -128,7 +128,8 @@ layer signal $\bm{h}$ and model a part of it directly as standard Gaussian to re
 
 \section{Generator Mixture Model and EM Training}
 \label{chpt6:sec:generator-mix-em}
-\begin{figure}[tp!]
+
+\begin{figure}[t!]
   \centering
   \begin{tikzpicture}
     % \tikzstyle{enode} = [thick, draw=blue, circle, inner sep = 3pt,
@@ -155,29 +156,6 @@ layer signal $\bm{h}$ and model a part of it directly as standard Gaussian to re
   \caption{Graphical Model of GenMM.}\label{chpt6:fig:genmm-graph}
 \end{figure}
 
-\begin{figure}[tp!]
-  \centering
-  \begin{tikzpicture}
-    \tikzstyle{enode} = [thick, draw=black, ellipse, inner sep = 2pt,  align=center]
-    \tikzstyle{nnode} = [thick, rectangle, rounded corners = 2pt,minimum size = 0.8cm,draw,inner sep = 2pt]
-    \node[enode] (z) at (0,0) {$\bm{z}\sim p(\bm{z})$};
-    \node[enode] (x) at (5.5,0){$\bm{x}\sim p(\bm{x}; \bm{\Theta})$};
-    % \node at (5.2,-1) {$p(\bm{x};\bm{\Phi}) = \textstyle\sum_{k=1}^K \pi_k  p_k(\bm{x})$};
-    \node[nnode] (g1) at (2.6,1.8) {$\bm{g}_1$};
-    \node[nnode] (g2) at (2.6,0.5) {$\bm{g}_2$};
-    \node[nnode] (gk) at (2.6,-1.8) {$\bm{g}_K$};
-    \draw[dotted,line width=2pt] (2.6,-0.3) -- (2.6,-1.2);
-    \draw[->] (z) [in= 180, out =0] to (g1);
-    \draw[->] (z) [in= 180, out =0] to (g2);
-    \draw[->] (z) [in= 180, out =0] to (gk);
-    \filldraw[->] (3.7, 0.5)circle (2pt) -- node[above=0.2]{$\bm{s}\sim \bm{\pi}$} (x) ;
-    % \draw[->] (3,-0.8) -- (3.5, -0.8);
-    \draw[->] (g1) -- (3.5,1.8);
-    \draw[->] (g2) -- (3.5, 0.5);
-    \draw[->] (gk) -- (3.5, -1.8);
-  \end{tikzpicture}
-  \caption{Signal diagram of GenMM.}\label{dia-emgm-nm}
-\end{figure}
 
 In this section, we introduce a generative model that is a mixture of $K$ flow models. All the $K$ flow models have a common input latent variable $\bm{z} \in \mathbb{R}^N$. Here, a flow $\bm{g}_k(\bm{z}): \mathbb{R}^N
 \rightarrow \mathbb{R}^N$ is an instance of $\tilde{\bm{g}}$. $\bm{g}_k$ acts as the $k$-th generator and depends on a set of parameters $\bm{\theta}_k$ as
@@ -223,8 +201,34 @@ Assume that a value $\bm{\Theta}^{\mathrm{old}}$ of the parameter set $\bm{\Thet
 
 For the GenMM in \eqref{eq:FirstMixtureModel}, realizing EM requires computation of $\gamma_k$ in the E-step and computation of the joint likelihood $\log{\pi_k p_k(\bm{x})}$ in the M-step. They require explicit computation of the conditional density $p_k(\bm{x}) =  p(\bm{g}_k(\bm{z})) =p(\bm{g}(\bm{z};\bm{\theta}_k))$. This is fulfilled by flow realization of generator $\bm{g}_k$. Since the chain-step transformations can be any invertible complex mapping as discussed in Section~\ref{chpt6:sec:flow}, they can be implemented by neural networks. The neural network implementation allows high flexibility of GenMM in representing complex-structured multi-modal data.
 
+
 \subsection{EM Learning of GenMM}
 \label{sec-algo-genmm}
+
+\begin{figure}[tp!]
+  \centering
+  \begin{tikzpicture}
+    \tikzstyle{enode} = [thick, draw=black, ellipse, inner sep = 2pt,  align=center]
+    \tikzstyle{nnode} = [thick, rectangle, rounded corners = 2pt,minimum size = 0.8cm,draw,inner sep = 2pt]
+    \node[enode] (z) at (0,0) {$\bm{z}\sim p(\bm{z})$};
+    \node[enode] (x) at (5.5,0){$\bm{x}\sim p(\bm{x}; \bm{\Theta})$};
+    % \node at (5.2,-1) {$p(\bm{x};\bm{\Phi}) = \textstyle\sum_{k=1}^K \pi_k  p_k(\bm{x})$};
+    \node[nnode] (g1) at (2.6,1.8) {$\bm{g}_1$};
+    \node[nnode] (g2) at (2.6,0.5) {$\bm{g}_2$};
+    \node[nnode] (gk) at (2.6,-1.8) {$\bm{g}_K$};
+    \draw[dotted,line width=2pt] (2.6,-0.3) -- (2.6,-1.2);
+    \draw[->] (z) [in= 180, out =0] to (g1);
+    \draw[->] (z) [in= 180, out =0] to (g2);
+    \draw[->] (z) [in= 180, out =0] to (gk);
+    \filldraw[->] (3.7, 0.5)circle (2pt) -- node[above=0.2]{$\bm{s}\sim \bm{\pi}$} (x) ;
+    % \draw[->] (3,-0.8) -- (3.5, -0.8);
+    \draw[->] (g1) -- (3.5,1.8);
+    \draw[->] (g2) -- (3.5, 0.5);
+    \draw[->] (gk) -- (3.5, -1.8);
+  \end{tikzpicture}
+  \caption{Signal diagram of GenMM.}\label{dia-emgm-nm}
+\end{figure}
+
 The mixture model GenMM is illustrated in Figure~\ref{dia-emgm-nm},
 where $K$ generators with a certain prior distribution share the same
 latent distribution $p(\bm{z})$. With a neural network based flow as the generator $\bm{g}_k$ for the $k$'th mixture component in GenMM, the probability density function $p_k(\bm{x})$ for any
@@ -413,7 +417,7 @@ We have
 \end{align}
 
 Similar to the case of GenMM, realization of the corresponding EM
-algorithm associated with LatMM in Figure~\ref{eq:SecondMixtureModel}
+algorithm associated with LatMM in \ref{eq:SecondMixtureModel}
 also requires computing the posterior distribution $\ubar{\gamma}_k$ and the joint likelihood $\log{\pi_k p_k(\bm{x})}$. They require explicit computation of the conditional density function $p_k(\bm{x}) = p(\bm{g}(\bm{z};\bm{\theta})| s_k=1) = p(\bm{g}(\bm{z};\bm{\theta});\bm{\mu}_k, \bm{C}_k) $. In LatMM, $\bm{g}(\bm{z}): \mathbb{R}^N \rightarrow \mathbb{R}^N$ is also required to be invertible. Again $\bm{g}$ is instantiated from flow $\tilde{\bm{g}}$ in Section~\ref{chpt6:sec:flow}. Then, the problem is how to learn the parameters of LatMM.
 
 \begin{figure}
