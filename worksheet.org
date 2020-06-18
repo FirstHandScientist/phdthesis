@@ -78,7 +78,7 @@ Click [[file:main.pdf][the latest version]] to open the latest version of thesis
    - [X] +Fix eq(4.7) large {{a, x_a}}, small {{i}}+
 
 ** TODO Chapter 5
-   - [ ] Cannot recognize the comment on 'We would begin with the explanation of why inference ...' the last paragraph in preamble of chapter 5.
+   - [ ] +Cannot recognize the comment on 'We would begin with the explanation of why inference ...' the last paragraph in preamble of chapter 5.+
    - [ ] *important* I re-did the math and still think the current eq(5.2) (5.4) (5.5) are correct.
    - The question on the remark after eq(5.5).
      Yes, I think a exponential distribution can always be written as log-linear in terms of product between sufficient statistics and natural parameters.
@@ -91,12 +91,13 @@ Click [[file:main.pdf][the latest version]] to open the latest version of thesis
      - [ ] interpolation experiment. It is for illustration of abstraction in latent space and test the invertibility? can not think more on it.
 
    - [X] section numbering: original depth 2 --> depth 3
-   - [-] mixture model in eq (6.9) is defined as a mixture of x. Each component of the mixture should be a density function of x=g_k(z), i.e., p(x=g_k(z)). p denotes the pdf value for any random variable as its argument. Besides, there is no p_z^k for the GenMM model since there is only one latent Gaussian. The randomness then comes from the identity variable as shown in Figure 6.2.
+   - [X] mixture model in eq (6.9) is defined as a mixture of x. Each component of the mixture should be a density function of x=g_k(z), i.e., p(x=g_k(z)). p denotes the pdf value for any random variable as its argument. Besides, there is no p_z^k for the GenMM model since there is only one latent Gaussian. The randomness then comes from the identity variable as shown in Figure 6.2.
      - [X] Added a bit more explanation before (6.9) for p_k(x). 
-     - [ ] explanation in meeting
+     - [X] explanation in meeting
 
 
 ** TODO Chapter 7
+   - [X] revise the introduction part for better motivation 
    - [explanation] There is no need to explicit mention discrete state variables since a dynamic model with continuous latent variable is known as linear dynamical system
    - [explanation] response to the comment right placed after (7.8)
      - Correct, in the inference/computation of posteriors in GenHMM, there is no approximation since forward-backward algorithm is used for the posterior of hidden states computation. Forward-backward algorithm is a message passing algorithm that does exact inference for linear chains.
@@ -120,6 +121,12 @@ Click [[file:main.pdf][the latest version]] to open the latest version of thesis
   Search a bit more.
 
   For a grading committee consisting of three members, at least two members must be sourced outside of KTH. For a grading committee consisting of five members, at least three members must be sourced outside of KTH. Clarification: the opponent is not in the grading committee
+
+  Two substitute members (stand-ins) of the grading committee for public defences of doctoral theses must be appointed (both substitutes cannot come from KTH if one of the ordinary members of the grading committe is already from KTH).
+
+  Three external committee members + two KTH subsitutes (one of them to be the advance reviewer, check).
+  
+  ** *We should start from next week's meeting for contacting the committees, I should put more candidates here*
 
   - [ ] Timo Koski, Professor emeritus of mathematical statistics, KTH,
     [[https://people.kth.se/~tjtkoski/][KTHProfile Page]],
