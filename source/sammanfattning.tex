@@ -1,9 +1,12 @@
 \chapter{Sammanfattning}
-% \begin{sammanfattning}
-%   \begin{otherlanguage}{swedish}
-    
-%   \end{otherlanguage}
-% \end{sammanfattning}
+
+\begin{otherlanguage}{swedish}
+  Probabilistiska grafiska modeller ger en naturlig ram för representation av komplexa system och erbjuder enkel abstraktion för interaktioner inom systemen. Resonemang med probabilistiska grafiska modeller gör det möjligt för oss att besvara inferensfrågor med osäkerhet efter ramarna för probabilistisk teori. Allmänna inferensfrågor inkluderar beräkningen av marginella sannolikheter eller villkorade sannolikheter för tillstånd i ett system, eller utvärdering av partitionsfunktionen för den understrukna fördelningen av ett Markov slumpmässigt fält (inriktad grafisk modell). Kritiskt sett beror framgången för grafiska modeller i praktiken till stor del på effektiva ungefärliga inferensmetoder som erbjuder snabba och korrekta resonemangsresultat. Närmare besläktat med inferensuppgifterna i grafiska modeller är ett annat grundläggande problem att bestämma parametrarna för en kandidatgrafisk modell genom att extrahera information från empiriska observationer, d.v.s. inlärning av parametrar för en grafisk modell. De två väsentliga ämnena (dvs. slutsatser och inlärning) interagerar med och underlättar varandra. Till exempel använder inlärning av en grafisk modell vanligtvis en inferensmetod som en subroutin medan den inlärda grafiska modellen sedan används för inferensuppgifter i närvaro av nya bevis.
+
+  I denna avhandling utvecklar vi nya algoritmer och modeller för generisk inferens i Markov slumpmässiga fält. Vi presenterar för det första en alternativ syn på trosförökningen i termer av en divergensminimering, vilket är i motsats till synen på fri energiminimering. Den alternativa vyn ger utvecklingen av en variantalgoritm för trosförökning som visar sig generalisera den vanliga troutbredningsalgoritmen. Insikter om konvergensbeteenden hos den utvecklade algoritmen i det binära tillståndsutrymmet tillhandahålls bortsett från intuitionen under utveckling. Som ett steg utöver ungefärlig inferens med meddelandetillförseln utvecklar vi en regionbaserad energinätverksmodell som utför generisk inferens via regionbaserad fri energiminimering, vilket gör slutsatser i Markov slumpmässiga fält till ett optimeringsproblem. Denna modell innehåller både vår väsentliga förståelse för inferens och beräkningseffektivitet hos moderna neurala nätverksmodeller.
+
+  Den ytterligare delen av avhandlingen fokuserar på parameterinlärning av probabilistiska grafiska modeller. Denna del börjar med diskussionen om parameterinlärning av inställda grafiska modeller och förklarar rollen för en (ungefärlig) inferensmetod i denna rutin. Som riktade grafiska modeller presenteras nya ändliga blandningsmodeller som inkluderar normaliseringsflöden i neurala nätverksimplementeringar för mer uttrycksfull och flexibel modellering. Inlärningen av utvecklade generiska modeller hanteras inom förväntad maximering på grund av närvaron av dolda (eller latenta) variabler. Den expressiva modelleringsmetoden och inlärningen utvidgas ytterligare till dynamiska system inom ett reducerat dynamiskt Bayesian-nätverk, dvs en dold Markov-modell. Avhandlingen avslutas med ett kapitel om sannolikhetsfri inlärning av en klass med riktade grafiska modeller, där (riktade) generativa modeller inducerar implicit sannolikhetsfördelningar och lärs av det optimala transportavståndet.
+\end{otherlanguage}
 
 %%% Local Variables:
 %%% mode: latex
