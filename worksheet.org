@@ -8,10 +8,11 @@
 
   +text+: strike out text
 
-Click [[file:main.pdf][the latest version]] to open the latest version of thesis.
-  
-** TODO I need to sync this to a online doc for Ragnar
-  
+  Click [[file:main.pdf][the latest version]] to open the latest version of thesis.
+
+** DONE I need to sync this to a online doc for Ragnar
+   CLOSED: [2020-06-22 Mon 10:44]
+
 ** Global Items
    - [X] Capitalize section/chapter~ref
    - [X] Space after Figures/tables. \textfloatset, ref to [[https://tex.stackexchange.com/questions/60477/remove-space-after-figure-and-before-text][here]]
@@ -22,9 +23,14 @@ Click [[file:main.pdf][the latest version]] to open the latest version of thesis
    - [X] Capitalization of section titles
    - [ ] Ask someone (phd students) to proofreading.
 
-     
-** TODO Abstract writing and ACKs
-   - [X] Abstract
+
+** Abstract writing and ACKs
+   - [-] Abstract
+     - [X] Writing
+     - [ ] proofreading
+   - [-] Swedish
+     - [X] Google translate
+     - [ ] colleague proofreading
    - [ ] Acknowledgement
 
 ** Chapter 2
@@ -35,7 +41,7 @@ Click [[file:main.pdf][the latest version]] to open the latest version of thesis
    - [X] fix error in eq(2.4). Check if still have difficulty in reading (2.4) (2.5) (2.6)
    - [X] toy model in from three-node to four-node case
    - [X] Section 2.4 Exact Inference is newly added according to comments. Please check
-   
+
 
 ** DONE Chapter 3 [4/8]
    CLOSED: [2020-06-04 Thu 19:44] DEADLINE: <2020-05-29 Fri>
@@ -44,16 +50,16 @@ Click [[file:main.pdf][the latest version]] to open the latest version of thesis
    :END:
 
    Click [[file:comments/c3main.pdf][Commented file of Chapter 3]] (c3main.pdf) to open the commented file for this chapter.
-  
+
    - [X] eq (3.10), (3.11). Not understanding comments
      - [update] This is cleared during our meeting.
    - [X] eq (3.23). Adding one example to symmetric property of potentials, i.e., the Ising model.
-   - [X] eq (3.36), +I think it is fine without abs insides, since p-norm operation gives the abs operation by default,+ 
+   - [X] eq (3.36), +I think it is fine without abs insides, since p-norm operation gives the abs operation by default,+
      - [update] I should use abs value notation over z - z. The correction is made.
    - [-] Interpretation to Theorem and Corollary results. A remark is added (Remark 3.5 in the revised version)
    - [-] quality of the fix point, add one example of coding about :
-     - https://documents.epfl.ch/groups/i/ip/ipg/www/2010-2011/Statistical_Physics_for_Communication_and_Computer_Science/mct-new.pdf 
-     - https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=910578 
+     - https://documents.epfl.ch/groups/i/ip/ipg/www/2010-2011/Statistical_Physics_for_Communication_and_Computer_Science/mct-new.pdf
+     - https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=910578
      - [update] I added a Remark discussing some cases (special graphs or graph structures) where error analysis of BP has been studied, at the end of Theorem 1 (Remark 3.4 in revised).
    - [ ] Figure 3.3, pending
      - Yeah, the order of legend was generated random in the figure where I used a python library. I am leaving the trivial issue pended.
@@ -69,7 +75,7 @@ Click [[file:main.pdf][the latest version]] to open the latest version of thesis
    - [X] Fix eq(4.3), added explanation
    - [-] An example has been add after eq(4.4), showing message update and belief calculation in GBP
    - eq(4.6). The inside term can be formulated in term of KL divergence. I follow the typical definition of region-based free energy. The current definition is fine.
-   - eq(4.12), Ragnar questioned where the true b_R comes from. 
+   - eq(4.12), Ragnar questioned where the true b_R comes from.
      b_R here is belief from RENN. It is an estimation instead of ground truth. The regularization is to enforce belief consistency.
    - Ragnar question after eq(4.3). The counting numbers are to balance the each region's energy to the overall region-based free energy. I do not see how this is connected to trees.
      However, a region graph is a hypergraph and is tree-structured by definition. You may see a region graph as a DAG.
@@ -92,21 +98,21 @@ Click [[file:main.pdf][the latest version]] to open the latest version of thesis
 
    - [X] section numbering: original depth 2 --> depth 3
    - [X] mixture model in eq (6.9) is defined as a mixture of x. Each component of the mixture should be a density function of x=g_k(z), i.e., p(x=g_k(z)). p denotes the pdf value for any random variable as its argument. Besides, there is no p_z^k for the GenMM model since there is only one latent Gaussian. The randomness then comes from the identity variable as shown in Figure 6.2.
-     - [X] Added a bit more explanation before (6.9) for p_k(x). 
+     - [X] Added a bit more explanation before (6.9) for p_k(x).
      - [X] explanation in meeting
 
 
 ** TODO Chapter 7
-   - [X] revise the introduction part for better motivation 
+   - [X] revise the introduction part for better motivation
    - [explanation] There is no need to explicit mention discrete state variables since a dynamic model with continuous latent variable is known as linear dynamical system
    - [explanation] response to the comment right placed after (7.8)
      - Correct, in the inference/computation of posteriors in GenHMM, there is no approximation since forward-backward algorithm is used for the posterior of hidden states computation. Forward-backward algorithm is a message passing algorithm that does exact inference for linear chains.
      - I have added explanation i Remark 7.2 and made connection to the corresponding part in Chapter 2
-     
+
 
 ** TODO Chapter 8
 
-   
+
 
 ** Conclusion writing
 *** DONE Conclusion writing
@@ -117,6 +123,7 @@ Click [[file:main.pdf][the latest version]] to open the latest version of thesis
 
 
 * TODO Committee Candidate List
+  Schorlar https://scholar.google.se/citations?view_op=search_authors&mauthors=lars&hl=sv&oi=ao
 
   Search a bit more.
 
@@ -125,14 +132,14 @@ Click [[file:main.pdf][the latest version]] to open the latest version of thesis
   Two substitute members (stand-ins) of the grading committee for public defences of doctoral theses must be appointed (both substitutes cannot come from KTH if one of the ordinary members of the grading committe is already from KTH).
 
   Three external committee members + two KTH subsitutes (one of them to be the advance reviewer, check).
-  
+
   ** *We should start from next week's meeting for contacting the committees, I should put more candidates here*
 
   - [ ] Timo Koski, Professor emeritus of mathematical statistics, KTH,
     [[https://people.kth.se/~tjtkoski/][KTHProfile Page]],
     [[https://scholar.google.com/citations?hl=en&user=1CuzidAAAAAJ&view_op=list_works&sortby=pubdate][Google scholar]]. Or check his colleagues.
     [[https://www.math.kth.se/matstat/staff_e.html][KTH Mathematics]]
-    Seems retired 
+    Seems retired
 
   - [Preferred] Erik Aurell, KTH
     keywords: Biological, PhysicsNon-equilibrium Physics, Inference, Big Data
@@ -141,7 +148,7 @@ Click [[file:main.pdf][the latest version]] to open the latest version of thesis
   - [ ] Nicolas Macris, EPFL
     Keywords, Theory of error correcting codes, statistical mechanics and information theory
     [[https://people.epfl.ch/nicolas.macris][Page]]
-    
+
   - [ ] Hossein Azizpour, Assistant Professor in Machine Learning, Division of Robotics, Perception, and Learning (RPL)
     Deep learning, understanding its techniques, and advancing them particularly through equpping them with reasoning, inductive biases, uncertainty estimation and knowledge transfer.
     [[https://www.kth.se/profile/azizpour][Page]]
@@ -150,25 +157,35 @@ Click [[file:main.pdf][the latest version]] to open the latest version of thesis
     In the area of mobile robotics
     [[https://www.kth.se/profile/johnf][Page]]
 
-  - [ ] Hedvid kjellstrom, KTH 
+  - [ ] Hedvid kjellstrom, KTH
     Keywords: Computer Vision, Machine Learning, Representation Learning, Human Behavior, Animal Behavior
     [[https://scholar.google.com/citations?hl=en&user=wr3CtKAAAAAJ&view_op=list_works&sortby=pubdate][Google scholar]]
-    
+
   - [ ] Henk Wymeersch, Communication Systems, Chalmers
     [[https://www.chalmers.se/en/staff/Pages/henk-wymeersch.aspx][Page]] ,
     [[https://sites.google.com/site/hwymeers/][Google site]]
-    
+
   - uppsalar, there maybe groups
-  
+
   - [ ] Bogdan Savchynskyy, Senior Researcher and Group Leader (Akademischer Rat) at Visual Learning Lab, Universität Heidelberg
     [[https://hci.iwr.uni-heidelberg.de/vislearn/people/bogdan/][Page]]
+
+** picked up from google scholar
+  - Fredrik Lindsten, Associate Professor in Machine Learning, Associate Professor at the Division of Statistics and Machine Learning, the Department of Computer and Information Science, Linköping University 
+
+    page: https://lindsten.netlify.app/aboutme/
+    google scholar: https://scholar.google.se/citations?user=RfTyvdsAAAAJ&hl=sv
     
+  - Thomas Schön, Uppsalar,
+    [[http://user.it.uu.se/~thosc112/][page]]
+    [[https://scholar.google.se/citations?hl=sv&user=FUqUC2oAAAAJ&view_op=list_works&sortby=pubdate][Scholar]]
+
 
 * Schedule for Defense
 
   Schedule following: [KTH public defense of doctoral thesis](https://intra.kth.se/en/eecs/forskarutbildning/public-defence-of-doctoral-thesis-1.813458)
   - [X] **March**: course credit fulfilling check.
-  - [X] **March**: Check with Ragnar about the preliminary drafting stuff. 
+  - [X] **March**: Check with Ragnar about the preliminary drafting stuff.
   - [X] **March**: ~~preliminary Content organizing~~ We decide revise content organizing while along writing content.
   - [X] **March-May**: Finish the first complete draft of thesis.
     - [X] **March-April**: Introduction, Background, Inference Part finished
@@ -177,7 +194,7 @@ Click [[file:main.pdf][the latest version]] to open the latest version of thesis
   - [X] **March-May**: Finish the first complete draft of thesis.
 
   - Considering that summer break **16 June -- 14 August** is not taken into account into KTH public defense procedure
-    
+
   - [ ] **Mid June -- Mid August** parallel tasks:
     - [ ] **Before 15 August** committee member confirm. Lars and Ragnar.
     - [ ] quality reviewer contact. Lars and Ragnar
