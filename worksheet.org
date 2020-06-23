@@ -176,11 +176,16 @@
     page: https://lindsten.netlify.app/aboutme/
     google scholar: https://scholar.google.se/citations?user=RfTyvdsAAAAJ&hl=sv
     
-  - Thomas Schön, Uppsalar,
+  - Thomas Schön, Uppsalar University
     [[http://user.it.uu.se/~thosc112/][page]]
     [[https://scholar.google.se/citations?hl=sv&user=FUqUC2oAAAAJ&view_op=list_works&sortby=pubdate][Scholar]]
 
+  - Volkan Cevher, Accociate Professor, epfl
+    https://scholar.google.com/citations?hl=en&user=hlWhzU8AAAAJ&view_op=list_works&sortby=pubdate
 
+** picked from lars's google page
+   - Yoshiyuki Kabashima
+   https://scholar.google.com/citations?hl=en&user=NLBZuoEAAAAJ&view_op=list_works&sortby=pubdate
 * Schedule for Defense
 
   Schedule following: [KTH public defense of doctoral thesis](https://intra.kth.se/en/eecs/forskarutbildning/public-defence-of-doctoral-thesis-1.813458)
