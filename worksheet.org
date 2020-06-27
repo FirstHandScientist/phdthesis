@@ -133,7 +133,8 @@
 
   Three external committee members + two KTH subsitutes (one of them to be the advance reviewer, check).
 
-  ** *We should start from next week's meeting for contacting the committees, I should put more candidates here*
+** KTH candidates
+  *We should start from next week's meeting for contacting the committees, I should put more candidates here*
 
   - [ ] Timo Koski, Professor emeritus of mathematical statistics, KTH,
     [[https://people.kth.se/~tjtkoski/][KTHProfile Page]],
@@ -161,6 +162,20 @@
     Keywords: Computer Vision, Machine Learning, Representation Learning, Human Behavior, Animal Behavior
     [[https://scholar.google.com/citations?hl=en&user=wr3CtKAAAAAJ&view_op=list_works&sortby=pubdate][Google scholar]]
 
+
+** picked up from google scholar
+   - [X] Fredrik Lindsten, Associate Professor in Machine Learning, Associate Professor at the Division of Statistics and Machine Learning, the Department of Computer and Information Science, Linköping University 
+
+     page: https://lindsten.netlify.app/aboutme/
+     google scholar: https://scholar.google.se/citations?user=RfTyvdsAAAAJ&hl=sv
+
+   - Thomas Schön, Uppsalar University
+     [[http://user.it.uu.se/~thosc112/][page]]
+     [[https://scholar.google.se/citations?hl=sv&user=FUqUC2oAAAAJ&view_op=list_works&sortby=pubdate][Scholar]]
+
+   - Volkan Cevher, Accociate Professor, epfl
+     https://scholar.google.com/citations?hl=en&user=hlWhzU8AAAAJ&view_op=list_works&sortby=pubdate
+
   - [ ] Henk Wymeersch, Communication Systems, Chalmers
     [[https://www.chalmers.se/en/staff/Pages/henk-wymeersch.aspx][Page]] ,
     [[https://sites.google.com/site/hwymeers/][Google site]]
@@ -170,22 +185,49 @@
   - [ ] Bogdan Savchynskyy, Senior Researcher and Group Leader (Akademischer Rat) at Visual Learning Lab, Universität Heidelberg
     [[https://hci.iwr.uni-heidelberg.de/vislearn/people/bogdan/][Page]]
 
-** picked up from google scholar
-  - Fredrik Lindsten, Associate Professor in Machine Learning, Associate Professor at the Division of Statistics and Machine Learning, the Department of Computer and Information Science, Linköping University 
-
-    page: https://lindsten.netlify.app/aboutme/
-    google scholar: https://scholar.google.se/citations?user=RfTyvdsAAAAJ&hl=sv
-    
-  - Thomas Schön, Uppsalar University
-    [[http://user.it.uu.se/~thosc112/][page]]
-    [[https://scholar.google.se/citations?hl=sv&user=FUqUC2oAAAAJ&view_op=list_works&sortby=pubdate][Scholar]]
-
-  - Volkan Cevher, Accociate Professor, epfl
-    https://scholar.google.com/citations?hl=en&user=hlWhzU8AAAAJ&view_op=list_works&sortby=pubdate
-
-** picked from lars's google page
    - Yoshiyuki Kabashima
    https://scholar.google.com/citations?hl=en&user=NLBZuoEAAAAJ&view_op=list_works&sortby=pubdate
+
+** picked during meeting
+   - [X] Daniel Hernández-Lobato,Lecturer of Computer Science at Universidad Autónoma de Madrid,
+     https://dhnzl.org/
+     https://scholar.google.se/citations?hl=en&user=rL6cvTUAAAAJ&view_op=list_works&sortby=pubdate
+   - Vanessa Didelez, Professor of Statistics, Leibniz Institute for Prevention Research and Epidemiology - BIPS, Bremen
+     Key words: Statistics Causal Inference Graphical Models Biostatistics Epidemiology
+     https://scholar.google.com/citations?hl=en&user=T-XaM1YAAAAJ&view_op=list_works&sortby=pubdate
+
+** further picking
+   a webpage to look at: https://www.ntnu.edu/research/experts/artificial-intelligence-machine-learning
+   - [ ] Helge Langseth
+     Professor in the Group of Data and Artificial Intelligence, at the Department of Computer and Information Science, The Norwegian University of Science and Technology. 
+     https://folk.idi.ntnu.no/helgel/ , *his thesis is about Bayesian network, looks fit*
+     https://scholar.google.com/citations?user=yyXvuZsAAAAJ&hl=en
+
+   - Centre for Computational Statistics and Machine Learning, UCL: http://www.csml.ucl.ac.uk/
+     - [ ] David Barber, probabilistic modelling and reasoning, Centre for Computational Statistics and Machine Learning, UCL
+       http://web4.cs.ucl.ac.uk/staff/D.Barber/pmwiki/pmwiki.php?n=Main.HomePage
+     - [ ] Ioanna Manolopoulou, http://www.homepages.ucl.ac.uk/~ucakima/
+     - [ ] Ricardo Silva, Associate Professor in Statistics working on computational approaches for causal inference, graphical latent variable models and relational models., http://www.homepages.ucl.ac.uk/~ucgtrbd/
+
+
+   - [ ] Iain Murray, Reader in Machine Learning, School of Informatics, University of Edinburgh.
+     https://homepages.inf.ed.ac.uk/imurray2/
+
+   - Charles Sutton (Bio), Research Scientist, Google AI, Reader (= Associate Professor), School of Informatics, University of Edinburgh,Fellow, The Alan Turing Institute 
+     http://homepages.inf.ed.ac.uk/csutton/
+
+   - [ ] Philipp Hennig, Max planck institute for intelligent systems/ University of Tubingen
+     https://ei.is.tuebingen.mpg.de/person/phennig
+
+   - Johan Pensar, Associate Professor, Statistics and Data Science, University of Oslo
+     Data analysis, Graphical models, Structure learning, Computational statistics, Machine learning
+     
+   I do not know if followings should take a look: 
+   - Luigi Portinale, Full Professor of Computer Science, Computer Science Insitute DiSIT,University of Piemonte Orientale "Amedeo Avogadro"
+     http://people.unipmn.it/portinal/
+   - Jirka Vomlel, Institute of Information Theory and Automation (ÚTIA), Academy of Sciences of the Czech Republic
+     http://staff.utia.cas.cz/vomlel/vomlel.html
+
 * Schedule for Defense
 
   Schedule following: [KTH public defense of doctoral thesis](https://intra.kth.se/en/eecs/forskarutbildning/public-defence-of-doctoral-thesis-1.813458)
