@@ -248,7 +248,7 @@ with encoder $q(\bm{x}_U|\bm{x}_O)$ and decoder ${p}(\bm{x}_O| \bm{x}_U; \bm{\th
                              & = \log{\sum_{\bm{x}_U} {q(\bm{x}_U|\bm{x}_O)}\frac{{p}(\bm{x}_O, \bm{x}_U; \bm{\theta})}{q(\bm{x}_U|\bm{x}_O)} } \label{chpt5:eq:important-sampling-inituition}\\
                              & \geq \EE_{q(\bm{x}_U|\bm{x}_O)}\left[ \log{\frac{{p}(\bm{x}_O, \bm{x}_U; \bm{\theta})}{q(\bm{x}_U|\bm{x}_O)}}\right] \label{chpt5:eq:apply-jensen-ineq},
   \end{align}
-  where \eqref{chpt5:eq:important-sampling-inituition} can be seen as an evaluation of importance sampling with proposal distribution $q$ and \eqref{chpt5:eq:apply-jensen-ineq} uses Jensen's inequality $\log{\EE_{p(x)}[f(x)] \geq \EE_{P(x)}[\log{f(x)}]}$.
+  where \eqref{chpt5:eq:important-sampling-inituition} can be seen as an evaluation of importance sampling with proposal distribution $q$ and \eqref{chpt5:eq:apply-jensen-ineq} uses Jensen's inequality $\log{\EE_{p(x)}[f(x)] \geq \EE_{p(x)}[\log{f(x)}]}$.
 \end{remark}
 
 \begin{remark}

@@ -160,7 +160,8 @@ meaningful. An element of the cost matrix $\bm{M_f}$ in representation domain (f
 Our new objective is joint learning of generator $\bm{g}$ and representation $\bm{f}$. A natural question is how to construct the $\bm{f}$ function? {Inspired by the triplet loss in \cite{7298682} aiming at larger distance between distinct classes than in-class distance, we may consider two virtual classes labeled by $p^{\ast}(\bm{x})$ and $p(\bm{x};\bm{\theta})$.
 This means that the representation function $\bm{f}$ should have the algebraic property: $ d_{\bm{f}}(\bm{x}_1, \tilde{\bm{x}}_1) + \gamma \leq d_{\bm{f}}(\bm{x}_1, \bm{x}_2) $ for $\gamma > 0$, where $\bm{x}_1, \tilde{\bm{x}}_1 \in \bm{\Xx}_1$ are two samples from distribution $p^{\ast}$ and $\bm{x}_2$ is a generated signal from distribution $p(\bm{x};\bm{\theta})$, i.e., an output of $\bm{g}$. Meanwhile, $\bm{g}$ tries to mitigate this distinction.}
 
-Following the above idea, let us denote the mapped distribution via $\bm{f}$ by $p^{\ast}_{\bm{f}}$ and $p_{\bm{f}}$, respectively. Let $\bm{M}_{\bm{f}}$ be the cost matrix in representation domain and its elements $M_{\bm{f},{i,j}} = d_{\bm{f}}(\bm{x}^{i}_1, \bm{x}^{j}_2)$, $\bm{x}^{i} \sim p^{\ast}(\bm{x}), \bm{x}^{j}\sim p(\bm{x}; \bm{\theta})$. Then we learn $\bm{f}$ and $\bm{g}$ using alternative optimization, as follows. 
+Following the above idea, we do the learning of mapping $\bm{f}$ and generator $\bm{g}$ in $\bm{\Mm}$. Samples from $p^{\ast}(\bm{x})$ and $p(\bm{x}; \bm{\theta})$ are mapped by $\bm{f}$ before we use EOT to measure their similarity.
+Let us denote the mapped distributions via $\bm{f}$ by $p^{\ast}_{\bm{f}}$ and $p_{\bm{f}}$, respectively. Let $\bm{M}_{\bm{f}}$ be the cost matrix in representation domain and its elements $M_{\bm{f},{i,j}} = d_{\bm{f}}(\bm{x}^{i}_1, \bm{x}^{j}_2)$, $\bm{x}^{i} \sim p^{\ast}(\bm{x}), \bm{x}^{j}\sim p(\bm{x}; \bm{\theta})$. Then we learn $\bm{f}$ and $\bm{g}$ using alternative optimization, as follows. 
 \begin{itemize}
 \item Learning of representation $f$ is minimizing EOT cost
   \begin{equation}\label{eq-sim-in}
@@ -223,7 +224,9 @@ The algorithm steps of EOTGAN are shown in Algorithm \ref{algo-eWGAN}.
     \STATE $\bm{\th} \gets \bm{\th} -l \cdot \partial{\bm{g}}$
     \ENDWHILE
   \end{algorithmic}
+
 \end{algorithm}
+
 
 \begin{remark}[Discussion on OT and EOT]
 
