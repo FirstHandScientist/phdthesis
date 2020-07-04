@@ -4,14 +4,10 @@
   Notation explanation
   - [X]: stands for checked tasks
   - [ ]: to be done, or stands for original statement is preferred or used, or intact due to confusion in understanding comments
-  - [-]: partial revised or pending task. Please check.
+  - [-]: partial revised or pending task. Check.
 
   +text+: strike out text
 
-  Click [[file:main.pdf][the latest version]] to open the latest version of thesis.
-
-** DONE I need to sync this to a online doc for Ragnar
-   CLOSED: [2020-06-22 Mon 10:44]
 
 ** Global Items
    - [X] Capitalize section/chapter~ref
@@ -31,7 +27,7 @@
    - [-] Swedish
      - [X] Google translate
      - [ ] colleague proofreading
-   - [ ] Acknowledgement
+   - [X] Acknowledgement
 
 ** Chapter 2
    Click [[file:comments/c12main.pdf][comments on Chapter1,2]] to open commented file.
@@ -85,13 +81,15 @@
 
 ** TODO Chapter 5
    - [ ] +Cannot recognize the comment on 'We would begin with the explanation of why inference ...' the last paragraph in preamble of chapter 5.+
-   - [ ] *important* I re-did the math and still think the current eq(5.2) (5.4) (5.5) are correct.
+   - [X] *important* I re-did the math and still think the current eq(5.2) (5.4) (5.5) are correct.
    - The question on the remark after eq(5.5).
      Yes, I think a exponential distribution can always be written as log-linear in terms of product between sufficient statistics and natural parameters.
      reference: wainwright2008graphical chapter3 and wiki on exponential family
    - Chapter 5 is supposed to be a transition chapter connecting Inference and Learning, thus I am not planning literature section for this chapter, since all following chapters are about learning.
 
 ** TODO Chapter 6
+   [[file:comments/c6main.pdf][Commented file on chapter 6]]
+
    - [-] revising introducing part for better motivated
      - [X] made changes on emphasizing purpose of increasing flexibility of models
      - [ ] interpolation experiment. It is for illustration of abstraction in latent space and test the invertibility? can not think more on it.
@@ -103,6 +101,8 @@
 
 
 ** TODO Chapter 7
+   [[file:comments/c7main.pdf][Commented file on chaper 7]]
+
    - [X] revise the introduction part for better motivation
    - [explanation] There is no need to explicit mention discrete state variables since a dynamic model with continuous latent variable is known as linear dynamical system
    - [explanation] response to the comment right placed after (7.8)
@@ -111,8 +111,11 @@
 
 
 ** TODO Chapter 8
+   [[file:comments/c8main.pdf][Commented file (Chapter 8 and 9)]]
+
    - comment near by over (8.1), The N for X_1 and X_2 is not necessarily the same.
-   - some thing missing? above (8.11)
+   - [X] some thing missing? above (8.11)
+     A bit more text explanation added.
 
 
 ** Conclusion writing
@@ -124,7 +127,7 @@
 
 
 * TODO Committee Candidate List
-
+  
   Search a bit more.
 
   For a grading committee consisting of three members, at least two members must be sourced outside of KTH. For a grading committee consisting of five members, at least three members must be sourced outside of KTH. Clarification: the opponent is not in the grading committee
@@ -236,7 +239,7 @@
     Keywords: Computer Vision, Machine Learning, Representation Learning, Human Behavior, Animal Behavior
     [[https://scholar.google.com/citations?hl=en&user=wr3CtKAAAAAJ&view_op=list_works&sortby=pubdate][Google scholar]]
 
-* Opponent
+* Opponent Candidates
   high-profile, senior faculty (full prof., arising stars in recent year), be nice 
   - Harri Lähdesmäki from Aalto University, Picked by Saikat
 
