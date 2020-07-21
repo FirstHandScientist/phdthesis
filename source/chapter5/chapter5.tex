@@ -4,7 +4,7 @@ In Part~\ref{part:background} and \ref{part:inference}, we have discussed differ
 As introduced in Chapter~\ref{chapter2}, learning of a graphical model includes structure learning and parameter learning. We restrict our discussion to parameter learning in graphical models. That is to say, answering the question of how to decide the parameters of a probabilistic graphical model.
 In this chapter, we mainly discuss the learning of undirected graphical models and leave the learning of directed graphical models for the coming chapters.
 
-As explained in Section~\ref{chpt2:sec:learning-principles}, the most essential learning principle is \textit{maximum likelihood} that is derived from the minimization of KL-divergence. Since we do not have access to the true distribution $p^{\ast}(\bm{x})$, practical maximum likelihood learning is via tuning the parameter $\bm{\theta}$ of a model $p(\bm{x};\bm{\theta})$ using information from samples of $p^{\ast}(\bm{x})$, i.e. $\Dd = \left\{ \bm{x}^1, \bm{x}^2, \cdots, \bm{x}^{M}\right\}$.
+As explained in Section~\ref{chpt2:sec:learning-principles}, one of the most essential learning principles is \textit{maximum likelihood} that is derived from the minimization of KL-divergence. Since we do not have access to the true distribution $p^{\ast}(\bm{x})$, practical maximum likelihood learning is done via tuning the parameter $\bm{\theta}$ of a model $p(\bm{x};\bm{\theta})$ using information from samples of $p^{\ast}(\bm{x})$, i.e. $\Dd = \left\{ \bm{x}^1, \bm{x}^2, \cdots, \bm{x}^{M}\right\}$.
 
 We begin with the explanation of why inference is required in learning, and then, discuss MRF learning via RENN. Numerical comparisons with learned MRFs via classic message-passing methods are presented and discussed afterwards. We also include learning with hidden variables, an important topic in graphical model learning, in this chapter.
 
@@ -29,23 +29,23 @@ We similarly have the gradient of $\Ll$ as
 \begin{equation}\label{chpt5:eq:likely-gradient-thetaa}
   \pd{\Ll(\bm{x};\bm{\theta})}{\bm{\theta}_a} = \frac{1}{|\Dd |} \sum_{\bm{x} \in \Dd}\pd{\log{{\phi_a}(\bm{x}_a; \bm{\theta}_a)}}{\bm{\theta}_a} - \EE_{p(\bm{x}_a; \bm{\theta})}\left[ \pd{\log{{\phi_a}(\bm{x}_a; \bm{\theta}_a)}}{\bm{\theta}_a} \right].
 \end{equation}
-In general, there is no closed-form solution to the maximization problem of the log-likelihood $\Ll(\Dd; \bm{\theta})$. But it is intuitive to observe that the stationary point of ${\Ll(\bm{x};\bm{\theta})}$ is
+In general, there is no closed-form solution to the maximization problem of the log-likelihood $\Ll(\Dd; \bm{\theta})$. But it is intuitive to observe that the stationary points of ${\Ll(\bm{x};\bm{\theta})}$ satisfy
 \begin{equation}\label{chpt5:eq:stationary-point-likely}
   \frac{1}{|\Dd |} \sum_{x \in \Dd}\pd{\log{{\phi_a}(\bm{x}_a; \bm{\theta}_a)}}{\bm{\theta}_a} = \EE_{p(\bm{x}_a; \bm{\theta})}\left[ \pd{\log{{\phi_a}(\bm{x}_a; \bm{\theta}_a)}}{\bm{\theta}_a} \right].
 \end{equation}
-The left-hand-side of \eqref{chpt5:eq:stationary-point-likely} is empirical expectation with regard to the gradient of potential function $\phi_a$, while on the right-hand-side of \eqref{chpt5:eq:stationary-point-likely} the expectation is computed by the support of the marginal distribution $p(\bm{x}_a; \bm{\theta})$. This stationary point is intuitively telling us that the maximum likelihood estimation is trying to enforce the equality of empirical expectation of gradient with each $\bm{\theta}_a$ and the model's expectation of that.
+The left-hand side of \eqref{chpt5:eq:stationary-point-likely} is empirical expectation with regard to the gradient of potential function $\phi_a$, while on the right-hand side of \eqref{chpt5:eq:stationary-point-likely} the expectation is computed by the marginal distribution $p(\bm{x}_a; \bm{\theta})$. This \eqref{chpt5:eq:stationary-point-likely} is intuitively telling us that the maximum likelihood estimation is trying to enforce the equality of empirical expectation of the gradient with regard to each $\bm{\theta}_a$ and the model's expectation of that.
 \begin{remark}[Interpretation to learning with inference]
-  If we instantiate $p(\bm{x};\bm{\theta})$ from exponential family and it is canonically parameterized, its potential $\phi_a(\bm{x}_a; \bm{\theta})$ is log-linear with regard to the sufficient statistics. The corresponding equation of \eqref{chpt5:eq:stationary-point-likely} in this case is reduced into \textit{moment matching}.
+  If we instantiate $p(\bm{x};\bm{\theta})$ from exponential family and it is canonically parameterized, its potential $\phi_a(\bm{x}_a; \bm{\theta})$ is log-linear with regard to the sufficient statistics. The corresponding equation of \eqref{chpt5:eq:stationary-point-likely} in this case is reduced to \textit{moment matching}.
 
-  For log-linear potential function $\phi_a$, $\forall ~a \in \Ff$, the first term of $l(\bm{x}; \bm{\theta})$ is linear with regard to $\bm{\theta}$ and the second term, i.e. $-\log{Z(\bm{\theta})}$, is concave. Thus the log-likelihood is concave and there is a unique globally optimal log-likelihood value. But this does not necessarily mean that there is always a unique global optimum $\bm{\theta}^{\ast}$, since the parameterization of an MRF can be redundant. That is to say, in the case of over-parameterization of an MRF, there could exit multiple global optima after maximum likelihood learning.
+  For log-linear potential function $\phi_a$, $\forall ~a \in \Ff$, the first term of $l(\bm{x}; \bm{\theta})$, $\log{\tilde{p}(\bm{x};\bm{\theta})}$, is linear with regard to $\bm{\theta}$ and the second term, i.e. $-\log{Z(\bm{\theta})}$, is concave. Thus the log-likelihood is concave and there is a unique globally optimal log-likelihood value. But this does not necessarily mean that there is always a unique global optimal solution $\bm{\theta}^{\ast}$, since the parameterization of an MRF can be redundant. That is to say, in the case of over-parameterization of an MRF, there could exit multiple global optimal solutions after maximum likelihood learning.
   
 \end{remark}
 
-Apart from the classical techniques such as iterative proportional fitting \cite[Section~6.1]{wainwright2008graphical}\cite{eric10-708ipf}, the wide used approach is gradient decent method by using \eqref{chpt5:eq:likely-gradient-thetaa}, in maximizing $\Ll(\Dd; \bm{\theta})$. Either way, the inference on marginal distribution $\left\{ p(\bm{x}_a; \bm{\theta}), a \in \Ff \right\}$ is inevitable.
+Apart from the classical techniques such as iterative proportional fitting \cite[Section~6.1]{wainwright2008graphical}\cite{eric10-708ipf}, a widely used approach is maximizing $\Ll(\Dd; \bm{\theta})$ by \eqref{chpt5:eq:likely-gradient-thetaa} via gradient decent method. In either way, the inference on marginal distribution $\left\{ p(\bm{x}_a; \bm{\theta}), a \in \Ff \right\}$ is inevitable.
 
 Take the gradient decent method as an example: we need to use one of the inference approaches introduced in Part~\ref{part:background} and \ref{part:inference} to approximate the marginals $\left\{ p(\bm{x}_a; \bm{\theta}), a \in \Ff \right\}$ and then do the update of the parameters
 \begin{equation}
-  \bm{\theta}_a \leftarrow \bm{\theta}_a + r \cdot \pd{\Ll(\bm{x};\bm{\theta})}{\bm{\theta}_a}, \forall~~a~\in~\Ff.
+  \bm{\theta}_a \leftarrow \bm{\theta}_a + r \cdot \pd{\Ll(\bm{x};\bm{\theta})}{\bm{\theta}_a}, ~\forall~a \in \Ff.
 \end{equation}
 
 \begin{remark}[Learning with a prior]
@@ -53,7 +53,7 @@ Take the gradient decent method as an example: we need to use one of the inferen
   \begin{equation}
     \Ll(\bm{x};\bm{\theta}) = \sum_{\bm{x}\in \Dd}\left[ \log{\tilde{p}(\bm{x}; \bm{\theta})} - \log{Z(\bm{\theta})}  \right] - \frac{\norm{\bm{\theta}}^2}{2\sigma^2},
   \end{equation}
-  where $\sigma^2$ is the variance of the Gaussian prior, which is free to determine. The rest of the analysis follows.
+  where $\sigma^2$ is the variance of the Gaussian prior, which is free to determine and reflects our subjective prior knowledge. The rest of the analysis follows. Intuitively, the presence of the prior reduces the chance for making prediction dominated by a small number of observations. 
 Alternatively, Laplacian prior is also commonly used, which brings a $\ell_1$-norm regularization over $\bm{\theta}$ and encourages sparsity.
 
 \end{remark}
@@ -67,23 +67,23 @@ The likelihood maximization of \eqref{chpt5:eq:one-sample-likely} can be written
 \begin{equation}\label{eq:maximizing-likelihood}
   \umin{\bm{\theta}}{ -\log{\tilde{p}(\bm{x}; \bm{\theta})} + \log{Z(\bm{\theta})}}.
 \end{equation}
-As discussed in Section~\ref{chpt5:sec:learning-mrf}, inference is needed in this MRF learning problem due to the intractable partition function, whose gradient with regard to the model parameter is an expectation with the support of marginal distributions. RENN, similar to other inference methods, is able to infer both the marginal distributions (via beliefs) and partition functions (via region-based free energy) more efficiently and accurately, as explained in Chapter~\ref{chapter4}. Thus there are two alternative ways to employ the inference results of RENN for MRF learning:
+As discussed in Section~\ref{chpt5:sec:learning-mrf}, inference is needed in this MRF learning problem due to the intractable partition function, whose gradient with regard to the model parameter is an expectation with regard to marginal distributions. RENN, similar to other inference methods, is able to infer both the marginal distributions (via beliefs) and partition functions (via region-based free energy) more efficiently and accurately, as explained in Chapter~\ref{chapter4}. Thus there are two alternative ways to employ the inference results of RENN for MRF learning:
 \begin{itemize}
 \item use belief $\left\{ b_{a}(\bm{x}_a) \right\}$ obtained from a RENN in place of marginal distributions $\left\{ p(\bm{x}_a; \bm{\theta}) \right\}$ to compute gradient of the likelihood $\Ll$ in \eqref{chpt5:eq:likely-gradient-thetaa}. Then employ a gradient-based optimization algorithm to optimize the model parameter $\bm{\theta}$;
-  \item use the region-based free energy of a RENN in place of the intractable negative log-partition function $-\log{Z(\bm{\theta})}$. Make use of autodiff methods in morden framework such as PyTorch or Tensorflow for $\bm{\theta}$. Then do alternating optimization routine with regard to the model parameter $\bm{\theta}$ and RENN parameters under the same objective function.
+  \item use the region-based free energy of a RENN in place of the intractable negative log-partition function $-\log{Z(\bm{\theta})}$. Make use of autodiff methods in morden framework such as PyTorch or Tensorflow for $\bm{\theta}$. Then do alternating optimization routine with respect to the model parameter $\bm{\theta}$ and RENN parameters under the same objective function.
 \end{itemize}
 The first alternative is straightforward by following the discussion in Section~\ref{chpt5:sec:learning-mrf}. We give a further explanation to the second alternative in this section.
 
-The region-based free energy $F_R(\Bb;\bm{\theta})$ in \eqref{eq:def-region-free-energy} of Definition~\ref{def:region-free-energy} is the exactly negative partition function of $p(\bm{x};\bm{\theta})$, i.e. $-\log{Z(\bm{\theta})}$, if each belief is exactly the corresponding marginalization, $b_R(\bm{x}_R)=p(\bm{x}_{R})$, $\forall~R\in \Rr$. Otherwise, $F_R(\Bb^{\ast};\bm{\theta})$ can always be an approximation of $-\log{Z(\bm{\theta})}$, where $\Bb^{\ast}= \{b_R(\bm{x}_R; \bm{\omega}^{\ast}), R\in \Rr\}$ with $\bm{\omega}^{\ast}$ being the solution to problem \eqref{eq:infer-F-all-belief}.
+The region-based free energy $F_R(\Bb;\bm{\theta})$ in \eqref{eq:def-region-free-energy} of Definition~\ref{def:region-free-energy} is the exactly negative partition function of $p(\bm{x};\bm{\theta})$, i.e. $-\log{Z(\bm{\theta})}$, if each belief is exactly the corresponding marginalization, $b_R(\bm{x}_R)=p(\bm{x}_{R})$, $\forall~R\in \Rr$. Otherwise, $F_R(\Bb^{\ast};\bm{\theta})$ can always be used as an approximation of $-\log{Z(\bm{\theta})}$, where $\Bb^{\ast}= \{b_R(\bm{x}_R; \bm{\omega}^{\ast}), R\in \Rr\}$ with $\bm{\omega}^{\ast}$ being a solution to problem \eqref{eq:infer-F-all-belief}.
 
 Combining MRF learning and RENN inference, we have
 \begin{align}\label{eq:learning-min-max}
   \min_{\bm{\theta}}\max_{\bm{\omega}} -\log{\tilde{p}(\bm{x}; \bm{\theta})} - F_R(\Bb; \bm{\theta}) 
   -\lambda \sum_{R\in \Rr \backslash \Rr_0} \sum_{R_p \in \Pp(R)}\!\!\!\!\!d( b_R, \!\!\!\!\! \sum_{\Ss(R_p)\backslash \Ss(R)}\!\!\!\!\! b_{R_p}(\bm{x}_{R_p}; \bm{\omega})).
 \end{align}
-Then the difficulty of computing $Z(\bm{\theta})$ is dealt with by joint learning of MRF and inference by RENN in \eqref{eq:learning-min-max}.
+Then the difficulty of computing $Z(\bm{\theta})$ is dealt with by joint learning of MRF and inference via RENN in \eqref{eq:learning-min-max}.
 
-Learning MRF with RENN does not need iterative message propagation. Additionally, RENN can be implemented with modern toolboxes and enjoys the GPU computation capacity. Consequently, learning MRF with RENN can be much faster, which will be shown in the following section.
+Learning MRF with RENN does not need an iterative message propagation. Additionally, RENN can be implemented with modern toolboxes and enjoys the GPU computation capacity. Consequently, learning MRF with RENN can be much faster, which will be shown in the following section.
 
 
 \section{Numerical Comparisons in MRF Learning}
@@ -98,6 +98,7 @@ Learning MRF with RENN does not need iterative message propagation. Additionally
         % std=1.0
         \toprule
         $n$ & True & Exact & Mean Field & Loopy BP & Damped BP & GBP & Inference Net & RENN \\
+        \midrule
         25  &  9.000  &  9.004  &  9.811  &  {9.139}  &  9.196  &  10.56  &  9.252  &  \textbf{9.048}  \\
         100 &  19.34  &  19.38  &  23.48  &  {19.92}  &  20.02  &  28.61  &  20.29  &  \textbf{19.76} \\
         225 &  63.90  &  63.97  &  69.01  &  66.44    &  66.25  &  92.62  &  68.15  &  \textbf{64.79}  \\
@@ -186,7 +187,7 @@ Learning MRF with RENN does not need iterative message propagation. Additionally
 To make the comparison more concrete, we consider learning of MRFs (i.e. learning the model parameter $\bm{\theta}$), via different inference methods discussed in the following.
 
 
-We perform learning on two types of MRF graphs, grid (Table~\ref{tab:nll-training-grid-n5n10}) and complete graphs (Table~\ref{tab:nll-training-full-n3n4}). For both cases, we firstly sample the parameter set $\bm{\theta}^{\prime}$, then sample training and testing dataset from $p(\bm{x}; \bm{\theta}^{\prime})$. The true NLL of sampled datasets can be computed by $p(\bm{x}; \bm{\theta}^{\prime})$. We then train a randomly-initialized MRF with the obtained training dataset by using RENN (Section~\ref{sec:model-learning-with-renn}). The trained MRF by RENN is evaluated with the testing dataset with regard to the NLL value, which is compared with trained models by other methods. We also include the comparison with exact inference where $Z(\bm{\theta})$ is computed exactly.
+We perform learning on two types of MRF graphs, grid (Table~\ref{tab:nll-training-grid-n5n10}) and complete graphs (Table~\ref{tab:nll-training-full-n3n4}). For both cases, we firstly sample a parameter set $\bm{\theta}^{\prime}$, then sample training and testing datasets from $p(\bm{x}; \bm{\theta}^{\prime})$. The true NLL of sampled datasets can be computed by $p(\bm{x}; \bm{\theta}^{\prime})$. We then train a randomly-initialized MRF with the obtained training dataset by using RENN (Section~\ref{sec:model-learning-with-renn}). The trained MRF by RENN is evaluated with the testing dataset to compute the NLL value, which is compared with trained models by other methods. We also include the comparison with exact inference where $Z(\bm{\theta})$ is computed precisely in learning.
 In the grid graphs, there are $4000$ samples for training and $1000$ for testing. In the complete graph case, there are $2000$ samples for training and $1000$ samples for testing. 
 
 In the cases of grid graphs, the NLLs of most methods are close to the true NLL for small-sized graphs ($n=\left\{ 25, 100 \right\}$), with RENN reaching the lowest NNL. In the case of $n=255$, RENN outperforms all other methods significantly. In addition, RENN is much faster. As shown in Table~\ref{tab:time-training}, loopy BP needs almost $335$s and damped BP needs about $525$s per epoch iteration, while RENN takes $16$s per epoch.
@@ -194,7 +195,7 @@ Neural network based methods parameterize the beliefs or marginal distributions 
 
 
 
-In the case of complete graphs, the advantage of RENN is significant, compared with other methods as shown in Table~\ref{tab:nll-training-full-n3n4}. Other benchmark methods fall behind RENN by a distinct difference, given the size of graphs is relatively small. The results here actually agree with inference experiments shown in Table~\ref{tab:infer-full-n9} and \ref{tab:infer-full-n16}, where partition function estimations of other benchmark methods have much larger errors. As for the average time per epoch, neural network based models still are faster than iterative message-passing methods in general.
+In the case of complete graphs, the advantage of RENN is significant, compared with other methods as shown in Table~\ref{tab:nll-training-full-n3n4}. The other benchmark methods fall behind RENN by a distinct difference, given the size of graphs is relatively small. The results here actually agree with inference experiments shown in Table~\ref{tab:infer-full-n9} and \ref{tab:infer-full-n16}, where partition function estimations of those methods have much larger errors. In terms of the average time per epoch, neural network based models still are faster than iterative message-passing methods in general.
 
 
 \section{Further Discussion on Learning}\label{chpt5:sec:futher-dis-learning}
