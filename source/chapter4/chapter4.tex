@@ -1,7 +1,7 @@
 \chapter{Inference as Optimization: An Region-based Energy Method}
 \label{chapter4}
-In the previous chapter, we presented an iterative message passing algorithm and discussed the connection with mean field, belief propagation, and tree-reweighted belief propagation algorithms. These methods fellow different message passing rules (fixed-point iterations) that have been heuristically developed.
-The heuristic efforts usually include the message-passing rules, message update schedules, manual tuning and trials for convergence to stable solutions. Sometimes, it needs to switch to an alternative approximate inference method if the initial selection can not meet practical requirements, e.g., belief propagation can be exact in tree-structured graphs but generally performs worse than mean field method in densely-connected graphs.
+In the previous chapter, we presented an iterative message passing algorithm and discussed the connection with mean field, belief propagation, and tree-reweighted belief propagation algorithms. These methods follow different message passing rules (fixed-point iterations) that have been heuristically developed.
+The heuristic efforts usually include the message-passing rules, message update schedules, manual tuning and trials for convergence to stable solutions. Sometimes, it needs to switch to an alternative approximate inference method if the initial selection cannot meet practical requirements, e.g., belief propagation can be exact in tree-structured graphs but generally performs worse than mean field method in densely-connected graphs.
 However, on our way towards automated inference methods, we intend to reduce the heuristic efforts and manual trials without degenerating their performance. In this chapter, we discuss one promising way to achieve this target. The principle idea is to do inference by solving an optimization problem, i.e., to treat inference as optimization.
 
 In fact, we have touched this topic in Section~\ref{chpt2:sec:variational-inference}, where we interpreted what message passing updates of mean field and belief propagation are actually doing. It turns out that the message passing rules are fixed-point iterations as solutions to optimization problems. Therefore mean field and belief propagation get the intuition of minimization of variational free energy. Take the most widely used belief propagation method as an example, since the message passing rule can be obtained from the minimization of Bethe free energy cost, we may just as well solve the optimization problem by other optimization techniques such as gradient descent. However, an early attempt on this track showed that it might suffer from stability issues for peaky potential functions compared to iterative message passing method \cite{welling2001belief}.
@@ -9,8 +9,7 @@ In fact, we have touched this topic in Section~\ref{chpt2:sec:variational-infere
 
 Another limitation lies in the Bethe approximation itself. When representing the Bethe approximation in a factor graph, a factor node associated with a potential function is related to more than one random variable, while a variable node is associated with one random variable. When beliefs are propagated on the graph, only a univariate marginal distribution (associated with a variable node) can be propagated from one neighboring factor to another neighboring factor of the variable node. The interactions between multiple variables cannot be directly propagated as messages in the graph. This limitation actually affects the performance of Bethe approximation in general graphs, especially the loopy graphs.
 
-In this chapter, we seek to use larger clusters in a graphical representation to overcome the above-mentioned limitation. Along with that, we would bring the concept of inference as optimization into the representation with clusters.
-
+In this chapter, we seek to use larger clusters in a graphical representation to overcome the above-mentioned limitation. Along with that, we bring the concept of inference as optimization into the representation with clusters.
 
 
 
@@ -148,39 +147,39 @@ In this chapter, we seek to use larger clusters in a graphical representation to
 
 \section{Region Graph and Generalized Belief Propagation}
 
-In a MRF, the underlining probability distribution of its $N$-dimensional random vector $\bm{x}=(x_1, x_2, \cdots, x_N)$ can be written as
+In a MRF, the underlying probability distribution of its $N$-dimensional random vector $\bm{x}=(x_1, x_2, \cdots, x_N)$ can be written as
 \begin{equation}\label{eq:joint-px}
   p(\bm{x}; \bm{\theta}) = \frac{1}{Z(\bm{\theta})} \prod_{a \in \Ff} \phi_{a}(\bm{x}_{a}; \bm{\theta}_a),
 \end{equation}
-where potential functions' index set is instantiated as $\Ff = \left\{ A, B, \cdots, M \right\}$. Here we explicitly define that potential $\phi_a$ has its own parameter $\bm{\theta}_a$, and $\bm{\theta} = \{\bm{\theta}_a, a\in \Ff\}$. For notation simplicity, we define that each variable has $K$ states, i.e. $x_i \in \Xx_i$ with $|\Xx_i|=K$, where $|\cdot|$ denotes the cardinality.
+where the potential functions' index set is instantiated as $\Ff = \left\{ A, B, \cdots, M \right\}$. Here we explicitly define that potential $\phi_a$ has its own parameter $\bm{\theta}_a$, and $\bm{\theta} = \{\bm{\theta}_a, a\in \Ff\}$. For notational simplicity, we define that each variable has $K$ states, i.e., $x_i \in \Xx_i$ with $|\Xx_i|=K$, where $|\cdot|$ denotes the cardinality.
 
-We have discussed that loopy BP as a message-passing algorithm operates on factor graphs (as shown in the top-left example in Figure~\ref{fig:factor-region-graphs}) in Section~\ref{chpt2:sec:variational-inference}. We then can compute the marginal distributions of \eqref{eq:joint-px} from a collection of updated messages as discussed in Chapter~\ref{chapter3}. The fundamental limitation of methods in this family is that a message over a single variable is communicated instead of messages over multiple variables (as pointed out above). This issue can be relieved by using a hyper-graph or cluster graph where a node is associated with multiple variables. A region graph is such a kind of graph, which was proposed by \cite{yedida2005constucting, DBLP:journals/corr/abs-1207-4158} to assist scheduling messages for generalized belief propagation (GBP). For illustration purpose, two alternative region graphs constructed from the same factor graph are shown in Figure~\ref{fig:factor-region-graphs}.
+We discussed that loopy BP as a message-passing algorithm operates on factor graphs (as shown in the top-left example in Figure~\ref{fig:factor-region-graphs}) in Section~\ref{chpt2:sec:variational-inference}. We then computed the marginal distributions of \eqref{eq:joint-px} from a collection of updated messages as discussed in Chapter~\ref{chapter3}. The fundamental limitation of methods in this family is that a message over a single variable is communicated instead of messages over multiple variables (as pointed out above). This issue can be relieved by using a hyper-graph or cluster graph where a node is associated with multiple variables. A region graph is such a kind of graph, which was proposed by \cite{yedida2005constucting, DBLP:journals/corr/abs-1207-4158} to assist scheduling messages for generalized belief propagation (GBP). For illustration purpose, two alternative region graphs constructed from the same factor graph are shown in Figure~\ref{fig:factor-region-graphs}.
 
 Before giving the definition of a region graph, we need to define the \textit{region} first, which is on the basis of a factor graph $\Gg_{\Ff}(\Vv \cup \Ff, \Ee_{\Ff})$ (see Definition~\ref{chpt2:def:factor-graph}).
 \begin{definition}
-  A \textit{region} $R$ is a set $V_R$ of variables nodes and a set $A_R$ of factor nodes, such that if a factor node $a$ belong to $A_R$, all the variables nodes neighboring $a$ are in $V_R$.
+  A \textit{region} $R$ is a set $V_R$ of variables nodes and a set $A_R$ of factor nodes, such that if a factor node '$a$' belongs to $A_R$, all the variables nodes neighboring $a$ are in $V_R$.
 \end{definition}
 A region in a region graph acts as a node, and there are directed edges between regions which are defined according to specific rules. Formally, a region graph is defined as follows:
 \begin{definition}\label{def:region-graph}
-  A \textit{region graph} is  a directed graph $\Gg_R(\Rr, \Ee)$, where each vertex $R \in \Rr$ is defined as the joint set of variable and factor nodes in this region, i.e. $R = \left\{ i \in V_R, a \in A_R | i \in \Vv, a \in \Ff \right\}$. Each edge $e \in \Ee$ in $\Gg_R$ is directed from $R_p$ to $R_c$ such that $R_c \subset R_p$. 
+  A \textit{region graph} is  a directed graph $\Gg_R(\Rr, \Ee)$, where each vertex $R \in \Rr$ is defined as the joint set of variable and factor nodes in this region, i.e., $R = \left\{ i \in V_R, a \in A_R | i \in \Vv, a \in \Ff \right\}$. Each edge $e \in \Ee$ in $\Gg_R$ is directed from $R_p$ to $R_c$ such that $R_c \subset R_p$. 
 \end{definition}
 
 
 We define some notations before going further. Since $\Gg_R$ is a hierarchical directed graph, $\Rr_l$ denotes the set of regions at level $l$, and
-$R^{[l]}_i\in \Rr_l$ is the $i$-th region node at level $l$. This means $\Rr_0$ is a set of the top root regions that have no parents, i.e. the level $0$ regions. Also, $R^{[l]}$ means it can be any node in $\Rr_l$ and $R$ denotes a region node when it is not clear or does not matter at which level it locates. Lastly, since a region may be associated with both variable and factor nodes, we denote the scope of $R$ by  $\bm{x}_R = \left\{ x_i| i \in R \right\}$.
+$R^{[l]}_i\in \Rr_l$ is the $i$-th region node at level $l$. This means $\Rr_0$ is the set of the top root regions that have no parents, i.e., the level $0$ regions. Also, $R^{[l]}$ means it can be any node in $\Rr_l$ and $R$ denotes a region node when it is not clear or does not matter at which level it locates. Lastly, since a region may be associated with both variable and factor nodes, we denote the scope of $R$ by  $\bm{x}_R = \left\{ x_i| i \in R \right\}$.
 
 \begin{example}
   Take the top-right region graph in Figure~\ref{fig:factor-region-graphs} as an example. There are total two layers in the region graph, i.e., $\Rr_0$ and $\Rr_1$. We have $\Rr_0 = \left\{ R_1^{[0]}, R_2^{[0]} \right\}$ where $R_1^{[0]} = \left\{ 1, 2, 4, 5, A, C, D, F \right\}$ and $R_2^{[0]} = \left\{ 2, 3, 5, 6, B, D, E, G \right\}$. As for $\Rr_1$, there is only one region in it and it is $R_1^{[1]} = \left\{ 2, 5, D \right\}$. There are two directed edges, i.e., $\left( R_1^{[0]}, R_1^{[1]} \right)$ and $\left( R_2^{[0]}, R_1^{[1]} \right)$.
 \end{example}
 
-GBP operates on a region graph $\Gg_R(\Rr,\Ee)$. A message is always sent from a parent region $P$ to a child region $R$, i.e., along the directed edge $(P, R)\in \Ee$. Let us define the factors in region $R$ as $A_R = \left\{ a | a \in R \right\}$. $\Pp(R)$ denotes the set of parent regions of $R$. The descendants of $R$ is denoted by $\Dd(R)$ (excluding $R$). The descendants of $R$ including $R$ is denoted by $\hat{\Dd}(R) = \Dd(R) \cup R$. The message update rule from the parent region $P$ to the child region $R$ is
+GBP operates on a region graph $\Gg_R(\Rr,\Ee)$. A message is always sent from a parent region $P$ to a child region $R$, i.e., along the directed edge $(P, R)\in \Ee$. Let us define the factors in region $R$ as $A_R = \left\{ a | a \in R \right\}$. $\Pp(R)$ denotes the set of parent regions of $R$. The descendants of $R$ is denoted by $\Dd(R)$ (excluding $R$). The set of descendants of $R$ including $R$ is denoted by $\hat{\Dd}(R) = \Dd(R) \cup R$. The message update rule from the parent region $P$ to the child region $R$ is
 \begin{align}\label{chpt4:eq-gbp-update-rule}
   m_{P\rightarrow R} \propto \frac{\sum_{\bm{x}_P\backslash
   \bm{x}_R}\prod_{a\in A_P\backslash A_R}\phi_a(\bm{x}_a)\prod_{(I,J)
   \in \Nn(P, R)}m_{I\rightarrow J}(\bm{x}_J)}{\prod_{(I,J)
   \in \Hh(P, R)}m_{I\rightarrow J}(\bm{x}_J)},
 \end{align}
-where $\Nn(P, R)$ is the set of all connected pairs of regions $(I, J)$ such that $J$ is in $\hat{\Dd}(P)$ but not $\hat{\Dd}(R)$ while $I$ is not in $\hat{\Dd}(P)$, $\Hh(P, R)$ is the set of all connected pairs of regions $(I, J)$ such that $J$ is in $\hat{\Dd}(R)$ while $I$ is in $\hat{\Dd}(P)$ but not $\hat{\Dd}(R)$. They are formally defined as
+where $\Nn(P, R)$ is the set of all connected pairs of regions $(I, J)$ such that $J$ is in $\hat{\Dd}(P)$ but not $\hat{\Dd}(R)$ while $I$ is not in $\hat{\Dd}(P)$, and $\Hh(P, R)$ is the set of all connected pairs of regions $(I, J)$ such that $J$ is in $\hat{\Dd}(R)$ while $I$ is in $\hat{\Dd}(P)$ but not $\hat{\Dd}(R)$. They are formally defined as
 \begin{align}\label{chpt4:eq:gbp-two-sets}
   \Nn(P, R) &:= \left\{ (I,J)\in \Ee | J \in \hat{\Dd}(P) \backslash \hat{\Dd}(R), I \not\in \hat{\Dd}(P)\right\},\nonumber \\
   \Hh(P, R) &:= \left\{ (I,J) \in \Ee | J \in \hat{\Dd}(R), I \in \hat{\Dd}(P) \backslash \hat{\Dd}(R), (I,J) \neq (P,R) \right\}.
@@ -194,19 +193,19 @@ By comparing the GBP with previously discussed mean field, loopy BP and $\alpha$
 
 \begin{example}
   We demonstrate an example of GPB message update using the three-level region graph in Figure~\ref{fig:factor-region-graphs}. Following our notation, we have $\Rr_0 = \left\{ R_1^{[0]}, R_2^{[0]}, R_3^{[0]} \right\}$ where $R_1^{[0]} = \left\{ 1, 2, 4, 5, A, C, D, F \right\}$, $R_2^{[0]} = \left\{ 2, 3, 5, 6, B, D, E, G \right\}$, and $R_3^{[0]} = \left\{ 1, 2, 3, 4, 5, 6, A, B, C, D, F, G \right\}$. For $\Rr_1$, we have $\Rr_1 = \left\{ R_1^{[1]}, \cdots , R_7^{[1]} \right\}$ with $R_1^{[1]} = \left\{ 1, 2, A \right\}$ and $R_7^{[1]} = \left\{ 5, 6, G \right\}$. The same notation applies to the bottom level, e.g., $R^{[2]}_2 = {2}$, etc.
-  Considering the message from region $R^{[1]}_1 = \left\{ 2, 5, D \right\}$ to $R^{[2]}_5 = \left\{ 5 \right\}$, i.e., $m_{R^{[1]}_1 \rightarrow R^{[2]}_5}$, we have
+  Considering the message from region $R^{[1]}_4 = \left\{ 2, 5, D \right\}$ to $R^{[2]}_5 = \left\{ 5 \right\}$, i.e., $m_{R^{[1]}_4 \rightarrow R^{[2]}_5}$, we have
   \begin{align*}
     \hat{\Dd}(R^{[1]}_4) &= \left\{ \left\{ 2 \right\}, \left\{ 5 \right\}, \left\{ 2, 5, D \right\}\right\} = \left\{ R^{[2]}_2, R^{[2]}_5, R^{[1]}_4 \right\} \\
     \hat{\Dd}(R^{[2]}_5) & = \left\{ \left\{ 5 \right\} \right\} = \left\{ R^{[2]}_5 \right\}
   \end{align*}
   The corresponding sets $\Nn$ and $\Hh$ defined in \eqref{chpt4:eq:gbp-two-sets} are
   \begin{align*}
-    \Nn(R^{[1]}_1, R^{[2]}_5) & = \left\{ \left( R^{[0]}_1, R^{[1]}_4 \right), \left( R^{[0]}_2, R^{[1]}_4 \right), \left( R^{[1]}_1, R^{[2]}_2 \right), \left( R^{[1]}_2, R^{[2]}_2 \right) \right\}, \\
-    \Hh(R^{[1]}_1, R^{[2]}_5) & = \emptyset.
+    \Nn(R^{[1]}_4, R^{[2]}_5) & = \left\{ \left( R^{[0]}_1, R^{[1]}_4 \right), \left( R^{[0]}_2, R^{[1]}_4 \right), \left( R^{[1]}_1, R^{[2]}_2 \right), \left( R^{[1]}_2, R^{[2]}_2 \right) \right\}, \\
+    \Hh(R^{[1]}_4, R^{[2]}_5) & = \emptyset.
   \end{align*}
   Then the message from region $R^{[1]}_1$ to $R^{[2]}_5$ follows
   \begin{equation*}
-    m_{R^{[1]}_1 \rightarrow R^{[2]}_5} \propto \sum_{x_2}\phi_D m_{R^{[0]}_1\rightarrow R^{[1]}_4} m_{R^{[0]}_2\rightarrow R^{[1]}_4} m_{ R^{[1]}_1\rightarrow R^{[2]}_2 } m_{ R^{[1]}_2 \rightarrow R^{[2]}_2}.
+    m_{R^{[1]}_4 \rightarrow R^{[2]}_5} \propto \sum_{x_2}\phi_D m_{R^{[0]}_1\rightarrow R^{[1]}_4} m_{R^{[0]}_2\rightarrow R^{[1]}_4} m_{ R^{[1]}_1\rightarrow R^{[2]}_2 } m_{ R^{[1]}_2 \rightarrow R^{[2]}_2}.
     \end{equation*}
     The other messages can be updated similarly by following the rule in \eqref{chpt4:eq-gbp-update-rule}. When the message passing phase is done, the beliefs can be computed according to \eqref{chpt4:gbp-belief-rule}. We exemplify the computation for $b_{R^{[1]}_4}(x_2, x_5)$ here. Since
     \begin{align*}
@@ -237,7 +236,7 @@ The region-based free energy over a region graph $\Gg_R$ is defined over the reg
   \begin{equation}\label{eq:def-region-free-energy}
     F_R(\Bb; \bm{\theta}) = \hspace{-0.15cm}\sum_{R\in \Rr} \hspace{-0.1cm}c_R\hspace{-0.1cm} \sum_{\bm{x}_R}b_R(\bm{x}_R) (E_R(\bm{x}_R; \bm{\theta}_R) + \ln{b_R}(\bm{x}_R)),
   \end{equation}
-  where $b_R(\bm{x}_R)$ is the belief to region $R$, $\Bb$ is the set of region beliefs $\Bb = \left\{ b_R| R \in \Rr \right\}$, and integer $c_R \in \NN$ is the counting number for region $R$. The integer counting numbers are to balance the contribution of each region to the overall region-based free energy (see Section~\ref{subsec:count-number} for detailed discussions).
+  where $b_R(\bm{x}_R)$ is the belief to region $R$, $\Bb$ is the set of region beliefs $\Bb = \left\{ b_R| R \in \Rr \right\}$, and integer $c_R \in \NN$ is the counting number for region $R$. The integer counting numbers are to balance the contribution of each region to the overall region-based free energy (see Section~\ref{subsec:count-number} for a detailed discussion).
 \end{definition}
 
 Region-based free energy is a more generalized free energy than the variational free energy discussed in Section~\ref{chpt2:sec:variational-inference}. For instance, Bethe free energy, corresponding to loopy BP, can be viewed as a special case of region-based free energy.
@@ -245,12 +244,12 @@ Region-based free energy is a more generalized free energy than the variational 
 \subsection{Recover Bethe Free Energy from Region-based Free Energy}
 \label{apdix:sec:get-bethe-from-region-energy}
 If we define two types of regions (large regions and small
-regions) directly from a factor graph $\Gg_F(\Vv \cup \Ff, \Ee_F)$, which is a two-level region graph with large regions locating at the root level (level 0) and small regions locating at level 1, 
+regions) directly from a factor graph $\Gg_F(\Vv \cup \Ff, \Ee_F)$, which is a two-level region graph with large regions located at the root level (level 0) and small regions located at level 1, 
 \begin{align}
   \Rr_{L} &= \left\{ \left\{ a, \bm{x}_a \right\}| a\in \Ff \right\}, \nonumber \\
   \Rr_{S} &= \left\{ \left\{ i \right\} | i \in \Vv \right\}.
 \end{align}
-The edges of the original factor graph $\Gg_F$ are preserved in the constructed region graph with adding directions from a factor node to its neighboring variable nodes. For the large regions, we set counting number $c_{R,a}=1$, and for small regions each node $i$, set counting number $c_{R,i}=1-|\mathrm{ne}_i|$. Then we can recover the Bethe free energy from region-based free energy defined in 
+The edges of the original factor graph $\Gg_F$ are preserved in the constructed region graph with adding directions from a factor node to its neighboring variable nodes. For the large regions, we set counting number $c_{R,a}=1$, and for the small regions (each node $i$), set counting number $c_{R,i}=1-|\mathrm{ne}_i|$. Then we can recover the Bethe free energy from region-based free energy defined in 
 \eqref{eq:def-region-free-energy}. To be specific, for
 large regions,
 \begin{align}\label{apdix:eq:large-region}
