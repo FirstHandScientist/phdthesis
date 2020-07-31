@@ -462,7 +462,7 @@ where $H(q(\bm{x}_U|\bm{x}_O))$ is the entropy of $q(\bm{x}_U|\bm{x}_O)$, and $q
 \end{equation}
 with equality when $q(\bm{x}_U|\bm{x}_O) = p(\bm{x}_U|\bm{x}_O; \bm{\theta})$. $F(q, \bm{\theta})$ is also called \textit{variational lower bound}.
 
-One of the most widely used methods in learning with latent variable is \textit{expectation maximization (EM)} \cite{DEMP1977em}. In the EM method, the posterior of $\bm{x}_U$ is computed exactly from $p$, $q(\bm{x}_U|\bm{x}_O) = \argmax_{q}{F(q, \bm{\theta})} = p(\bm{x}_U|\bm{x}_O; \bm{\theta})$, which is the optimal solution to $q$. Then the parameter $\bm{\theta}$ of $p$ is optimized. The two steps are optimized iteratively. The detailed treatment can be found in Part~\ref{part:learning}
+One of the most widely used methods in learning with latent variable is \textit{expectation maximization (EM)} \cite{dempster1977maximum}. In the EM method, the posterior of $\bm{x}_U$ is computed exactly from $p$, $q(\bm{x}_U|\bm{x}_O) = \argmax_{q}{F(q, \bm{\theta})} = p(\bm{x}_U|\bm{x}_O; \bm{\theta})$, which is the optimal solution to $q$. Then the parameter $\bm{\theta}$ of $p$ is optimized. The two steps are optimized iteratively. The detailed treatment can be found in Part~\ref{part:learning}
 
 In cases where the posterior of $\bm{x}_U$ is not feasible to compute, the variational EM \cite[Section~6.2.2]{wainwright2008graphical} or Monte Carlo EM (need sampling technique) \cite{neath2012convergence} can be applied. There are also neural network based methods with Monte Carlo estimator to cope with the latent variable problems, see e.g., \cite{DBLP:journals/corr/KingmaW13, kuleshov2017neural_variational, lazarogredilla2019learning, goodfellow2014gan}.
 
