@@ -30,6 +30,10 @@
 \usetikzlibrary{arrows}
 \usetikzlibrary{fit}
 \newcommand{\midarrow}{\tikz \draw[-triangle 90] (0,0) -- +(.1,0);}
+% set arrow type and size by tikz
+% alternative to 'Straight Barb' can be 'Latex, Stealth, Computer Modern Rightarrow'.
+\usetikzlibrary{arrows.meta}
+\tikzset{>={Straight Barb[width=1.3mm,length=1.3mm]}}
 
 \makeindex
 % allow subfigure environment
