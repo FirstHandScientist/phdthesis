@@ -125,8 +125,17 @@
     CLOSED: [2020-06-10 Wed 10:12]
 
 
-
+    
 * TODO Committee Candidate List
+
+> Member 1: Lennart Svensson (Chalmers) or Helge Langseth (NTNU)
+> Member 2: Fredrik Lindsten (Linköping)
+> Member 3: Ioanna Manolopoulou (University Collage London)
+>
+> KTH: 
+> Advanced reviewer and stand-in member: Erik Aurell
+> Second stand-in: Markus Flierl
+
   
   Search a bit more.
 
@@ -239,9 +248,11 @@
     Keywords: Computer Vision, Machine Learning, Representation Learning, Human Behavior, Animal Behavior
     [[https://scholar.google.com/citations?hl=en&user=wr3CtKAAAAAJ&view_op=list_works&sortby=pubdate][Google scholar]]
 
+
 * Opponent Candidates
   high-profile, senior faculty (full prof., arising stars in recent year), be nice 
-  - Harri Lähdesmäki from Aalto University, Picked by Saikat
+  - Harri Lähdesmäki from Aalto University, suggested by Saikat
+    https://dblp.org/pid/85/4466.html
 
   - José Miguel Hernández-Lobato, machine learning, Assistant professor at Cambridge
     + https://jmhl.org/
@@ -258,6 +269,10 @@
     Professor of Statistics, University of Copenhagen
     Verified email at math.ku.dk - Homepage
     Causal InferenceStatisticsMachine Learning
+
+   - Nir Friedman, Professor of Computer Science and Life Sciences, Hebrew University
+     (According to his profile page: https://www.cs.huji.ac.il/~nir/index.html, no supervision of students, teaching or activities after 2015, does not seems to be active in recent years)
+    https://scholar.google.se/citations?hl=en&user=xjnef1AAAAAJ&view_op=list_works&sortby=pubdate
     
   Next week --- 10 August
 * Schedule for Defense
@@ -269,7 +284,7 @@
   - [X] **March-May**: Finish the first complete draft of thesis.
     - [X] **March-April**: Introduction, Background, Inference Part finished
     - [X] **April-May**: Learning Part,
-    - [ ]abstract, acknowledgements
+    - [X] abstract, acknowledgements
   - [X] **March-May**: Finish the first complete draft of thesis.
 
   - Considering that summer break **16 June -- 14 August** is not taken into account into KTH public defense procedure
