@@ -58,6 +58,9 @@ Alternatively, Laplacian prior is also commonly used, which brings a $\ell_1$-no
 
 \end{remark}
 
+\begin{remark}[Alternative objectives]
+  The partition function $Z(\bm{\theta})$ motivates the expectation $\EE_{p(\bm{x}_a; \bm{\theta})}[\cdot]$ in gradient computation \eqref{chpt5:eq:one-sample-likely-grad}. It is the reason of requiring inference in graphical model learning. Apart from the methods discussed above, alternative objectives were proposed to do MRF learning, e.g., pseudolikelihood \cite[Section~20]{koller2009pgm}, contrastive divergence \cite{Hinton2012, carreiraperpinan2005contrastive}, etc. Pseudolikelihood avoids the computation of $Z(\bm{\theta})$ by approximating $l(\bm{x}; \bm{\theta})$ via $\sum_{i}\log{p(x_i|\bm{x}_{-i}; \bm{\theta})}$, and contrastive divergence circumvents $Z(\bm{\theta})$ by maximizing $\EE_{\Dd}[\log{\tilde{p}(\bm{x}; \bm{\theta})}] - \EE_{\Dd^{\prime}}[\log{\tilde{p}(\bm{x}; \bm{\theta})}]$ instead, where $\bm{x}_{-i} = \{\bm{x}\backslash x_i\}$ and $\Dd^{\prime}$ is a perturbed dataset that is usually simulated from $\Dd$.
+\end{remark}
 
 \section{MRF Learning with Inference of RENN}
 \label{sec:model-learning-with-renn}
