@@ -522,11 +522,11 @@ Apart from the inference experiments, we also carried out the MRF model learning
 
 
 
-\begin{sidewaystable}[ph!]
-  \caption{Inference on grid graph ($\gamma=0.1$). $\ell_1$ error and correlation $\rho$ between true and approximate marginals, and $\log{Z}$ error.}
+\begin{table}[!tp]
+  \caption{Inference on grid graph. $J_{ij}\sim \mathsf{N}(0,1), h_i\sim\mathsf{N}(0, \gamma^2)$ with $\gamma=0.1$. $\ell_1$ error and correlation $\rho$ between true and approximate marginals, and $\log{Z}$ error.}
   \label{table:infer-grid-gamma0.1}
   \begin{center}
-    \begin{small}
+    \begin{adjustbox}{width=1\textwidth}
       \begin{tabular}{lcccccccc}
         \toprule
         Metric & $N$ & Mean Field & Loopy BP & Damped BP & GBP & Inference Net & RENN \\
@@ -572,15 +572,20 @@ Apart from the inference experiments, we also carried out the MRF model learning
         
         \bottomrule
       \end{tabular}
-    \end{small}
+    \end{adjustbox}
   \end{center}
-\end{sidewaystable}
+\end{table}
 
-\begin{sidewaystable}[ph!]
-  \caption{Inference on grid Graph. ($\gamma=1$)}
+\subsection{Experiment Setting and Evaluation Metrics}
+\label{subsec:exp-setting}
+Without loss of generality, our experiments are carried out on binary pairwise MRF (Ising model). This gives us $p(\bm{x}; \bm{\theta}) = \frac{1}{Z(\bm{\theta})}\exp{(\sum_{(i,j)\in \Ee_F} J_{ij} x_i x_j + \sum_{i\in \Vv}h_i x_i)}$, $\bm{x} \in \{-1, 1\}^{N}$, where $J_{ij}$ is the pairwise log-potential between node $i$ and $j$, and $h_i$ is the node log-potential for node $i$. Then $\bm{\theta} = \left\{ J_{ij}, h_i| (i,j) \in \Ee_F, i,j \in \Vv \right\}$. $J_{ij}$ is sampled from standard normal distribution by default, i.e. $J_{ij}\sim \mathsf{N}(0,1)$, meanwhile $h_i \sim \mathsf{N}(0, \gamma^{2})$ with varying $\gamma$ in different experiment cases.
+
+
+\begin{table}[!tp]
+  \caption{Inference on grid Graph. $J_{ij}\sim \mathsf{N}(0,1), h_i\sim\mathsf{N}(0, \gamma^2)$ with $\gamma=1$.}
   \label{table:infer-grid-gamma1.0}
   \begin{center}
-    \begin{small}
+    \begin{adjustbox}{width=\textwidth}
       
       \begin{tabular}{lcccccccc}
         \toprule
@@ -630,18 +635,17 @@ Apart from the inference experiments, we also carried out the MRF model learning
         \bottomrule
       \end{tabular}
 
-    \end{small}
+    \end{adjustbox}
   \end{center}
-\end{sidewaystable}
+\end{table}
 
-
-\subsection{Experiment Setting and Evaluation Metrics}
-\label{subsec:exp-setting}
-Without loss of generality, our experiments are carried out on binary pairwise MRF (Ising model). This gives us $p(\bm{x}; \bm{\theta}) = \frac{1}{Z(\bm{\theta})}\exp{(\sum_{(i,j)\in \Ee_F} J_{ij} x_i x_j + \sum_{i\in \Vv}h_i x_i)}$, $\bm{x} \in \{-1, 1\}^{N}$, where $J_{ij}$ is the pairwise log-potential between node $i$ and $j$, and $h_i$ is the node log-potential for node $i$. Then $\bm{\theta} = \left\{ J_{ij}, h_i| (i,j) \in \Ee_F, i,j \in \Vv \right\}$. $J_{ij}$ is always sampled from standard normal distribution, i.e. $J_{ij}\sim \mathsf{N}(0,1)$, meanwhile $h_i \sim \mathsf{N}(0, \gamma^{2})$ with varying $\gamma$ in different experiment cases.
 
 In the inference experiments, we are interested on how well beliefs from RENN approximate true marginal distributions of $p(\bm{x};\bm{\theta})$. We quantify this by both the $\ell_1$ error ($\ell_1$-norm distance) and Pearson correlation coefficient $\rho$, between true marginals and beliefs of RENN. The marginal evaluations include both $p(x_i)$ and $p(x_i,x_j)$. In addition, we also quantify the $\log{Z}$ error as the absolute difference between true partition function and an approximated value, i.e., the region-based free energy for RENN or GBP while a counterpart free energy form for mean field or loopy BP as explained in Section~\ref{chpt2:sec:variational-inference}.
 
-In all experiments, for each evaluation of RENN, mean field, (loopy) BP \cite{mooij2007sufficient}, damped BP \cite{Pretti2005damping} with damping factor $0.5$, and GBP \cite{yedida2005constucting} as benchmarks, are all evaluated on the same MRF, which are then compared with RENN. Additionally, a recent neural network benchmark model, saddle-point Inference Net \cite{NIPS2019_9687} targeting the Bethe free energy, is also used as a comparison. To make the comparison with Inference Net fair, RENN and Inference Net use the same neural network structures and hidden dimensions. Each variable $x_i$ is associated with a learnable embedding vector $\bm{e}_i$. A transform layer \cite{AshishNIPS2017_7181} consumes $\bm{e}_i$ and outputs a hidden representation $\bm{h}_i$. The transform layer is shared by all embeddings. Then an affine layer followed by softmax consumes $[\bm{h}_1, \cdots, \bm{h}_N]$ and outputs beliefs.
+In all experiments, for each evaluation of RENN, mean field, (loopy) BP \cite{mooij2007sufficient}, damped BP \cite{Pretti2005damping} with damping factor $0.5$, and GBP \cite{yedida2005constucting} as benchmarks, are all evaluated on the same MRF, which are then compared with RENN. Additionally, a recent neural network benchmark model, saddle-point Inference Net \cite{NIPS2019_9687} targeting the Bethe free energy, is also used as a comparison. To make the comparison with Inference Net fair, RENN and Inference Net use the same neural network structures and hidden dimensions. Each variable $x_i$ is associated with a learnable embedding vector $\bm{e}_i$. The default architecture is: $\{\bm{e}_i\}$$\rightarrow$ attention $\rightarrow$ two residual layers $\rightarrow$ softmax $\rightarrow$ $\{\bm{b}_{R^{[0]}},R^{[0]}\in\Rr_0\}$ $\rightarrow \cdots \rightarrow$ $\{\bm{b}_{R^{[L-1]}},R^{[L-1]}\in\Rr_{L-1}\}$ for a $L$-level RENN \footnote{See \cite{AshishNIPS2017_7181} for the attention structure and \cite{DBLP:journals/corr/HeZRS15} for residual structure}. ADAM optimizer is used for RENN inference, with learning step rate $0.001$. The maximum number of optimization steps for RENN is 200.
+
+
+% A transform layer \cite{AshishNIPS2017_7181} consumes $\bm{e}_i$ and outputs a hidden representation $\bm{h}_i$. The transform layer is shared by all embeddings. Then an affine layer followed by softmax consumes $[\bm{h}_1, \cdots, \bm{h}_N]$ and outputs beliefs.
 
 \subsection{Inference on Grid Graphs}
 
@@ -681,14 +685,13 @@ Experiments are carried out in large and small standard deviation of $\{h_i\}$ (
 
 
 
+The marginal approximation can be reflected by $\ell_1$ error and correlation coefficient $\rho$. These two metrics also reflect the belief consistency since both univariate and pairwise marginals are used in evaluation computation. The results are reported in Table~\ref{table:infer-grid-gamma0.1} and \ref{table:infer-grid-gamma1.0}. In all cases except one, beliefs of RENN outperform benchmark algorithms with large marginals. As expected, performances of loopy BP and its variant damped BP are similar in general while damped BP sometimes gets better estimations. Both loopy BP and damped BP have better marginal estimations than mean field method in all of our considered scenarios. GBP outperforms loopy BP and damped BP at case $\gamma=0.1$, $h_i\sim \mathsf{N}(0,0.1^2)$, agreeing with the results at \cite{yedida2005constucting}, but performs poorly at case of $\gamma=1$. Similar phenomena happen to Inference Net, which has better estimations than loopy BP and damped BP in some cases of $\gamma=0.1$ but falls behind in all cases of $\gamma=1$.
 
 
-\begin{sidewaystable}[ph!]
-  \caption{Inference on complete graph of size $9$.}
+\begin{table}[!tp]
+  \caption{Inference on complete graph of size $9$. $J_{ij}\sim \mathsf{N}(0,1), h_i\sim\mathsf{N}(0, \gamma^2)$.}
   \label{tab:infer-full-n9}
-  \begin{center}
-    \begin{small}
-      
+    \begin{adjustbox}{width=1\textwidth}
       \begin{tabular}{lcccccccc}
         \toprule
         Metric & $\gamma$ & Mean Field & Loopy BP & Damped BP & GBP & Inference Net & RENN \\
@@ -750,18 +753,14 @@ Experiments are carried out in large and small standard deviation of $\{h_i\}$ (
         
         \bottomrule
       \end{tabular}
-      
-    \end{small}
-  \end{center}
-\end{sidewaystable}
+    \end{adjustbox}
+\end{table}
 
-\begin{sidewaystable}[ph!]
-  \caption{Inference on complete graph of size $16$.}
+\begin{table}[!tp]
+  \caption{Inference on complete graph of size $16$. $J_{ij}\sim \mathsf{N}(0,1), h_i\sim\mathsf{N}(0, \gamma^2)$.}
   \label{tab:infer-full-n16}
   % \vskip -0.05in
-  \begin{center}
-    \begin{small}
-
+    \begin{adjustbox}{width=1\textwidth}
       \begin{tabular}{lcccccccc}
         \toprule
         Metric & $\gamma$ & Mean Field & Loopy BP & Damped BP & GBP & Inference Net & RENN \\
@@ -827,11 +826,9 @@ Experiments are carried out in large and small standard deviation of $\{h_i\}$ (
 
         \bottomrule
       \end{tabular}
-    \end{small}
-  \end{center}
-\end{sidewaystable}
+    \end{adjustbox}
+\end{table}
 
-The marginal approximation can be reflected by $\ell_1$ error and correlation coefficient $\rho$. These two metrics also reflect the belief consistency since both univariate and pairwise marginals are used in evaluation computation. The results are reported in Table~\ref{table:infer-grid-gamma0.1} and \ref{table:infer-grid-gamma1.0}. In all cases except one, beliefs of RENN outperform benchmark algorithms with large marginals. As expected, performances of loopy BP and its variant damped BP are similar in general while damped BP sometimes gets better estimations. Both loopy BP and damped BP have better marginal estimations than mean field method in all of our considered scenarios. GBP outperforms loopy BP and damped BP at case $\gamma=0.1$, $h_i\sim \mathsf{N}(0,0.1^2)$, agreeing with the results at \cite{yedida2005constucting}, but performs poorly at case of $\gamma=1$. Similar phenomena happen to Inference Net, which has better estimations than loopy BP and damped BP in some cases of $\gamma=0.1$ but falls behind in all cases of $\gamma=1$.
 
 
 As for the error of partition function values, GBP gets the most accurate estimations when $\gamma=0.1$. $\log{Z}$ estimated by loopy BP and damped BP is better for $\gamma=1$. Partition function estimation by RENN is competitive in different considered cases.
@@ -849,7 +846,191 @@ In the complete graphs, GBP does not have an advantage over loopy BP and damped 
 
 As for partition function evaluations of complete graphs, the results are quite different from those of grid graphs, by observing Tables~\ref{tab:infer-full-n9} and \ref{tab:infer-full-n16}. Loopy BP, damped BP, and Inference Net are getting very large errors of partition function as node log-potentials are more different from each other, i.e., $\gamma$ gets larger. GBP has reasonable good estimation of $\log{Z}$ in smaller sized complete graph in Table~\ref{tab:infer-full-n9}, but gets large $\log{Z}$ error in a bit larger complete graph as in Table~\ref{tab:infer-full-n16}. Mean field methods gives a much better estimation of $\log{Z}$ in complete graphs than loopy BP, damped BP, and Inference Net, but it has poorer marginal distribution estimations.
 
-\section{Discussion}
+
+\subsection{Inference on MRFs with Wider Range of Pairwise Potentials}
+\begin{table}[t]
+  \caption{Uniform potentials. Inference on grid graph of size 100. $J_{ij}\sim \Uu(-u, u)$, $h_{i}\sim \Uu(-1, 1)$}
+  \label{tab:inference-grid100-uniform}
+  \begin{center}
+      \begin{adjustbox}{width=1\textwidth}
+        \begin{tabular}{lcccccccc}
+          \toprule
+          Metric & $u$ & Mean Field & Loopy BP & Damped BP & GBP & Inference Net & RENN \\
+          \midrule
+          \multirow{4}{*}{\begin{tabular}[x]{@{}c@{}}$\ell_1$\\error \end{tabular} }
+                 &    1   & $0.035 \pm 0.012$ &  $\textbf{0.001} \pm 0.001$ & $0.002 \pm 0.001$ & $0.097 \pm 0.010$ & $ 0.022 \pm 0.005$ & {0.015} $\pm$ 0.007 \\
+
+                 &    5   & $0.257 \pm 0.065$ &  $0.115 \pm 0.071$ & $0.120 \pm 0.073$ & $0.250 \pm 0.024$ & $ 0.164 \pm 0.036$ & \textbf{0.100} $\pm$ 0.046 \\
+
+                 &    10  & $0.292 \pm 0.056$ &  $0.253 \pm 0.095$ & $0.223 \pm 0.102$ & $0.287 \pm 0.024$ & $ 0.248 \pm 0.035$ & \textbf{0.145} $\pm$ 0.052 \\
+
+                 &    15  & $0.328 \pm 0.068$ &  $0.228 \pm 0.088$ & $0.267 \pm 0.147$ & $0.303 \pm 0.026$ & $ 0.279 \pm 0.024$ & \textbf{0.207} $\pm$ 0.054 \\
+
+          \midrule
+          \multirow{4}{*}{\begin{tabular}[x]{@{}c@{}}Corre-\\lation\\ $\rho$ \end{tabular}}
+                 &   1    & 0.985 $\pm$ 0.010  &  \textbf{0.999} $\pm$ 0.001  &  0.999 $\pm$ 0.001  &  0.913 $\pm$ 0.019  &  0.994 $\pm$ 0.003 &  {0.994} $\pm$ 0.008 \\
+
+                 &   5    & 0.517 $\pm$ 0.140  &  0.825 $\pm$ 0.131  &  0.828 $\pm$ 0.139  &  0.586 $\pm$ 0.062  &  0.807 $\pm$ 0.071 &  \textbf{0.885} $\pm$ 0.092 \\
+
+                 &   10   & 0.402 $\pm$ 0.130  &  0.493 $\pm$ 0.217  &  0.567 $\pm$ 0.239  &  0.491 $\pm$ 0.056  &  0.634 $\pm$ 0.083 &  \textbf{0.872} $\pm$ 0.081 \\
+
+                 &   15   & 0.313 $\pm$ 0.152  &  0.540 $\pm$ 0.194  &  0.457 $\pm$ 0.324  &  0.448 $\pm$ 0.064  &  0.564 $\pm$ 0.059 &  \textbf{0.769} $\pm$ 0.088 \\
+
+          \midrule
+          \multirow{4}{*}{\begin{tabular}[x]{@{}c@{}}$\log{Z}$ \\error\end{tabular}}
+                 &   1    & 2.124 $\pm$ 0.771  &  \textbf{0.027} $\pm$ 0.021  &  0.090 $\pm$ 0.053  &  {1.082} $\pm$ 0.799  &  3.535 $\pm$ 0.628  & 0.697 $\pm$ 0.387 \\
+
+                 &  5     & 42.65 $\pm$ 17.86  &  7.346 $\pm$ 7.744  &  \textbf{5.444} $\pm$ 4.811  &  {8.369} $\pm$ 7.401  &  65.60 $\pm$ 8.786  & 11.34 $\pm$ 4.724 \\
+
+                 &  10    & 107.9 $\pm$ 32.50  &  34.33 $\pm$ 15.83  &  46.17 $\pm$ 37.66  &  \textbf{16.18} $\pm$ 10.32  &  145.5 $\pm$ 17.34  & 41.50 $\pm$ 8.839  \\
+
+                 &  15    & 164.9 $\pm$ 56.07  &  58.40 $\pm$ 41.36  &  101.9 $\pm$ 54.31  &  \textbf{23.10} $\pm$ 15.06  &  224.3 $\pm$ 25.52  & 78.85 $\pm$ 15.08 \\
+          \bottomrule
+        \end{tabular}
+      \end{adjustbox}
+  \end{center}
+\end{table}
+
+
+\begin{table}[t]
+  \caption{Uniform potentials. Inference on complete graph of size 9. $J_{ij}\sim \Uu(-u, u)$, $h_{i}\sim \Uu(-1, 1)$}
+  \label{tab:inference-complete9-uniform}
+  \begin{center}
+      \begin{adjustbox}{width=1\textwidth}
+        \begin{tabular}{lcccccccc}
+          \toprule
+          Metric & $u$ & Mean Field & Loopy BP & Damped BP & GBP & Inference Net & RENN \\
+          \midrule
+          \multirow{4}{*}{\begin{tabular}[x]{@{}c@{}}$\ell_1$\\error \end{tabular} }
+                 &    1   & $0.139 \pm 0.072$ &  $0.129 \pm 0.056$ & $0.129 \pm 0.056$ & $0.198 \pm 0.110$ & $ 0.125 \pm 0.051$ & \textbf{0.064} $\pm$ 0.048 \\
+
+                 &    5   & $0.378 \pm 0.172$ &  $0.327 \pm 0.120$ & $0.329 \pm 0.123$ & $0.389 \pm 0.140$ & $ 0.283 \pm 0.083$ & \textbf{0.273} $\pm$ 0.100 \\
+
+                 &    10  & $0.396 \pm 0.166$ &  $0.325 \pm 0.115$ & $0.321 \pm 0.116$ & $0.393 \pm 0.119$ & $ 0.302 \pm 0.058$ & \textbf{0.286} $\pm$ 0.068 \\
+
+                 &    15  & $0.384 \pm 0.152$ &  $0.359 \pm 0.142$ & $0.358 \pm 0.128$ & $0.376 \pm 0.144$ & $ 0.314 \pm 0.071$ & \textbf{0.282} $\pm$ 0.110 \\
+
+          \midrule
+          \multirow{4}{*}{\begin{tabular}[x]{@{}c@{}}Corre-\\lation\\ $\rho$ \end{tabular}}
+                 &   1    & 0.826 $\pm$ 0.215  &  0.846 $\pm$ 0.151  &  0.846 $\pm$ 0.152  &  0.661 $\pm$ 0.290  &  0.861 $\pm$ 0.138 &  \textbf{0.934} $\pm$ 0.123 \\
+
+                 &   5    & 0.210 $\pm$ 0.364  &  0.370 $\pm$ 0.249  &  0.363 $\pm$ 0.256  &  0.119 $\pm$ 0.356  &  0.552 $\pm$ 0.203 &  \textbf{0.483} $\pm$ 0.309 \\
+
+                 &   10   & 0.194 $\pm$ 0.339  &  0.313 $\pm$ 0.240  &  0.310 $\pm$ 0.258  &  0.103 $\pm$ 0.308  &  0.482 $\pm$ 0.147 &  \textbf{0.524} $\pm$ 0.158 \\
+
+                 &   15   & 0.207 $\pm$ 0.313  &  0.237 $\pm$ 0.317  &  0.200 $\pm$ 0.299  &  0.142 $\pm$ 0.347  &  0.419 $\pm$ 0.149 &  \textbf{0.447} $\pm$ 0.265 \\
+
+          \midrule
+          \multirow{4}{*}{\begin{tabular}[x]{@{}c@{}}$\log{Z}$ \\error\end{tabular}}
+                 &   1    & 1.748 $\pm$ 1.733  &  90.22 $\pm$ 20.72  &  90.34 $\pm$ 20.72  &  2.780 $\pm$ 2.369  &  92.86 $\pm$ 19.92  & \textbf{1.351} $\pm$ 0.708 \\
+
+                 &  5     & 19.98 $\pm$ 10.48  &  72.98 $\pm$ 25.57  &  72.78 $\pm$ 25.57  &  \textbf{8.000} $\pm$ 5.618  &  104.0 $\pm$ 21.39  & 13.56 $\pm$ 6.224 \\
+
+                 &  10    & 45.61 $\pm$ 22.96  &  84.49 $\pm$ 30.98  &  87.02 $\pm$ 33.98  &  \textbf{20.79} $\pm$ 14.69  &  146.9 $\pm$ 26.95  & 49.96 $\pm$ 14.21  \\
+
+                 &  15    & 71.14 $\pm$ 46.65  &  107.6 $\pm$ 43.34  &  119.8 $\pm$ 45.59  &  \textbf{32.68} $\pm$ 24.14  &  182.5 $\pm$ 34.21  & 79.74 $\pm$ 24.24 \\
+          \bottomrule
+        \end{tabular}
+      \end{adjustbox}
+  \end{center}
+\end{table}
+
+It is known that inference on MRFs with strong pairwise potentials is challenging. To enrich the comparisons, we carried out experiments on MRFs wider range of pairwise potentials. Specifically, potentials are sampled from uniform discussion $J_{ij}\sim\Uu(-u, u)$ whereas $h_i\sim\Uu(-1,1)$. The results are shown in Table~\ref{tab:inference-grid100-uniform} and \ref{tab:inference-complete9-uniform}. When pairwise potentials get much stronger, the performance of all methods degenerated. But the RENN still offers competing results.
+
+\subsection{Discussion on Inference via RENN}
+\begin{table}[!tp]
+  \caption{Average consumed time per inference instance (unit: second) for some cases in Tables~\ref{table:infer-grid-gamma0.1}, \ref{tab:infer-full-n16}, \ref{tab:inference-grid100-uniform}, and \ref{tab:inference-complete9-uniform}.}
+  \label{tab:time-inference}
+  \centering
+  \begin{adjustbox}{width=1\textwidth}
+    \begin{tabular}{lcccccc}
+      \toprule
+      {} &  Mean Field & Loopy BP & Damped BP & GBP & Inference Net & RENN \\
+      \toprule
+      Grid $\Gg$, $N=400$, $J_{ij}\sim \Nn(0,1), h_i\sim\Nn(0,0.1^2)$ & 9.897 & 425.0 & 328.3 & 286.3 & 74.41 & 101.0 \\
+      Complete $\Gg$, $N=16$, $J_{ij}\sim \Nn(0,1), h_i\sim\Nn(0,1)$ & 0.457 & 0.777 & 1.285 & 14.29 &  12.45  & 16.16\\
+      Grid $\Gg$, $N=100$, $J_{ij}\sim \Uu(-15,15), h_i\sim\Uu(-1,1)$ & 2.314 & 253.3 & 229.3 & 53.72 & 103.4 & 79.38 \\
+      Complete $\Gg$, $N=9$, $J_{ij}\sim \Uu(-15,15), h_i\sim\Uu(-1,1)$ & 0.502 & 15.86 & 18.23 & 3.213 & 17.21 & 7.857 \\
+      \bottomrule
+    \end{tabular}
+  \end{adjustbox}
+\end{table}
+
+
+\textit{Timing}: we report here the time consumption of some inference instances from Tables~\ref{table:infer-grid-gamma0.1}, \ref{tab:infer-full-n16}, \ref{tab:inference-grid100-uniform}, and \ref{tab:inference-complete9-uniform} to give a general concept. The numbers are present in Table~\ref{tab:time-inference}. It can be seen that RENN demonstrates competing efficiency when the pairwise potentials are strong or graphs are large.
+
+\textit{On $\lambda$}: the hyperparameter $\lambda$ is to regulate the belief consistency of RENN. As a control comparison, testing cases of RENN with $\lambda=0$ are presented in Table~\ref{tab:zeo-penalty-grid}. The results agree with our intuition. Errors of both the marginal probabilities and partition function estimations degenerates significantly by comparing with Tables~\ref{table:infer-grid-gamma0.1} and \ref{table:infer-grid-gamma1.0}. This verifies its effects.
+\begin{table}
+  \caption{RENN with zero penalty ($\lambda=0$) on Grids. $J_{ij}\sim \Nn(0,1)$ and $h_i \sim \Nn(0, \gamma^{2})$.}
+  \label{tab:zeo-penalty-grid}
+  \centering
+      \begin{small}
+          \begin{tabular}{llcc}
+            \toprule
+            {Metric} & $N$ & $\gamma = 0.1$ & $\gamma = 1$ \\
+            \midrule
+            \multirow{4}{*}{\begin{tabular}[x]{@{}c@{}}$\ell_1$\\error \end{tabular} }
+                     & 25 & 0.075 $\pm$ 0.021   &  0.107 $\pm$ 0.032 \\
+                     & 100 & 0.128 $\pm$ 0.014  &  0.108 $\pm$ 0.021  \\
+                     & 225 & 0.136 $\pm$ 0.013  &  0.112 $\pm$ 0.012  \\
+                     & 400 & 0.141 $\pm$ 0.011  &  0.118 $\pm$ 0.010  \\
+            \midrule
+            \multirow{4}{*}{\begin{tabular}[x]{@{}c@{}}Correl-\\ation $\rho$ \end{tabular}}
+                     & 25   & 0.908 $\pm$ 0.057  & 0.879 $\pm$ 0.074 \\
+                     & 100  & 0.806 $\pm$ 0.039  & 0.874 $\pm$ 0.044 \\
+                     & 225  & 0.799 $\pm$ 0.036  & 0.864 $\pm$ 0.028 \\
+                     & 400  & 0.793 $\pm$ 0.021  & 0.852 $\pm$ 0.021 \\
+            \midrule
+            \multirow{4}{*}{\begin{tabular}[x]{@{}c@{}}$\log{Z}$ \\error\end{tabular}}
+                     & 25   & 0.598 $\pm$ 0.214  & 2.256 $\pm$ 1.006 \\
+                     & 100  & 22.20 $\pm$ 4.530  & 12.29 $\pm$ 1.748 \\
+                     & 225  & 11.70 $\pm$ 1.747  & 31.49 $\pm$ 3.239 \\
+                     & 400  & 22.55 $\pm$ 1.953  & 56.49 $\pm$ 4.296 \\
+            \bottomrule
+          \end{tabular}
+      \end{small}
+\end{table}
+
+
+
+\begin{table}[!tp]
+  \caption{RENN performance on Grid ($N=100$, $\gamma=0.1$) with different architecture settings.}
+  \label{tab:arch-grid-gamma0_1}
+  \centering
+      \begin{small}
+          \begin{tabular}{llcccc}
+            \toprule
+            \multirow{2}{*}{Metric} & {Attention} & \multicolumn{4}{c}{Residual Layer \#} \\
+                                    & Layers \# & 0 & 2 & 4  & 6 \\
+            \midrule
+            \multirow{3}{*}{\begin{tabular}[x]{@{}c@{}}$\ell_1$\\error \end{tabular} }
+                                    & 0    & 0.144 &  0.026  &  0.060 &  0.085 \\
+                                    & 1    & 0.031 &  0.026  &  0.064 &  0.074 \\
+                                    & 2    & 0.029 &  0.026  &  0.031 &  0.066 \\
+
+
+            \midrule
+            \multirow{3}{*}{\begin{tabular}[x]{@{}c@{}}Correl-\\ation $\rho$ \end{tabular}}
+                                    & 0    & 0.497 & 0.982  & 0.909 & 0.849 \\
+                                    & 1    & 0.975 & 0.982  & 0.903 & 0.891 \\
+                                    & 2    & 0.980 & 0.983  & 0.978 & 0.898 \\
+
+            \midrule
+            \multirow{3}{*}{\begin{tabular}[x]{@{}c@{}}$\log{Z}$ \\error\end{tabular}}
+                                    & 0    & 91.69 & 1.897  & 2.605 & 3.690 \\
+                                    & 1    & 1.606 & 1.886  & 2.067 & 2.648 \\
+                                    & 2    & 1.774 & 1.886  & 3.144 & 2.567 \\
+
+            \bottomrule
+          \end{tabular}
+
+      \end{small}
+\end{table}
+
+\textit{Architecture of RENN}: the default architecture used in our experiments is one attention layer followed two residual layers. We investigate how RENN performs with variants of architectures in Table~\ref{tab:arch-grid-gamma0_1} on grid MRFs. In general, it reflects that attention and residual layers are helpful to get better inference results for RENN, while further more attention and residual layers do not necessarily brings consistently better improvements. {Note the contrast setting of zero attention and residual layer corresponds to direct parameterizing beliefs without any neural networks}, i.e., 
+$b_{R^{[0]}}(\bm{x}_{R^{[0]}}; \bm{\omega}) = e^{\bm{\omega}[\bm{x}_{R^{[0]}}]}/ \sum_{\bm{x}_{R^{[0]}}} e^{\bm{\omega}[\bm{x}_{R^{[0]}}]}, \forall~ {R^{[0]}} \in \Rr$, where ${\bm{\omega}[\bm{x}_{R^{[0]}}]}$ is a direct parameter for instantiation $\bm{x}_{R^{[0]}}$. The contrasting result agrees with out intuition that neural networks may represent more flexible distributions and learn dependencies of variables in better ways.
+
+\section{Summary}
 In this chapter, we presented an alternative way to do inference in MRFs. Different from iteratively propagating messages as classical message passing algorithms, we directly minimize the region-based free energy defined over a region graph. We, therefore, are able to perform inference by solving the energy minimization problem.
 The region-based free energy is a function of variational distribution $b$. We amortize the distribution $b$ by a neural network in solving the energy minimization problem.
 
