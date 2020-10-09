@@ -935,7 +935,7 @@ As for partition function evaluations of complete graphs, the results are quite 
   \end{center}
 \end{table}
 
-It is known that inference on MRFs with strong pairwise potentials is challenging. To enrich the comparisons, we carried out experiments on MRFs wider range of pairwise potentials. Specifically, potentials are sampled from uniform discussion $J_{ij}\sim\Uu(-u, u)$ whereas $h_i\sim\Uu(-1,1)$. The results are shown in Table~\ref{tab:inference-grid100-uniform} and \ref{tab:inference-complete9-uniform}. When pairwise potentials get much stronger, the performance of all methods degenerated. But the RENN still offers competing results.
+It is known that inference on MRFs with strong pairwise potentials is challenging. To enrich the comparisons, we carried out experiments on MRFs wider range of pairwise potentials. Specifically, potentials are sampled from uniform discussion $J_{ij}\sim\Uu(-u, u)$ whereas $h_i\sim\Uu(-1,1)$. The results are shown in Table~\ref{tab:inference-grid100-uniform} and \ref{tab:inference-complete9-uniform}. When pairwise potentials get much stronger, the performance of all methods degenerated. But the RENN still offers competitive results.
 
 \subsection{Discussion on Inference via RENN}
 \begin{table}[!tp]
@@ -957,9 +957,9 @@ It is known that inference on MRFs with strong pairwise potentials is challengin
 \end{table}
 
 
-\textit{Timing}: we report here the time consumption of some inference instances from Tables~\ref{table:infer-grid-gamma0.1}, \ref{tab:infer-full-n16}, \ref{tab:inference-grid100-uniform}, and \ref{tab:inference-complete9-uniform} to give a general concept. The numbers are present in Table~\ref{tab:time-inference}. It can be seen that RENN demonstrates competing efficiency when the pairwise potentials are strong or graphs are large.
+\textit{Timing}: We report here the time consumption of some inference instances from Tables~\ref{table:infer-grid-gamma0.1}, \ref{tab:infer-full-n16}, \ref{tab:inference-grid100-uniform}, and \ref{tab:inference-complete9-uniform} to give a general impression of overview. The numbers are presented in Table~\ref{tab:time-inference}. It can be seen that RENN demonstrates competitive efficiency when the pairwise potentials are strong or graphs are large.
 
-\textit{On $\lambda$}: the hyperparameter $\lambda$ is to regulate the belief consistency of RENN. As a control comparison, testing cases of RENN with $\lambda=0$ are presented in Table~\ref{tab:zeo-penalty-grid}. The results agree with our intuition. Errors of both the marginal probabilities and partition function estimations degenerates significantly by comparing with Tables~\ref{table:infer-grid-gamma0.1} and \ref{table:infer-grid-gamma1.0}. This verifies its effects.
+\textit{On $\lambda$}: The hyperparameter $\lambda$ regulates the belief consistency of RENN. As a control comparison, testing cases of RENN with $\lambda=0$ are presented in Table~\ref{tab:zeo-penalty-grid}. The results agree with our intuition. Errors of both the marginal probabilities and partition function estimates increased significantly when comparing with Tables~\ref{table:infer-grid-gamma0.1} and \ref{table:infer-grid-gamma1.0}. This confirms the importance of belief consistency regularization.
 \begin{table}
   \caption{RENN with zero penalty ($\lambda=0$) on Grids. $J_{ij}\sim \Nn(0,1)$ and $h_i \sim \Nn(0, \gamma^{2})$.}
   \label{tab:zeo-penalty-grid}
@@ -1026,9 +1026,45 @@ It is known that inference on MRFs with strong pairwise potentials is challengin
 
       \end{small}
 \end{table}
+\begin{table}[h]
+  \caption{RENN performance on complete graph 16 ($\gamma=0.1$) with different architecture settings.}
+  \label{tab:arch-complete-gamma0_1}
+  \begin{center}
+    
+      \begin{small}
+        \begin{sc}
+          \begin{tabular}{llcccc}
+            \toprule
+            \multirow{2}{*}{Metric} & {Attention} & \multicolumn{4}{c}{Residual Layer \#} \\
+                                    & Layer \# & 0 & 2 & 4  & 6 \\
+            \midrule
+            \multirow{3}{*}{\begin{tabular}[x]{@{}c@{}}$\ell_1$\\error \end{tabular} }
+                                    & 0    & 0.215 &  0.177  &  0.284 &  0.424 \\
+                                    & 1    & 0.253 &  0.185  &  0.304 &  0.378 \\
+                                    & 2    & 0.222 &  0.190  &  0.291 &  0.478 \\
+            \midrule
+            \multirow{3}{*}{\begin{tabular}[x]{@{}c@{}}Correl-\\ation $\rho$ \end{tabular}}
+                                    & 0    & 0.185 & 0.497  & 0.353 & 0.095 \\
+                                    & 1    & 0.413 & 0.462  & 0.310 & 0.142 \\
+                                    & 2    & 0.456 & 0.459  & 0.413 & 0.040 \\
 
-\textit{Architecture of RENN}: the default architecture used in our experiments is one attention layer followed two residual layers. We investigate how RENN performs with variants of architectures in Table~\ref{tab:arch-grid-gamma0_1} on grid MRFs. In general, it reflects that attention and residual layers are helpful to get better inference results for RENN, while further more attention and residual layers do not necessarily brings consistently better improvements. {Note the contrast setting of zero attention and residual layer corresponds to direct parameterizing beliefs without any neural networks}, i.e., 
-$b_{R^{[0]}}(\bm{x}_{R^{[0]}}; \bm{\omega}) = e^{\bm{\omega}[\bm{x}_{R^{[0]}}]}/ \sum_{\bm{x}_{R^{[0]}}} e^{\bm{\omega}[\bm{x}_{R^{[0]}}]}, \forall~ {R^{[0]}} \in \Rr$, where ${\bm{\omega}[\bm{x}_{R^{[0]}}]}$ is a direct parameter for instantiation $\bm{x}_{R^{[0]}}$. The contrasting result agrees with out intuition that neural networks may represent more flexible distributions and learn dependencies of variables in better ways.
+            \midrule
+            \multirow{3}{*}{\begin{tabular}[x]{@{}c@{}}$\log{Z}$ \\error\end{tabular}}
+                                    & 0    & 64.70 & 10.38  & 15.74 & 28.67 \\
+                                    & 1    & 3.229 & 10.65  & 18.36 & 36.19 \\
+                                    & 2    & 3.269 & 11.77  & 20.29 & 40.03 \\
+
+            \bottomrule
+          \end{tabular}
+        \end{sc}
+      \end{small}
+    
+  \end{center}
+  
+\end{table}
+
+\textit{Architecture of RENN}: The default architecture used in our experiments is one attention layer followed two residual layers. We investigate how RENN performs with variants of architectures and report the results in Table~\ref{tab:arch-grid-gamma0_1} and \ref{tab:arch-complete-gamma0_1}. In general, it reflects that attention and residual layers are helpful to get better inference results for RENN, while further more attention and residual layers do not necessarily bring consistently better improvements. {Note the contrast setting of zero attention and residual layer corresponds to direct parameterizing beliefs without any neural network}, i.e., 
+$b_{R^{[0]}}(\bm{x}_{R^{[0]}}; \bm{\omega}) = e^{\bm{\omega}[\bm{x}_{R^{[0]}}]}/ \sum_{\bm{x}_{R^{[0]}}} e^{\bm{\omega}[\bm{x}_{R^{[0]}}]}, \forall~ {R^{[0]}} \in \Rr$, where ${\bm{\omega}[\bm{x}_{R^{[0]}}]}$ is a direct parameter for instantiation $\bm{x}_{R^{[0]}}$. The contrasting result agrees with our intuition that neural networks may represent more flexible distributions and learn dependencies of variables in better ways.
 
 \section{Summary}
 In this chapter, we presented an alternative way to do inference in MRFs. Different from iteratively propagating messages as classical message passing algorithms, we directly minimize the region-based free energy defined over a region graph. We, therefore, are able to perform inference by solving the energy minimization problem.
