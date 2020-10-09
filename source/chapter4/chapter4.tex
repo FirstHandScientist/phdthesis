@@ -1030,9 +1030,7 @@ It is known that inference on MRFs with strong pairwise potentials is challengin
   \caption{RENN performance on complete graph 16 ($\gamma=0.1$) with different architecture settings.}
   \label{tab:arch-complete-gamma0_1}
   \begin{center}
-    
       \begin{small}
-        \begin{sc}
           \begin{tabular}{llcccc}
             \toprule
             \multirow{2}{*}{Metric} & {Attention} & \multicolumn{4}{c}{Residual Layer \#} \\
@@ -1056,11 +1054,8 @@ It is known that inference on MRFs with strong pairwise potentials is challengin
 
             \bottomrule
           \end{tabular}
-        \end{sc}
       \end{small}
-    
   \end{center}
-  
 \end{table}
 
 \textit{Architecture of RENN}: The default architecture used in our experiments is one attention layer followed two residual layers. We investigate how RENN performs with variants of architectures and report the results in Table~\ref{tab:arch-grid-gamma0_1} and \ref{tab:arch-complete-gamma0_1}. In general, it reflects that attention and residual layers are helpful to get better inference results for RENN, while further more attention and residual layers do not necessarily bring consistently better improvements. {Note the contrast setting of zero attention and residual layer corresponds to direct parameterizing beliefs without any neural network}, i.e., 
