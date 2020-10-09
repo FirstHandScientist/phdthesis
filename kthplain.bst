@@ -232,7 +232,7 @@ FUNCTION {format.authors}
     { author format.names }
   if$
 }
-
+%disable editors to appear in bibliography items
 FUNCTION {format.editors}
 { editor empty$
     { "" }
@@ -244,6 +244,12 @@ FUNCTION {format.editors}
     }
   if$
 }
+% FUNCTION {format.editors}
+% { editor empty$
+%     { "" }
+%     { "" }
+%   if$
+% }
 
 FUNCTION {format.isbn}
 { isbn empty$
@@ -258,11 +264,17 @@ FUNCTION {format.issn}
     { new.block "ISSN " issn * }
   if$
 }
-
+% disable url
+% FUNCTION {format.url}
+% { url empty$
+%     { "" }
+%     { new.block "URL \url{" url * "}" * }
+%   if$
+% }
 FUNCTION {format.url}
 { url empty$
     { "" }
-    { new.block "URL \url{" url * "}" * }
+    { "" } 
   if$
 }
 
