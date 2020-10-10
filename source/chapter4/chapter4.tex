@@ -425,7 +425,7 @@ where $\Aa(R)$ denotes the ancestor set of region node $R$ in $\Gg_R$. This rule
 \subsubsection{Generating Graph by Cluster Variation Method}
 \label{sec:cluster-variation-method}
 
-The cluster variation method was introduced by Kikuchi and other physicists \cite{PhysRev.81.988,morita1991cluster}, which started with the intuition of approximating free energy by using larger sets of variable nodes instead of the single-node factorization in mean field approximation. See \cite{pelizzola2005cvm} for a detailed review.
+The cluster variation method was introduced by Kikuchi and other physicists \cite{PhysRev.81.988,morita1991cluster}, which started with the intuition of approximating free energy by using larger sets of variable nodes instead of the univariate factorization in mean field approximation. See \cite{pelizzola2005cvm} for a detailed review.
 
 The cluster variation method starts with the root regions $\Rr_0$. There are two requirements for $\Rr_0$: i) every variable node $i$ of factor graph $\Gg_F$ is included in at least one region $R^{[0]}\in\Rr_0$; ii) there should be no region $R^{[0]}\in \Rr_0$ being a subregion of any other region in $\Rr_0$.
 With $\Rr_0$ ready, the other sets of regions are generated hierarchically. To construct level-$1$ regions $\Rr_1$ from $\Rr_0$, we find all the intersections between regions in $\Rr_0$, but omit any that are subregion of other intersection regions. Then level-$2$ regions $\Rr_2$ can be similarly constructed from $\Rr_1$. Assume there are $L$ such sets, then $\Rr = \Rr_0 \cup \Rr_1 \cup \cdots \cup \Rr_{L-1}$. The construction rule can be formulated as

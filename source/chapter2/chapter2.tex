@@ -1,6 +1,6 @@
 \chapter{Background}
 \label{chapter2}
-In this chapter, we review some background knowledge that is going to be used in this dissertation. We begin with the introduction to probabilistic graphical models. Then a divergence measure is introduced. Common inference tasks and methods are discussed before the learning problems in probabilistic graphical models are reviewed, which are interpreted as minimization of the divergence measure.
+In this chapter, we review some background knowledge that is going to be used in this dissertation. We begin with the introduction to probabilistic graphical models (we may just use the term 'graphical models' in the sequel). Then a divergence measure is introduced. Common inference tasks and methods are discussed before the learning problems in probabilistic graphical models are reviewed, which are interpreted as minimization of the divergence measure.
 
 \section{Graphical Models}
 \label{chpt2:sec:graphical-models}
@@ -243,7 +243,7 @@ In our definition in \eqref{chp2:eq:mrf-definition}, the set of potential factor
 \end{figure}
 
 The previous graphical representations do not explicitly include the conditional probability functions or potential factors in their graphs. An alternative representation to a graphical model (undirected or directed) is \textit{factor graph} \cite{kschischang2001factor_graph},
-which is a bipartite graph topology. In a factor graph, a potential factor or a conditional probability funciton is explicitly represented as a factor node, as the counterpart of the variable node associated with a random variable. We focus on the correspondence between a MRF and its factor graph here.
+which is a bipartite graph topology. In a factor graph, a potential factor or a conditional probability funciton is explicitly represented as a factor node, as the counterpart of a variable node associated with a random variable. We focus on the correspondence between a MRF and its factor graph here.
 \begin{definition}\label{chpt2:def:factor-graph}
   A factor graph $\Gg_F$, is a bipartite graph that represents the factorization of \eqref{chp2:eq:mrf-definition}. A factor graph has two types of nodes: i) a variable node for each variable $x_i$; ii) a factor node for each potential function $\phi_{a}$. An edge is placed between a variable node $i$ and factor node $a$ if and only if $x_i$ is argument of $\phi_{a}$. We denote a factor graph by $\Gg_F(\Vv \cup \Ff, \Ee_F)$ with $\Vv$ as the set of variable nodes, $\Ff$ as the set of factor nodes, and $\Ee_F$ the set of undirected edges.
 \end{definition}
@@ -306,7 +306,7 @@ The KL divergence is not symmetric. In other words, there is no equivalence betw
 Given a probability distribution $p(\bm{x})$ as the underlying distribution of a graphical model, inference in general can be divided into four kinds of tasks, as explained in Chapter~\ref{chpt1:sec:scope-outline}. Our work in this dissertation is closely involved with the following problems in MRFs
 \begin{itemize}
 \item computing the likelihood of observed data or unobserved random variables;
-\item computing the marginal distribution over a particular subset of nodes, i.e., $p(\bm{x}_A)$ for $A \subset \Vv$. Note that a single-node marginal distribution $p(x_i)$ also belongs to this case;
+\item computing the marginal distribution over a particular subset of nodes, i.e., $p(\bm{x}_A)$ for $A \subset \Vv$. Note that a univariate marginal distribution $p(x_i)$ also belongs to this case;
 \item computing the conditional distribution of a subset of nodes given the configuration of another subset of nodes, i.e., $p(\bm{x}_A| \bm{x}_B)$ for $A, B \in \Vv$ and $A \cap B = \emptyset$.
 \end{itemize}
 The above tasks are also closely related with the inference of the partition function, i.e.,
@@ -360,7 +360,7 @@ where $\tilde{p}(\bm{x}; \bm{\theta}) =  \prod_{a \in \Ff} \phi_{a}(\bm{x}_{a}; 
 
 \subsection{Variational Free Energy and Mean Field}
 
-Mean field method, similar to the sum-product algorithm in Section~\ref{chpt2:sec:inference-mp}, is an iterative message passing approach. 
+\sloppy Mean field method, similar to the sum-product algorithm in Section~\ref{chpt2:sec:inference-mp}, is an iterative message passing approach. 
 The message update rule of mean field algorithm is described as follows.
 \begin{equation}\label{chpt2:eq:mf-update}
   \log{b_i(x_i)} \propto \sum_{a \in \mathrm{ne}_i} \sum_{\bm{x}_{a} \backslash x_i} \prod_{j\in {a}\backslash i} b_j(x_j)\log{\phi_{a}}(\bm{x}_{a};\bm{\theta}_{a}).
@@ -385,14 +385,14 @@ Minimizing $F_{MF}(b)$ over $\left\{ b_i \right\}$ would give us the mean field 
 We described the sum-product algorithm (belief propagation) for exact inference in tree-structured graphs in Section~\ref{chpt2:sec:inference-mp}. For graphical models with the presence of cycles or loops, we can still apply the sum-product algorithm as if there was no loop. This is known as the loopy belief propagation (loopy BP). Of course, the inference results are no longer exact. But loopy BP still works well in many practical cases.
 
 Now we give the intuition of loopy BP from the perspective of free energy minimization, which comes with the name of Bethe approximation in literature.
-Different from the mean field approximation, Bethe approximation also includes the non-single-node beliefs $\{b_{a}(\bm{x}_{a})\}$ apart from the single-node beliefs $\{b_i(x_i)\}$\cite{yedidia2003understanding}. In this case, the Bethe free energy is given by
+Different from the mean field approximation, Bethe approximation also includes the multivariate beliefs $\{b_{a}(\bm{x}_{a})\}$ apart from the univariate beliefs $\{b_i(x_i)\}$\cite{yedidia2003understanding}. In this case, the Bethe free energy is given by
 \begin{align}\label{chpt2:bethe-free-energy}
   F_{Bethe}(b) = \sum_{a\in \Ff} \sum_{\bm{x}_{a}}
   b_{a}(\bm{x}_{a})\log{\frac{b_{a}(\bm{x}_{a})}{\phi_{a}(\bm{x}_{a})}
   } -  \sum_{i=1}^{N} (|\mathrm{ne}_i| - 1) \sum_{x_i} b_i(x_i) \log{b_i(x_i)},
 \end{align}
 where $|\cdot|$ stands for cardinality.
-Due to the  non-single-node beliefs, there are consistency constrains $\sum_{\bm{x}_{a}} b_{a}(\bm{x}_{a}) = \sum_{ x_i} b_i({x}_i) =1$, $\forall~ i \in a$ to obey. Then, solving the Bethe free energy minimization problem
+Due to the multivariate beliefs, there are consistency constrains $\sum_{\bm{x}_{a}} b_{a}(\bm{x}_{a}) = \sum_{ x_i} b_i({x}_i) =1$, $\forall~ i \in a$ to obey. Then, solving the Bethe free energy minimization problem
 \begin{align}
   \min_{\{b_{a}(\bm{x}_{a})\}, \{b_i(x_i)\}}& F_{Bethe}(b) \nonumber \\
   \mathrm{s.t.}~~ & \sum_{\bm{x}_{a} \backslash x_i} b_{a}(\bm{x}_{a})  =
@@ -419,7 +419,7 @@ The problem of learning a distribution in $\PP$ to approximate $p^{\ast}$ can be
   =& - H(p^{\ast}) - \EE_{p^{\ast}(\bm{x})}\left[ \log{{p(\bm{x}; \bm{\theta})}} \right],
 \end{align}
 where $H(p^{\ast})$ is the entropy of $p^{\ast}$.
-Due to the property of divergence, the KL divergence in \eqref{chpt2:sec:mle-as-min-kl} is zero if and only if $p(\bm{x};\bm{\theta})=p^{\ast}(\bm{x})$. The last line of \eqref{chpt2:sec:mle-as-min-kl} shows that the negative entropy term does not depend on $p(\bm{x}; \bm{\theta})$. Thus we can just focus on the negative expectation term $-\EE_{\bm{x} \sim p^{\ast}}\left[ \log{{p(\bm{x}; \bm{\theta})}} \right]$, which is the \textit{cross entropy}. Therefore, we can just use the cross entropy to do model learning.
+Due to the property of divergence, the KL divergence in \eqref{chpt2:sec:mle-as-min-kl} is zero if and only if $p(\bm{x};\bm{\theta})=p^{\ast}(\bm{x})$. The last line of \eqref{chpt2:sec:mle-as-min-kl} shows that the negative entropy term does not depend on $p(\bm{x}; \bm{\theta})$. Thus we can just focus on the negative expectation term $-\EE_{p^{\ast}(\bm{x})}\left[ \log{{p(\bm{x}; \bm{\theta})}} \right]$, which is the \textit{cross entropy}. Therefore, we can just use the cross entropy to do model learning.
 
 Note that although we can use the cross entropy for the model learning task and for even model comparison (comparing a trained model with another one), we lose the information of how close a trained model is to $p^{\ast}$. This is due to the omission of $H(p^{\ast})$, which is not available.
 
@@ -440,7 +440,7 @@ The log-likelihood $\Ll(\Dd; \bm{\theta})$ is one of the most widely used loss f
 \end{itemize}
 For the first case, the typical treatment is to approximate the exact log-likelihood. This is done via approximation by employing inference methods or   making simplified assumptions on dependency structure of the graphical model of $p(\bm{x})$. Then, optimization is carried out with regard to the approximated log-likelihood. These methods include surrogate likelihood \cite{wainwright06estimating, lu2019blockBP}, pseudo-likelihood\cite{qu2019gmnn, lazarogredilla2019learning}, piecewise likelihood \cite{sutton2012piecewise, lin_2016_CVPR}, saddle-point approximation \cite{srikumar-etal-2012-amortizing, NIPS2019_9687}.
 
-Apart from the above case where all variables are observable, the partial observed models, the latent variable case, are equally import in inference and learning with uncertainty. This class of models includes (but is not limited to) classic Gaussian mixture models (GMMs) and hidden Markov models (HMMs). There are latent variables because:
+Apart from the above case where all variables are observable, the partial observed models with the latent variables, are equally import in inference and learning with uncertainty. This class of models includes (but is not limited to) classic Gaussian mixture models (GMMs) and hidden Markov models (HMMs). There are latent variables because:
 \begin{itemize}
 \item Use of abstract variables to model the generative process (usually a directed graph) of observation data, such as HMMs.
 \item A practical true attribute of an object may be difficult or impossible to measure exactly. For instance, disease infection can only be diagnosed via the relevant symptoms, see e.g., Example~\ref{example-corona}. In the position tracking of a car with noisy sensors, the true position of the car might only be inferred via noisy data of sensors.
@@ -450,11 +450,11 @@ In general, latent variables are commonly used to deal with partial observation 
 \begin{align}
   l(\bm{x}_O; \bm{\theta}) =& \log{p(\bm{x}_O; \bm{\theta})} \nonumber \\  
   = & \EE_{q(\bm{x}_U|\bm{x}_O)}\left[ \log{\frac{q(\bm{x}_U|\bm{x}_O)}{p(\bm{x}_U|\bm{x}_O;\bm{\theta})} \cdot \frac{p(\bm{x}_U,\bm{x}_O;\bm{\theta})}{q(\bm{x}_U|\bm{x}_O)}} \right] \nonumber \\
-  = & \mathrm{KL}(q(\bm{x}_U|\bm{x}_O)\|p(\bm{x}_U|\bm{x}_O;\bm{\theta})) + F(q, \bm{\theta})
+  = & \mathrm{KL}(q(\bm{x}_U|\bm{x}_O)\|p(\bm{x}_U|\bm{x}_O;\bm{\theta})) + F(q, \bm{\theta}),
 \end{align}
 with
 \begin{equation}\label{chpt2:eq:llk-lower-bound}
-  F(q, \bm{\theta}) = \EE_{q(\bm{x}_U|\bm{x}_O)}\left[ \log{p(\bm{x}_U,\bm{x}_O;\bm{\theta})} \right] + H(q(\bm{x}_U|\bm{x}_O))
+  F(q, \bm{\theta}) = \EE_{q(\bm{x}_U|\bm{x}_O)}\left[ \log{p(\bm{x}_U,\bm{x}_O;\bm{\theta})} \right] + H(q(\bm{x}_U|\bm{x}_O)),
 \end{equation}
 where $H(q(\bm{x}_U|\bm{x}_O))$ is the entropy of $q(\bm{x}_U|\bm{x}_O)$, and $q$ can be any distribution over $\bm{x}_U$. Due to the non-negative property of KL divergence, we have
 \begin{equation}

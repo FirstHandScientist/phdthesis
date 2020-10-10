@@ -8,7 +8,7 @@ Most tasks conducted by a person or an automated system require a fundamental ab
 
 Instead of randomly guessing, reasoning aims at answering queries with preserving uncertainty by making the best of the available information. Two fundamental problems are inevitable before rational reasoning can be conducted. 
 \begin{itemize}
-\item How should we specify the relationship between a conclusion and the available information? In the coronavirus example, the corresponding question to answer is how the doctor should relate the coronavirus infection to the symptoms. This step is called \textit{modeling} which represents a reasoning problem abstractly by specifying the relationship between known information and unknown parts, in preparation for answering queries.
+\item How should we specify the relationship between a conclusion and the available information? In the coronavirus example, the corresponding question is how the doctor should relate the coronavirus infection to the symptoms. This step is called \textit{modeling} which represents a reasoning problem abstractly by specifying the relationship between known information and unknown parts, in preparation for answering queries.
 \item With the modeled representation, how should a conclusion be drawn? This process of reaching an answer to the query from an abstracted representation is called \textit{inference}. Assume the doctor knows that the candidate has fever and cough, but not any breathing problem. Then, how likely is it that the candidate is infected with the coronavirus?
 \end{itemize}
 
@@ -26,7 +26,7 @@ These problems can be treated nicely with probabilistic models via Bayesian logi
   \begin{equation}
     P(\mathrm{Infection} = \mathrm{True} | \mathrm{Fever} = \mathrm{True}, \mathrm{Cough} = \mathrm{False}, \mathrm{Breathing Difficulty}= \mathrm{True}), \nonumber
   \end{equation}
-  which is asking how likely the patient is to be infected by the coronavirus if symptoms of both fever and breathing difficulty are observed but no cough symptoms.
+  which is asking how likely the patient is infected by the coronavirus if symptoms of both fever and breathing difficulty are observed but no cough symptoms.
 
 \end{example}
 
@@ -144,17 +144,17 @@ At times, maximum likelihood based learning of certain classes of graphical mode
 \subsection{Publications}
 The following works were done during the author's PhD education.
 \begin{enumerate}
-\item \label{pub-renn} \textbf{Dong Liu}, Ragnar Thobaben, and Lars K. Rasmussen. Region-based energy neural network for approximate inference. Preprint, 2020. \\
+\item \label{pub-renn} \textbf{Dong Liu}, Ragnar Thobaben, and Lars K. Rasmussen. Region-based energy neural network for approximate inference. Preprint, \href{https://arxiv.org/abs/2006.09927}{arXiv}, 2020. \\
   Code: \href{https://github.com/FirstHandScientist/renn}{https://github.com/FirstHandScientist/renn}
-\item \label{pub-alphabp-convergence}\textbf{Dong Liu}, Minh Th\`{a}nh Vu, Zuxing Li, and Lars K. Rasmussen. $\alpha$ belief propagation for approximate inference. Preprint, 2020.\\
+  
+\item \label{pub-alphabp-convergence}\textbf{Dong Liu}, Minh Th\`{a}nh Vu, Zuxing Li, and Lars K. Rasmussen. $\alpha$ belief propagation for approximate inference. Preprint, \href{https://arxiv.org/abs/2006.15363}{arXiv}, 2020.\\
   Code: \href{https://github.com/FirstHandScientist/AlphaBP}{https://github.com/FirstHandScientist/AlphaBP}
 
-\item Anubhab Ghosh, Antoine Honor{\'e}, \textbf{Dong Liu}, Gustav Eje Henter, and Saikat Chatterjee. Robust Classification using Hidden Markov Models and Mixtures of Normalizing Flows. IEEE International Workshop on Machine Learning for Signal
-Processing, 2020.
+\item Anubhab Ghosh, Antoine Honor{\'e}, \textbf{Dong Liu}, Gustav Eje Henter, and Saikat Chatterjee. Robust Classification using Hidden Markov Models and Mixtures of Normalizing Flows. In IEEE International Workshop on Machine Learning for Signal Processing, 2020.
 
 \item Zuxing Li, Gyorgy Dan, and \textbf{Dong Liu}. A Game Theoretic Analysis of LQG Control under Adversarial Attack. Preprint, 2020.
 
-\item Andrea Scotti, Nima N. Moghadam, \textbf{Dong Liu}, Karl Gafvert and Jinliang Huang. Graph Neural Networks for Massive MIMO Detection and Higher-Order QAM. International Conference on Machine Learning (ICML) 2020 Workshop on Graph Representation Learning and Beyond, 2020.
+\item Andrea Scotti, Nima N. Moghadam, \textbf{Dong Liu}, Karl Gafvert and Jinliang Huang. Graph Neural Networks for Massive MIMO Detection and Higher-Order QAM. International Conference on Machine Learning (ICML) Workshop on Graph Representation Learning and Beyond, 2020.
 
 
 \item \label{pub-hmm-flow} \textbf{Dong Liu}, Antoine Honor{\'e}, Saikat Chatterjee, and Lars K. Rasmussen. Powering hidden
@@ -164,7 +164,7 @@ Processing, 2020.
 \item \label{pub-em-flow} \textbf{Dong Liu}, Minh Th\`{a}nh Vu, Saikat Chatterjee, and Lars K. Rasmussen. Neural network based explicit mixture models and expectation-maximization based learning. In International Joint Conference on Neural Networks, Glasgow, UK, July 2020. \\
   Code: \href{https://github.com/FirstHandScientist/EM-GM}{https://github.com/FirstHandScientist/EM-GM}
 
-\item \label{pub-hmm-sepsis} Antoine Honor{\'e}, \textbf{Dong Liu}, David Forsberg, Karen Coste, Eric Herlenius, Saikat Chatterjee, and Mikael Skoglund. Hidden markov models for sepsis detection in preterm infants. In 2020 IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP), 2020.\\
+\item \label{pub-hmm-sepsis} Antoine Honor{\'e}, \textbf{Dong Liu}, David Forsberg, Karen Coste, Eric Herlenius, Saikat Chatterjee, and Mikael Skoglund. Hidden markov models for sepsis detection in preterm infants. In IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP), 2020.\\
   Code: \href{https://github.com/FirstHandScientist/genhmm}{https://github.com/FirstHandScientist/genhmm}
 
 \item Jing Yue, Urban Bilstrup, \textbf{Dong Liu}, Unfair task allocation strategy for hierarchical distributed computing. Preprint, 2020.
@@ -177,7 +177,7 @@ Processing, 2020.
   Speech and Signal Processing (ICASSP), pages 3532-3536, 2019.\\
   Code: \href{https://github.com/FirstHandScientist/eotgms}{https://github.com/FirstHandScientist/eotgms}
 
-\item Saikat Chatterjee, Alireza M. Javid, Mostafa Sadeghi, Shumpei Kikuta, \textbf{Dong Liu}, Partha P. Mitra and Mikael Skoglund. SSFN--Self Size-estimating Feed-forward Network with Low Complexity, Limited Need for Human Intervention, and Consistent Behaviour across Trials. Preprint. 2019.
+\item Saikat Chatterjee, Alireza M. Javid, Mostafa Sadeghi, Shumpei Kikuta, \textbf{Dong Liu}, Partha P. Mitra and Mikael Skoglund. SSFN--Self Size-estimating Feed-forward Network with Low Complexity, Limited Need for Human Intervention, and Consistent Behaviour across Trials. Preprint, \href{https://arxiv.org/abs/1905.07111}{arXiv}, 2019.
   
 \item \textbf{Dong Liu}, Baptiste Cavarec, Lars K. Rasmussen, and Jing Yue. On dominant interference in random networks and communication reliability. In ICC 2019 IEEE International Conference on Communications (ICC), pages 1-7, 2019.
   
@@ -192,7 +192,7 @@ The material presented in this dissertation is based on the author's works which
 
 A general outline of the rest of the dissertation is as follows. Part~\ref{part:background} introduces the background knowledge and notations in support of the successive chapters. In what follows, the main ideas and techniques are present with two parts. Part~\ref{part:inference} consisting of Chapter~\ref{chapter3} and \ref{chapter4} focuses on inference techniques. Part~\ref{part:learning} consisting of Chapter~\ref{chpt5:undirecteLearning}, \ref{chpt6:em-flow}, \ref{chpt7:genhmm}, and \ref{chapter8}, covers mainly the learning topics. Chapter~\ref{chapter9} discusses some future directions along this line of research and closes the dissertation. We summarize the content more specifically as follows.
 
-The background part (Part~\ref{part:background}) first reviews the basics of probabilistic graphical models e.g., directed and undirected graphical models (also known as Bayesian network and Markov random fields), that are the fundamental frameworks for the content in this dissertation. Then, the inference tasks and basic message-passing algorithms (e.g., mean field and belief propagation) are reviewed. To give more intuition on approximate inference, the connection to variational free energy is discussed. The background part ends with the discussion on the essential learning principles of probabilistic graphical models.
+The background part (Part~\ref{part:background}) first reviews the basics of probabilistic graphical models, e.g., directed and undirected graphical models (also known as Bayesian network and Markov random fields), that are the fundamental frameworks for the content in this dissertation. Then, the inference tasks and basic message-passing algorithms (e.g., mean field and belief propagation) are reviewed. To give more intuition on approximate inference, the connection to variational free energy is discussed. The background part ends with the discussion on the essential learning principles of probabilistic graphical models.
 
 Part~\ref{part:inference} focuses on the development of inference in Markov random fields. Firstly, an alternative view of belief propagation is developed in contrast to free energy minimization in Chapter~\ref{chapter3}. A variant of the belief propagation algorithm is developed based on the alternative understanding. The convergence conditions of this proposed algorithm are studied and offered in the binary-state case of each variable node in pairwise Markov random fields. Secondly, in Chapter~\ref{chapter4}, this part then takes the path of addressing inference approximately by optimizing the region-based free energy which generalizes the Bethe free energy corresponding to the belief propagation algorithm. The developed method incorporates deep neural networks in solving the optimization problem of region-based free energy.
 
