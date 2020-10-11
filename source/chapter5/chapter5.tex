@@ -4,13 +4,13 @@ In Part~\ref{part:background} and \ref{part:inference}, we discussed different a
 As introduced in Chapter~\ref{chapter2}, learning of a graphical model includes structure learning and parameter learning. We restrict our discussion to parameter learning in graphical models. That is to say, answering the question of how to decide the parameters of a probabilistic graphical model.
 In this chapter, we mainly discuss the learning of undirected graphical models and leave the learning of directed graphical models for the coming chapters.
 
-As explained in Section~\ref{chpt2:sec:learning-principles}, one of the most essential learning principles is \textit{maximum likelihood} that is derived from the minimization of KL-divergence. Since we do not have access to the true distribution $p^{\ast}(\bm{x})$, practical maximum likelihood learning is done via tuning the parameter $\bm{\theta}$ of a model $p(\bm{x};\bm{\theta})$ using information from samples of $p^{\ast}(\bm{x})$, i.e. $\Dd = \left\{ \bm{x}^1, \bm{x}^2, \cdots, \bm{x}^{M}\right\}$.
+As explained in Section~\ref{chpt2:sec:learning-principles}, one of the most essential learning principles is \textit{maximum likelihood} that is derived from the minimization of KL-divergence. Since we do not have access to the true distribution $p^{\ast}(\bm{x})$, practical maximum likelihood learning is done via tuning the parameter $\bm{\theta}$ of a model $p(\bm{x};\bm{\theta})$ using information from samples of $p^{\ast}(\bm{x})$, i.e., $\Dd = \left\{ \bm{x}^1, \bm{x}^2, \cdots, \bm{x}^{M}\right\}$.
 
 We begin with the explanation of why inference is required in learning, and then, discuss MRF learning via RENN. Numerical comparisons with learned MRFs via classic message-passing methods are presented and discussed afterwards. We also include learning with hidden variables, an important topic in graphical model learning, in this chapter.
 
 
 
-\section{Why does learning of an MRF require inference?}
+\section{Why does Learning of an MRF Require Inference?}
 \label{chpt5:sec:learning-mrf}
 Let us continue the discussion on learning in Section~\ref{chpt2:sec:learning-principles}. Given a sample $\bm{x}$, the log-likelihood of this evidence is
 \begin{align}\label{chpt5:eq:one-sample-likely}
@@ -21,7 +21,7 @@ Without loss of generality, computing the gradient with regard to $\bm{\theta}_a
 \begin{align}\label{chpt5:eq:one-sample-likely-grad}
   \pd{l(\bm{x};\bm{\theta})}{\bm{\theta}_a} = \pd{\log{{\phi_a}(\bm{x}_a; \bm{\theta}_a)}}{\bm{\theta}_a} - \EE_{p(\bm{x}_a; \bm{\theta})}\left[ \pd{\log{{\phi_a}(\bm{x}_a; \bm{\theta}_a)}}{\bm{\theta}_a} \right].
 \end{align}
-In \eqref{chpt5:eq:one-sample-likely-grad}, a computation trick is used, i.e., $\pd{f(x)}{x} = f(x) \pd{\log{f(x)}}{x}$ holds for a differentiable function $f(x)$. Applying all sample from dataset $\Dd$ to \eqref{chpt5:eq:one-sample-likely-grad} gives
+In \eqref{chpt5:eq:one-sample-likely-grad}, a computation trick is used, i.e., $\pd{f(x)}{x} = f(x) \pd{\log{f(x)}}{x}$ holds for a differentiable function $f(x)$. Applying all samples from dataset $\Dd$ to \eqref{chpt5:eq:one-sample-likely-grad} gives
 \begin{equation}\label{chpt4:eq:dataset-likely}
   \Ll(\bm{\theta}) = \frac{1}{|\Dd |} \sum_{\bm{x} \in \Dd} l(\bm{x}; \bm{\theta}).
 \end{equation}
@@ -54,7 +54,7 @@ Take the gradient descent method as an example: we need to use one of the infere
     \Ll(\bm{x};\bm{\theta}) = \sum_{\bm{x}\in \Dd}\left[ \log{\tilde{p}(\bm{x}; \bm{\theta})} - \log{Z(\bm{\theta})}  \right] - \frac{\norm{\bm{\theta}}^2}{2\sigma^2},
   \end{equation}
   where $\sigma^2$ is the variance of the Gaussian prior, which is free to determine and reflects our subjective prior knowledge. The rest of the analysis follows. Intuitively, the presence of the prior reduces the chance for making prediction dominated by a small number of observations. 
-Alternatively, Laplacian prior is also commonly used, which brings a $\ell_1$-norm regularization over $\bm{\theta}$ and encourages sparsity.
+Alternatively, Laplacian prior is also commonly used, which brings a $\ell^1$-norm regularization over $\bm{\theta}$ and encourages sparsity.
 
 \end{remark}
 
@@ -73,7 +73,7 @@ The likelihood maximization of \eqref{chpt5:eq:one-sample-likely} can be written
 As discussed in Section~\ref{chpt5:sec:learning-mrf}, inference is needed in this MRF learning problem due to the intractable partition function, whose gradient with regard to the model parameter is an expectation with regard to marginal distributions. RENN, similar to other inference methods, is able to infer both the marginal distributions (via beliefs) and partition functions (via region-based free energy) more efficiently and accurately, as explained in Chapter~\ref{chapter4}. Thus there are two alternative ways to employ the inference results of RENN for MRF learning:
 \begin{itemize}
 \item use belief $\left\{ b_{a}(\bm{x}_a) \right\}$ obtained from a RENN in place of marginal distributions $\left\{ p(\bm{x}_a; \bm{\theta}) \right\}$ to compute gradient of the likelihood $\Ll$ in \eqref{chpt5:eq:likely-gradient-thetaa}. Then employ a gradient-based optimization algorithm to optimize the model parameter $\bm{\theta}$;
-  \item use the region-based free energy of a RENN in place of the intractable negative log-partition function $-\log{Z(\bm{\theta})}$. Make use of autodiff methods in modern frameworks such as PyTorch \cite{pytorch} or Tensorflow \cite{tensorflow} for $\bm{\theta}$. Then do alternating optimization routine with respect to the model parameter $\bm{\theta}$ and RENN parameters under the same objective function.
+  \item use the region-based free energy of a RENN in place of the intractable negative log-partition function $-\log{Z(\bm{\theta})}$. Make use of autodiff methods in modern frameworks such as PyTorch \cite{pytorch} or Tensorflow \cite{tensorflow} for computing gradient w.r.t. $\bm{\theta}$. Then do alternating optimization routine with respect to the model parameter $\bm{\theta}$ and RENN parameters under the same objective function.
 \end{itemize}
 The first alternative is straightforward by following the discussion in Section~\ref{chpt5:sec:learning-mrf}. We give a further explanation to the second alternative in this section.
 
@@ -84,7 +84,7 @@ Combining MRF learning and RENN inference, we have
   \min_{\bm{\theta}}\max_{\bm{\omega}} -\log{\tilde{p}(\bm{x}; \bm{\theta})} - F_R(\Bb; \bm{\theta}) 
   -\lambda \sum_{R\in \Rr \backslash \Rr_0} \sum_{R_p \in \Pp(R)}\!\!\!\!\!d( b_R, \!\!\!\!\! \sum_{\Ss(R_p)\backslash \Ss(R)}\!\!\!\!\! b_{R_p}(\bm{x}_{R_p}; \bm{\omega})).
 \end{align}
-Then the difficulty of computing $Z(\bm{\theta})$ is dealt with by joint learning of MRF and inference via RENN in \eqref{eq:learning-min-max}.
+Then the difficulty of computing $Z(\bm{\theta})$ is dealt with by alternatively learning of MRF and inference via RENN in \eqref{eq:learning-min-max}.
 
 Learning MRF with RENN does not need an iterative message propagation. Additionally, RENN can be implemented with modern toolboxes and enjoys the GPU computation capacity. Consequently, learning MRF with RENN can be much faster, which will be shown in the following section.
 
@@ -198,7 +198,7 @@ Neural network based methods parameterize the beliefs or marginal distributions 
 
 
 
-In the case of complete graphs, the advantage of RENN is significant, compared with other methods as shown in Table~\ref{tab:nll-training-full-n3n4}. The other benchmark methods fall behind RENN by a distinct difference, given the size of graphs is relatively small. The results here actually agree with inference experiments shown in Table~\ref{tab:infer-full-n9} and \ref{tab:infer-full-n16}, where partition function estimations of those methods have much larger errors. In terms of the average time per epoch, neural network based models are still faster than iterative message-passing methods in general.
+In the case of complete graphs, the advantage of RENN is significant, compared with other methods as shown in Table~\ref{tab:nll-training-full-n3n4}. The other benchmark methods fall behind RENN by a distinct difference, given the size of graphs is relatively small. The results here actually agree with inference experiments shown in Table~\ref{tab:infer-full-n9} and \ref{tab:infer-full-n16}, where partition function estimations of those methods have much larger errors. In terms of the average time per epoch, neural network based models are still competitive in contrast to iterative message-passing methods in general.
 
 
 \section{Further Discussion on Learning}\label{chpt5:sec:futher-dis-learning}

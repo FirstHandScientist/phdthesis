@@ -7,7 +7,7 @@ However, on our way towards automated inference methods, we intend to reduce the
 In fact, we have touched this topic in Section~\ref{chpt2:sec:variational-inference}, where we interpreted what message passing updates of mean field and belief propagation are actually doing. It turns out that the message passing rules are fixed-point iterations as solutions to optimization problems. Therefore mean field and belief propagation get the intuition of minimization of variational free energy. Take the most widely used belief propagation method as an example, since the message passing rule can be obtained from the minimization of Bethe free energy cost, we may just as well solve the optimization problem by other optimization techniques such as gradient descent. However, an early attempt on this track showed that it might suffer from stability issues for peaky potential functions compared to iterative message passing method \cite{welling2001belief}.
 
 
-Another limitation lies in the Bethe approximation itself. When representing the Bethe approximation in a factor graph, a factor node associated with a potential function is related to more than one random variable, while a variable node is associated with one random variable. When beliefs are propagated on the graph, only a univariate marginal distribution (associated with a variable node) can be propagated from one neighboring factor to another neighboring factor of the variable node. The interactions between multiple variables cannot be directly propagated as messages in the graph. This limitation actually affects the performance of Bethe approximation in general graphs, especially the loopy graphs.
+Another limitation lies in the Bethe approximation itself. When representing the Bethe approximation in a factor graph, a factor node associated with a potential function is related to more than one random variable, while a variable node is associated with one random variable. When beliefs are propagated on the graph, information on only a univariate variable (associated with a variable node) can be propagated from one neighboring factor to another neighboring factor of the variable node. The interactions between multiple variables cannot be directly propagated as messages in the graph. This limitation actually affects the performance of Bethe approximation in general graphs, especially the loopy graphs.
 
 In this chapter, we seek to use larger clusters in a graphical representation to overcome the above-mentioned limitation. Along with that, we bring the concept of inference as optimization into the representation with clusters.
 
@@ -192,7 +192,7 @@ By comparing the GBP with previously discussed mean field, loopy BP and $\alpha$
 
 
 \begin{example}
-  We demonstrate an example of GPB message update using the three-level region graph in Figure~\ref{fig:factor-region-graphs}. Following our notation, we have $\Rr_0 = \left\{ R_1^{[0]}, R_2^{[0]}, R_3^{[0]} \right\}$ where $R_1^{[0]} = \left\{ 1, 2, 4, 5, A, C, D, F \right\}$, $R_2^{[0]} = \left\{ 2, 3, 5, 6, B, D, E, G \right\}$, and $R_3^{[0]} = \left\{ 1, 2, 3, 4, 5, 6, A, B, C, D, F, G \right\}$. For $\Rr_1$, we have $\Rr_1 = \left\{ R_1^{[1]}, \cdots , R_7^{[1]} \right\}$ with $R_1^{[1]} = \left\{ 1, 2, A \right\}$ and $R_7^{[1]} = \left\{ 5, 6, G \right\}$. The same notation applies to the bottom level, e.g., $R^{[2]}_2 = \{2\}$, etc.
+  We demonstrate an example of GPB message update using the three-level region graph in Figure~\ref{fig:factor-region-graphs}. Following our notation, we have $\Rr_0 = \left\{ R_1^{[0]}, R_2^{[0]}, R_3^{[0]} \right\}$ where $R_1^{[0]} = \left\{ 1, 2, 4, 5, A, C, D, F \right\}$, $R_2^{[0]} = \left\{ 2, 3, 5, 6, B, D, E, G \right\}$, and $R_3^{[0]} = \left\{ 1, 2, 3, 4, 5, 6, A, B, C, E, F, G \right\}$. For $\Rr_1$, we have $\Rr_1 = \left\{ R_1^{[1]}, \cdots , R_7^{[1]} \right\}$ with $R_1^{[1]} = \left\{ 1, 2, A \right\}$ and $R_7^{[1]} = \left\{ 5, 6, G \right\}$. The same notation applies to the bottom level, e.g., $R^{[2]}_2 = \{2\}$, etc.
   Considering the message from region $R^{[1]}_4 = \left\{ 2, 5, D \right\}$ to $R^{[2]}_5 = \left\{ 5 \right\}$, i.e., $m_{R^{[1]}_4 \rightarrow R^{[2]}_5}$, we have
   \begin{align*}
     \hat{\Dd}(R^{[1]}_4) &= \left\{ \left\{ 2 \right\}, \left\{ 5 \right\}, \left\{ 2, 5, D \right\}\right\} = \left\{ R^{[2]}_2, R^{[2]}_5, R^{[1]}_4 \right\} \\
@@ -388,7 +388,7 @@ Considering the region belief consistency, we summarize the cost function of REN
 \begin{equation}\label{eq:infer-F-all-belief}
   \umin{\bm{\omega}}{F_R(\Bb;\bm{\theta}) + \lambda \sum_{R\in \Rr \backslash \Rr_0} \sum_{R_p \in \Pp(R)} d( b_R, \sum_{\bm{x}_{R_p}\backslash \bm{x}_{R}} b_{R_p}(\bm{x}_{R_p}; \bm{\omega}))},
 \end{equation}
-where $d(\cdot, \cdot)$ is a distance metric or divergence to measure the mismatch between the beliefs ($L_2$ distance is used in our experiments), $\lambda$ is a positive regularization parameter. To summarize, a RENN takes embedding vectors as input and output beliefs directly by minimizing regularized region-based free energy. Embedding vectors are tunable variables (part of paramter $\bm{w}$), and will be explained in Section~\ref{subsec:exp-setting}, although they are not explicit in the objective function \eqref{eq:infer-F-all-belief}.
+where $d(\cdot, \cdot)$ is a distance metric or divergence to measure the mismatch between the beliefs ($\ell^2$ distance is used in our experiments), $\lambda$ is a positive regularization parameter. To summarize, a RENN takes embedding vectors as input and output beliefs directly by minimizing regularized region-based free energy. Embedding vectors are tunable variables (part of paramter $\bm{w}$), and will be explained in Section~\ref{subsec:exp-setting}, although they are not explicit in the objective function \eqref{eq:infer-F-all-belief}.
 
 
 \begin{example}
@@ -402,7 +402,7 @@ where $d(\cdot, \cdot)$ is a distance metric or divergence to measure the mismat
 
 \subsection{Region Graph Construction for RENN}
 In this section we detail how to construct the region graph $\Gg_R$ for RENN.
-Informally, a region graph can be generated by firstly clustering the nodes in a factor graph in any way and then connect the clusters with directed edges as long as the resulted graph fulfills the Definition~\ref{def:region-graph}. But this does not mean we can rely on an arbitrary region graph to do our inference. Conditions such as \textit{valid} region graph (will be discussed in the following section) and \textit{maxent-normality} \cite{yedida2005constucting,welling2005structured} have been proposed for region graphs. But these conditions do not provide rules for how to construct ''good'' region graphs.
+Informally, a region graph can be generated by firstly clustering the nodes in a factor graph in any way and then connect the clusters with directed edges as long as the resulted graph fulfills the Definition~\ref{def:region-graph}. But this does not mean we can rely on an arbitrary region graph to do our inference. Conditions such as \textit{valid} region graph (will be discussed in the following section) and \textit{maxent-normality} \cite{yedida2005constucting,welling2005structured} have been proposed for region graphs. But these conditions do not provide rules for how to construct 'good' region graphs.
 Our approach to this issue is to combine the cluster variation method \cite{PhysRev.81.988,morita1991cluster} with the \textit{tree-robust} condition \cite{gelfand2012generalized} (that was originally developed to improve the accuracy of GBP) to obtain practical region graph construction for RENN.
 
 In what follows, we firstly explain the concept of valid region graphs. Then the method of region graph construction for RENN is detailed.
@@ -425,7 +425,7 @@ where $\Aa(R)$ denotes the ancestor set of region node $R$ in $\Gg_R$. This rule
 \subsubsection{Generating Graph by Cluster Variation Method}
 \label{sec:cluster-variation-method}
 
-The cluster variation method was introduced by Kikuchi and other physicists \cite{PhysRev.81.988,morita1991cluster}, which started with the intuition of approximating free energy by using larger sets of variable nodes instead of the univariate factorization in mean field approximation. See \cite{pelizzola2005cvm} for a detailed review.
+The cluster variation method was introduced by Kikuchi and other physicists \cite{PhysRev.81.988,morita1991cluster}, which started with the intuition of approximating free energy by using larger sets of variable nodes instead of the fully factorization in mean field approximation. See \cite{pelizzola2005cvm} for a detailed review.
 
 The cluster variation method starts with the root regions $\Rr_0$. There are two requirements for $\Rr_0$: i) every variable node $i$ of factor graph $\Gg_F$ is included in at least one region $R^{[0]}\in\Rr_0$; ii) there should be no region $R^{[0]}\in \Rr_0$ being a subregion of any other region in $\Rr_0$.
 With $\Rr_0$ ready, the other sets of regions are generated hierarchically. To construct level-$1$ regions $\Rr_1$ from $\Rr_0$, we find all the intersections between regions in $\Rr_0$, but omit any that are subregion of other intersection regions. Then level-$2$ regions $\Rr_2$ can be similarly constructed from $\Rr_1$. Assume there are $L$ such sets, then $\Rr = \Rr_0 \cup \Rr_1 \cup \cdots \cup \Rr_{L-1}$. The construction rule can be formulated as
@@ -469,7 +469,7 @@ With the above concepts, we are ready to give the definition of tree-robust.
 \end{definition}
 
 
-We use two theorems from \cite{gelfand2012generalized} for choosing cycle basis in two specific graph classes, i.e. planar graphs and complete graphs. A planar graph is a graph that can be embedded in the two-dimensional plain (it can be drawn on the plane in such a way that its edges intersect only at their nodes). In a complete graph, every pair of distinct nodes is connected by a unique edge.
+We use two theorems from \cite{gelfand2012generalized} for choosing cycle basis in two specific graph classes, i.e., planar graphs and complete graphs. A planar graph is a graph that can be embedded in the two-dimensional plain (it can be drawn on the plane in such a way that its edges intersect only at their nodes). In a complete graph, every pair of distinct nodes is connected by a unique edge.
 
 \begin{theorem}\label{thm:planar-tree-robust}
   In a planar graph $\Gg$, the cycle basis comprised of the faces of the graph $\Gg$ is tree-robust.
@@ -518,12 +518,12 @@ Tree-robust root regions can also be constructed for general graphs, which can b
 \section{Experimental Results}\label{chpt4:sec:experiments}
 
 We conducted a series of experiments to validate the proposed RENN model. The experiments are designed to verify RENN in inference problems. 
-Apart from the inference experiments, we also carried out the MRF model learning experiments. Analysis and experiments on MRF learning are discussed in Chapter~\ref{chpt5:undirecteLearning}.
+Apart from the inference experiments, we also carried out the MRF learning experiments. Analysis and experiments on MRF learning are discussed in Chapter~\ref{chpt5:undirecteLearning}.
 
 
 
 \begin{table}[!tp]
-  \caption{Inference on grid graph. $J_{ij}\sim \mathsf{N}(0,1), h_i\sim\mathsf{N}(0, \gamma^2)$ with $\gamma=0.1$. $\ell_1$ error and correlation $\rho$ between true and approximate marginals, and $\log{Z}$ error.}
+  \caption{Inference on grid graph. $J_{ij}\sim \mathsf{N}(0,1), h_i\sim\mathsf{N}(0, \gamma^2)$ with $\gamma=0.1$. $\ell^1$ error and correlation $\rho$ between true and approximate marginals, and $\log{Z}$ error.}
   \label{table:infer-grid-gamma0.1}
   \begin{center}
     \begin{adjustbox}{width=1\textwidth}
@@ -531,7 +531,7 @@ Apart from the inference experiments, we also carried out the MRF model learning
         \toprule
         Metric & $N$ & Mean Field & Loopy BP & Damped BP & GBP & Inference Net & RENN \\
         \midrule
-        \multirow{4}{*}{\begin{tabular}[x]{@{}c@{}}$\ell_1$\\error \end{tabular} }
+        \multirow{4}{*}{\begin{tabular}[x]{@{}c@{}}$\ell^1$\\error \end{tabular} }
                &    25   &$0.271 \pm 0.051$ &  $0.086 \pm 0.078$ & $0.084 \pm 0.076$ & $0.057 \pm 0.024$ & $0.111 \pm 0.072$ & \textbf{0.049} $\pm$ 0.078 \\
         
                &    100   & $0.283 \pm 0.024$ &  $0.085 \pm 0.041$ & $0.062 \pm 0.024$ & $0.064 \pm 0.019$ & $0.074 \pm 0.034$ & \textbf{0.025} $\pm$ 0.011 \\
@@ -591,7 +591,7 @@ Without loss of generality, our experiments are carried out on binary pairwise M
         \toprule
         Metric & $N$ & Mean Field & Loopy BP & Damped BP & GBP & Inference Net & RENN \\
         \midrule
-        \multirow{4}{*}{\begin{tabular}[x]{@{}c@{}}$\ell_1$\\error \end{tabular} }
+        \multirow{4}{*}{\begin{tabular}[x]{@{}c@{}}$\ell^1$\\error \end{tabular} }
                & 25   &  0.131 $\pm$ 0.080  &  \textbf{0.022} $\pm$ 0.017  &  0.022 $\pm$ 0.018  &  0.137 $\pm$ 0.026  &  0.043 $\pm$ 0.017  &  0.027 $\pm$ 0.014 \\
                & 100  &  0.130 $\pm$ 0.041  &  0.025 $\pm$ 0.014  &  0.025 $\pm$ 0.014  &  0.146 $\pm$ 0.020  &  0.046 $\pm$ 0.009  &  \textbf{0.017} $\pm$ 0.002  \\
 
@@ -640,7 +640,7 @@ Without loss of generality, our experiments are carried out on binary pairwise M
 \end{table}
 
 
-In the inference experiments, we are interested on how well beliefs from RENN approximate true marginal distributions of $p(\bm{x};\bm{\theta})$. We quantify this by both the $\ell_1$ error ($\ell_1$-norm distance) and Pearson correlation coefficient $\rho$, between true marginals and beliefs of RENN. The marginal evaluations include both $p(x_i)$ and $p(x_i,x_j)$. In addition, we also quantify the $\log{Z}$ error as the absolute difference between true partition function and an approximated value, i.e., the region-based free energy for RENN or GBP while a counterpart free energy form for mean field or loopy BP as explained in Section~\ref{chpt2:sec:variational-inference}.
+In the inference experiments, we are interested on how well beliefs from RENN approximate true marginal distributions of $p(\bm{x};\bm{\theta})$. We quantify this by both the $\ell^1$ error ($\ell^1$-norm distance) and Pearson correlation coefficient $\rho$, between true marginals and beliefs of RENN. The marginal evaluations include both $p(x_i)$ and $p(x_i,x_j)$. In addition, we also quantify the $\log{Z}$ error as the absolute difference between true partition function and an approximated value, i.e., the region-based free energy for RENN or GBP while a counterpart free energy form for mean field or loopy BP as explained in Section~\ref{chpt2:sec:variational-inference}.
 
 In all experiments, for each evaluation of RENN, mean field, (loopy) BP \cite{mooij2007sufficient}, damped BP \cite{Pretti2005damping} with damping factor $0.5$, and GBP \cite{yedida2005constucting} as benchmarks, are all evaluated on the same MRF, which are then compared with RENN. Additionally, a recent neural network benchmark model, saddle-point Inference Net \cite{NIPS2019_9687} targeting the Bethe free energy, is also used as a comparison. To make the comparison with Inference Net fair, RENN and Inference Net use the same neural network structures and hidden dimensions. Each variable $x_i$ is associated with a learnable embedding vector $\bm{e}_i$. The default architecture is: $\{\bm{e}_i\}$$\rightarrow$ attention $\rightarrow$ two residual layers $\rightarrow$ softmax $\rightarrow$ $\{\bm{b}_{R^{[0]}},R^{[0]}\in\Rr_0\}$ $\rightarrow \cdots \rightarrow$ $\{\bm{b}_{R^{[L-1]}},R^{[L-1]}\in\Rr_{L-1}\}$ for a $L$-level RENN \footnote{See \cite{AshishNIPS2017_7181} for the attention structure and \cite{DBLP:journals/corr/HeZRS15} for residual structure}. ADAM optimizer is used for RENN inference, with learning step rate $0.001$. The maximum number of optimization steps for RENN is 200.
 
@@ -649,7 +649,7 @@ In all experiments, for each evaluation of RENN, mean field, (loopy) BP \cite{mo
 
 \subsection{Inference on Grid Graphs}
 
-A grid graph is essentially a $2$-dimensional Edwards-Anderson model \cite{Edwards_1975}. But in our setting, we additionally include the local potentials, i.e., the univariate potentials. We first evaluate how well RENN can estimate the marginal distributions, compared with benchmark algorithms/models, with regard to marginal $\ell_1$ errors and Pearson correlation $\rho$, for different graph size $N$ and standard deviation $\gamma$ of $\{h_i\}$. At each evaluation for a given size $N$, $20$ MRFs are generated by sampling $\{J_{ij}\}$ and $\{h_i\}$. Then RENN and other candidate algorithms perform inference on these MRFs. The $\ell_1$ error and correlation $\rho$ between true and estimated marginal distributions are evaluated. The $\log{Z}$ error is also recorded.
+A grid graph is essentially a $2$-dimensional Edwards-Anderson model \cite{Edwards_1975}. But in our setting, we additionally include the local potentials, i.e., the univariate potentials. We first evaluate how well RENN can estimate the marginal distributions, compared with benchmark algorithms/models, with regard to marginal $\ell^1$ errors and Pearson correlation $\rho$, for different graph size $N$ and standard deviation $\gamma$ of $\{h_i\}$. At each evaluation for a given size $N$, $20$ MRFs are generated by sampling $\{J_{ij}\}$ and $\{h_i\}$. Then RENN and other candidate algorithms perform inference on these MRFs. The $\ell^1$ error and correlation $\rho$ between true and estimated marginal distributions are evaluated. The $\log{Z}$ error is also recorded.
 Experiments are carried out in large and small standard deviation of $\{h_i\}$ ($\gamma=0.1$, $\gamma=1$), which reflects the relative strength of standalone node log-potentials to pairwise log-potentials. The results are reported as 'mean $\pm$ standard deviation' in tables.
 
 \begin{table}[tp!]
@@ -663,13 +663,13 @@ Experiments are carried out in large and small standard deviation of $\{h_i\}$ (
         $\gamma$ & Metric & GBP & RENN \\
         \midrule
         \multirow{3}{*}{0.1}
-                 & $\ell_1$ Error & 0.061 $\pm$ 0.025 & \textbf{0.025} $\pm$ 0.020 \\
+                 & $\ell^1$ Error & 0.061 $\pm$ 0.025 & \textbf{0.025} $\pm$ 0.020 \\
 
                  & $\rho$   & 0.913 $\pm$ 0.049  &  \textbf{0.984} $\pm$ 0.021  \\
                  & $\log{Z}$ Error & 3.564 $\pm$ 2.823  &  0.384 $\pm$ 0.223  \\
         \midrule
         \multirow{3}{*}{1}
-                 & $\ell_1$ Error & 0.145 $\pm$ 0.028  & \textbf{0.016} $\pm$ 0.010 \\
+                 & $\ell^1$ Error & 0.145 $\pm$ 0.028  & \textbf{0.016} $\pm$ 0.010 \\
 
                  & $\rho$   & 0.783 $\pm$ 0.091  &  \textbf{0.995} $\pm$ 0.010 \\
                  & $\log{Z}$ Error & 0.825 $\pm$ 0.841  & 0.364 $\pm$ 0.201 \\
@@ -685,7 +685,7 @@ Experiments are carried out in large and small standard deviation of $\{h_i\}$ (
 
 
 
-The marginal approximation can be reflected by $\ell_1$ error and correlation coefficient $\rho$. These two metrics also reflect the belief consistency since both univariate and pairwise marginals are used in evaluation computation. The results are reported in Table~\ref{table:infer-grid-gamma0.1} and \ref{table:infer-grid-gamma1.0}. In all cases except one, beliefs of RENN outperform benchmark algorithms with large marginals. As expected, performances of loopy BP and its variant damped BP are similar in general while damped BP sometimes gets better estimations. Both loopy BP and damped BP have better marginal estimations than mean field method in all of our considered scenarios. GBP outperforms loopy BP and damped BP at case $\gamma=0.1$, $h_i\sim \mathsf{N}(0,0.1^2)$, agreeing with the results at \cite{yedida2005constucting}, but performs poorly at case of $\gamma=1$. Similar phenomena happen to Inference Net, which has better estimations than loopy BP and damped BP in some cases of $\gamma=0.1$ but falls behind in all cases of $\gamma=1$.
+The marginal approximation can be reflected by $\ell^1$ error and correlation coefficient $\rho$. These two metrics also reflect the belief consistency since both univariate and pairwise marginals are used in evaluation computation. The results are reported in Table~\ref{table:infer-grid-gamma0.1} and \ref{table:infer-grid-gamma1.0}. In all cases except one, beliefs of RENN outperform benchmark algorithms with large marginals. As expected, performances of loopy BP and its variant damped BP are similar in general while damped BP sometimes gets better estimations. Both loopy BP and damped BP have better marginal estimations than mean field method in all of our considered scenarios. GBP outperforms loopy BP and damped BP at case $\gamma=0.1$, $h_i\sim \mathsf{N}(0,0.1^2)$, agreeing with the results at \cite{yedida2005constucting}, but performs poorly at case of $\gamma=1$. Similar phenomena happen to Inference Net, which has better estimations than loopy BP and damped BP in some cases of $\gamma=0.1$ but falls behind in all cases of $\gamma=1$.
 
 
 \begin{table}[!tp]
@@ -696,7 +696,7 @@ The marginal approximation can be reflected by $\ell_1$ error and correlation co
         \toprule
         Metric & $\gamma$ & Mean Field & Loopy BP & Damped BP & GBP & Inference Net & RENN \\
         \midrule
-        \multirow{4}{*}{\begin{tabular}[x]{@{}c@{}}$\ell_1$\\error\end{tabular}}
+        \multirow{4}{*}{\begin{tabular}[x]{@{}c@{}}$\ell^1$\\error\end{tabular}}
         % pen1
                & 0.1   &  0.294 $\pm$ 0.061  &  0.120 $\pm$ 0.038  &  0.118 $\pm$ 0.034  &   0.237 $\pm$ 0.061  &  \textbf{0.109} $\pm$ 0.025  &  0.130 $\pm$ 0.085  \\
 
@@ -765,7 +765,7 @@ The marginal approximation can be reflected by $\ell_1$ error and correlation co
         \toprule
         Metric & $\gamma$ & Mean Field & Loopy BP & Damped BP & GBP & Inference Net & RENN \\
         \midrule
-        \multirow{4}{*}{\begin{tabular}[x]{@{}c@{}}$\ell_1$-\\error\end{tabular}}
+        \multirow{4}{*}{\begin{tabular}[x]{@{}c@{}}$\ell^1$-\\error\end{tabular}}
         % pen3
                & 0.1   &  0.303 $\pm$ 0.056  &  0.176 $\pm$ 0.039  &  0.174 $\pm$ 0.038  &  0.244 $\pm$ 0.047  &  0.174 $\pm$ 0.044  &  \textbf{0.169} $\pm$ 0.052  \\
 
@@ -840,7 +840,7 @@ As for the error of partition function values, GBP gets the most accurate estima
 
 In this section, we evaluate RENN in comparison with benchmark methods on more challenging graphs, i.e., complete graphs in which every two nodes are connected by a unique edge. A complete graph here can be viewed as a Sherrington-Kirkpatrick model \cite{PhysRevLett.35.1792} with univariate potentials. Due to the high complexity, we carry out the inference experiments on complete graphs of size $N=9$ and $N=16$ but with a richer setting of $\gamma$, to be able to track the true marginals and partition functions exactly, which are used to evaluate candidate methods.
 
-For marginal distribution estimations, RENN still outperforms all other benchmark methods except for one case at $\gamma=0.1$ in size-$9$ graph, as shown in Tables~\ref{tab:infer-full-n9} and \ref{tab:infer-full-n16}. In the case of $\gamma=0.1$ in Table~\ref{tab:infer-full-n9}, Inference Net outperforms RENN with regard to $\ell_1$ error, i.e., $0.109$ versus $0.130$, but falls behind RENN with regard to correlation $\rho$ ($0.720$ versus $0.741$) and $\log{Z}$ estimation significantly ($35.46$ versus $3.171$).
+For marginal distribution estimations, RENN still outperforms all other benchmark methods except for one case at $\gamma=0.1$ in size-$9$ graph, as shown in Tables~\ref{tab:infer-full-n9} and \ref{tab:infer-full-n16}. In the case of $\gamma=0.1$ in Table~\ref{tab:infer-full-n9}, Inference Net outperforms RENN with regard to $\ell^1$ error, i.e., $0.109$ versus $0.130$, but falls behind RENN with regard to correlation $\rho$ ($0.720$ versus $0.741$) and $\log{Z}$ estimation significantly ($35.46$ versus $3.171$).
 
 In the complete graphs, GBP does not have an advantage over loopy BP and damped BP any more, RENN operating on the same region graphs as those for GBP, gives consistently better marginal distribution estimations. Also, generally speaking, the performance of Inference Net is close to loopy and damped BP in most cases of complete graphs.
 
@@ -849,7 +849,7 @@ As for partition function evaluations of complete graphs, the results are quite 
 
 \subsection{Inference on MRFs with Wider Range of Pairwise Potentials}
 \begin{table}[t]
-  \caption{Uniform potentials. Inference on grid graph of size 100. $J_{ij}\sim \Uu(-u, u)$, $h_{i}\sim \Uu(-1, 1)$}
+  \caption{Uniform potentials. Inference on grid graph of size 100. $J_{ij}\sim \Uu(-u, u)$, $h_{i}\sim \Uu(-1, 1)$.}
   \label{tab:inference-grid100-uniform}
   \begin{center}
       \begin{adjustbox}{width=1\textwidth}
@@ -857,7 +857,7 @@ As for partition function evaluations of complete graphs, the results are quite 
           \toprule
           Metric & $u$ & Mean Field & Loopy BP & Damped BP & GBP & Inference Net & RENN \\
           \midrule
-          \multirow{4}{*}{\begin{tabular}[x]{@{}c@{}}$\ell_1$\\error \end{tabular} }
+          \multirow{4}{*}{\begin{tabular}[x]{@{}c@{}}$\ell^1$\\error \end{tabular} }
                  &    1   & $0.035 \pm 0.012$ &  $\textbf{0.001} \pm 0.001$ & $0.002 \pm 0.001$ & $0.097 \pm 0.010$ & $ 0.022 \pm 0.005$ & {0.015} $\pm$ 0.007 \\
 
                  &    5   & $0.257 \pm 0.065$ &  $0.115 \pm 0.071$ & $0.120 \pm 0.073$ & $0.250 \pm 0.024$ & $ 0.164 \pm 0.036$ & \textbf{0.100} $\pm$ 0.046 \\
@@ -893,7 +893,7 @@ As for partition function evaluations of complete graphs, the results are quite 
 
 
 \begin{table}[t]
-  \caption{Uniform potentials. Inference on complete graph of size 9. $J_{ij}\sim \Uu(-u, u)$, $h_{i}\sim \Uu(-1, 1)$}
+  \caption{Uniform potentials. Inference on complete graph of size 9. $J_{ij}\sim \Uu(-u, u)$, $h_{i}\sim \Uu(-1, 1)$.}
   \label{tab:inference-complete9-uniform}
   \begin{center}
       \begin{adjustbox}{width=1\textwidth}
@@ -901,7 +901,7 @@ As for partition function evaluations of complete graphs, the results are quite 
           \toprule
           Metric & $u$ & Mean Field & Loopy BP & Damped BP & GBP & Inference Net & RENN \\
           \midrule
-          \multirow{4}{*}{\begin{tabular}[x]{@{}c@{}}$\ell_1$\\error \end{tabular} }
+          \multirow{4}{*}{\begin{tabular}[x]{@{}c@{}}$\ell^1$\\error \end{tabular} }
                  &    1   & $0.139 \pm 0.072$ &  $0.129 \pm 0.056$ & $0.129 \pm 0.056$ & $0.198 \pm 0.110$ & $ 0.125 \pm 0.051$ & \textbf{0.064} $\pm$ 0.048 \\
 
                  &    5   & $0.378 \pm 0.172$ &  $0.327 \pm 0.120$ & $0.329 \pm 0.123$ & $0.389 \pm 0.140$ & $ 0.283 \pm 0.083$ & \textbf{0.273} $\pm$ 0.100 \\
@@ -935,7 +935,7 @@ As for partition function evaluations of complete graphs, the results are quite 
   \end{center}
 \end{table}
 
-It is known that inference on MRFs with strong pairwise potentials is challenging. To enrich the comparisons, we carried out experiments on MRFs wider range of pairwise potentials. Specifically, potentials are sampled from uniform discussion $J_{ij}\sim\Uu(-u, u)$ whereas $h_i\sim\Uu(-1,1)$. The results are shown in Table~\ref{tab:inference-grid100-uniform} and \ref{tab:inference-complete9-uniform}. When pairwise potentials get much stronger, the performance of all methods degenerated. But the RENN still offers competitive results.
+It is known that inference on MRFs with strong pairwise potentials is challenging. To enrich the comparisons, we carried out experiments on MRFs wider range of pairwise potentials. Specifically, potentials are sampled from uniform discussion $J_{ij}\sim\Uu(-u, u)$ whereas $h_i\sim\Uu(-1,1)$. The results are shown in Table~\ref{tab:inference-grid100-uniform} and \ref{tab:inference-complete9-uniform}. When pairwise potentials get much stronger, the performance of all methods degenerated. But RENN still offers competitive results.
 
 \subsection{Discussion on Inference via RENN}
 \begin{table}[!tp]
@@ -969,7 +969,7 @@ It is known that inference on MRFs with strong pairwise potentials is challengin
             \toprule
             {Metric} & $N$ & $\gamma = 0.1$ & $\gamma = 1$ \\
             \midrule
-            \multirow{4}{*}{\begin{tabular}[x]{@{}c@{}}$\ell_1$\\error \end{tabular} }
+            \multirow{4}{*}{\begin{tabular}[x]{@{}c@{}}$\ell^1$\\error \end{tabular} }
                      & 25 & 0.075 $\pm$ 0.021   &  0.107 $\pm$ 0.032 \\
                      & 100 & 0.128 $\pm$ 0.014  &  0.108 $\pm$ 0.021  \\
                      & 225 & 0.136 $\pm$ 0.013  &  0.112 $\pm$ 0.012  \\
@@ -1003,7 +1003,7 @@ It is known that inference on MRFs with strong pairwise potentials is challengin
             \multirow{2}{*}{Metric} & {Attention} & \multicolumn{4}{c}{Residual Layer \#} \\
                                     & Layers \# & 0 & 2 & 4  & 6 \\
             \midrule
-            \multirow{3}{*}{\begin{tabular}[x]{@{}c@{}}$\ell_1$\\error \end{tabular} }
+            \multirow{3}{*}{\begin{tabular}[x]{@{}c@{}}$\ell^1$\\error \end{tabular} }
                                     & 0    & 0.144 &  0.026  &  0.060 &  0.085 \\
                                     & 1    & 0.031 &  0.026  &  0.064 &  0.074 \\
                                     & 2    & 0.029 &  0.026  &  0.031 &  0.066 \\
@@ -1036,7 +1036,7 @@ It is known that inference on MRFs with strong pairwise potentials is challengin
             \multirow{2}{*}{Metric} & {Attention} & \multicolumn{4}{c}{Residual Layer \#} \\
                                     & Layer \# & 0 & 2 & 4  & 6 \\
             \midrule
-            \multirow{3}{*}{\begin{tabular}[x]{@{}c@{}}$\ell_1$\\error \end{tabular} }
+            \multirow{3}{*}{\begin{tabular}[x]{@{}c@{}}$\ell^1$\\error \end{tabular} }
                                     & 0    & 0.215 &  0.177  &  0.284 &  0.424 \\
                                     & 1    & 0.253 &  0.185  &  0.304 &  0.378 \\
                                     & 2    & 0.222 &  0.190  &  0.291 &  0.478 \\
@@ -1058,7 +1058,7 @@ It is known that inference on MRFs with strong pairwise potentials is challengin
   \end{center}
 \end{table}
 
-\textit{Architecture of RENN}: The default architecture used in our experiments is one attention layer followed two residual layers. We investigate how RENN performs with variants of architectures and report the results in Table~\ref{tab:arch-grid-gamma0_1} and \ref{tab:arch-complete-gamma0_1}. In general, it reflects that attention and residual layers are helpful to get better inference results for RENN, while further more attention and residual layers do not necessarily bring consistently better improvements. {Note the contrast setting of zero attention and residual layer corresponds to direct parameterizing beliefs without any neural network}, i.e., 
+\textit{Architecture of RENN}: The default architecture used in our experiments is one attention layer followed two residual layers. We investigate how RENN performs with variants of architectures and report the results in Table~\ref{tab:arch-grid-gamma0_1} and \ref{tab:arch-complete-gamma0_1}. In general, it reflects that attention and residual layers are helpful to get better inference results for RENN, while further more attention and residual layers do not necessarily bring consistently better improvements. {Note the contrast setting of zero attention and residual layer corresponds to directly parameterizing beliefs without any neural network}, i.e., 
 $b_{R^{[0]}}(\bm{x}_{R^{[0]}}; \bm{\omega}) = e^{\bm{\omega}[\bm{x}_{R^{[0]}}]}/ \sum_{\bm{x}_{R^{[0]}}} e^{\bm{\omega}[\bm{x}_{R^{[0]}}]}, \forall~ {R^{[0]}} \in \Rr$, where ${\bm{\omega}[\bm{x}_{R^{[0]}}]}$ is a direct parameter for instantiation $\bm{x}_{R^{[0]}}$. The contrasting result agrees with our intuition that neural networks may represent more flexible distributions and learn dependencies of variables in better ways.
 
 \section{Summary}
@@ -1074,15 +1074,15 @@ In the coming chapter, i.e., Chapter~\ref{chpt5:undirecteLearning}, we will disc
 \section{Relevant Literature}\label{chpt4:sec:literature}
 
 The well-known standard belief propagation (BP) algorithm \cite{Pearl1982reverend,kschischang2001factor_graph} has been popularly used in exact inference problems of tree-structures graphs and approximate inference in general graphs (loopy BP), which was explained by the Bethe free energy minimization later on \cite{yedidia2003understanding}. The attempts in improving the approximate inference with BP and gaining better insight has been made, where the representative works are fractional BP \cite{Wiegerinck:2002:FBP:2968618.2968673}, tree-reweighted BP \cite{wainwright2008graphical}, generalized BP (GBP, also known as parent-to-child algorithm) \cite{Yedidia:2000:GBP:3008751.3008848, yedida2005constucting}, etc. 
-GBP propagating messages between regions (clusters of nodes), is generally more accurate than loopy BP but is more complex than BP. Fix points of GBP that operate on region graphs, correspond to stationary points of region-based free energy of the region graphs. Depending on the graph size and potential functions, the iterative message-passing algorithms can take a long time to converge (if they can converge) before returning inference results. Inference results of these message-passing methods can degenerate significantly in dense graphs (graphs with too many circles).
+GBP propagating messages between regions (clusters of nodes), is generally more accurate than loopy BP but is more complex than BP. Fix points of GBP that operates on region graphs, correspond to stationary points of region-based free energy of the region graphs. Depending on the graph size and potential functions, the iterative message-passing algorithms can take a long time to converge (if they can converge) before returning inference results. Inference results of these message-passing methods can degenerate significantly in dense graphs (graphs with too many circles).
 
-Neural network based inference methods are getting popular in recent years, where they have success in areas of deep graphical generative models for structured data modeling \cite{qu2019gmnn, johansonNIPS2016_6379, li2018graphical}. Along with a neural network based generative model, a separate recognitive neural network has to be trained for inference. In these directed graphical models built on neural networks, training of inference networks needs sampling which brings in the trade-off between training speed and estimation variance. These issues also lie in one of the most successful models, variational autoencoders \cite{DBLP:journals/corr/KingmaW13,2017arXiv170104722M, 2017arXiv171101558T}, and other variational methods \cite{kuleshov2017neural_variational, dustin2017hierarchical, domke2019provable, hernandez-lobatob16}.
+Neural network based inference methods are getting popular in recent years, where they have success in areas of deep graphical generative models for structured data modeling \cite{qu2019gmnn, johansonNIPS2016_6379, li2018graphical}. Along with a neural network based generative model, a separate recognitive neural network has to be trained for inference. In these directed graphical models built on neural networks, training of inference networks needs sampling which brings in the trade-off between training speed and estimation variance. These issues also lie in the successful models, e.g., variational autoencoders \cite{DBLP:journals/corr/KingmaW13,2017arXiv170104722M, 2017arXiv171101558T} and other variational methods \cite{kuleshov2017neural_variational, dustin2017hierarchical, domke2019provable, hernandez-lobatob16}.
 
 
 Apart from the directed graphical models, there is also a track of work on using neural networks to model the message passing functions. \cite{akbayrak2019reparameterization} models the intractable message update functions by Gaussian distributions with parameters as the output of a neural network, and then follows the typical message passing rules to do iterative message updates of standard BP. \cite{jitkrittum2015kernel, heess2013learning} also similarly learn a neural network to model the message update functions of expectation propagation methods.
 
 
-In another track, message-passing functions are implemented neural networks with parameters that need to be trained. In fact, these methods still do iterative message propagation analogous to standard BP.
+In another track, message passing functions are implemented as neural networks with parameters that need to be trained. In fact, these methods still do iterative message propagation analogous to standard BP.
 Neural message passing methods \cite{yoon2019inferenceGraph, pmlr-v70-gilmer17a} use a  graph network update messages and a separate network to map messages into targeted results. Training of these models needs true marginal distributions which might be an issue for cases where it is too expensive or prohibitive to collect the true marginals.
 
 Closely related to work in this chapter, Bethe free energy is directly minimized in \cite{welling2001belief,xionggyr19one-shot,NIPS2019_9687} instead of iterative message passing methods, which can be treated as special cases of RENN. \cite{welling2001belief} uses a gradient descent method to alternative minimize single variable marginals. \cite{NIPS2019_9687} parameterizes marginals directly by a neural network and minimizes Bethe free energy.

@@ -3,7 +3,7 @@
 % set the path to figures in this section
 \graphicspath{{source/chapter3/}}
 
-Belief propagation (BP) is a meta message-passing algorithm for inference problems in probabilistic graphical models. BP answers queries by locally exchanging beliefs (statistical information) between nodes in a graphical model \cite{kschischang2001factor_graph, Bishop:2006:PRM:1162264}. In Section~\ref{chpt2:sec:variational-inference}, we introduced the classic belief propagation as the minimization of free energy, instead of an iterative message-passing routine. Interesting to note, the message-passing rule of BP was developed as early as $1986$ \cite{pearl1986b} and had been popularly used in different fields before the free energy optimization intuition was developed in literature \cite{yedidia2003understanding}.
+Belief propagation (BP) is a meta message-passing algorithm for inference problems in probabilistic graphical models. BP answers queries by locally exchanging beliefs (statistical information) between nodes in a graphical model \cite{kschischang2001factor_graph, Bishop:2006:PRM:1162264}. In Section~\ref{chpt2:sec:variational-inference}, we introduced the classic belief propagation as the minimization of free energy, apart from an iterative message-passing routine. Interesting to note, the message-passing rule of BP was developed as early as $1986$ \cite{pearl1986b} and had been popularly used in different fields before the free energy optimization intuition was developed in literature \cite{yedidia2003understanding}.
 
 BP can solve inference problems in linear-time exactly when graphs are loop-free or tree-structured \cite{kschischang2001factor_graph}. That is to say, BP offers error-free inference results in this case. The message-passing routine of BP can be boiled down into variable elimination in tree-structured graphs\footnote{This applies to cases where systems themselves can be represented by tree-structured graphs, or cases where original graphs are not trees but becoming tree-structured after re-organized (such as clustering).} and message scheduling, which corresponds to determining the variable elimination order. The message scheduling can be omitted and equivalent exact inference results can be obtained, when an alternative belief update algorithm is applied which is also known as Lauritzen-Spiegelhalter algorithm \cite[Section~10.3]{koller2009pgm}. BP and its variants are widely applied in large computation systems due to their 'magic' of reducing the exponential number of operations for inference with enumeration into linear complexity. This is possible because: 
 \begin{itemize}
@@ -11,7 +11,7 @@ BP can solve inference problems in linear-time exactly when graphs are loop-free
 \item The intermediate results are computed once and cached as messages, which are reused in subsequent computations. 
 \end{itemize}
 
-Inevitably, many real-world signals are naturally modeled by graph representations with loops. Surprisingly, although losing its optimality guarantees in loopy graphs, loopy BP is still a practical method and gives reasonable good inference results by running it as if there were no loops. But its performance can vary from case to case and its behavior is not well understood in general. 
+Inevitably, many real-world problems are naturally modeled by graph representations with loops. Surprisingly, although losing its optimality guarantees in loopy graphs, loopy BP is still a practical method and gives reasonable good inference results by running it as if there were no loops. But its performance can vary from case to case and its behavior is not well understood in general. 
 
 In this chapter, to gain more insights into BP in general graphs, we take a variational approach to develop an interpretable variant of BP, which is termed  $\alpha$-BP.
 The intuition of $\alpha$-BP starts with a surrogate distribution $q(\bm{x})$, which is an approximate distribution. $q(\bm{x})$ is assumed to be fully factorized, and each factor of $q(\bm{x})$ actually represents a message in the graphical model with an underlying distribution $p(\bm{x})$. We derive a message-passing rule that is induced by minimizing a localized $\alpha$-divergence. The merits of $\alpha$-BP are as follows: i). {$\alpha$-BP is derived intuitively as localized minimization of the $\alpha$-divergence between the original distribution $p$ and the surrogate distribution $q$}; ii). {$\alpha$-BP generalizes the standard BP, since the message-passing rule of BP is a special case of $\alpha$-BP}. iii). {$\alpha$}-BP can outperform BP in complete (fully-connected) graphs while still maintaining the simplicity of BP for inference.
@@ -22,7 +22,7 @@ Apart from the algorithmic perspective, another common issue of BP and its varia
 \label{chpt3:sec:alpha-divergence}
 Before we get into the algorithmic discussion, we provide some preliminaries for the algorithmic intuition. As an extended discussion to Section~\ref{chpt2:sec:devergence}, we firstly introduce a more generalized divergence than $\mathrm{KL}$ divergence.
 
-Apart from the KL divergence, another divergence measure that generalizes KL divergence is $\alpha$-divergence. In fact, $\alpha$-divergence appeared in literature just one year later than KL divergence when Herman Chernoff initially defined it for likelihood-ratio tests \cite{Chernoff1952measure}. Around a decade later, Alfr\'ed R\'enyi proposed his version of divergence as well \cite{renyi1961entropy}. In the 80s of last century, Amari extended Chernoff's version of $\alpha$-divergence \cite{amari1982differential}, which is now widely used in studies of the geometry of distribution manifolds. 
+Apart from the KL divergence, a divergence measure that generalizes KL divergence is $\alpha$-divergence. In fact, $\alpha$-divergence appeared in literature just one year later than KL divergence when Herman Chernoff initially defined it for likelihood-ratio tests \cite{Chernoff1952measure}. Around a decade later, Alfr\'ed R\'enyi proposed his version of divergence as well \cite{renyi1961entropy}. In the 80s of last century, Amari extended Chernoff's version of $\alpha$-divergence \cite{amari1982differential}, which is now widely used in studies of the geometry of distribution manifolds. 
 $\alpha$-divergence, similar to KL divergence, is a typical way to measure how different two measures characterized by densities $p$ and $q$ are. By following the notation \cite{Zhu95informationgeometric}, the definition of $\alpha$-divergence (Amari's version, with correction term to accommodate unnormalized measure) is as follows,
 \begin{equation}\label{chpt3:eq:alpha-divergence}
   \Dd_{\alpha}(p \| q ) = \frac{\sum_{\bm{x}} \alpha p(\bm{x}) + (1-\alpha) q (\bm{x}) - p(\bm{x})^{\alpha} q(\bm{x})^{1-\alpha}}{\alpha(1-\alpha)},
@@ -35,7 +35,7 @@ In Section~\ref{chpt2:sec:devergence}, the KL divergence was defined over two no
 \end{equation}
 where the $\sum_{\bm{x}} q(\bm{x}) - p(\bm{x})$ is a correction factor to accommodate possibly unnormalized $p$ and $q$.
 \begin{remark}
-  The KL divergence can be seen as a special case of $\alpha$-divergence, by observing $\lim_{\alpha \rightarrow 1}\Dd_{\alpha}(p \| q ) = KL(p\|q)$ and $\lim_{\alpha \rightarrow 0}\Dd_{\alpha}(p \| q ) = KL(q\|p)$ (applying L'H\^opital's rule to \eqref{chpt3:eq:alpha-divergence}).
+  The KL divergence can be seen as a special case of $\alpha$-divergence, by observing $\lim_{\alpha \rightarrow 1}\Dd_{\alpha}(p \| q ) = \mathrm{KL}(p\|q)$ and $\lim_{\alpha \rightarrow 0}\Dd_{\alpha}(p \| q ) = \mathrm{KL}(q\|p)$ (applying L'H\^opital's rule to \eqref{chpt3:eq:alpha-divergence}).
 
   Regarding the basic properties of divergence measures, both $\alpha$-divergence and KL divergence are zero if and only if $p=q$, and they are non-negative. 
 \end{remark}
@@ -117,13 +117,13 @@ The joint distribution of $\bm{x}$ can be formulated as a pairwise factorization
 \begin{equation}\label{eq:mrf}
   p(\bm{x}) \propto \prod_{{s\in \Vv}} \phi_s(x_s) \prod_{(s,t) \in \Ee} \phi_{st}(x_s, x_t),
 \end{equation}
-where $\phi_{s}: \Xx \rightarrow (0, \infty)$ and $\phi_{st}: \Xx \times \Xx \rightarrow (0, \infty)$ are factor potentials. Here the normalization is omitted. Note the union of the node set and the edge set, i.e., $\Vv \cup \Ee$, instantiates the factor index set $\Ff$ of a general MRF in \eqref{chp2:eq:mrf-definition} here.
+where $\phi_{s}: \Xx \rightarrow (0, \infty)$ and $\phi_{st}: \Xx \times \Xx \rightarrow (0, \infty)$ are factor potentials. Here the normalization is omitted. Note the union of the node set and the edge set, i.e., $\Vv \cup \Ee$, instantiates the factor index set $\Ff$ of a general MRF in \eqref{chp2:eq:mrf-definition}.
 
 The factor graph representation of \eqref{eq:mrf} is shown in
 Figure~\ref{fig:factor-graph}. In the figure, $\Nn(s)$ is the set of variable nodes neighboring $x_s$ via
 pairwise factors, i.e. $\Nn(s) = \left\{ t|(t,s) \in \Ee \right\}$, and $\backslash$ denotes exclusion.
 
-\subsection{From $\alpha$-divergence minimization to $\alpha$-BP}
+\subsection{From $\alpha$-divergence Minimization to $\alpha$-BP}
 We start with defining a surrogate distribution and then use the surrogate distribution to approximate a given distribution. The message passing rule of $\alpha$-BP is derived by solving the distribution approximation problem.
 
 % \subsubsection{Fully Factorized Surrogate}
@@ -195,7 +195,7 @@ Solving \eqref{eq:message-update} gives the message passing rule as
   {m}^{\text{new}}_{ts}(x_s) \propto  m_{ts}(x_s)^{1-\alpha_{ts}} \bigg[\sum_{x_t} \phi_{ts}(x_t, x_s)^{\alpha_{ts}} {m}_{st}(x_t)^{1-\alpha_{ts}}\tilde{\phi}_t(x_t) \prod_{w\in \Nn(t)\backslash s}m_{wt}(x_t) \bigg].
 \end{align}
 
-As for the singleton factor $\tilde{\phi}_t(x_t)$, we can do the refinement procedure on $\tilde{\phi}_t(x_t)$ in the same way as we have done on $\tilde{\phi}_{ts}(x_t, x_s)$. This gives us the update rule of $\tilde{\phi}_t(x_t)$ as
+As for the univariate factor $\tilde{\phi}_t(x_t)$, we can do the refinement procedure on $\tilde{\phi}_t(x_t)$ in the same way as we have done on $\tilde{\phi}_{ts}(x_t, x_s)$. This gives us the update rule of $\tilde{\phi}_t(x_t)$ as
 \begin{equation}\label{eq:fix-factor-update}
   \tilde{\phi}_t^{\mathrm{new}}(x_t) \propto \phi_t(x_t)^{\alpha_{t}} \tilde{\phi}_t(x_t)^{1-\alpha_{t}},
 \end{equation}
@@ -204,7 +204,7 @@ which is the belief from factor $\phi_t(x_t)$ to variable $x_t$. Here $\alpha_t$
   {m}^{\mathrm{new}}_{ts}(x_s) \propto
   m_{ts}(x_s)^{1-\alpha_{ts}} \bigg[\sum_{x_t} \phi_{ts}(x_t, x_s)^{\alpha_{ts}} {m}_{st}(x_t)^{1-\alpha_{ts}} {\phi}_t(x_t) \prod_{w\in \Nn(t)\backslash s}m_{wt}(x_t) \bigg].
 \end{align}
-In our notations, a factor potential is undirected, i.e. $\phi_{ts}(x_t, x_s)=\phi_{st}(x_s, x_t)$ for all $(t,s) \in \Ee$. When refining factors with $\alpha$-BP, each factor potential (corresponding to an edge of $\Gg$) can be associated with a difference setting of $\alpha$ value. In addition we also have $\alpha_{ts} = \alpha_{st}$.
+In our notations, a factor potential is undirected, i.e. $\phi_{ts}(x_t, x_s)=\phi_{st}(x_s, x_t)$ for all $(t,s) \in \Ee$. When refining factors with $\alpha$-BP, each factor potential (corresponding to an edge of $\Gg$) can be associated with a difference setting of $\alpha$ value. 
 
 \section{Remarks on $\alpha$ Belief Propagation}\label{subsec:remark}
 
@@ -316,7 +316,7 @@ Further assume the symmetric property of potentials
   the factors of which fulfill the symmetric property in \eqref{chpt3:eq:symmetric-prop}.
 \end{example}
 
-For notational simplicity, we use $\theta_{ts}=\theta_{ts}(1, 1)$ and $\theta_s = \theta_s(1)$. Denote by $\bm{\alpha}$ the vector of all local assignments of parameter $\alpha$, i.e. $\bm{\alpha} = \left(  \alpha_{ts} \right)_{(t ,s) \in \Ee }$, by $\bm{\theta}$ the vector of all parameters of the potentials, i.e. $\bm{\theta} = \left(  \theta_{ts} \right)_{(t ,s) \in \Ee }$.  Define a matrix $\bm{M}(\bm{\alpha}, \bm{\theta})$ of size $\abs{\vec{\Ee}} \times \abs{\vec{\Ee}}$, in which its entries are indexed by directed edges $(t\rightarrow s)$, as \footnote{Note the definition of matrix $\bm{M}(\bm{\alpha}, \bm{\theta})$ has similarity to the nonbacktracking matrix in the sparse network clustering problem in physical sciences \cite{Krzakala20935}, where the spectral clustering method is applied to the nonbacktracking matrix. But both the domain and the application of $\bm{M}(\bm{\alpha}, \bm{\theta})$ are different from that of the nonbacktracking matrix.}
+For notational simplicity, we use $\theta_{ts}=\theta_{ts}(1, 1)$ and $\theta_s = \theta_s(1)$. Denote by $\bm{\alpha}$ the vector of all local assignments of parameter $\alpha$, i.e., $\bm{\alpha} = \left(  \alpha_{ts} \right)_{(t ,s) \in \Ee }$, by $\bm{\theta}$ the vector of all parameters of the potentials, i.e. $\bm{\theta} = \left(  \theta_{ts} \right)_{(t ,s) \in \Ee }$.  Define a matrix $\bm{M}(\bm{\alpha}, \bm{\theta})$ of size $\abs{\vec{\Ee}} \times \abs{\vec{\Ee}}$, in which its entries are indexed by directed edges $(t\rightarrow s)$, as \footnote{Note the definition of matrix $\bm{M}(\bm{\alpha}, \bm{\theta})$ has similarity to the nonbacktracking matrix in the sparse network clustering problem in physical sciences \cite{Krzakala20935}, where the spectral clustering method is applied to the nonbacktracking matrix. But both the domain and the application of $\bm{M}(\bm{\alpha}, \bm{\theta})$ are different from that of the nonbacktracking matrix.}
 \begin{align}\label{eq:matrix_m}
   M_{(t\rightarrow s), (u \rightarrow v)} =
   \begin{cases}
@@ -399,10 +399,10 @@ For notational simplicity, we use $\theta_{ts}=\theta_{ts}(1, 1)$ and $\theta_s 
   Combining \eqref{eq:ratio_diff_at_n}, \eqref{eq:F_pd}, \eqref{eq:eqv_aux_functions} and \eqref{eq:f-bound}, we have
   \begin{align}\label{eq:ratio_cvg_step}
     &\abs{z_{ts}^{(n+1)} - z_{ts}^{(n)}} \nonumber\\
-    & = \abs{(1-\alpha_{ts}) (z_{ts}^{(n)} - z_{ts}^{(n-1)}) + \nabla f_{ts}(\bm{z}^{\lambda})^{T} (\bm{z}^{(n)} - \bm{z}^{(n-1)})} \nonumber \\
-    & \leq \abs{(1-\alpha_{ts}) (z_{ts}^{(n)} - z_{ts}^{(n-1)})} + \abs{\nabla f_{ts}(\bm{z}^{\lambda})^{T} (\bm{z}^{(n)} - \bm{z}^{(n-1)})} \nonumber \\
-    & = \abs{ 1 - \alpha_{ts}} \abs{z_{ts}^{(n)} - z_{ts}^{(n-1)}} + \abs{\nabla f_{ts}(\bm{z}^{\lambda})}^{T} \abs{\bm{z}^{(n)} - \bm{z}^{(n-1)}} \nonumber \\
-    & \overset{(a)}{\leq} \abs{ 1 - \alpha_{ts}} \abs{z_{ts}^{(n)} - z_{ts}^{(n-1)}} + \abs{ 1 - \alpha_{ts}} \tanh(\abs{\alpha_{ts} \theta_{ts}}) \abs{z_{st}^{(n)} - z_{st}^{(n-1)}} \nonumber \\
+    =& \abs{(1-\alpha_{ts}) (z_{ts}^{(n)} - z_{ts}^{(n-1)}) + \nabla f_{ts}(\bm{z}^{\lambda})^{T} (\bm{z}^{(n)} - \bm{z}^{(n-1)})} \nonumber \\
+    \leq & \abs{(1-\alpha_{ts}) (z_{ts}^{(n)} - z_{ts}^{(n-1)})} + \abs{\nabla f_{ts}(\bm{z}^{\lambda})^{T} (\bm{z}^{(n)} - \bm{z}^{(n-1)})} \nonumber \\
+    = &\abs{ 1 - \alpha_{ts}} \abs{z_{ts}^{(n)} - z_{ts}^{(n-1)}} + \abs{\nabla f_{ts}(\bm{z}^{\lambda})}^{T} \abs{\bm{z}^{(n)} - \bm{z}^{(n-1)}} \nonumber \\
+    \overset{(a)}{\leq} & \abs{ 1 - \alpha_{ts}} \abs{z_{ts}^{(n)} - z_{ts}^{(n-1)}} + \abs{ 1 - \alpha_{ts}} \tanh(\abs{\alpha_{ts} \theta_{ts}}) \abs{z_{st}^{(n)} - z_{st}^{(n-1)}} \nonumber \\
     &+ \sum_{w\in N(t)\backslash s} \tanh(\abs{\alpha_{ts} \theta_{ts}}) \abs{z_{wt}^{(n)} - z_{wt}^{(n-1)}},
   \end{align}
   where step $(a)$ holds by applying \eqref{eq:F_pd} and \eqref{eq:f-bound}.
@@ -466,7 +466,7 @@ For notational simplicity, we use $\theta_{ts}=\theta_{ts}(1, 1)$ and $\theta_s 
 \end{remark}
 
 \begin{remark}
-  The condition in Theorem~\ref{thm:normd} tells if $\alpha$-BP converges to a fixed point. However, it does not guarantee if the converged fixed point is a global optimum. Error analysis of BP and its variant is a challenging task. We discussed that the exact inference of BP in tree-structured graphs in Section~\ref{chpt2:sec:inference-mp}. The global optimum of the loopy BP algorithm can be guaranteed in rare cares. For instance, a ferromagnetic Ising model in which neighbors prefer to be in aligned states can get guaranteed global optimum with loopy BP\cite{frederic2019fast}. A successful application of (loopy) BP with bounded errors lies in coding theory, e.g., running a BP decoder on a graph whose structure (degrees of nodes) fulfills certain constraints can have its error bounded \cite{richardson2001}\cite[Section~7.2]{richardson2008}. 
+  The condition in Theorem~\ref{thm:normd} tells if $\alpha$-BP converges to a fixed point. However, it does not guarantee if the converged fixed point is a global optimum. Error analysis of BP and its variant is a challenging task. We discussed the exact inference of BP in tree-structured graphs in Section~\ref{chpt2:sec:inference-mp}. The global optimum of the loopy BP algorithm can be guaranteed in rare cares. For instance, a ferromagnetic Ising model in which neighbors prefer to be in aligned states can get guaranteed global optimum with loopy BP\cite{frederic2019fast}. A successful application of (loopy) BP with bounded errors lies in coding theory, e.g., running a BP decoder on a graph whose structure (degrees of nodes) fulfills certain constraints can have its error bounded \cite{richardson2001}\cite[Section~7.2]{richardson2008}. 
 \end{remark}
 
 Given the fact that $\alpha$-BP would converge if the condition in Theorem~\ref{thm:normd} is fulfilled, the largest singular value computation for large-sized graph could be nontrivial. We give alternative sufficient conditions for the convergence of $\alpha$-BP.
@@ -509,7 +509,7 @@ Given the fact that $\alpha$-BP would converge if the condition in Theorem~\ref{
 \end{proof}
 \begin{remark}[Interpretation of the Results]
   
-  Both Theorem~\ref{thm:normd} and Corollary~\ref{chpt3:cor:converge} offer sufficient conditions for convergence of $\alpha$-BP to a unique fixed point. The obtained results allow us to check if applying $\alpha$-BP in a certain configuration guarantees convergence without running the algorithm practically to try out, which saves computation resources when problems are at scales. To test the fulfillment of the conditions, the first step it to convert a problem to be solved into its pairwise MRF representation $\Gg(\Vv, \Ee)$. Secondly, construct the matrix $\bm{M}$ according to \eqref{eq:matrix_m}. Note the undirected edge set $\Ee$ of $\Gg$ is used to construct a directed edge set $\vec{\Ee}$ by assigning $(s\rightarrow t)$ and $(t\rightarrow s)$ with the same potential factor $\phi_{st}$ of $\Gg$. Thirdly, the condition fulfillment can be check by computing the largest singular value $\lambda^{\ast}(\bm{M})$ and testing $\lambda^{\ast}(\bm{M}) < 1$ as stated in Theorem~\ref{thm:normd}. Fulfilling this condition is to say that $\alpha$-BP is guaranteed to converge in the current setting.
+  Both Theorem~\ref{thm:normd} and Corollary~\ref{chpt3:cor:converge} offer sufficient conditions for convergence of $\alpha$-BP to a unique fixed point. The obtained results allow us to check if applying $\alpha$-BP in a certain configuration guarantees convergence without running the algorithm practically to try out, which saves computation resources when problems are complex. To test the fulfillment of the conditions, the first step is to convert a problem to be solved into its pairwise MRF representation $\Gg(\Vv, \Ee)$. Secondly, construct the matrix $\bm{M}$ according to \eqref{eq:matrix_m}. Note the undirected edge set $\Ee$ of $\Gg$ is used to construct a directed edge set $\vec{\Ee}$ by assigning $(s\rightarrow t)$ and $(t\rightarrow s)$ with the same potential factor $\phi_{st}$ of $\Gg$. Thirdly, the condition fulfillment can be check by computing the largest singular value $\lambda^{\ast}(\bm{M})$ and testing $\lambda^{\ast}(\bm{M}) < 1$ as stated in Theorem~\ref{thm:normd}. Fulfilling this condition is to say that $\alpha$-BP is guaranteed to converge in the current setting.
 
   The size of the constructed matrix $\bm{M}$ is $\abs{\vec{\Ee}} \times \abs{\vec{\Ee}}$. $\bm{M}$ could be pretty large if a graph $\Gg$ is large or dense, which might cast the computation issue of the largest singular value of this matrix. In this case, Corollary~\ref{chpt3:cor:converge} offers the conditions to avoid the computation of the largest singular value. To be specific, after constructing the matrix \eqref{eq:matrix_m}, Corollary~\ref{chpt3:cor:converge} allows column-wise tests of $\bm{M}$, i.e., the column value of matrix $\bm{M}$ returning the largest quantity according to \eqref{chpt3:cor:choose-col} should be smaller than $1$ to guarantee the convergence of $\alpha$-BP. Note for a column $(u\rightarrow v)$, the elements of $\bm{M}$ involved in the testing computation are the factors corresponding to edges connected to node $v$ in $\Gg$. Alternatively, row-wise test can be carried out according to \eqref{chpt3:cor:choose-row} with similar complexity.
 \end{remark}
@@ -517,7 +517,7 @@ Given the fact that $\alpha$-BP would converge if the condition in Theorem~\ref{
 
 \section{Experiments}
 
-In this section, we first give simulation results for the convergence condition of $\alpha$-BP explained in Theorem~\ref{thm:normd}. Then the application of $\alpha$-BP to a MIMO detection problem is demonstrated.
+In this section, we first give simulation results for the convergence condition of $\alpha$-BP explained in Theorem~\ref{thm:normd}. Then the application of $\alpha$-BP to a detection problem is demonstrated.
 
 \subsection{Simulated Results on Random Graphs}
 \begin{figure*}[!t]
@@ -538,7 +538,7 @@ Note that the MRF joint probability in \eqref{eq:mrf} can be reformulated into
 with $\phi_{ts}(x_t, x_s) = e^{- 2 J_{t,s} x_t x_s}$ and $\phi_s(x_s) = e^{ - J_{s,s} x_s^2 - b_s  x_s}$. $\bm{J}$ here is the weighted adjacency matrix. In our experiments, we generate a random graph $\Gg = (\Vv, \Ee)$ with $\gamma$ by ER model and then associate potential factors to the graph. Specifically, factor $\phi_s(x_s)$ is associated to node $x_s$, $s \in \Vv$, and $\phi_{ts}$ to edge $(t, s) \in \Ee$. $J_{ts}$ is zero if these is no edge $(t, s)$.
 
 For this set of experiments, we set $\Xx = \left\{ -1, 1 \right\}$ and $N=16$. To specify \eqref{eq:mrf_matrix_form}, the non-zero entries of $\bm{J}$ are sampled from a Gaussian distribution $\mathsf{N}(0, \sigma^2)$, i.e. $J_{ts} \sim \mathsf{N}(0, \sigma^2)$ if $J_{ts}\neq 0$. For entries of $\bm{b}$, we use $b_t \sim \mathsf{N}(0, (\sigma/4)^2)$.
-For each edge $(t,s) \in \Ee$, we set $\alpha_{ts}=\alpha$, i.e. the edges share a global value $\alpha$.
+For each edge $(t,s) \in \Ee$, we set $\alpha_{ts}=\alpha$, i.e., the edges share a global value $\alpha$.
 
 Figure~\ref{fig:largest_singular} illustrate how the largest singular value of $\bm{M}(\bm{\alpha}, \bm{\theta})$ as defined in \eqref{eq:matrix_m} changes when the standard deviation $\sigma$ of the potential factors increases. The behavior is illustrated with different values of $\alpha$ and the edge probability $\gamma$. For each curve, a point on the curve is the mean of $100$ realizations of random graphs as described above. The curves of Figure~\ref{fig:largest_singular} show in general that a larger standard deviation of the potential factors of the graph edges makes it more difficult to fulfill the convergence condition in Theorem~\ref{thm:normd}. The numerical and theoretical results here are consistent with the result of early investigation on BP \cite{NIPS2004_2741}, which are also in alignment with common sense that inference is generally possible in high-temperature disordered models.
 The convergence condition is less likely to be fulfilled when a graph is denser as we raise the edge probability $\gamma$ in generating random graphs, by comparing the green and orange curves. The comparison between green and blue curves indicates that the choice of $\alpha$ value in $\alpha$-BP also makes a difference, and its effect depends on the graph itself. Additionally, $\alpha$-BP with assignment $\alpha=0.5$ leads to flatter curves compared to standard BP ($\alpha=1$) and guarantees convergence for a larger range of $\sigma$, which corresponding a larger range of graphs.
@@ -597,7 +597,7 @@ In this section, we show the application of $\alpha$-BP to a multiple input mult
 \begin{equation}\label{eq:linear-model}
   \bm{y} = \bm{H} \bm{x} + \bm{e}, \bm{x} \in \bm{\Xx},
 \end{equation}
-where $\bm{e}$ is  noise modeled as Gaussian noise $ \bm{e} \sim \mathsf{N}\left( \bm{0}, \sigma^2_{w} \bm{I} \right)$. Here $\bm{I}$ is \textit{unitary} matrix. In this case, the posterior of $\bm{x}$ can be written as:
+where $\bm{e}$ is noise modeled as Gaussian $ \bm{e} \sim \mathsf{N}\left( \bm{0}, \sigma^2_{w} \bm{I} \right)$. Here $\bm{I}$ is \textit{unitary} matrix. In this case, the posterior of $\bm{x}$ can be written as:
 \begin{align}\label{eq:true-posterior}
   p(\bm{x}|\bm{y}) &\propto e^{ - \frac{1}{2\sigma_w^2} \normd{\bm{Hx} - \bm{y}}^2 } \nonumber \\
                    & = e^{ - \frac{1}{2\sigma_w^2}\left[ \bm{x}^{T}\bm{H}^{T}\bm{H}\bm{x} - 2 \bm{y}^T\bm{H}\bm{x}  + \bm{y^T}\bm{y}  \right] }.
@@ -609,12 +609,12 @@ Denote $\bm{S} = \bm{H}^T\bm{H}$, $\bm{h}_i$ as the $i$-th column of $\bm{H}$, a
 \end{align}
 Then it can be seen that \eqref{eq:true-posterior} is an instance of \eqref{eq:mrf}. We set $\Xx = \left\{ -1, 1 \right\}$, $N = 8$, and let $\bm{H}\in \RR^{8 \times 8}$ be sampled from a Gaussian distribution. This constructed model can be viewed as a Sherrington-Kirkpatrick model \cite{PhysRevLett.35.1792} with local potentials $\{\phi_i(x_i)\}$. It can be seen that it is the observation $\bm{y}$, channel $\bm{H}$ and noise $\bm{e}$ that define the local potentials.
 
-We test the application of $\alpha$-BP to the MIMO signal detection numerically. We run the $\alpha$-BP, without the prior trick (Section~\ref{subsec:remark}) in Figure~\ref{fig:mimo_a} and with the prior in Figure~\ref{fig:mimo_b} (legend ``$\alpha$-BP$+$MMSE'') as estimation of minimum mean square error (MMSE). The reference results of MMSE and maximum a posterior (MAP, exhaustive search) are also reported under the same conditions. MMSE estimator depends on Gaussian posterior $\mathsf{N}(\hat{\bm{\mu}}, \hat{\bm{\Sigma}})$, where $\hat{\bm{\mu}} = (\bm{H}^{T}\bm{H} + \sigma_w^2 \bm{I})^{-1}\bm{H}^{T}\bm{y}$ and $\hat{\bm{\Sigma}} = (\bm{H}^{T}\bm{H} + \sigma_w^2 \bm{I})^{-1}\sigma_w$. Detection of MMSE carried out by $\argmin_{x_i\in \Xx}\abs{x_i-\hat{\mu}_i}$.% The prior belief used in ``$\alpha$-BP$+$MMSE'' is $\hat{p}(x_i)=\Nn(\hat{{\mu}}_i, \hat{\bm{\Sigma}}_{i,i})$.
+We test the application of $\alpha$-BP to the MIMO signal detection numerically. We run the $\alpha$-BP, without the prior trick (Section~\ref{subsec:remark}) in Figure~\ref{fig:mimo_a} and with the prior in Figure~\ref{fig:mimo_b} (legend '$\alpha$-BP$+$MMSE') where estimation of minimum mean square error (MMSE) is used. The reference results of MMSE and maximum a posterior (MAP, exhaustive search) are also reported under the same conditions. MMSE estimator depends on Gaussian posterior $\mathsf{N}(\hat{\bm{\mu}}, \hat{\bm{\Sigma}})$, where $\hat{\bm{\mu}} = (\bm{H}^{T}\bm{H} + \sigma_w^2 \bm{I})^{-1}\bm{H}^{T}\bm{y}$ and $\hat{\bm{\Sigma}} = (\bm{H}^{T}\bm{H} + \sigma_w^2 \bm{I})^{-1}\sigma_w$. Detection of MMSE carried out by $\argmin_{x_i\in \Xx}\abs{x_i-\hat{\mu}_i}$.% The prior belief used in ``$\alpha$-BP$+$MMSE'' is $\hat{p}(x_i)=\Nn(\hat{{\mu}}_i, \hat{\bm{\Sigma}}_{i,i})$.
 
 Figure~\ref{fig:mimo_a} shows that BP even underperforms MMSE but $\alpha$-BP can outperform MMSE by assigning smaller value of $\alpha$.
 Note that MMSE has a higher computation complexity since it requires the matrix inverse computation whose complexity is proportional to $N^3$. Therefore $\alpha$-BP is superior to MMSE both performance-wise and complexity-wise.  
                          %                          $\alpha$-BP does not have this problem and still can outperform MMSE. 
-However, there is still a big gap between $\alpha$-BP (even for $\alpha=0.5$) and MAP. This gap can be decreased further by using the prior trick discussed in Section~\ref{subsec:remark}. Figure~\ref{fig:mimo_b} exemplifies this effects by using prior belief from MMSE, $\hat{p}_i(x_i)\propto \exp\{-(x_i-\hat{\mu}_i)^2/(2\hat{\bm{\Sigma}}_{i,i})\}$, by modifying the graph as shown in Figure~\ref{fig:factor-graph-with-prior}, which comes with legend "$\alpha$-BP$+$MMSE". It is shown that larger performance gain is observed when $\alpha$-BP runs with prior belief.
+However, there is still a big gap between $\alpha$-BP (even for $\alpha=0.5$) and MAP. This gap can be decreased further by using the prior trick discussed in Section~\ref{subsec:remark}. Figure~\ref{fig:mimo_b} exemplifies this effects by using prior belief from MMSE, $\hat{p}_i(x_i)\propto \exp\{-(x_i-\hat{\mu}_i)^2/(2\hat{\bm{\Sigma}}_{i,i})\}$, via modifying the graph as shown in Figure~\ref{fig:factor-graph-with-prior}, which comes with legend '$\alpha$-BP$+$MMSE'. It is shown that larger performance gain is observed when $\alpha$-BP runs with prior belief.
 
 Additional, we also carry out the experiments where the proposed $\alpha$-BP is compared with mean field (legend 'MF'), BP with damping technique \cite{Pretti2005damping} (with legend 'Damped-BP'), and Tree-reweighted belief propagation \cite{wainwright2008graphical} (with legend 'TBP') in Figure~\ref{fig:mimo_c}. As expected, mean field method performs no better than BP. Damping technique improves BP's performance with a noticeable difference but still falls behind MMSE. The performance of tree-reweighted BP reaches that of MMSE in low ratio range of signal-to-noise variance but degenerates a lot in the high ratio range. The old message and potential factors are reweighted by the edge appearance probability in TBP to compute new messages. In TBP, the edge appearance probability is the probability that the edge exists in a randomly chosen spanning tree from all possible spanning trees of graph $\Gg$, which is usually expensive to compute.
 
