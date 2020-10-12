@@ -1,7 +1,7 @@
 \chapter{An Implicit Probabilistic Generative Model}
 \label{chapter8}
 \graphicspath{{source/chapter8/}}
-In previous chapters, we discussed learning in both undirected (Chapter~\ref{chpt5:undirecteLearning}) and directed (Chapter~\ref{chpt6:em-flow} and \ref{chpt7:genhmm}) graphical models. In previous discussion, model learning has been mainly based on the maximum likelihood principle, which includes the cases of MRF learning with approximate inference and the likelihood variational lower bound such as \eqref{chpt5:eq:lower-bound-F}. With maximum likelihood learning, if the exact likelihood is not available, its variational or approximate value is used as the objective function.
+In previous chapters, we discussed learning in both undirected (Chapter~\ref{chpt5:undirecteLearning}) and directed (Chapter~\ref{chpt6:em-flow} and \ref{chpt7:genhmm}) graphical models. In previous discussion, model learning has been mainly based on the maximum likelihood principle, which includes the cases of MRF learning with approximate inference and the likelihood variational lower bound such as \eqref{chpt5:eq:lower-bound-F}. With maximum likelihood learning, if the exact likelihood is not available, its variational or approximate value is usually used as the objective function.
 
 In this chapter, we introduce a way of learning a generative model that does not use maximum likelihood. Different from distributions induced by normalizing flows in previous chapters, we do not require the induced distribution $p(\bm{x};\bm{\theta})$ by a generator in the generative model to be tractable here. In other words, the generator-induced distribution $p(\bm{x};\bm{\theta})$ is \textit{implicit} and likelihood-intractable. This relaxation indeed gives us larger freedom of defining the generators since we do not track the Jacobian computation anymore, and thus enlarges the hypothesis space of the model distribution $p(\bm{x};\bm{\theta})$. But it also brings the question of how to learn such a model without the tractable density function, since maximum likelihood and its associated KL divergence require evaluation of likelihood according to explicit probability density (mass) functions.  Perhaps, a question before the \textit{how} is the \textit{why}, i.e., why do we need such kind of probabilistic models?
 
@@ -10,7 +10,7 @@ The motivation for studying these generative models lies in applications where s
 In this chapter, we introduce the learning of implicit probabilistic generative models by employing \textit{optimal transport} from transportation theory that does not need the tractability of likelihood. As long as we can sample from a generative model efficiently, learning of the generative model can be formed as the minimization of an optimal transport distance between the induced implicit distribution and an empirical distribution.
 
 \section{Optimal Transport}\label{chpt8:sec:ot}
-Optimal transport (OT) is a geometric tool for comparison of probability distributions, which has a rich history. Its work traces back as early as $18$th century in Monge's work \cite{monge1781memoire}. OT has been widely used in different fields, such as economic problems, logistics, production planning, etc. Along with its development in history, OT has been given different names, such as earth mover distance, Kantorovich distance, and Wasserstein distance. Abstractly, OT distance measures the minimum transportation cost of from the mass of a distribution to another distribution \cite{villani2003topics}. Due to its close relation to the comparison of probability distributions and optimization, OT and its
+Optimal transport (OT) is a geometric tool for comparison of probability distributions, which has a rich history. Its work traces back as early as $18$th century in Monge's work \cite{monge1781memoire}. OT has been widely used in different fields, such as economic problems, logistics, production planning, etc. Along with its development in history, OT has been given different names, such as earth mover distance, Kantorovich distance, and Wasserstein distance. Abstractly, OT distance measures the minimum transportation cost of moving the mass of a distribution to another distribution \cite{villani2003topics}. Due to its close relation to the comparison of probability distributions and optimization, OT and its
 variants have also been popularly used in machine learning and gained fast development in both theory and applications \cite{2013arXiv1310.4375C, 2013arXiv1306.0895C, 2016arXiv161006519S, ClaiciCS18}.
 
 The high-level idea of this chapter is to use the OT distance to guide us to find the distribution $p(\bm{x}; \bm{\theta})$ of a generative model to approximate the true distribution $p^{\ast}(\bm{x})$. We begin with the introduction to OT itself and make connections to some popular generative models.
@@ -37,7 +37,7 @@ regarding a min-max objective
   \min_{\bm{g}} \max_f \EE_{p^{\ast}(\bm{x})}\left[ \log(f(\bm{x})) \right] + \EE_{p(\bm{z})}\left[ \log(1-f(\bm{g}(\bm{z})) \right],
 \end{equation}
 where $p(\bm{z})$ is a fixed distribution and easy to sample from. The model distribution $p(\bm{x}; \bm{\theta})$ is an implicit distribution and is induced by $\bm{x} = \bm{g}(\bm{z})$.
-The probability model learning relies on if min-max game finds
+The probabilistic model learning relies on if min-max game finds
 its equilibrium where distribution $p(\bm{x}; \bm{\theta})$ is the same as $p^{\ast}(\bm{x})$ and
 $f$ is optimal. In optimal case of the discriminator, objective of
 \eqref{chpt8:eq:eq-gan} is equivalent to minimize the Jensen-Shannon divergence between $p(\bm{x}; \bm{\theta})$ and $p^{\ast}(\bm{x})$.
@@ -131,12 +131,12 @@ via minimizing the EOT loss with regard to parameter $\bm{\th}$ of generator fun
     \STATE Sample  a batch from a real dataset, $\left\{ \bm{x}^{i} \right\}_{i=1}^{N} \sim p^{\ast}$. 
     \STATE Sample $\left\{ \bm{z}^{i} \right\}_{i=1}^{N} \sim p(\bm{z})$, a batch of latent samples.
     \STATE Pass $\left\{ \bm{z}^{i} \right\}_{i=1}^{N}$ through the generator $\bm{g}$.
-    \STATE Calculate the cost matrix $M$.
+    \STATE Calculate the cost matrix $\bm{M}$.
     \STATE $\pi^{\ast}$, $\bm{\beta}^{\ast} \gets$ primary and dual
     solutions of $W(\left\{ \bm{x}^{i} \right\}_{i=1}^{N}, \left\{
       \bm{g}(\bm{z}^{i})\right\}_{i=1}^{N})$ according \eqref{eq-dual-opt}.
     \STATE $\bm{\theta} \gets \bm{\theta} - l \left(\nabla_{\bm{\th}}{p}\right)^{\intercal}
-    \bm{\beta}^{\ast}$. (Or back propagate using loss $\dotp{\pi^{\ast}}{\bm{M}}$)
+    \bm{\beta}^{\ast}$, or back propagation using loss $\dotp{\pi^{\ast}}{\bm{M}}$
     \ENDWHILE
   \end{algorithmic}
 \end{algorithm}
@@ -252,7 +252,7 @@ $\mathcal{O}(N^3\log{N})$.
 
 \section{Experimental Results}
 We perform experiments to verify our arguments on loss choice and algorithms. We evaluate our
-generative models on a toy synthetic dataset of Gaussian-mixture distribution and the real image dataset MNIST.
+generative models on a toy synthetic dataset sampled from a Gaussian-mixture model and the real image dataset MNIST.
 
 \subsection{Evaluation Metrics}\label{subsec-metric}
 Similar to Section~\ref{chpt6:sec:eval-metrics}, the Inception Score (IS) \cite{NIPS2016_6125} and Frechet Inception Distance (FID)\cite{2017arXiv170608500H} are used as evaluation metrics of our models. IS is defined as $
@@ -302,7 +302,7 @@ setting as that of DCGAN \cite{2015arXiv151106434R} and WGAN \cite{2017arXiv1701
 We report IS and FID scores of EOTGAN in comparison with DCGAN and WGAN. Since EOTGAN is trained with the representation mapping $\bm{f}$ that
 acts as feature mapping, it is not fair to use this representation mapping $\bm{f}$ to do the
 evaluation and make comparisons since it would give EOTGAN
-advantages. Similar to \cite{2018arXiv180607755X}, we train a 34-layer
+advantages. Similar to \cite{2018arXiv180607755X}, we train a
 ResNet on MNIST to perform feature extraction for metric measurements
 of IS and FID. In addition, we put EOTGM (Algorithm~\ref{algo-E-WL}) in comparison as well.
 
@@ -369,7 +369,7 @@ Deep generative models that use non-linear mappings of neural networks have rece
 One popular track of deep generative models falls into deep variational models which are usually built with the abstraction of graphical models and neural network based generators. To preserve efficient model learning and some level of likelihood tractability, deep generators are usually restricted with special choices of parameterization (e.g., reparameterization \cite{DBLP:journals/corr/KingmaW13}) or generator structures (e.g., the variational inference by normalizing flows, see \cite{rezende2015variational, kingma2016IVF, TomczakW16vae-flow}). These choices of design sometimes also make use of extra auxiliary latent variables in order to further increase the flexibility of generators \cite{ranganath2015hierarchical}. Interesting works falling in this family includes variational auto-encoders (VAEs) \cite{kingma2019vae}, neural variational inference and learning (NVIL) \cite{kuleshov2017neural_variational, mnih14NVIL, Li2020To}, etc. Learning of these models is usually based on the likelihood variational bound (as discussed in Section~\ref{chpt5:sec:futher-dis-learning}) or bounds of this variational bound.
 
 If the generator constraints are further relaxed, more freedom is gained in implementing generators with deep neural networks (which also brings model learning challenges). A prominent example is the generative adversarial network (GAN) \cite{goodfellow2014gan}, which comes with an implicit distribution of the model.
-In the vanilla GAN, a generator produces synthetic samples and a discriminator tries to distinguish between real samples and synthetic samples. Generators and discriminators are both implemented using (deep) neural networks, and play an adversary game against each other using a \textit{min-max} optimization to learn parameters of neural networks. More intuitively speaking, for the generator, the game turns out to be minimizing Jensen-Shannon divergence between target distribution (the induced distribution by the generator) when the discriminator is optimal.
+In the vanilla GAN, a generator produces synthetic samples and a discriminator tries to distinguish between real samples and synthetic samples. Generators and discriminators are both implemented using (deep) neural networks, and play an adversary game against each other using a \textit{min-max} optimization to learn parameters of neural networks. More intuitively speaking, for the generator, the game turns out to be minimizing Jensen-Shannon divergence between the target distribution and the induced distribution by the generator when the discriminator is optimal.
 This interesting game of casting generative model learning into a adversary game triggered more research in generator and learning method design
 \cite{2015arXiv151106434R, 2015arXiv151106434R, 2018arXiv180205957M, 2018arXiv180508318Z, 2018arXiv180600880K, bang2018icml, DBLP:journals/corr/GhoshKNTD17, hoang2018mgan}, and also explanation exploration \cite{2017arXiv170104862A, 2017arXiv170107875A, 2018arXiv180607755X, 2017arXiv170104722M, NIPS2016_6399, li2018graphical}.
 
