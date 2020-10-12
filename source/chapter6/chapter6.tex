@@ -5,11 +5,11 @@
 When learning with partially observed variables in graphical models, EM is one of the most widely used frameworks in practice. In directed graphical models, immediate relief is that we do not need to deal with the partition function $Z(\bm{\theta})$ anymore. However, this does not mean that directed graphical models with partially observed variables are trivial to learn. The 'missing' data (corresponding to unobserved variables) still pose challenges in model learning, since we want to have the partial evidence (observed) well explained by our model while keeping its ability to track uncertainty of the 'unobserved' part.
 
 As discussed in Section~\ref{chpt2:sec:learning-principles}, the presence of latent or hidden variables is either due to the data availability or abstraction of data generation. Once the dataset is given, the option left to us is the choice of the model that we plan to use to approximate the true distribution $p^{\ast}$ which actually generated the dataset. This process is to select one model from a set of models, i.e., the hypothesis space, based on the maximum likelihood criteria. If the hypothesis space is very limited, the ability to represent our true $p^{\ast}$ is limited, leading to an inherent error. This type of inherent limitation brings learning \textit{bias} before we start to fit the parameters.
-Therefore, given that the dataset is large and representative enough, we hope that the hypothesis space is highly expressive such that we are more likely to be able to represent $p^{\ast}$ with a selected model from the hypothesis space. This naturally requires our model to be flexible and expressive.
+Therefore, given that the dataset is large and representative enough, we hope that the hypothesis space is highly expressive such that we are able to 'better' represent $p^{\ast}$ with a selected model from the hypothesis space. This naturally requires our model to be flexible and expressive.
 
 A common approach for enriching the hypothesis space of candidate models is using mixture models by assuming $p^{\ast}$ as a multi-modal distribution. A Gaussian mixture model is a representative model in this family. The EM framework has been successfully and widely applied to the learning of Gaussian mixture models, in which case closed-form update rules are available. The advantage comes with the limitation to linear dependencies and the restriction on available free parameters that can be tuned, i.e., a limitation of flexibility. For instance, Gaussian mixture models could be inefficient in modeling data on nonlinear manifolds. 
 
-To explore further, we discuss more flexible models beyond Gaussian in this chapter. We start by inducing normalizing flows that are going to be used as probabilistic models in place of Gaussian models to mitigate the above-mentioned issues. A normalizing flow can consist of as many non-linear invertible transformations as needed, and thus is highly flexible. Besides, the ability to compute likelihoods remains, and it allows for efficient sampling in normalizing flows. Then, mixture models that employ normalizing flows are proposed, which are highly flexible. Due to the abstraction that we made on the true $p^{\ast}$, i.e., the multi-modal assumption, and the introduction of normalizing flows, there are hidden variables in the proposed models. Thus, model learning is addressed by adapting the EM framework. Since closed-form iterative update solutions are not available anymore, we turn to gradient search based optimization to design practical algorithms for model learning in the EM framework.
+To explore further, we discuss more flexible models beyond Gaussian in this chapter. We start by introducing normalizing flows that are going to be used as probabilistic models in place of Gaussian models to mitigate the above-mentioned issues. A normalizing flow can consist of as many non-linear invertible transformations as needed, and thus is highly flexible. Besides, the ability to compute likelihoods remains, and it allows for efficient sampling in normalizing flows. Then, mixture models that employ normalizing flows are proposed, which are highly flexible. Due to the abstraction that we made on the true $p^{\ast}$, i.e., the multi-modal assumption, and the introduction of normalizing flows, there are hidden variables in the proposed models. Thus, model learning is addressed by adapting the EM framework. Since closed-form iterative update solutions are not available anymore, we turn to gradient search based optimization to design practical algorithms for model learning in the EM framework.
 
 
 \section{Normalizing Flow}
@@ -18,7 +18,7 @@ Normalizing flow is a practical approach to improve the flexibility of probabili
 
 Denote the chain of transformations by $\tilde{\bm{g}}$ and the output by $\tilde{\bm{x}}\in \RR^{N}$. Then we have
 \begin{equation}
-  \tilde{\bm{x}}=\tilde{\bm{g}}(\bm{z})
+  \tilde{\bm{x}}=\tilde{\bm{g}}(\bm{z}),
 \end{equation}
 where $\bm{z}\in \RR^{N}$ is the initial random variable with know density function $p(\bm{z})$. More specifically, the chain is composed of $L$ invertible subnetworks as follows
 \begin{equation}
@@ -89,7 +89,7 @@ $(\cdot)^{\intercal}$ denotes transpose operation. We have the following forward
   \end{bmatrix}, 
 \end{align}
 where $\odot$ denotes the element-wise product, $\oslash$ denotes
-the element-wise division, and $\bm{m}_a(\cdot), \bm{m}_b(\cdot)$ can be
+the element-wise division, $\bm{m}_a(\cdot)$ and $\bm{m}_b(\cdot)$ can be
 complex non-linear mappings (implemented by neural networks).
 Then, for the flow model, the determinant of the Jacobian of the complete network is
 \begin{equation}
@@ -113,7 +113,7 @@ where $\bm{I}_a$ is the identity matrix and $\mathrm{diag}(\cdot)$ returns a squ
 with $\bm{z}=\tilde{\bm{f}}(\tilde{\bm{x}})$.
 
 Equation \eqref{chpt6:eq-gl-coupling} describes a \textit{coupling} mapping between two adjoint layers. Since the coupling has a partial identity mapping, a direct concatenation of multiple such coupling mappings would result in a partial identity mapping of the overall mapping $\tilde{\bm{g}}$. Therefore, techniques such as alternating the positions of the identity mapping \cite{2016arXiv160508803D} or using $1\times1$ convolution operations before each coupling mapping \cite{2018arXiv180703039K} are used to address this issue.
-Sometimes, it may not be necessary to carry all features thorough all $L$ chain steps. For instance, \cite{2016arXiv160508803D}\cite{2018arXiv180703039K} split some hidden
+Sometimes, it may not be necessary to carry all features through all $L$ chain steps. For instance, \cite{2016arXiv160508803D}\cite{2018arXiv180703039K} split some hidden
 layer signal $\bm{h}$ and model a part of it directly as standard Gaussian to reduce computation and memory burden.
 
 \begin{remark}
@@ -160,14 +160,14 @@ layer signal $\bm{h}$ and model a part of it directly as standard Gaussian to re
 In this section, we introduce a generative model that is a mixture of $K$ flow models. All the $K$ flow models have a common input latent variable $\bm{z} \in \mathbb{R}^N$. Here, a flow $\bm{g}_k(\bm{z}): \mathbb{R}^N
 \rightarrow \mathbb{R}^N$ is an instance of $\tilde{\bm{g}}$. $\bm{g}_k$ acts as the $k$-th generator and depends on a set of parameters $\bm{\theta}_k$ as
 $\bm{g}_k(\bm{z})=\bm{g}(\bm{z};\boldsymbol{\theta}_k)$. We denote the induced probability density function by $\bm{g}_k$ as $p(\bm{x})|_{\bm{x}=\bm{g}_k(\bm{z})}:=p_k(\bm{x})$, i.e., $p_k(\bm{x})=p(\bm{g}_k(\bm{z}))$. For simplicity, we assume that all $K$ generators have the same chain structure. Furthermore, the distribution of $\bm{z}$ is fixed as Gaussian $\mathsf{N}(\bm{0},\bm{I})$.
-The induced probability density function of $\bm{x} \in \mathbb{R}^N$ of the proposed mixture model with $K$ mixture components is given as:
+The induced probability density function of $\bm{x} \in \mathbb{R}^N$ of the proposed mixture model with $K$ mixture components is given as
 \begin{align}\label{eq:FirstMixtureModel}
   p(\bm{x};\bm{\Theta})  &= \textstyle\sum_{k=1}^K \pi_k  p_k(\bm{x}) \nonumber\\
                          &= \textstyle \sum_{k=1}^K \pi_k  p(\bm{g}_k(\bm{z}))\nonumber\\
                          &= \textstyle \sum_{k=1}^K \pi_k  p(\bm{g}(\bm{z};\boldsymbol{\theta}_k)).
 \end{align}
 We use $\bm{\Theta}$ to denote the set of all parameters $ \{\bm{\pi},\bm{\theta}_1, \dots, \bm{\theta}_K \}$, where $\bm{\pi} = \left\{ \pi_1, \hdots, \pi_K \right\}$ is the prior distribution of the generators. Note that $\pi_k \geq 0$ and $\sum_{k=1}^K \pi_k =1$. The mixture model
-in \eqref{eq:FirstMixtureModel} is called a generator mixture model (GenMM). The graphical model of GenMM is illustrated in Figure~\ref{chpt6:fig:genmm-graph}. The plate in this figure is a common notation in template models (see \cite[Section~6]{koller2009pgm}). It states that denoting that we can instantiate multiple tuple $(\bm{z}, \bm{x}, \bm{s})$ instances having dependency as illustrated. Furthermore, the
+in \eqref{eq:FirstMixtureModel} is called a generator mixture model (GenMM). The graphical model of GenMM is illustrated in Figure~\ref{chpt6:fig:genmm-graph}. The plate in this figure is a common notation in template models (see \cite[Section~6]{koller2009pgm}). It states that  we can instantiate multiple tuple $(\bm{z}, \bm{x}, \bm{s})$ instances having dependency as illustrated. Furthermore, the
 signal diagram of GenMM is illustrated in Figure~\ref{dia-emgm-nm}. The GenMM can be considered as a high-complexity model because each mixture component $p_k(\bm{x})$ has its own parameter set $\bm{\theta}_k$. 
 % the parameter $\boldsymbol{\theta}_k$ varies across $K$ mixture components.
 
@@ -252,20 +252,21 @@ Recall that $ \bm{\Theta}= \{\bm{\pi},\bm{\theta}_1, \dots, \bm{\theta}_K \}$ an
   \caption{EM for learning GenMM}\label{flow-algo-em}
   \begin{algorithmic}[1]
     \STATE {\bfseries Input:}
-    Latent distribution: $p(\bm{z})$. Empirical distribution $P_d(\bm{x})$ of the input dataset;
-    \STATE Set a total number of epochs $T$ for training, a prior distribution $\bm{\pi}$, EM update gap $t_{\mathrm{EM}}$;
-    \STATE  Set a learning rate $\eta$. 
-    \STATE Build two models with parameter sets:
-    \STATE ${\bm{\Theta}}^{\mathrm{old}}=\{ \bm{\pi}^{\mathrm{old}},
+    Latent distribution $p(\bm{z})$. Empirical distribution $\hat{p}(\bm{x})$ of the input dataset $\Dd$
+    \STATE Set a total number of epochs $T$ for training, a prior distribution $\bm{\pi}$, EM update gap $t_{\mathrm{EM}}$
+    \STATE  Set a learning rate $\eta$ 
+    \STATE Build two models with parameter sets:\\
+    ${\bm{\Theta}}^{\mathrm{old}}=\{ \bm{\pi}^{\mathrm{old}},
     \bm{\th}_1^{\mathrm{old}},\hdots,
-    \bm{\th}_K^{\mathrm{old}} \}$,
-    \STATE ${\bm{\Theta}} = \{ \bm{\pi},
-    \bm{\th}_1,\hdots, \bm{\th}_K \}$.
-    \STATE Initialize the generator prior distribution $\pi_k = 1/K$;\\ Initialize $\bm{\theta}_k$ of $\bm{g}_k$, for all $k=1,\dots,K$ randomly. 
+    \bm{\th}_K^{\mathrm{old}} \}$\\
+     ${\bm{\Theta}} = \{ \bm{\pi},
+    \bm{\th}_1,\hdots, \bm{\th}_K \}$
+    \STATE Initialize the generator prior distribution $\pi_k = 1/K$
+    \STATE Initialize $\bm{\theta}_k$ of $\bm{g}_k$, for all $k=1,\dots,K$ randomly 
     \STATE $\bm{\Theta}^{\mathrm{old}} \gets \bm{\Theta}$.
     \FOR { {epoch} $t < T$}
     \FOR{the iteration in epoch $t$} %\Comment{M-Step}
-    \STATE Sample a batch of data $\left\{ \bm{x}^{(i)}
+    \STATE Sample a batch of data $\left\{ \bm{x}^{i}
     \right\}_{i=1}^{n_b}$ from the dataset $\Dd$ 
     \STATE Compute $\gamma_k^{i}(\bm{\Theta}^{\mathrm{old}})$ as in \eqref{eq-genmm-gamma},
     for all $\bm{x}^{i}$ and $k=1, \dots, K$
@@ -289,9 +290,9 @@ Recall that $ \bm{\Theta}= \{\bm{\pi},\bm{\theta}_1, \dots, \bm{\theta}_K \}$ an
 \end{algorithm}
 
 
-Finding a closed-form solution for the problem $\argmax_{\{\bm{\theta}_k\}_{k=1}^{K}}{\mathcal{Q}(\bm{\Theta},\bm{\Theta}^{\mathrm{old}})}$ is not feasible in general. Instead, we use the batch-size gradient decent to optimize $\mathcal{Q} (\bm{\Theta},\bm{\Theta}^{\mathrm{old}})$ with regard to $\{\bm{\theta}_k\}_{k=1}^{K}$.
+Finding a closed-form solution for the problem $\argmax_{\{\bm{\theta}_k\}_{k=1}^{K}}{\mathcal{Q}(\bm{\Theta},\bm{\Theta}^{\mathrm{old}})}$ is not feasible in general. Instead, we use the batch-size gradient descent to optimize $\mathcal{Q} (\bm{\Theta},\bm{\Theta}^{\mathrm{old}})$ with regard to $\{\bm{\theta}_k\}_{k=1}^{K}$.
 Further, optimization in the batch fashion leads to a practical problem as follows. 
-Since $\bm{\theta}_k$ is the parameter set of the neural networks $\bm{g}_k$, one update step of gradient decent would update the generator $\bm{g}_k$ and we would lose the old mixture model parameter set $\bm{\Theta}^{\mathrm{old}}$ that is needed to compute the posteriors $\gamma_k(\bm{\Theta}^{\mathrm{old}})$ and to update $\bm{\pi}$. Thus, in learning GenMM, we maintain two such models with parameter sets $\bm{\Theta}$ and $\bm{\Theta}^{\mathrm{old}}$. At the beginning of an EM step, $\bm{\Theta} = \bm{\Theta}^{\mathrm{old}}$. While we optimize $\{\bm{\theta}_k\}_{k=1}^{K}$ of $\bm{\Theta}$ with batch-size gradient decent, we use the model with old parameter set $\bm{\Theta}^{\mathrm{old}}$ to do posterior computation and update of $\bm{\pi}$. At the end of the EM step, the old parameter set is replaced by the updated one: $\bm{\Theta}^{\mathrm{old}}\gets \bm{\Theta}$.
+Since $\bm{\theta}_k$ is the parameter set of the neural networks $\bm{g}_k$, one update step of gradient descent would update the generator $\bm{g}_k$ and we would lose the old mixture model parameter set $\bm{\Theta}^{\mathrm{old}}$ that is needed to compute the posteriors $\gamma_k(\bm{\Theta}^{\mathrm{old}})$ and to update $\bm{\pi}$. Thus, in learning GenMM, we maintain two such models with parameter sets $\bm{\Theta}$ and $\bm{\Theta}^{\mathrm{old}}$. At the beginning of an EM step, $\bm{\Theta} = \bm{\Theta}^{\mathrm{old}}$. While we optimize $\{\bm{\theta}_k\}_{k=1}^{K}$ of $\bm{\Theta}$ with batch-size gradient descent, we use the model with old parameter set $\bm{\Theta}^{\mathrm{old}}$ to do posterior computation and update of $\bm{\pi}$. At the end of the EM step, the old parameter set is replaced by the updated one, i.e., $\bm{\Theta}^{\mathrm{old}}\gets \bm{\Theta}$.
 
 
 
@@ -305,7 +306,7 @@ The update of prior follows the solution
 \begin{equation}\label{eq-pi-solution}
   \pi_k^{\mathrm{new}} = \frac{1}{\abs{\Dd}}\sum_{i=1}^{\abs{\Dd}}\gamma_k^{i}(\bm{\Theta}^{\mathrm{old}}).
 \end{equation}
-The detail to get the solution is derived in the Section~\ref{subsubsec:Proof_for_update}. For a given dataset with empirical distribution $P_d(\bm{x})$,
+The detail to get the solution is derived in the Section~\ref{subsubsec:Proof_for_update}. For a given dataset with empirical distribution $\hat{p}(\bm{x})$,
 $\gamma_k$ is evaluated with batch data in order to calculate the cost
 $\Qq\left(\bm{\Theta},\bm{\Theta}^{\mathrm{old}}\right)$ and to update the
 parameter $\bm{\theta}_k$ of $\bm{g}_k$. We accumulate the values of $\gamma_k$ of batches and
@@ -381,11 +382,11 @@ Now we analyze the convergence behaviour of GenMM. Under the conditions that we 
 \end{proof}
 
 
-\section{A low-complexity model}
+\section{A Low-complexity Model}
 There are $K$ flow generators implemented as neural networks in GenMM, which makes GenMM a high-complexity model.
 We now propose a low-complexity model where parameters are shared. This is motivated by many machine learning setups where model parameters are shared across model components. For example, this technique is applied as the use of shared covariance matrices in a tied Gaussian mixture model, in linear discriminant analysis \cite{bellegarda1990tiedmixture, Kimball:1993:UTD:1075671.1075694, Bishop:2006:PRM:1162264}, and the use of a common subspace in non-negative matrix factorization \cite{Gupta2013}. Based on the idea of sharing parameters, we propose a low-complexity model which we refer to as a latent mixture model as follows.
 
-\subsection{Latent mixture model}\label{subsec-latmm}
+\subsection{Latent Mixture Model}\label{subsec-latmm}
 
 In this generative model, we use a latent variable $\bm{z}$ that has the following Gaussian mixture distribution
 \begin{equation}
@@ -451,24 +452,24 @@ also requires computing the posterior distribution $\ubar{\gamma}_k$ and the joi
 \begin{algorithm}[t]
   \caption{EM for learning LatMM}\label{flow-algo-sem}
   \begin{algorithmic}[1]
-    \STATE {\bfseries Input:} Empirical distribution $P_d(\bm{x})$ of dataset;
-    \STATE Latent mixture distribution: 
-    \STATE $\sum_{k=1}^{K}\pi_k \Nn\left(\bm{z}; \bm{\mu}_k, \mathrm{diag}(\bm{\sigma}_k^2)\right)$
+    \STATE {\bfseries Input:} Empirical distribution $\hat{p}(\bm{x})$ of dataset $\Dd$
+    \STATE Latent mixture distribution: \\ 
+     $\sum_{k=1}^{K}\pi_k \Nn\left(\bm{z}; \bm{\mu}_k, \mathrm{diag}(\bm{\sigma}_k^2)\right)$
     \STATE Set a total number of epochs $T$ of training, prior $\bm{\pi}$ update gap $t_{\pi}$, EM update gap $t_{\mathrm{EM}}$, a learning rate $\eta$; Set hyperparameter $a$ , $b$ for prior of
-    $\bm{\sigma}_k^{-1}, \forall k$.
-    \STATE Build two models with parameter sets:
-    \STATE $\ubar{\bm{\Theta}}^{\mathrm{old}}=\{ \bm{\pi}^{\mathrm{old}},
+    $\bm{\sigma}_k^{-1}, \forall k$
+    \STATE Build two models with parameter sets:\\
+     $\ubar{\bm{\Theta}}^{\mathrm{old}}=\{ \bm{\pi}^{\mathrm{old}},
     \bm{\mu}_1^{\mathrm{old}},\hdots, \bm{\mu}_K^{\mathrm{old}}, \bm{\sigma}_1^{\mathrm{old}},\hdots,
-    \bm{\sigma}_K^{\mathrm{old}}, \bm{\theta}^{\mathrm{old}} \}$,
-    \STATE $\ubar{\bm{\Theta}} = \{ \bm{\pi},
+    \bm{\sigma}_K^{\mathrm{old}}, \bm{\theta}^{\mathrm{old}} \}$ \\
+     $\ubar{\bm{\Theta}} = \{ \bm{\pi},
     \bm{\mu}_1,\hdots, \bm{\mu}_K, \bm{\sigma}_1,\hdots,
-    \bm{\sigma}_K, \bm{\theta} \}$.
-    \STATE Initialize the generator prior distribution $\pi_k = 1/K$ and initialize its $\bm{\theta}$ for $\bm{g}$, $\bm{\mu}_k$, $\bm{\sigma}_k$, $\forall k$ randomly.
+    \bm{\sigma}_K, \bm{\theta} \}$
+    \STATE Initialize the generator prior distribution $\pi_k = 1/K$ and initialize its $\bm{\theta}$ for $\bm{g}$, $\bm{\mu}_k$, $\bm{\sigma}_k$, $\forall k$ randomly
     \STATE $\ubar{\bm{\Theta}}^{\mathrm{old}} \gets \ubar{\bm{\Theta}}$
     % \STATE 
     \FOR {epoch $t < T$}
     \FOR{the iteration in epoch $t$}
-    \STATE Sample a batch of data $\left\{ \bm{x}^{(i)}
+    \STATE Sample a batch of data $\left\{ \bm{x}^{i}
     \right\}_{i=1}^{n_b}$ from dataset
     \STATE Compute $\ubar{\gamma}_k(\ubar{\bm{\Theta}}^{\mathrm{old}})$ by \eqref{em-latmm-gamma}, $\forall \bm{x}^{(i)}$ and $k=1, 2, \cdots, K$ %= \frac{\pi_k \Nn\left(f(X); \bm{\mu}_k^{t},\bm{\sigma}_k^{t}\right)}{\sum_{k=1}^K\; \pi_k\Nn\left(f(X); \bm{\mu}_k^{t},\bm{\sigma}_k^{t}\right) }, \forall \left\{ x^{(i)}\right\}_{i=1}^{n_b}$
     % \Comment{Calculate posterior \autoref{eq-posterior-gamma}}
@@ -494,7 +495,7 @@ also requires computing the posterior distribution $\ubar{\gamma}_k$ and the joi
 
     % \ENDIF
     \IF{$(t \mod t_{\mathrm{EM}} )=0$} %\Comment{M-Step}
-    \STATE $\pi_k \gets \EE_{P_d}\left[ \ubar{\gamma}_k(\ubar{\bm{\Theta}}^{\mathrm{old}}) \right]$%\Comment{Update perior}
+    \STATE $\pi_k \gets \EE_{\Dd}\left[ \ubar{\gamma}_k(\ubar{\bm{\Theta}}^{\mathrm{old}}) \right]$%\Comment{Update perior}
     \STATE $\ubar{\bm{\Theta}}^{\mathrm{old}} \gets \ubar{\bm{\Theta}}$
     \ENDIF
     \ENDFOR
@@ -528,8 +529,8 @@ where $\bm{f}$ is the inverse of $\bm{g}$.
 Similar to Section~\ref{sec-algo-genmm}, the prior $\bm{\pi}$ is updated by
 following, $\pi_k \leftarrow \EE_{\Dd}[ \ubar{\gamma}_k(\bm{x})
 ]$. However, we need to consider the following issue when learning the parameters of
-the Gaussian mixture source $p(\bm{z}) = \sum_{k=1}^K \pi_k p_k(\bm{z})$. If a component of the mixture source overfits and collapses onto a data sample, the likelihood can be large and the parameter learning can be problematic. This problem is known as the singularity problem of Gaussian mixture \cite{Bishop:2006:PRM:1162264}.
-We avoid this problem by using the following alternatives:
+the Gaussian mixture source $p(\bm{z}) = \sum_{k=1}^K \pi_k p_k(\bm{z})$. If a component of the mixture source overfits and collapses onto a data sample, the likelihood can be infinite and the parameter learning can be problematic. This problem is known as the singularity problem of Gaussian mixture \cite{Bishop:2006:PRM:1162264}.
+We avoid this problem by using the following alternatives.
 \begin{itemize}
 \item Assume that for each $\forall k=1, 2, \cdots, K$, there is a parameter prior distribution for $\bm{C}_k=\mathrm{diag}(\bm{\sigma}_k^2)$.
   To be specific, assume that the parameter prior distribution of the precision $\bm{\sigma}_k^{-1}$ is
@@ -543,7 +544,7 @@ We avoid this problem by using the following alternatives:
     \Gamma(\bm{\sigma}_k^{-1};
     a, b).
   \end{equation}
-\item Alternatively, we use an $l_2$ regularization on $\bm{\sigma}_k$,
+\item Alternatively, we use an $\ell^2$ regularization on $\bm{\sigma}_k$,
   which formulates the optimization step as
   \begin{equation}
     \umax{\ubar{\bm{\Theta}}}   \frac{1}{\abs{\Dd}} \ubar{\Qq}\left(\ubar{\bm{\Theta}},\ubar{\bm{\Theta}}^{\mathrm{old}}\right)-\lambda \sum_{k=1}^K \frac{(1- \bm{\sigma}_k)^2}{K},
@@ -1019,7 +1020,7 @@ improvement shows a saturation and decreasing trend for GenMM when
 $K=9$. The FID, MMD, and 1NN scores show a decreasing trend with the
 increase of $K$. Their trends also saturate with increase in $K$. The
 trends obey common practice that performance improves with
-increasing model complexity, and then deteriorates if the model
+increasing model complexity, and then may deteriorate if the model
 complexity continues to increase. As in Figure~\ref{fig-scores-k}, similar trends are also observed in Figure~\ref{fig-scores-k-FashionMNIST}. In some cases, performance for $K=3$ is poorer than $K=1$. We assume that the random initialization of parameters in the mixture models has a high influence in this aspect.
 Considering the trends in all the scores for both the figures, we can conclude that GenMM and LatMM can model the underlying distributions of data and the mixture models are good.
 
@@ -1080,7 +1081,7 @@ Considering the trends in all the scores for both the figures, we can conclude t
     % \caption{FID score}
     % \label{fig-sm-fid}
   \end{subfigure}
-  \caption{Train and Test Accuracy Curves versus Epochs on Dataset Letter.}
+  \caption{Train and test accuracy curves versus epochs on dataset Letter.}
   \label{fig:class-letter}
 \end{figure*}
 
@@ -1147,7 +1148,7 @@ In the second experiment, we explore the power of invertibility for interpolatio
     % \caption{FID score}
     % \label{fig-sm-fid}
   \end{subfigure}
-  \caption{Train and Test Accuracy Curves versus Epochs on Dataset Norb.}
+  \caption{Train and test accuracy curves versus epochs on dataset Norb.}
   \label{fig:class-norb}
 \end{figure*}
 
@@ -1173,7 +1174,7 @@ procedure as that in Figure~\ref{fig-interpo-genmm1}, but use the generator wher
 
 \subsection{Application to Classification Task}
 \begin{table*}[!t]
-  \caption{Test Accuracy Table of GenMM for Classification Task}\label{tab:acc-classification}
+  \caption{Test accuracy table of GenMM for classification task.}\label{tab:acc-classification}
   % \centering
   % \subcaption{Accuracy Table of GenMM on Test Data}
   % \centering  
@@ -1254,7 +1255,7 @@ procedure as that in Figure~\ref{fig-interpo-genmm1}, but use the generator wher
     % \caption{FID score}
     % \label{fig-sm-fid}
   \end{subfigure}
-  \caption{Train and Test Accuracy Curves versus Epochs on Dataset Satimage.}
+  \caption{Train and test accuracy curves versus epochs on dataset Satimage.}
   \label{fig:class-satimage}
 \end{figure*}
 
@@ -1269,7 +1270,7 @@ Figures~\ref{fig:class-letter}, \ref{fig:class-norb}, and \ref{fig:class-satimag
 \section{Summary}
 In this chapter, we considered the learning problem in the presence of incomplete data (or unobserved variables) in directed graphs. We introduced normalizing flows that were implemented as neural networks to model the conditional distributions, in order to increase the modeling flexibility. Building a more expressive model helps reducing the inherent bias in modeling. The proposed models allow both exact likelihood computation and efficient sampling.
 
-Apart from proposing expressive models, practical learning methods of the proposed models were presented. Due to the presence of neural network based flows in conditional distribution modeling, expectation maximization was tailored to adapt to their learning and the maximization step was approximately solved with back-propagation technique. The approximation was due to the fact that batch-based optimization had to be used to accommodate large datasets. From the perspective of the numerical evaluations, the proposed models are valid. The numerical results show that the normal statistical behavior of modeling performance versus model complexity remains valid. More expressive models benefit the applications to data representation (data generating) and classification.
+Apart from proposing expressive models, practical learning methods of the proposed models were presented. Due to the presence of neural network based flows in conditional distribution modeling, expectation maximization was tailored to adapt to their learning and the maximization step was approximately solved with back-propagation technique. The approximation was due to the fact that batch-based optimization had to be used to accommodate large datasets. From the perspective of the numerical evaluations, the proposed models are valid. The numerical results show that the normal statistical behavior of modeling performance versus model complexity remains valid. More expressive models benefit the applications to data representation (data generation) and classification.
 
 The considered models in this chapter assume that an observation instance with its associated hidden variable is independent of other observation instances (with their corresponding hidden variables). This assumption could lead to underfit models when the true signal is temporal and the independence does not hold. In the next chapter, we would consider how to model and learn a model where this independence is gone. 
 
