@@ -9,7 +9,7 @@ The most widely used constraint is probably the Markov assumption, i.e., $(\bm{x
 
 The other issue is the parameterization of the model of the dynamic system. If we directly model $\{\bm{x}_t, {s}_t, t=1, 2, \cdots, T\}$ jointly, the parameterization would grow exponentially as the system evolves over time. A good solution to this issue is to introduce the \textit{template} concept into the graphical model. In the assumption, the variable $\bm{x}_t$ or $s_t$ becomes an instance of a \textit{template variable}. More importantly, each dependency between two sequential time instants becomes an instance of a \textit{template factor}. When the dynamic system evolves from time $t$ to $t+1$, we only need to instantiate from the template variables and template factors without adding new parameters to the model. Template based dynamic Bayesian networks belong to such kind of models.
 
-We add one more assumption: variable $\bm{x}_t$ is independent of the rest of the variables $\{\bm{x}_{t^{\prime}}, {s}_{t^{\prime}}, t^{\prime}\neq t \}$ if the state $s_t$ is given, and reduce a dynamic Bayesian network into the classic hidden Markov model (HMM). Similar to Chapter~\ref{chpt6:em-flow}, we bring the normalizing flows into the \textit{template factors} modeling to increase the flexibility of HMM in modeling dynamic systems in this chapter. With the merit of the high flexibility of normalizing flows, we are able to model the correlation between a system state $s_t$ and the observed variable $\bm{x}_t$ driven by data, which could relieve the bias brought by choosing a pre-defined parametric model for template factors (see, e.g., Chapter~\ref{chpt6:em-flow}). Additionally, the data-driven template factor over $\bm{x}_t$ and $s_t$, modeled by normalizing flows, admits nonlinear dependency and meanwhile keeps the likelihood tractable. Putting these merits together translates into more expressive dynamic models that are straightforward to learn (with EM) and efficient to do inference with. 
+We add one more assumption, variable $\bm{x}_t$ is independent of the rest of the variables $\{\bm{x}_{t^{\prime}}, {s}_{t^{\prime}}, t^{\prime}\neq t \}$ if the state $s_t$ is given, and reduce a dynamic Bayesian network into the classic hidden Markov model (HMM). Similar to Chapter~\ref{chpt6:em-flow}, we bring the normalizing flows into the \textit{template factors} modeling to increase the flexibility of HMM in modeling dynamic systems in this chapter. With the merit of the high flexibility of normalizing flows, we are able to model the correlation between a system state $s_t$ and the observed variable $\bm{x}_t$ driven by data, which could relieve the bias brought by choosing a pre-defined parametric model for template factors (see, e.g., Chapter~\ref{chpt6:em-flow}). Additionally, the data-driven template factor over $\bm{x}_t$ and $s_t$, modeled by normalizing flows, admits nonlinear dependency and meanwhile keeps the likelihood tractable. Putting these merits together translates into more expressive dynamic models that are straightforward to learn (with EM) and efficient to do inference with. 
 
 We begin with the introduction to an HMM in this chapter, which is followed by the proposed generator-mixed HMM with normalizing flows and the detailed solution to its learning. The applications of the proposed model are demonstrated afterward, i.e., speech recognition and sepsis detection.
  
@@ -67,7 +67,7 @@ We begin with the introduction to an HMM in this chapter, which is followed by t
 \caption{From HMM template to instance.}\label{chpt7:fig:hmm-inituition}
 \end{figure}
 
-We first illustrate the concepts of Markov assumption and \textit{template} with an example before giving the definition of HMM. As shown in Figure~\ref{chpt7:fig:hmm-template}, the plate denotes the template within which the generic variables and their dependencies (template variables and factors) are represented. As a dynamic system evolves with time, the hidden variable $s$ and observed variable $\bm{x}$ can be instantiated for each time slice $t$, along with their dependencies. Figure~\ref{chpt7:fig:hmm-instance} is an instantiated example up to $t=3$ from the generic template. The Markov assumption is embedded in the HMM instances from the template since Markov independence is fulfilled no matter how long the system evolves. More importantly, the conditional probabilities $p(s_{t+1}|s_{t}),~\forall~t$, instantiated from template factors (defined with the directed edge $s\rightarrow s^{\prime}$ in Figure~\ref{chpt7:fig:hmm-template}), share the same parameterization. Similarly, the probabilities $p(\bm{x}_{t}|s_{t}),~\forall~t$ share parameterization with the template factor defined with edge $s^{\prime}\rightarrow \bm{x}^{\prime}$. This definition circumvents the exponential growth of parameterization. 
+We first illustrate the concepts of Markov assumption and \textit{template} with an example before giving the definition of HMM. As shown in Figure~\ref{chpt7:fig:hmm-template}, the plate denotes the template within which the generic variables and their dependencies (template variables and factors) are represented. As a dynamic system evolves with time, the hidden variable $s$ and observed variable $\bm{x}$ can be instantiated for each time slice $t$, along with their dependencies. Figure~\ref{chpt7:fig:hmm-instance} is an instantiated example up to $t=3$ from the generic template. The Markov assumption is embedded in the HMM instances from the template since Markov independence is fulfilled no matter how long the system evolves. More importantly, the conditional probabilities $p(s_{t+1}|s_{t}),~\forall~t$, instantiated from template factors (defined with the directed edge $s\rightarrow s^{\prime}$ in Figure~\ref{chpt7:fig:hmm-template}), share the same parameterization. Similarly, the probabilities $p(\bm{x}_{t}|s_{t}),~\forall~t$, share parameterization with the template factor defined with edge $s^{\prime}\rightarrow \bm{x}^{\prime}$. This definition circumvents the exponential growth of parameterization. 
 
 With the intuition from Figure~\ref{chpt7:fig:hmm-inituition}, we now define the HMM with its parameterization. A HMM $\bm{H}$ defined in a hypothesis space $\Hh$, i.e., $\bm{H} \in \Hh$, is capable to model a time-span signal $\ubar{\bm{x}} = \left[ \bm{x}_1, \cdots, \bm{x}_T\right]^{\intercal}$, where $\bm{x}_t\in \RR^{N}$ is the $N$-dimensional signal at time $t$, $[\cdot]^{\intercal}$ denotes transpose, and $T$ denotes the time length\footnote{The length for  sequential data varies.}. We define the hypothesis set of HMM as $\Hh := \{\bm{H} | \bm{H}=\{\Ss, \bm{q}, \bm{A}, p(\bm{x}|{s}; \bm{\Phi}_{s})\}\}$, where
 \begin{itemize}
@@ -119,7 +119,7 @@ In the framework of HMM, at each time instance $t$, signal $\bm{x}_t$ is assumed
 \begin{remark}
   The graphical model of an HMM is very similar to that of a CRF, especially linear-chain CRF. The straightforward difference between an HMM and a linear-chain CRF is the graphical model representation. An HMM is a pure directed probabilistic graphical model while there are both directed and undirected edges in a CRF. 
 
-  In a nutshell, omitting observed variables and their edges, the remaining variables and their edges form an MRF in a CRF. This difference also affects the model training. An HMM is a generative model and models $p(\ubar{\bm{x}}, \ubar{{s}})$ jointly. Its training target is to maximize the joint probability. In contrast, a CRF models a conditional distribution $p(\ubar{{s}}|\ubar{\bm{x}})$ and is learned via discriminative training. CRFs are popular applied to structure prediction such as natural language processing, computer vision, bioinformatics, etc.
+  In a nutshell, omitting observed variables and their edges, the remaining variables and their edges form an MRF in a CRF. This difference also affects the model training. An HMM is a generative model and models $p(\ubar{\bm{x}}, \ubar{{s}})$ jointly. Its training target is to maximize the evidence probability. In contrast, a CRF models a conditional distribution $p(\ubar{{s}}|\ubar{\bm{x}})$ and is learned via discriminative training. CRFs are popular applied to structure prediction such as natural language processing, computer vision, bioinformatics, etc.
 See \cite{charles2012crf} for a more detailed discussion on the difference between them.
 \end{remark}
 
@@ -158,7 +158,7 @@ In this section, we introduce a generator-mixed hidden Markov model (GenHMM). Th
 \end{figure}
 
 In this section, we introduce normalizing flows to each state probabilistic model of our GenHMM, which models the conditional probability of observation given a hidden state.
-Recall that $\bm{x}\in\mathbb{R}^N$. The subscript is $\bm{x}_t$ omitted when it does not cause ambiguity.
+Recall that $\bm{x}\in\mathbb{R}^N$. The subscript of $\bm{x}_t$ is omitted when it does not cause ambiguity.
 The probabilistic model of GenHMM for each hidden state is a mixture of $K$ flow generators that are implemented by neural networks, where $K$ is a positive integer.
 The probabilistic model of a state $s\in\Ss$ is then given by
 \begin{equation}\label{eq:state-prob-model}
@@ -172,11 +172,11 @@ In \eqref{eq:state-prob-model}, $p(\bm{x}| s, \kappa; \bm{\theta}_{s, \kappa})$ 
 \end{equation}
 which is discussed in detail in Section~\ref{chpt6:sec:flow}.
 
-The signal generating process of the probability distribution for a state $s$ of GenHMM is shown in Figure~\ref{fig:gen-mix}, in which the generator identity is up to the random variable $\kappa$. This serves as the template factor in instantiating the chain of a HMM. The normalizing flows with neural network realizations of their coupling mapping \eqref{chpt6:eq-gl-coupling} offer a richer probability density function space and higher model expressivity. This naturally enriches the feasible space $\Hh$. Putting these together with the typical Markov assumption, the template model of GenHMM is illustrated in Figure~\ref{chpt7:fig:tenhmm-template}. As a dynamic system evolves, we can instantiate from the template model in Figure~\ref{chpt7:fig:tenhmm-template} to create the dynamic chain of graphical model representation. Similar to a typical HMM, the parameterization of GenHMM can be fully explained by its template model and does not grow exponentially when instantiating over the evolving system.
+The signal generating process of the probability distribution for a state $s$ of GenHMM is shown in Figure~\ref{fig:gen-mix}, in which the generator identity is up to the random variable $\kappa$. This serves as the template factor in instantiating the chain of a HMM. The normalizing flows with neural network realizations of their coupling mapping \eqref{chpt6:eq-gl-coupling} offer a richer probability density function space and higher model expressivity. This naturally enriches the feasible space $\Hh$. Putting these together with the typical Markov assumption, the template model of GenHMM is illustrated in Figure~\ref{chpt7:fig:tenhmm-template}. As a dynamic system evolves, we can instantiate from the template model in Figure~\ref{chpt7:fig:tenhmm-template} to create the dynamic chain of graphical model representation. Similar to a typical HMM, the parameterization of GenHMM can be fully explained by its template model and does not grow exponentially when instantiating over time as the system evolves.
 
-\subsection{Learning with the EM framework}
+\subsection{Learning with the EM Framework}
 
-Assume the sequential signal $\ubm{x}$ follows the true distribution $p^{\ast}(\ubm{x})$, which is unknown. We would like to use GenHMM to model this distribution. Alternatively, we are addressing
+Assume the sequential signal $\ubm{x}$ follows a true distribution $p^{\ast}(\ubm{x})$, which is unknown. We would like to use GenHMM to model this distribution. Alternatively, we are addressing
 \begin{equation}
   \umin{\bm{H}\in \Hh} \mathrm{KL}({p^{\ast}}(\ubm{x})\| p(\ubm{x};\bm{H})).
 \end{equation}
@@ -211,9 +211,9 @@ For practical consideration, we only have access to the samples of $p^{\ast}(\ub
   \end{tikzpicture}
   \caption{The template model of GenHMM.}\label{chpt7:fig:tenhmm-template}
 \end{figure}
-For the likelihood maximization, the first problem that we need to address is how to deal with the hidden sequential variables of model $\bm{H}$, namely $\ubm{s}=[ \bm{s}_1, \bm{s}_2, \cdots, \bm{s}_T ]^{\intercal}$ and $\ubm{\kappa} = [\bm{\kappa}_1, \bm{\kappa}_2, \cdots, \bm{\kappa}_T]^{\intercal}$. For a sequentially observable variable $\ubm{x}$, $\ubm{s}$ is the hidden state sequence corresponding to $\ubm{x}$, and $\ubm{\kappa}$ is the hidden variable sequence representing the generator identity sequence that actually generates $\ubm{x}$. Note that for a sequentially observable $\ubm{x}$, there is also a sequential $\ubm{z}$ brought by flows. But the mapping between $\bm{x}$ and $\bm{z}$ is deterministic for fixed $p_{s,\kappa}(\bm{z})$ when the corresponding $\bm{s}$ and ${\kappa}$ are given, which is defined by $\bm{g}_{s, \kappa}$.
+For the likelihood maximization, the first problem that we need to address is how to deal with the hidden sequential variables of model $\bm{H}$, namely $\ubm{s}=[ \bm{s}_1, \bm{s}_2, \cdots, \bm{s}_T ]^{\intercal}$ and $\ubm{\kappa} = [\bm{\kappa}_1, \bm{\kappa}_2, \cdots, \bm{\kappa}_T]^{\intercal}$. For a sequentially observable variable $\ubm{x}$, $\ubm{s}$ is the hidden state sequence corresponding to $\ubm{x}$, and $\ubm{\kappa}$ is the hidden variable sequence representing the generator identity sequence that actually generates $\ubm{x}$. Note that for a sequentially observable $\ubm{x}$, there is also a sequential $\ubm{z}$ brought by flows. But the mapping between $\bm{x}$ and $\bm{z}$ becomes deterministic for fixed $p_{s,\kappa}(\bm{z})$ when the corresponding $\bm{s}$ and ${\kappa}$ are given, which is defined by $\bm{g}_{s, \kappa}$.
 
-Since directly maximizing likelihood is not an option for our problem in \eqref{eq:ml-of-hmm}, we address this problem with the EM framework, similar to the way we dealt with hidden variable in Section~\ref{chpt6:sec:generator-mix-em}. This divides our problem into  two iterative steps: i) using the joint posterior of hidden variable sequences $\ubm{s}$ and $\ubm{\kappa}$ to obtain an ``expected likelihood'' of the observable variable sequence $\ubm{x}$, i.e., the E-step; ii) maximizing the expected likelihood with regard to the model $\bm{H}$, i.e., the M-step. Assume model $\bm{H}$ is at a configuration of $\bm{H}^{\mathrm{old}}$, we formulate these two steps as follows.
+Since directly maximizing likelihood is not an option for our problem in \eqref{eq:ml-of-hmm}, we address this problem with the EM framework, similar to the way we dealt with hidden variable in Section~\ref{chpt6:sec:generator-mix-em}. This divides our problem into  two iterative steps: i) using the joint posterior of hidden variable sequences $\ubm{s}$ and $\ubm{\kappa}$ to obtain an 'expected likelihood' of the observable variable sequence $\ubm{x}$, i.e., the E-step; ii) maximizing the expected likelihood with regard to the model $\bm{H}$, i.e., the M-step. Assume model $\bm{H}$ is at a configuration of $\bm{H}^{\mathrm{old}}$, we formulate these two steps as follows.
 \begin{itemize}
 \item E-step: % the posterior probability of $\ubm{s}$:
   % \begin{equation}
@@ -249,13 +249,13 @@ where the decomposed optimization problems are
 We can see that the solution of $\bm{H}$ depends on the posterior probability $p(\ubm{s}| \ubm{x}; \bm{H})$.
 
 \begin{remark}[On posterior]\label{chpt7:rmk:posterior}
-  Although the principle here in dealing with the hidden variables is similar to that in Section~\ref{chpt6:sec:generator-mix-em}, new issues arise for dynamic systems. Due to the presence of incomplete observations (hidden variables), we need to 'complete' the missing information by evaluating the posteriors of hidden variables for each partial observation $\bm{x}_t$. In GenHMM, for each $\ubm{x}$, there are missing hidden sequences ($\ubm{s}$, $\ubm{\kappa}$). Although the evaluation of the posterior according to Bayes theorem is straightforward, the computational complexity of $p(\ubm{s}| \ubm{x}; \bm{H})$ grows exponentially with the length of $\ubm{s}$. Therefore, we employ forward-backward algorithm \cite{Bishop:2006:PRM:1162264}, i.e., a message passing algorithm for chains which computes exact marginal probabilities, to do the posterior computation efficiently. The forward-backward algorithm can be recovered from the generic message passing rule \eqref{chpt2:eq:loopy-bp} in Section~\ref{chpt2:sec:inference-mp}.
+  Although the principle here in dealing with the hidden variables is similar to that in Section~\ref{chpt6:sec:generator-mix-em}, new issues arise for dynamic systems. Due to the presence of incomplete observations (hidden variables), we need to 'complete' the missing information by evaluating the posteriors of hidden variables for each observation $\bm{x}_t$. In GenHMM, for each $\ubm{x}$, there are missing hidden sequences ($\ubm{s}$, $\ubm{\kappa}$). Although the evaluation of the posterior according to Bayes theorem is straightforward, the computational complexity of $p(\ubm{s}| \ubm{x}; \bm{H})$ grows exponentially with the length of $\ubm{s}$. Therefore, we employ forward-backward algorithm \cite{Bishop:2006:PRM:1162264}, i.e., a message passing algorithm for chains which computes exact marginal probabilities, to do the posterior computation efficiently. The forward-backward algorithm can be recovered from the generic message passing rule \eqref{chpt2:eq:loopy-bp} in Section~\ref{chpt2:sec:inference-mp}.
 As we will detail in the next section, what is needed to formulate the problem, are actually the $p(s| \ubm{x}; \bm{H})$ and $p(s, \kappa| \ubm{x}; \bm{H})$. For the joint posterior $p(s, \kappa| \ubm{x}; \bm{H})$, it can be computed by the Bayes rule when posterior of hidden state is available.
 
-  The considered domain $\Ss$ of hidden state $s$ here has small cardinality. If a hidden variable itself is structured and the cardinality of its domain is large, the exact posterior probability computation of the hidden variable by forward-backward is not longer feasible. In this case, approximate inference methods as discussed in Part~\ref{part:inference} may be applied. See \cite{Pelizzola_2013,NIPS2018_8013} for related works that explore this problem. 
+  The considered domain $\Ss$ of hidden state $s$ here has small cardinality. If a hidden variable itself is structured and the cardinality of its domain is huge, the exact posterior probability computation of the hidden variable by forward-backward is not longer feasible. In this case, approximate inference methods as discussed in Part~\ref{part:inference} may be applied. See \cite{Pelizzola_2013,NIPS2018_8013} for related works that explore this problem. 
 \end{remark}
 \begin{remark}[Connection to other methods or models]\label{chpt7:rmk:connections}
-  The forward-background algorithm mentioned in Remark~\ref{chpt7:rmk:posterior} does exact inference to posteriors, i.e., the exact computation of posterior probabilities. At times, the posterior inference is addressed by approximate inference. For instance, it might be due to the modeling of a dynamic system that does not allow exact inference. \cite{yuan2007thesis} applies expectation propagation \cite{Minka:2001:EPA:647235.720257} to non-linear dynamic models with continuous hidden states.
+  The forward-background algorithm mentioned in Remark~\ref{chpt7:rmk:posterior} does exact inference to posteriors, i.e., the exact computation of posterior probabilities. At times, the posterior inference is addressed by approximate inference. For instance, it might be due to the modeling of a dynamic system that does not allow exact inference. \cite{yuan2007thesis} applied expectation propagation \cite{Minka:2001:EPA:647235.720257} to non-linear dynamic models with continuous hidden states.
   
   The considered hidden states are discrete in GenHMM. For linear dynamic models with continuous hidden states, the best-known approach is the Kalman filter \cite{kalman1960} and smoothing \cite{rauch1965}. To generalize the problem into non-linear dynamic models, which is practical consideration since many real-world problems are indeed non-linear, known classical methods such as extended Kalman filter \cite{ljung1979} and unscented Kalman filter \cite{wan2000unscented} are applicable. Further exploration in recent literature also considered more flexible models such as neural networks in dynamic models. For instance, \cite{wallach2019combining} combined the inference process of Kalman filter and graph neural network in pursuit of more flexible non-linear dynamic models, and \cite{kim2019variational} proposed hierarchical hidden state space to model and infer hidden structures with multi-layer perceptrons.
 \end{remark}
@@ -476,9 +476,9 @@ In pursuit of representing a dataset by GenHMM,  we are interested in knowing if
     $\bm{H}^{\mathrm{old}} = \{\Ss, \bm{q}^{\mathrm{old}}, A^{\mathrm{old}}, p(\bm{x}|s; \bm{\Phi}_{s}^{\mathrm{old}})\}$, \\
     $\bm{H} = \{\Ss, \bm{q}, A, p(\bm{x}|s; \bm{\Phi}_{s})\}$, \\
     in which generators $\left\{\bm{g}_{s,\kappa}|s\in \Ss, \kappa=1,
-      2, \cdots, K \right\}$ are all initialized randomly.
+      2, \cdots, K \right\}$ are all initialized randomly
     \STATE $\bm{H}^{\mathrm{old}} \gets \bm{H}$
-    \STATE Set learning rate $\eta$, neural network optimization batches $N$ per EM step
+    \STATE Set learning rate $\eta$, neural network optimization steps, $N$ per EM step
     \FOR { $\bm{H}$ not converge}
     \FOR {epoch $n < N$}
     \STATE Sample a batch of data $\left\{ \ubmr{x}{r} \right\}_{r=1}^{R_b}$ from dataset $\hat{p}(\ubm{x})$ with batch size $R_b$
@@ -502,7 +502,7 @@ We summarize the learning solution in Section~\ref{subsec:optmGenHMM} in the pse
 As described by the pseudocode in Algorithm~\ref{algo:genhmm}, the learning of GenHMM is divided into optimizations with regard to generators' parameters $\bm{\Theta}$, initial probability $\bm{q}$ of hidden state, transition matrix $\bm{A}$, and generator mixture weights $\bm{\Pi}$. Different from the optimization with regard to $\bm{q}$, $\bm{A}$ and $\bm{\Pi}$, which have optimal solutions, generator learning usually cannot give optimal solution to the problem $\max_{\bm{\Theta}} \Qq(\bm{\Theta}; \bm{H}^{\mathrm{old}})$. In fact, given that no optimal $\bm{\Theta}$ is obtained, learning of GenHMM can still converge as long as quantity $\Qq(\bm{\Theta}; \bm{H})$ are improving in iterations in Algorithm~\ref{algo:genhmm}, since the inequalities in Proposition~\ref{proposition1} still hold. Therefore optimal $\bm{\Theta}$ in each iteration is not required for convergence of GenHMM as long as the loss in $\eqref{eq:obj-q-gen-mix}$ is getting improved.
 \begin{remark}
   \label{chpt7:rmk:generative-discriminative}
-  {The above discussed maximum likelihood training is also known as generative training, which models the signal generating process with the defined generative model. An alternative training principle is discriminative training where a conditional distribution is modeled directly and optimized as the objective. Since a generative model characterizes a joint distribution, it is usually possible to train a generative model via discriminative training, with mildly altering the objective functions. On the contrary, it is usually not likely to train a discriminative model via generative training, since the direct conditional probability modeling of the discriminative model omits modeling the distribution of the observable signal that is highly structured. These two training principles are possible to be used together at different training phases. For instance, apply the generative training firstly, and then a discriminative training phase for the generative-trained model which acts as a parameter fine-tuning phase \cite{hinton2012deepSpeech}. See detailed insightful discussion about these two principles in \cite{lasserre2006principled}.
+  {The above discussed maximum likelihood training is also known as generative training, which models the signal generating process with the defined generative model. An alternative training principle is discriminative training where a conditional distribution is modeled directly and optimized as the objective. Since a generative model characterizes a joint distribution, it is usually possible to train a generative model via discriminative training, with mildly altering the objective functions. On the contrary, it is usually not likely to train a discriminative model via generative training, since the direct conditional probability modeling of the discriminative model omits modeling the distribution of the observable signal that is highly structured. These two training principles are possible to be used together at different training phases. For instance, apply the generative training firstly, and then a discriminative training phase for the generative-trained model, which acts as a parameter fine-tuning phase \cite{hinton2012deepSpeech}. See detailed insightful discussion about these two principles in \cite{lasserre2006principled}.
   }
 \end{remark}
 
@@ -708,7 +708,7 @@ The classes prior probabilities $p(\bm{H}_{i}),~i=0, 1$ are infered from the tra
 
 \subsection{Patient Dataset}
 The bedside monitor signals of $48$ premature infants who have been under care at a NICU in Karolinska University hospital have been collected.
-The sequential signals used are the Respiratory Frequency (RF), the beat to beat interval (RRi), and the blood oxygen saturation level ($Sp0_2$).
+The sequential signals used are the Respiratory Frequency (RF), the RR-interval (RRi, beat to beat interval) in electrocardiography, and the blood oxygen saturation level ($SpO_2$).
 All signals were sampled at $1$Hz and segmented into $20$ minutes time frames.
 Each time frame was then labeled based on information retrieved from the Electronic Health Records (EHR).
 Similar to heart rate observation system (HeRO) \cite{hicksHeartRateObservation2013, griffinHeartRateCharacteristics2005}, a logistic regression method using RRi, we aim at detecting septic events earlier than clinical suspicion of sepsis.
@@ -725,23 +725,23 @@ All time frames have a constant size of $T=1200$ samples and are $3$-dimensional
 \subsection{Experimental Setup}
 To make the experiments more interesting, we add a set of baseline methods in the comparisons.
 Baseline model HeRO is used, which uses the RRi signal for feature extraction and applies a logistic regression to the extracted features. See \cite{honore2020icassp} about detailed feature extraction.
-Pulse oximetry predictive score (POPS) \cite{sullivanEarlyPulseOximetry2018} uses mean, standard deviation, skewness, kurtosis, and min-max cross correlation between RR-interval and $SpO2$ to compute a risk score. POPS is also a logistic regression method. 
+Pulse oximetry predictive score (POPS) \cite{sullivanEarlyPulseOximetry2018} uses mean, standard deviation, skewness, kurtosis, and min-max cross correlation between RRi and $SpO_2$ to compute a risk score. POPS is also a logistic regression method. 
 For the logistic regressions, the optimal regularization parameter was found with cross-validation and grid search in the set $\{10^{-5}, \cdots, 10^{5}\}$.
 
 We performed binary classification by the maximum likelihood with GMM-HMM, GenHMM, and dGenHMM as probabilistic models.
 The GMM-HMM hyper-parameters were the number of states and the number of Gaussians per state.
 For GenHMM and dGenHMM, the hyper-parameters were the number of states, the number of flows per state, chain-length in each flow, the size of the networks in a coupling layer of a flow.
-Given our limited input dimension, the size of the networks in the coupling layers was fixed to $3$.
+Given our limited input dimension, the number of the mixture components was fixed to $3$.
 The chain-length in the coupling layer of each flow was varied between $4$ and $8$.
 We varied the number of states in HMMs in $\{3,6,9\}$ and show the results in Table~\ref{table:results:HMM}.
 
 We repeated our experiments $3$ times and each time a random $30\%$ of the patients were left out for testing.
-This lead to $2361 \pm 353$ time series in the training sets and $1140 \pm 353$ time series in the testing sets.
+This lead to $2361 \pm 353$ time series in the training sets and $1140 \pm 353$ time series in the testing set.
 We used a different set of input features to test our models in different conditions.
-HMMs are trained on raw time series and on raw time series with first and second order derivatives.
+HMMs are trained on raw time series only, and on raw time series with first and second order derivatives.
 For logistic regression models, HeRO is trained with $3$-dimensional features, and POPS with $10$-dimensional features.
 The results associated with these two sets of features are presented in Table~\ref{table:results:Lin}.
-Extreme learning machines (ELM) and support vector machine (SVM) with a Gaussian kernel trained on the raw time series data are also added into the comparison.
+Extreme learning machines (ELM) and support vector machine (SVM) with a Gaussian kernel trained on the raw time series are also added into the comparison.
 
 \subsection{Numerical Results}
 The results for the HMMs are presented in Table~\ref{table:results:HMM} and the comparison with other benchmarks are presented in Table~\ref{table:results:Lin}.
@@ -752,7 +752,7 @@ The results for the HMMs are presented in Table~\ref{table:results:HMM} and the 
 \setlength{\tabcolsep}{4pt}
 \begin{tabular}{cccc}    
 \toprule
-Number of states 		&  n=3 			    				&  n=6									&  n=9 						\\  
+Number of states, $\abs{\Ss}$ 		&  3 			    				&  6									&  9 						\\  
 \hline
                                         \multicolumn{4}{c}{Raw sequential input} 		\\
 \hline
@@ -782,10 +782,10 @@ dGenHMM 				&  0.71 $\pm$ 0.04    		&	   0.72 $\pm$ 0.10     	    &  	   0.67 $\
  Model							&   			    & Performance 	 	\\  
 \toprule
 
-\multicolumn{4}{c}{Using feature extraction}    \\ \hline
+\multicolumn{4}{l}{Using feature extraction}    \\ \hline
 Logistic Regression	 & & POPS & 0.54$\pm$0.01				  \\
 & & HeRO			&   0.57$\pm$0.04\\   \hline
-\multicolumn{3}{c}{Using raw sequential input}    \\    \hline  
+\multicolumn{3}{l}{Using raw sequential input}    \\    \hline  
 SVM      & &                       &   0.60 $\pm$ 0.04   			\\
 ELM		& &						&   0.60 $\pm$ 0.03   				\\ 
 dGenHMM     & &                     &   0.70 $\pm$ 0.10  \\ \hline
@@ -804,14 +804,14 @@ As expected, the logistic classifiers are outperformed by Gaussian kernel SVM, E
 SVM and ELM both reach an accuracy of $60\%$ and comparable standard deviations of $4\%$ and $3\%$.
 This is lower than dGenHMM which reaches $70\%$ accuracy and outperforms both GenHMM $67\%$, and GMM-HMM $68\%$.
 These results are contrasted by the large standard deviation of dGenHMM $10\%$, which is larger than both GenHMM $4\%$ and GMM-HMM $3\%$.
-When the number of states increases to $n=6$ and $n=9$, GMM-HMM reaches $68\%$ and $69\%$ which outperforms GenHMM, and dGenHMM.
+When the number of states increases to $\abs{\Ss}=6$ and $\abs{\Ss}=9$, GMM-HMM reaches $68\%$ and $69\%$ which outperforms GenHMM, and dGenHMM.
 When the raw sequential input is augmented with $1$st and $2$nd order derivatives, GMM-HMM reaches its highest performance at $75\%$ accuracy.
-GenHMM and dGenHMM also reach their highest performance with $69\%$ at $n=3$ and $72\%$ at $n=6$.
+GenHMM and dGenHMM also reach their highest performance with $69\%$ at $\abs{\Ss}=3$ and $72\%$ at $\abs{\Ss}=6$.
 
 Improved performance of GenHMM using discriminative training (dGenHMM) was significant for both $1$st and $2$nd order derivatives as argument to inputs.
 This is encouraging, given that our current discriminative training consists of only one epoch, i.e., one-epoch fine-tuning.
 The performance of GMM-HMM is also significantly increased when adding $1$st and $2$nd order derivative, reaching higher than dGenHMM.
-This phenomenon is due to two aspects: i) model complexity; ii) dataset size. GMM-HMM is a simpler model compared to GenHMM. Besides, the number of samples in the dataset is limited, i.e., only $3501$ time frames. These two major factors together explain why the performance of GMM-HMM increases while that of GenHMM decreases as $n$ increases from $3$ to $9$ (an increase of each corresponding model's complexity).
+This phenomenon is due to two aspects: i) model complexity; ii) dataset size. GMM-HMM is a simpler model compared to GenHMM. Besides, the number of samples in the dataset is limited, i.e., only $3501$ time frames. These two major factors together explain why the performance of GMM-HMM increases while that of GenHMM decreases as $\abs{\Ss}$ increases from $3$ to $9$ (an increase of each corresponding model's complexity).
 Also, discriminative training, dGenHMM, does improve performance. The insufficient training data makes its final accuracy fall behind the much simpler model GMM-HMM.
 
 \section{Summary}
