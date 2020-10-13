@@ -269,7 +269,7 @@ This means that the likelihood of an (partial) evidence can be computed by parti
 \begin{equation}\label{chpt2:eq:mrf-condtioning}
   p(\bm{x}_U|\bm{x}_O=\bm{e}_O;\bm{\theta}) = \frac{\tilde{p}(\bm{x}_U, \bm{x}_O = \bm{e}_O; \bm{\theta})}{\sum_{\bm{x}_U}\tilde{p}(\bm{x}_U, \bm{x}_O = \bm{e}_O; \bm{\theta})} \propto \tilde{p}(\bm{x}_U, \bm{x}_O = \bm{e}_O; \bm{\theta}),
 \end{equation}
-where $\propto$ stands for proportional to. Note that \eqref{chpt2:eq:mrf-condtioning} shows an interesting phenomenon for MRF including evidence. It can be understood as clamping nodes in $\Vv_O$ of the MRF to configuration $\bm{e}_O$, i.e., the domain of $\bm{x}_O$ becomes a set containing only one instance $\bm{e}_O$. For instance, an example of conditioning on a variable node for Example~\ref{chpt2:mrf-3node-example} is shown in Figure~\ref{chpt2:fig:factor-graph-3node-example-condition}, where node $2$ is clamped to evidence $x_2=1$.
+where $\propto$ stands for proportional to. Note that \eqref{chpt2:eq:mrf-condtioning} shows an interesting phenomenon for MRF including evidence. It can be understood as clamping nodes in $\Vv_O$ of the MRF to configuration $\bm{e}_O$, i.e., the domain of $\bm{x}_O$ becomes a set containing only one instance $\bm{e}_O$. An example of conditioning on a variable node for Example~\ref{chpt2:mrf-3node-example} is shown in Figure~\ref{chpt2:fig:factor-graph-3node-example-condition}, where node $2$ is clamped to evidence $x_2=1$.
 
 
 
