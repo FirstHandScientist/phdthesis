@@ -4,7 +4,7 @@ We have been mainly discussing the topics of modeling and learning when an obser
 
 In modeling a dynamic system that generates sequential signals, we are usually interested in reasoning about the system state that evolves over time. For simplification, the timeline over which a dynamic system generates a sequential signal is discretized, i.e., time is sliced. Thus for each time instant $t$, we can take a measurement of the dynamic system, which corresponds to an observed variable $\bm{x}_t$. Due to the limitation of our measure accuracy or the abstraction in modeling itself, the state of the system at this time instant is not directly available, which corresponds to an unobserved or hidden variable $s_t$.
 
-The straightforward issue is the complexity of the graphical representation of dependencies for a dynamic system, which in turn affects model learning and inference. As the dynamic system evolves, the dependencies (which correspond to edges in the graphical model) can be arbitrarily complex since the system states on any two time instants can be dependent if no constraint is enforced. The complexity of the resulting graphical model can be too high for practical usages. Therefore, constraints are required to allow reasonable model learning and state estimations.
+The straightforward issue is the complexity of the graphical representation of dependencies for a dynamic system, which in turn affects model learning and inference. As the dynamic system evolves, the dependencies (which correspond to edges in the graphical model) can be arbitrarily complex since the system states on any two time instants can be dependent if no constraint is enforced. The complexity of the resulting graphical model may become too high for practical usages. Therefore, constraints are required to allow reasonable model learning and state estimations.
 The most widely used constraint is probably the Markov assumption, i.e., $(\bm{x}_{t+1}, {s}_{t+1})$ is independent of $(\bm{x}_{1:t-1}, {s}_{1:t-1})$ if $(\bm{x}_{t}, {s}_{t})$ is given. This assumption indeed reduces the complexity of graphical structures in modeling a dynamic system, since we do not need to draw any edges between variables with time interval larger than one in the graphical representation.
 
 The other issue is the parameterization of the model of the dynamic system. If we directly model $\{\bm{x}_t, {s}_t, t=1, 2, \cdots, T\}$ jointly, the parameterization would grow exponentially as the system evolves over time. A good solution to this issue is to introduce the \textit{template} concept into the graphical model. In the assumption, the variable $\bm{x}_t$ or $s_t$ becomes an instance of a \textit{template variable}. More importantly, each dependency between two sequential time instants becomes an instance of a \textit{template factor}. When the dynamic system evolves from time $t$ to $t+1$, we only need to instantiate from the template variables and template factors without adding new parameters to the model. Template based dynamic Bayesian networks belong to such kind of models.
@@ -334,7 +334,7 @@ In what follows we address the problem $\max_{\bm{\Pi}} \Qq(\bm{\Pi}; \bm{H}^{\m
                   & s.t. \, \sum_{\kappa=1}^{K} \pi_{s, \kappa}= 1, \forall s = 1, 2, \cdots, |\Ss|. 
 \end{align}
 
-To solve problem \eqref{opm:pi}, we formulate its Lagrange function as
+To solve problem in \eqref{opm:pi}, we formulate its Lagrange function as
 \begin{equation}
   \Ff = \Qq(\bm{\Pi}; \bm{H}^{\mathrm{old}}) + \sum_{s=1}^{|\Ss|} \lambda_s\left( 1-  \sum_{\kappa=1}^{K}\pi_{s, \kappa}  \right).
 \end{equation}
@@ -497,7 +497,7 @@ In pursuit of representing a dataset by GenHMM,  we are interested in knowing if
   \end{algorithmic}
 \end{algorithm}
 
-We summarize the learning solution in Section~\ref{subsec:optmGenHMM} in the pseudocode as shown in Algorithm~\ref{algo:genhmm}. We use the Adam optimizer \cite{DBLP:journals/corr/KingmaB14} for optimization with regard to the parameters of generators in GenHMM. As shown from line $6$ to $12$ in Algorithm~\ref{algo:genhmm}, the batch-size stochastic gradient descent can be naturally embedded into the learning algorithm of GenHMM.
+We summarize the learning solution in Section~\ref{subsec:optmGenHMM} in the pseudocode as shown in Algorithm~\ref{algo:genhmm}. We use the Adam optimizer \cite{DBLP:journals/corr/KingmaB14} for optimization with regard to the parameters of generators in GenHMM. As shown in Algorithm~\ref{algo:genhmm}, the batch-size stochastic gradient descent can be naturally embedded into the learning algorithm of GenHMM.
 
 As described by the pseudocode in Algorithm~\ref{algo:genhmm}, the learning of GenHMM is divided into optimizations with regard to generators' parameters $\bm{\Theta}$, initial probability $\bm{q}$ of hidden state, transition matrix $\bm{A}$, and generator mixture weights $\bm{\Pi}$. Different from the optimization with regard to $\bm{q}$, $\bm{A}$ and $\bm{\Pi}$, which have optimal solutions, generator learning usually cannot give optimal solution to the problem $\max_{\bm{\Theta}} \Qq(\bm{\Theta}; \bm{H}^{\mathrm{old}})$. In fact, given that no optimal $\bm{\Theta}$ is obtained, learning of GenHMM can still converge as long as quantity $\Qq(\bm{\Theta}; \bm{H})$ are improving in iterations in Algorithm~\ref{algo:genhmm}, since the inequalities in Proposition~\ref{proposition1} still hold. Therefore optimal $\bm{\Theta}$ in each iteration is not required for convergence of GenHMM as long as the loss in $\eqref{eq:obj-q-gen-mix}$ is getting improved.
 \begin{remark}
@@ -715,7 +715,7 @@ Similar to heart rate observation system (HeRO) \cite{hicksHeartRateObservation2
 In our study we use a threshold of $72$h prior to blood sample, to label a time frame as \textit{septic}, according to the practices in \cite{gurMathematicalAlgorithmDetection2014}.
 A time frame was retro-actively labeled $1$ if it occurred at most $72$h prior to clinical suspicion.
 A time frame was labeled $0$ if it occurred during a day when no notes were entered in the infant's EHR.
-Time frames not labeled either $0$ or $1$ were discarded.
+Time frames which are labeled neither $0$ nor $1$ were discarded.
 
 Our final dataset consists of $22$ patients, among which $13$ males and $9$ females.
 The birth weight was $1.61\pm1.10$ kg and the gestational age at birth $30.9\pm6.14$.
@@ -731,8 +731,8 @@ For the logistic regressions, the optimal regularization parameter was found wit
 We performed binary classification by the maximum likelihood with GMM-HMM, GenHMM, and dGenHMM as probabilistic models.
 The GMM-HMM hyper-parameters were the number of states and the number of Gaussians per state.
 For GenHMM and dGenHMM, the hyper-parameters were the number of states, the number of flows per state, chain-length in each flow, the size of the networks in a coupling layer of a flow.
-Given our limited input dimension, the number of the mixture components was fixed to $3$.
-The chain-length in the coupling layer of each flow was varied between $4$ and $8$.
+Given our limited input dimension, $\bm{m}_a$ and $\bm{m}_b$ are $3$-layer feed-forward neural networks.
+The chain-length in the coupling layers of each flow was varied between $4$ and $8$.
 We varied the number of states in HMMs in $\{3,6,9\}$ and show the results in Table~\ref{table:results:HMM}.
 
 We repeated our experiments $3$ times and each time a random $30\%$ of the patients were left out for testing.

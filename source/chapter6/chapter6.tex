@@ -178,7 +178,7 @@ Assuming that the data in $\Dd$ is sampled i.i.d. from $p^{\ast}$, the maximum l
 where the superscript $i$ corresponds to the $i$'th data sample in a given dataset.
 We address the above maximum likelihood estimation problem using EM. 
 Let us use a categorical variable $\bm{s} = [s_1, s_2, \cdots, s_K]$
-for $1$-of-$K$ representation to be a hidden variable that indicates which generator is the actual one. Elements of $\bm{s}$ follow $s_k \in \{0,1\}$, $\sum_{k=1}^K s_k =1$, and $p(s_k=1)=\pi_k$. The variable $\bm{s}$ is the hidden variable in EM. We will use $\gamma_k$ to denote the posterior probability $p(s_k =1|\bm{x})$ calculated as
+for $1$-of-$K$ representation to be a hidden variable that indicates which generator actually generated the observed signal. Elements of $\bm{s}$ follow $s_k \in \{0,1\}$, $\sum_{k=1}^K s_k =1$, and $p(s_k=1)=\pi_k$. The variable $\bm{s}$ is the hidden variable in EM. We will use $\gamma_k$ to denote the posterior probability $p(s_k =1|\bm{x})$ calculated as
 \begin{align}\label{eq-genmm-gamma-org}
   \gamma_k = p(s_k =1|\bm{x};\bm{\Theta}) 
   = \frac{\pi_k p(\bm{g}(\bm{z};\bm{\theta}_k))}{\sum_{l=1}^K\; \pi_l p(\bm{g}(\bm{z};\bm{\theta}_l))}.
@@ -244,8 +244,8 @@ and the objective function in the M-step can be written as
 We usually deal with a large dataset for model learning, i.e., $\abs{\Dd}$ can be large. In that case we implement the EM algorithm in batch fashion. 
 Recall that $ \bm{\Theta}= \{\bm{\pi},\bm{\theta}_1, \dots, \bm{\theta}_K \}$ and hence the M-step optimization problem $\argmax_{\bm{\Theta}} \mathcal{Q} (\bm{\Theta},\bm{\Theta}^{\mathrm{old}})$ is addressed in two steps:
 \begin{itemize}
-\item[(a)] optimizing with respect to $\{ \bm{\theta}_k \}_{k=1}^{K}$,
-\item[(b)] optimizing with regard to $\bm{\pi}$.
+\item[(a)] Optimizing with respect to $\{ \bm{\theta}_k \}_{k=1}^{K}$,
+\item[(b)] Optimizing with regard to $\bm{\pi}$.
 \end{itemize}
 
 \begin{algorithm}[!t]
@@ -552,7 +552,7 @@ We avoid this problem by using the following alternatives.
   where $\la$ is the regulation parameter.
 \end{itemize}
 
-\subsection{On complexity of models and new variant models}
+\subsection{On Complexity of Models and New Variant Models}
 We have proposed two models, GenMM and LatMM. GenMM has a high complexity whereas LatMM has low complexity. Due to their difference in model complexity as well as training complexity, their usage efficiency is highly application-dependent. For example, when the training data is limited, it may be advisable to use LatMM.
 
 It is possible to combine GenMM and LatMM to obtain new models. A simple way is to replace the latent source $p(\bm{z})$ of GenMM by a LatMM model. 
@@ -741,9 +741,9 @@ In this section, we evaluate our proposed mixture models for generating samples 
 \end{figure*}
 
 
-\subsection{Experimental setup}\label{sub:exp-setup}
+\subsection{Experimental Setup}\label{sub:exp-setup}
 
-We use the flow-based neural network for implementing generators $\{\bm{g}_k\}_{k=1}^{K}$ in GenMM and $\bm{g}$ in LatMM. Specifically, we use the Glow structure \cite{2018arXiv180703039K} that is developed based on RealNVP \cite{2016arXiv160508803D} and NICE \cite{DBLP:journals/corr/DinhKB14}. As introduced in Section~\ref{chpt6:sec:flow}, the operation in \eqref{chpt6:eq-gl-coupling} is a coupling
+We use the flow-based neural network for implementing generators $\{\bm{g}_k\}_{k=1}^{K}$ in GenMM and $\bm{g}$ in LatMM. Specifically, we use the Glow structure \cite{2018arXiv180703039K} which was developed based on RealNVP \cite{2016arXiv160508803D} and NICE \cite{DBLP:journals/corr/DinhKB14}. As introduced in Section~\ref{chpt6:sec:flow}, the operation in \eqref{chpt6:eq-gl-coupling} is a coupling
 layer. Since only a part of the input is mapped non-linearly after a coupling
 layer and the rest part remains the same, permutation \cite{2016arXiv160508803D} or $1\times 1$ convolution operation \cite{2018arXiv180703039K} is used to alternate the part of the signal that goes through identity mapping. In Glow structure, a basic \textit{flow step} is the concatenation of three layers: Actnorm (element-wise affine mapping)
 $\rightarrow$ $1\times 1$ Convolution (for permutation purpose)

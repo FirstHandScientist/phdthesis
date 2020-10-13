@@ -84,14 +84,14 @@ to a requirement that the joint distribution $\pi$ has a high entropy.
   W(p^{\ast}, p)  =  \max_{\bm{\al}, \bm{\be} \in \mathbb{R}^{N}} \bm{\al}^{\intercal}p^{\ast} + \bm{\beta}^{\intercal}p \! - \!
   \sum_{i,j} \lambda e^{ \frac{{\left( \al_i + \beta_j - M_{i,j} \right)}}{\la} },\vspace{-2pt}
 \end{equation}
-where $\bm{\alpha},\bm{\beta}$ are dual variables, $(\cdot)^{\intercal}$ means transpose, $\alpha_i$ is the $i$th element of $\bm{\alpha}$, and $\beta_i$ is the $j$th element of $\bm{\beta}$
+where $\bm{\alpha},\bm{\beta}$ are dual variables, $(\cdot)^{\intercal}$ means transpose, $\alpha_i$ is the $i$th element of $\bm{\alpha}$, and $\beta_i$ is the $j$th element of $\bm{\beta}$.
 
 One benefit of having the dual variables in this form is that the optimal dual vector $\bm{\beta}^{\ast}$
 of \eqref{eq-dual-wsd} is a subgradient of $W(p^{\ast},p)$ with respect to $p$. Thus, if we can efficiently obtain the optimal dual vector $\bm{\beta}^{\ast}$, we can learn our model distribution $p(\bm{x}; \bm{\theta})$ via the subgradient $\bm{\beta}^{\ast}$.
 
 There is a computationally efficient algorithm called Sinkhorn
 algorithm\cite{2013arXiv1306.0895C, 2013arXiv1310.4375C} to
-solve~\eqref{eq-dual-wsd}, which alternatively scales the rows and columns of matrix $e^{-\frac{\bm{M}}{\lambda}}$. This alternative computation gives a pair of vectors $(\bm{u}, \bm{v}) \in \RR^N_{+} \times \RR^N_{+}$ that defines the optimal primary and dual variables \cite[Proposition~2]{2013arXiv1310.4375C} 
+solve~\eqref{eq-dual-wsd}, which alternatively scales the rows and columns of matrix $e^{-\frac{\bm{M}}{\lambda}}$. This alternative computation gives a pair of vectors $(\bm{u}, \bm{v}) \in \RR^N_{+} \times \RR^N_{+}$ that defines the optimal primary and dual variables \cite[Proposition~2]{2013arXiv1310.4375C},
 \begin{align}\label{eq-dual-opt}
   \pi^{\ast} &=
                \mathrm{diag}(\bm{u}) \, e^{\frac{-\bm{M}}{\la}} \, \mathrm{diag}(\bm{v}),  \nonumber \\
