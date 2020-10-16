@@ -467,7 +467,7 @@ In pursuit of representing a dataset by GenHMM,  we are interested in knowing if
 \end{proof}
 
 \subsection{Algorithm of GenHMM}
-\begin{algorithm}[t]
+\begin{algorithm}[!tp]
   \caption{Learning of GenHMM}\label{algo:genhmm}
   \begin{algorithmic}[1]
     \STATE {\bfseries Input:}{
@@ -594,7 +594,7 @@ We firstly show the phoneme classification using 39 dimensional MFCC features (M
 
 Tables \ref{tab:acc-classification39f_a} and \ref{tab:acc-classification39f_b} show the results for this experiment, in which we test both the folded $39$-phoneme classification case (the conventional way) in Table~\ref{tab:acc-classification39f_a} and the $61$-phoneme classification case in Table~\ref{tab:acc-classification39f_b}. As shown in both $61$-phoneme and $39$-phoneme cases, GenHMM gets significantly higher accuracy than GMM-HMM for the same number of mixture components. The comparisons with regard to precision and F1 scores show similar trends and also demonstrate significant improvement of GenHMM's performance. As our expectation, GenHMM has better modeling capacity of sequential data since we bring in the neural network based generators into GenHMM, which should be able to represent complex relationships between states of HMM and sequential data. Apart from the gain of using neural network based generative models, there are also increases of accuracy, precision, and F1 scores as the number of mixture components in GenHMM is increased from $K=1$ to $K=5$. The sequential dependency of data is modeled by HMM itself, while each state of HMM can have a better representation using a mixture probabilistic model if data represented by the state is multi-mode. Comparing the results in $39$-phoneme and $61$-phoneme cases, GenHMM gets higher accuracy for $39$-phoneme classification than it does for $61$-phoneme classification. The total training dataset size remains the same as $61$ phonemes are folded into $39$ phonemes. There are less training data available per phoneme and more classes to be recognized in the $61$-phoneme case, which makes the task more challenging.
 
-\begin{table}
+\begin{table}[!t]
   \caption{Test accuracy table for $13$ dimensional features and folded $39$ phonemes.}\label{tab:acc-classification13f_a}
   \centering  
   \begin{tabular}{llccc}
@@ -614,7 +614,7 @@ Tables \ref{tab:acc-classification39f_a} and \ref{tab:acc-classification39f_b} s
   \end{tabular}
 \end{table}
 
-\begin{table}
+\begin{table}[!t]
   \caption{Test accuracy table for $13$ dimensional features and $61$
     phonemes.}\label{tab:acc-classification13f_b}
   \centering
@@ -637,7 +637,7 @@ Tables \ref{tab:acc-classification39f_a} and \ref{tab:acc-classification39f_b} s
 
 Similar experiments are carried out by using only the MFCC coefficients as feature input (excluding deltas and delta-deltas). The results are shown in Tables~\ref{tab:acc-classification13f_a} and \ref{tab:acc-classification13f_b}. The superior performance of GenHMM remains compared with reference model GMM-HMM, with regard to accuracy, precision, and F1 scores. The gain by using mixture generators is also presented in this set of experiments while the difference between $61$-phoneme and $39$-phoneme cases is similar to the set of experiments in Tables~\ref{tab:acc-classification39f_a} and \ref{tab:acc-classification39f_b}.
 
-\begin{table}
+\begin{table}[!t]
   \caption{Test accuracy table of perturbation with white noise ($K=3$, folded $39$ phonomes).}
   \label{tab:acc-classification39f_noise_snr}
   \centering
@@ -663,7 +663,7 @@ Similar experiments are carried out by using only the MFCC coefficients as featu
   \end{tabular}
   \vspace{0.1cm}
 \end{table}
-\begin{table}
+\begin{table}[!t]
   \caption{Test accuracy table of perturbation by different type of noise (SNR=$20$dB, $K=3$, folded $39$ phonomes).}
   \label{tab:acc-classification39f_noise_type}
   
@@ -773,7 +773,7 @@ dGenHMM 				&  0.71 $\pm$ 0.04    		&	   0.72 $\pm$ 0.10     	    &  	   0.67 $\
 
 %%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%
-\begin{table}[!ht]
+\begin{table}[!t]
 \center
 \caption{Comparison of HMM with other models}
 \begin{tabular}{*4c}

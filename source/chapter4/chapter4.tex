@@ -483,7 +483,7 @@ Tree-robust root regions can also be constructed for general graphs, which can b
 \begin{algorithm}[tb]
   \caption{Construct Root Regions from General Graphs.}
   \label{apdix:alg:root-region-general-graph}
-  \begin{algorithmic}
+  \begin{algorithmic}[1]
     \STATE {\bfseries Input:} Pairwise Markov random field $p(\bm{x})$
     \STATE Draw the factor graph $\Gg_F$ of $p(\bm{x})$
     \STATE Obtain graph $\Gg$ by preserving the variable nodes as they are and converting the factor nodes of $\Gg_F$ into edges, i.e., the undirected graph of MRF representation

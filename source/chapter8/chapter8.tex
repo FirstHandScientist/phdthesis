@@ -122,7 +122,7 @@ Alternatively the optimization problem \eqref{eq-entropic-model} can be addresse
 TensorFlow\cite{tensorflow}, where $\pi^{\ast}$ is the solution to the primary problem \eqref{eq-entropic-wsd} given by \eqref{eq-dual-opt}. We
 propose Algorithm~\ref{algo-E-WL} to learn distribution $p^{\ast}$
 via minimizing the EOT loss with regard to parameter $\bm{\th}$ of generator function $\bm{g}$.
-\begin{algorithm}[!t]
+\begin{algorithm}[!tp]
   \caption{EOT based Generative Model (EOTGM)}\label{algo-E-WL}
   \begin{algorithmic}[1]
     \STATE{$l$: the update rate at each iteration. $N$: the batch
@@ -194,6 +194,27 @@ generator $\bm{g}$ is the following alternating optimization problem
   \end{array}\vspace{-2pt}
 \end{equation}
 The algorithm steps of EOTGAN are shown in Algorithm \ref{algo-eWGAN}.
+\begin{remark}[Discussion on OT and EOT]
+
+The usage of the entropy regularization in EOT avoids the need for Kantorovich-Rubinstein duality
+of OT, thus, is free from the Lipschitz constraint. In the literature, several methods endeavor to
+satisfy Lipschitz constraint, for example, projecting neural network
+parameters into a space fulfilling Lipschitz constraint via weight
+clipping \cite{2017arXiv170107875A}, spectrum
+normalization \cite{2018arXiv180205957M}, or adding gradient 
+penalty into GAN's cost function \cite{2017arXiv170400028G}. Projecting
+approaches bring the problem of neural network capacity underuse and
+limit its ability to learn complex mappings. Gradient penalty approaches take
+gradients of each layer's weight parameters of a neural network into
+GAN's cost, and thus, computational complexity grows fast as the neural
+network gets deeper. 
+EOT avoids the above-mentioned problems and also has the benefit of lower
+computation complexity. With entropy-regularization and Sinkhorn
+algorithm, the computation complexity scales as $\mathcal{O}(N^2)$ \cite{2013arXiv1306.0895C}. 
+On the other hand, solving OT cost using interior-point methods has a computational requirement as 
+$\mathcal{O}(N^3\log{N})$. 
+
+\end{remark}
 
 \begin{algorithm}[!t]
   \caption{EOT based GAN (EOTGAN)}\label{algo-eWGAN}
@@ -224,31 +245,9 @@ The algorithm steps of EOTGAN are shown in Algorithm \ref{algo-eWGAN}.
     \STATE $\bm{\th} \gets \bm{\th} -l \cdot \partial{\bm{g}}$
     \ENDWHILE
   \end{algorithmic}
-
 \end{algorithm}
 
 
-\begin{remark}[Discussion on OT and EOT]
-
-The usage of the entropy regularization in EOT avoids the need for Kantorovich-Rubinstein duality
-of OT, thus, is free from the Lipschitz constraint. In the literature, several methods endeavor to
-satisfy Lipschitz constraint, for example, projecting neural network
-parameters into a space fulfilling Lipschitz constraint via weight
-clipping \cite{2017arXiv170107875A}, spectrum
-normalization \cite{2018arXiv180205957M}, or adding gradient 
-penalty into GAN's cost function \cite{2017arXiv170400028G}. Projecting
-approaches bring the problem of neural network capacity underuse and
-limit its ability to learn complex mappings. Gradient penalty approaches take
-gradients of each layer's weight parameters of a neural network into
-GAN's cost, and thus, computational complexity grows fast as the neural
-network gets deeper. 
-EOT avoids the above-mentioned problems and also has the benefit of lower
-computation complexity. With entropy-regularization and Sinkhorn
-algorithm, the computation complexity scales as $\mathcal{O}(N^2)$ \cite{2013arXiv1306.0895C}. 
-On the other hand, solving OT cost using interior-point methods has a computational requirement as 
-$\mathcal{O}(N^3\log{N})$. 
-
-\end{remark}
 
 \section{Experimental Results}
 We perform experiments to verify our arguments on loss choice and algorithms. We evaluate our
