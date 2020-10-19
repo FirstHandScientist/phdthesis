@@ -1,4 +1,4 @@
-#+ PhD Thesis: Perspectives on Probabilistic Graphical Models
+#+TITLE: PhD Thesis: Perspectives on Probabilistic Graphical Models
 
 The repository contains the source files and compile recipe for making my thesis pdf. All compiling processes are via the recipe [[file:Makefile][Makefile]] with Latexmk (see, [[https://mg.readthedocs.io/latexmk.html][Using Latexmk]]). The sources are to generate:
 - Thesis file: [[file:main.pdf][main.pdf]]
@@ -13,9 +13,14 @@ The repository contains the source files and compile recipe for making my thesis
 
 ** Optional
    It is preferable to have a global configuration for your Latexmk. For install, tell latexmk which pdf viewer you want to use:
-```bash
+#+BEGIN_SRC bash
 $ echo '$pdf_previewer = 'start evince';' >> ~/.latexmkrc
-```
+#+END_SRC
+
+#+BEGIN_SRC 
+$ echo '$pdf_previewer = 'start evince';' >> ~/.latexmkrc
+
+#+END_SRC
 It is possible to have local configuration for the project only, see [[https://mg.readthedocs.io/latexmk.html][local configuration]]. 
 
 
