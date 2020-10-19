@@ -1,5 +1,5 @@
 #+TITLE: PhD Thesis: Perspectives on Probabilistic Graphical Models
-
+[[https://creativecommons.org/licenses/by-nc-sa/4.0/][https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg]]
 The repository contains the source files and compile recipe for making my thesis pdf. All compiling processes are via the recipe [[file:Makefile][Makefile]] with Latexmk (see, [[https://mg.readthedocs.io/latexmk.html][Using Latexmk]]). The sources are to generate:
 - Thesis file: [[file:main.pdf][main.pdf]]
 - Slide file: [[slides/ppgm_slide.pdf]]
