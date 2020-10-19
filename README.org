@@ -16,31 +16,28 @@ The repository contains the source files and compile recipe for making my thesis
 #+BEGIN_SRC bash
 $ echo '$pdf_previewer = 'start evince';' >> ~/.latexmkrc
 #+END_SRC
-
-#+BEGIN_SRC 
-$ echo '$pdf_previewer = 'start evince';' >> ~/.latexmkrc
-
-#+END_SRC
 It is possible to have local configuration for the project only, see [[https://mg.readthedocs.io/latexmk.html][local configuration]]. 
 
 
 * Compile from Souce
 
 Default clean-compile removes cached or intermediate files made previous, and compile from scratch, just do
-``` bash
+#+BEGIN_SRC bash
 $ make 
-```
+#+END_SRC
 The fantastic part is to have the compiling process running at backend continuously, monitoring your file change, and re-compiling at any new edited changed spotted automatically. It frees your hands from running compile whenever have write new stuff. If you want to work on the manuscript this way, just run
-``` bash
+#+BEGIN_SRC bash
 $ make continuous
-```
+#+END_SRC
 The generated pdf is opened and refreshed automatically as well, where the viewer is specified in the .latexmkrc file.
 
 To start the pdf viewer manually, run
-``` bash
+#+BEGIN_SRC bash
 $ make run
-```
+#+END_SRC
+
 To compile the slides:
-``` bash
+#+BEGIN_SRC bash
 $ make slide
-```
+#+END_SRC
+
