@@ -1,0 +1,263 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+% ------------------------------------------------
+\scriptsize
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+\section{Motivation}
+\scriptsize
+\subsection{Probabilistic Graphical Models}
+{ \setbeamercolor{background canvas}{bg=hl_bg}
+  \setbeamercolor{normal text}{fg=hl_fg}
+  \setbeamercolor{frametitle}{fg=hl_fg}
+  \begin{frame}
+    \usebeamercolor[fg]{normal text}
+    \begin{center}
+      {\large Why are Probabilistic Graphical Models interested?}
+    \end{center}
+  \end{frame}
+}
+
+\begin{frame}{Probabilistic Graphical Models}
+  \begin{itemize}
+    
+    \item Directed: Bayesian Networks \\
+      \vskip 0.2cm
+      \begin{columns}
+        \column{0.5\textwidth}
+        \hskip 1cm
+        \begin{tikzpicture}
+          % \tikzstyle{enode} = [thick, draw=blue, circle, inner sep = 3pt,
+          % align=center]
+          \tikzstyle{enode} = [thick, draw=black, ellipse, inner sep = 2pt,  align=center]
+          \tikzstyle{nnode} = [thick, rectangle, rounded corners = 2pt, minimum size = 0.5cm,draw,inner sep = 2pt]
+
+          \node[enode] (s) at (-0.5, 1.5) {Sprinkler};
+          \node[enode] (r) at (1.5, 1.5) {Rain};
+          \node[enode] (gw) at (1, 0) {Grass Wet};
+          \draw[->] (r) to (s);
+          \draw[->] (r) to (gw);
+          \draw[->] (s) to (gw);
+        \end{tikzpicture}\\
+        \centering
+        Is the sprinkler working?
+        
+        \column{0.5\textwidth}
+        \hskip -1cm
+        \begin{tikzpicture}
+          \tikzstyle{cnode} = [thick, draw=black, ellipse, inner sep = 1pt,  align=center]
+          \tikzstyle{nnode} = [thick, rectangle, rounded corners = 0pt,draw,inner sep = 2pt]
+          \node[cnode] (virus) at (0, 1.5) {Covid-19};
+          \node[cnode] (fever) at (-3, 0) {Fever};
+          \node[cnode] (cough) at (-1.5, 0) {Cough};
+          \node[cnode] (breath) at (1, 0) {Breath Difficulty};
+          \draw[->] (virus) -- (fever);
+          \draw[->] (virus) -- (cough);
+          \draw[->] (virus) -- (breath);
+        \end{tikzpicture}\\
+        \centering
+        Is the person get contiguous by COVID?
+      \end{columns}
+    \item 
+      \vskip 0.2cm
+      \begin{columns}
+        \column{0.5\textwidth}
+        \hskip 1cm
+        \begin{tikzpicture}[scale=0.7]
+          \tikzstyle{enode} = [thick, draw, circle, inner sep = 3pt,  align=center]
+          \tikzstyle{cnode} = [thick, fill=black, draw, circle, inner sep = 3pt,  align=center]
+          \begin{scope}{scale=0.5, xshift=1cm}
+            \node[enode] (x1) at (-2, 0) {};
+            \node[enode] (x2) at (-1, 0) {};
+            \node[enode] (x3) at (0, 0) {};
+            \node[enode] (x4) at (1, 0) {};
+            \node[text width=1cm, right = 0.2cm of x4] {Phoneme};
+            \node[cnode] (y1) at (-2, -1.5) {};
+            \node[cnode] (y2) at (-1, -1.5) {};
+            \node[cnode] (y3) at (0, -1.5) {};
+            \node[cnode] (y4) at (1, -1.5) {};
+            \node[text width=1cm, right = 0.2cm of y4] {Acoustic};
+
+            \draw[->] (x1) to (x2);
+            \draw[->] (x2) to (x3);
+            \draw[->] (x3) to (x4);
+
+            \draw[->] (x1) to (y1);
+            \draw[->] (x2) to (y2);
+            \draw[->] (x3) to (y3);
+            \draw[->] (x4) to (y4);
+
+          \end{scope}
+        \end{tikzpicture}
+        \vskip 0.1cm
+        \centering
+        Speech Recognition
+        \column{0.5\textwidth}
+        \begin{tikzpicture}[scale=0.65]
+          \tikzstyle{enode} = [thick, draw, circle, inner sep = 3pt,  align=center]
+          \tikzstyle{cnode} = [thick, fill=gray, draw, circle, inner sep = 3pt,  align=center]
+          \begin{scope}{scale=0.5, xshift=1cm}
+            \node[cnode] (o1) at (-2, 1.5) {$\Oo_1$};
+            \node[cnode] (o2) at (0, 1.5) {$\Oo_2$};
+            \node[cnode] (o3) at (2, 1.5) {$\Oo_3$};
+            \node[cnode] (o4) at (4, 1.5) {$\Oo_4$};
+            \node[text width=1cm, right = 0.2cm of o4] {Award};
+
+            \node[enode] (a1) at (-2, 0) {$a_1$};
+            \node[enode] (a2) at (0, 0) {$a_2$};
+            \node[enode] (a3) at (2, 0) {$a_3$};
+            \node[enode] (a4) at (4, 0) {$a_4$};
+            \node[text width=1cm, right = 0.2cm of a4] {Action};
+            \node[enode] (s1) at (-2, -1.5) {$s_1$};
+            \node[enode] (s2) at (0, -1.5) {$s_2$};
+            \node[enode] (s3) at (2, -1.5) {$s_3$};
+            \node[enode] (s4) at (4, -1.5) {$s_4$};
+            \node[text width=1cm, right = 0.2cm of s4] {State};
+
+            \draw[->] (s1) to (s2);
+            \draw[->] (s2) to (s3);
+            \draw[->] (s3) to (s4);
+            \draw[->] (a1) to (s2);
+            \draw[->] (a2) to (s3);
+            \draw[->] (a3) to (s4);
+            \draw[->] (s1) to [out=15, in=-15] (o1);
+            \draw[->] (s2) to [out=15, in=-15] (o2);
+            \draw[->] (s3) to [out=15, in=-15] (o3);
+            \draw[->] (s4) to [out=15, in=-15] (o4);
+
+          \end{scope}
+          
+        \end{tikzpicture}
+        
+        Communication system
+      \end{columns}
+    
+  \end{itemize}
+  Two key aspects to encode in a graphical model:
+
+    \begin{itemize}[label={$\bullet$}]
+    \item attributes of our interests in a system $\rightarrow$ variable nodes
+    \item relationship of these factors (dependencies or indepedencies) $\rightarrow$ structures of a graph
+    \end{itemize}
+\end{frame}
+
+
+
+\begin{frame}{Probabilistic Graphical Models}
+  \begin{itemize}
+    
+    \item Directed: Bayesian Networks \\
+      \vskip 0.2cm
+      \begin{columns}
+        \column{0.5\textwidth}
+        \hskip 1cm
+        \begin{tikzpicture}
+          \tikzstyle{enode} = [thick, draw=black, ellipse, inner sep = 2pt,  align=center]
+          \tikzstyle{nnode} = [thick, rectangle, rounded corners = 2pt, minimum size = 0.5cm,draw,inner sep = 2pt]
+
+          \node[enode] (s) at (-0.5, 1.5) {Sprinkler};
+          \node[enode] (r) at (1.5, 1.5) {Rain};
+          \node[enode] (gw) at (1, 0) {Grass Wet};
+          \draw[->] (r) to (s);
+          \draw[->] (r) to (gw);
+          \draw[->] (s) to (gw);
+        \end{tikzpicture}
+
+        \column{0.5\textwidth}
+        \hskip -1cm
+        \begin{tikzpicture}
+          \tikzstyle{cnode} = [thick, draw=black, ellipse, inner sep = 1pt,  align=center]
+          \tikzstyle{nnode} = [thick, rectangle, rounded corners = 0pt,draw,inner sep = 2pt]
+          \node[cnode] (virus) at (0, 1.5) {Covid-19};
+          \node[cnode] (fever) at (-3, 0) {Fever};
+          \node[cnode] (cough) at (-1.5, 0) {Cough};
+          \node[cnode] (breath) at (1, 0) {Breath Difficulty};
+          \draw[->] (virus) -- (fever);
+          \draw[->] (virus) -- (cough);
+          \draw[->] (virus) -- (breath);
+        \end{tikzpicture}
+        
+      \end{columns}
+    \item Undirected: Markov Random Field
+      \vskip 0.2cm
+
+      \begin{columns}
+        \column{0.5\textwidth}
+        \hskip 1cm
+        \begin{tikzpicture}[scale=0.6]
+          \tikzstyle{enode} = [thick, draw, circle, inner sep = 3pt,  align=center]
+          \tikzstyle{cnode} = [thick, fill=black, draw, circle, inner sep = 3pt,  align=center]
+          \begin{scope}{scale=0.4, xshift=1cm}
+            \node[enode] (x1) at (-2, 1) {};
+            \node[enode] (x2) at (0, 1) {};
+            \node[enode] (x3) at (-2, -1) {};
+            \node[enode] (x4) at (0, -1) {};
+
+            \node[cnode] (y1) at (-3, 0) {};
+            \node[cnode] (y2) at (-1, 0) {};
+            \node[cnode] (y3) at (-3, -2) {};
+            \node[cnode] (y4) at (-1, -2) {};
+
+            \draw[-] (x1) to (y1);
+            \draw[-] (x2) to (y2);
+            \draw[-] (x3) to (y3);
+            \draw[-] (x4) to (y4);
+
+            \draw[-] (x1) to (x2);
+            \draw[-] (x1) to (x3);
+            \draw[-] (x2) to (x4);
+            \draw[-] (x3) to (x4);
+          \end{scope}
+        \end{tikzpicture}
+        \vskip 0.1cm
+        \hskip 1cm
+        Computer vision
+        \column{0.5\textwidth}
+        \begin{tikzpicture}[scale=0.7]
+          \tikzstyle{enode} = [thick, draw, circle, inner sep = 3pt,  align=center]
+          \tikzstyle{cnode} = [thick, fill=black, draw, circle, inner sep = 3pt,  align=center]
+          \begin{scope}{scale=0.2}
+            \node[enode] (x1) at (-2, 1) {};
+            \node[enode] (x2) at (-1, 1) {};
+            \node[enode] (x3) at (0, 1) {};
+
+            \node[cnode] (y1) at (-3, -1) {};
+            \node[cnode] (y2) at (-1, -1) {};
+            \node[cnode] (y3) at (1, -1) {};
+            
+
+            \draw[-] (x1) to (y1);
+            \draw[-] (x1) to (y2);
+            \draw[-] (x1) to (y3);
+
+            \draw[-] (x2) to (y1);
+            \draw[-] (x2) to (y2);
+            \draw[-] (x2) to (y3);
+
+            \draw[-] (x3) to (y1);
+            \draw[-] (x3) to (y2);
+            \draw[-] (x3) to (y3);
+            
+            % \draw[-] (x4) to (y4);
+
+            % \draw[-] (x1) to (x2);
+            % \draw[-] (x1) to (x3);
+            % \draw[-] (x2) to (x4);
+            % \draw[-] (x3) to (x4);
+          \end{scope}
+        \end{tikzpicture}
+        
+        \centering
+        Control, reinforcement learning
+      \end{columns}
+    
+  \end{itemize}
+  Two key aspects to encode in a graphical model:
+
+    \begin{itemize}[label={$\bullet$}]
+    \item attributes of our interests in a system $\rightarrow$ variable nodes
+    \item relationship of these factors (dependencies or indepedencies) $\rightarrow$ structures of a graph
+    \end{itemize}
+\end{frame}
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: ../ppgm_slide.tex
+%%% End:
