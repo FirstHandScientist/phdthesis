@@ -12,7 +12,7 @@ CONTINUOUS=-pvc
 MAIN=main
 SOURCES=source
 
-
+SLIDE=slides
 
 
 all: clean-compile
@@ -34,6 +34,9 @@ run:
 continuous: $(MAIN).tex .refresh $(SOURCES)
 	$(LATEXMK) $(LATEXMKOPT) $(CONTINUOUS) \
 	-pdflatex="$(LATEX) $(LATEXOPT) $(NONSTOP) %O %S" $(MAIN)
+
+slide:
+	$(MAKE) -C $(SLIDE)
 
 force:
 	touch .refresh
