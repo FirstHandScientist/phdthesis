@@ -1,0 +1,41 @@
+#+ PhD Thesis: Perspectives on Probabilistic Graphical Models
+
+The repository contains the source files and compile recipe for making my thesis pdf. All compiling processes are via the recipe [[file:Makefile][Makefile]] with Latexmk (see, [[https://mg.readthedocs.io/latexmk.html][Using Latexmk]]). The sources are to generate:
+- Thesis file: [[file:main.pdf][main.pdf]]
+- Slide file: [[slides/ppgm_slide.pdf]]
+
+/No need to go further down if you are here to view the pdf files/.
+
+* The environment requires
+** To compile from source, you need to have the following utilities installed
+- GUN Make
+- Latexmk
+
+** Optional
+   It is preferable to have a global configuration for your Latexmk. For install, tell latexmk which pdf viewer you want to use:
+```bash
+$ echo '$pdf_previewer = 'start evince';' >> ~/.latexmkrc
+```
+It is possible to have local configuration for the project only, see [[https://mg.readthedocs.io/latexmk.html][local configuration]]. 
+
+
+* Compile from Souce
+
+Default clean-compile removes cached or intermediate files made previous, and compile from scratch, just do
+``` bash
+$ make 
+```
+The fantastic part is to have the compiling process running at backend continuously, monitoring your file change, and re-compiling at any new edited changed spotted automatically. It frees your hands from running compile whenever have write new stuff. If you want to work on the manuscript this way, just run
+``` bash
+$ make continuous
+```
+The generated pdf is opened and refreshed automatically as well, where the viewer is specified in the .latexmkrc file.
+
+To start the pdf viewer manually, run
+``` bash
+$ make run
+```
+To compile the slides:
+``` bash
+$ make slide
+```
