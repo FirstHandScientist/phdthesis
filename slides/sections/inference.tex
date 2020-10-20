@@ -1,5 +1,5 @@
 \section{Inference}
-
+\subsection{Alpha-BP}
 { \setbeamercolor{background canvas}{bg=hl_bg}
   \setbeamercolor{normal text}{fg=hl_fg}
   \setbeamercolor{frametitle}{fg=hl_fg}
@@ -11,27 +11,27 @@
     
   \end{frame}
 }
-\subsection{GraphNet}
+% \subsection{GraphNet}
 
-\begin{frame}{Learn the message update rule by NN}
-  An end-to-end learning process: Factor graph $\rightarrow$ converted graph representation $\rightarrow$ GNN $\rightarrow$ Output
-  \begin{figure}
-    \centerline{\includegraphics[scale=0.3]{images/gnn.png}}
-  \end{figure}
-  \begin{itemize}[label=$\bullet$]
-  \item sum-product update rule (in BP) $\rightarrow$ NN, to learn
-  \item pseudo probability (belief aggregation) $\rightarrow$ NN, to learn
-  \item end-to-end learning that requires true marginal probability, which BP, GPB and mean field do no require
-  \end{itemize}
-  \let\thefootnote\relax\footnotetext{\tiny For related methods, see:\\
-    Heess et al, Learning to Pass Expectation Propagation Messages\\
-    Yoon, et al, 2019, Inference in Probabilistic Graphical Models by Graph Neural Networks\\
-    Gilmer, et al, 2017, Neural message passing for quantum chemistry.\\
-    Battaglia, et al, 2018, Relational inductive biases, deep learning, and graph networks
-  }
-\end{frame}
+% \begin{frame}{Learn the message update rule by NN}
+%   An end-to-end learning process: Factor graph $\rightarrow$ converted graph representation $\rightarrow$ GNN $\rightarrow$ Output
+%   \begin{figure}
+%     \centerline{\includegraphics[scale=0.3]{images/gnn.png}}
+%   \end{figure}
+%   \begin{itemize}[label=$\bullet$]
+%   \item sum-product update rule (in BP) $\rightarrow$ NN, to learn
+%   \item pseudo probability (belief aggregation) $\rightarrow$ NN, to learn
+%   \item end-to-end learning that requires true marginal probability, which BP, GPB and mean field do no require
+%   \end{itemize}
+%   \let\thefootnote\relax\footnotetext{\tiny For related methods, see:\\
+%     Heess et al, Learning to Pass Expectation Propagation Messages\\
+%     Yoon, et al, 2019, Inference in Probabilistic Graphical Models by Graph Neural Networks\\
+%     Gilmer, et al, 2017, Neural message passing for quantum chemistry.\\
+%     Battaglia, et al, 2018, Relational inductive biases, deep learning, and graph networks
+%   }
+% \end{frame}
 
-\subsection{AutoEncoder}
+% \subsection{AutoEncoder}
 
 % \begin{frame}
 %   {Variational Auto-encoder}
@@ -108,6 +108,61 @@
 % \end{frame}
 \subsection{RENN}
 
+\begin{frame}{What is the state of $x$?}
+  \framesubtitle{Yedidia, Freeman, Weiss: A step to generalization}
+  \textbf{Message among variables \& factors $\rightarrow$ message among regions}
+  \vskip -0.5cm
+  \begin{figure}
+    \centering
+    \begin{tikzpicture}
+      % \tikzstyle{enode} = [thick, draw=blue, circle, inner sep = 3pt,
+      % align=center]
+      \tikzstyle{enode} = [thick, draw=black, circle, inner sep = 2pt,  align=center]
+      \tikzstyle{nnode} = [thick, rectangle, rounded corners = 2pt, minimum size = 0.5cm,draw,inner sep = 2pt]
+      \tikzstyle{fnode} = [draw=blue, ellipse, inner sep = 1pt]
+      \tikzstyle{fnoder} = [draw=red, ellipse, inner sep = 0.0pt, rotate=-20]
+
+
+      \node[enode] (x1) at (-1.5, 1) {$x_1$};
+      \node[enode] (x2) at (-0.5, 1) {$x_2$};
+      \node[enode] (x3) at (0.5, 1) {$x_3$};
+      \node[enode] (x4) at (1.5, 1) {$x_4$};
+
+      \node[nnode] (a) at (-2,-1) {A};
+      \node[nnode] (b) at (0,-1) {B};
+      \node[nnode] (c) at (2,-1) {C};
+
+      \draw[-] (a) to (x1);
+      \draw[-] (a) to (x2);
+      \draw[-] (b) to (x2);
+      \draw[-] (b) to (x3);
+      \draw[-] (b) to (x4);
+      \draw[-] (c) to (x4);
+      
+      \node[fnode, fit=(x1)(x2)] (box) {};
+      \node[fnoder, fit=(x3)(b)] (box) {};
+
+      \node[fnode, fit=(x2)(x3)(x4)(b)(c)] (box) {};
+    \end{tikzpicture}
+  \end{figure}
+  \vskip -0.5cm
+  
+  % A region in a region graph acts as a node, and there are directed edges between regions which are defined according to specific rules. Formally, a region graph is defined as follows:
+
+  % A \textit{region graph} is  a directed graph $\Gg_R(\Rr, \Ee)$, where each vertex $R \in \Rr$ is defined as the joint set of variable and factor nodes in this region, i.e., $R = \left\{ i \in V_R, a \in A_R | i \in \Vv, a \in \Ff \right\}$. Each edge $e \in \Ee$ in $\Gg_R$ is directed from $R_p$ to $R_c$ such that $R_c \subset R_p$. 
+
+  Generalized belief propagation (GBP) generalizes loopy BP
+  \begin{itemize}[label={$\bullet$}]
+  \item usual better approximation than LBP
+  \item higher complexity
+  \item sensitive to scheduling of region messages
+  \end{itemize}
+  Corresponding to minimization of approximated \textbf{variational free energy $F_v(b)$  with trial $b$ including $\{b_R\}$}.
+  \let\thefootnote\relax\footnotetext{\tiny
+    \vskip -0.2cm
+    A \textit{region} $R$ is a set $V_R$ of variables nodes and a set $A_R$ of factor nodes, such that if a factor node '$a$' belongs to $A_R$, all the variables nodes neighboring $a$ are in $V_R$.
+  }
+\end{frame}
 
 \begin{frame}{RENN}
   \framesubtitle{Region revisited}
