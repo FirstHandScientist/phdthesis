@@ -11,11 +11,10 @@
   \end{frame}
 }
 \subsection{Directed}
-\begin{frame}{Probabilistic Graphical Models}
+\begin{frame}[label=current]{Directed Graph Representation}
   \begin{itemize}
     
-    \item Directed: Bayesian Networks \\
-      \vskip 0.2cm
+    \item 
       \begin{columns}
         \column{0.5\textwidth}
         \hskip 1cm
@@ -52,11 +51,11 @@
         Is the person get contiguous by COVID?
       \end{columns}
     \item 
-      \vskip 0.2cm
+      \vskip 0.5cm
       \begin{columns}
         \column{0.5\textwidth}
         \hskip 1cm
-        \begin{tikzpicture}[scale=0.7]
+        \begin{tikzpicture}[scale=0.8]
           \tikzstyle{enode} = [thick, draw, circle, inner sep = 3pt,  align=center]
           \tikzstyle{cnode} = [thick, fill=black, draw, circle, inner sep = 3pt,  align=center]
           \begin{scope}{scale=0.5, xshift=1cm}
@@ -121,66 +120,30 @@
           \end{scope}
           
         \end{tikzpicture}
-        
-        Communication system
+        \centering
+        Control, reinforcement learning        
       \end{columns}
     
   \end{itemize}
-  Two key aspects to encode in a graphical model:
 
-    \begin{itemize}[label={$\bullet$}]
-    \item attributes of our interests in a system $\rightarrow$ variable nodes
-    \item relationship of these factors (dependencies or indepedencies) $\rightarrow$ structures of a graph
-    \end{itemize}
 \end{frame}
 
 
-
-\begin{frame}{Probabilistic Graphical Models}
+\subsection{Directed}
+\begin{frame}[label=current]{Undirected Graph Representations}
   \begin{itemize}
-    
-    \item Directed: Bayesian Networks \\
-      \vskip 0.2cm
-      \begin{columns}
-        \column{0.5\textwidth}
-        \hskip 1cm
+  \item % image segmentation
         \begin{tikzpicture}
-          \tikzstyle{enode} = [thick, draw=black, ellipse, inner sep = 2pt,  align=center]
-          \tikzstyle{nnode} = [thick, rectangle, rounded corners = 2pt, minimum size = 0.5cm,draw,inner sep = 2pt]
-
-          \node[enode] (s) at (-0.5, 1.5) {Sprinkler};
-          \node[enode] (r) at (1.5, 1.5) {Rain};
-          \node[enode] (gw) at (1, 0) {Grass Wet};
-          \draw[->] (r) to (s);
-          \draw[->] (r) to (gw);
-          \draw[->] (s) to (gw);
-        \end{tikzpicture}
-
-        \column{0.5\textwidth}
-        \hskip -1cm
-        \begin{tikzpicture}
-          \tikzstyle{cnode} = [thick, draw=black, ellipse, inner sep = 1pt,  align=center]
-          \tikzstyle{nnode} = [thick, rectangle, rounded corners = 0pt,draw,inner sep = 2pt]
-          \node[cnode] (virus) at (0, 1.5) {Covid-19};
-          \node[cnode] (fever) at (-3, 0) {Fever};
-          \node[cnode] (cough) at (-1.5, 0) {Cough};
-          \node[cnode] (breath) at (1, 0) {Breath Difficulty};
-          \draw[->] (virus) -- (fever);
-          \draw[->] (virus) -- (cough);
-          \draw[->] (virus) -- (breath);
-        \end{tikzpicture}
-        
-      \end{columns}
-    \item Undirected: Markov Random Field
-      \vskip 0.2cm
-
-      \begin{columns}
-        \column{0.5\textwidth}
-        \hskip 1cm
-        \begin{tikzpicture}[scale=0.6]
           \tikzstyle{enode} = [thick, draw, circle, inner sep = 3pt,  align=center]
-          \tikzstyle{cnode} = [thick, fill=black, draw, circle, inner sep = 3pt,  align=center]
-          \begin{scope}{scale=0.4, xshift=1cm}
+          \tikzstyle{cnode} = [thick, fill=gray, draw, circle, inner sep = 3pt,  align=center]
+          \begin{scope}{scale=0.4}
+            \node[inner sep=0pt] (img) at (-7,0) {\includegraphics[width=.25\textwidth]{images/illustrate/slam_img.png}};
+          \end{scope}
+          \begin{scope}{scale=0.4}
+            \node[inner sep=0pt] (slam) at (0,0) {\includegraphics[width=.25\textwidth]{images/illustrate/slam_lab.png}};
+          \end{scope}
+          
+          \begin{scope}[local bounding box=crf, scale=0.6, xshift=-4cm]
             \node[enode] (x1) at (-2, 1) {};
             \node[enode] (x2) at (0, 1) {};
             \node[enode] (x3) at (-2, -1) {};
@@ -190,6 +153,8 @@
             \node[cnode] (y2) at (-1, 0) {};
             \node[cnode] (y3) at (-3, -2) {};
             \node[cnode] (y4) at (-1, -2) {};
+            \node[text width=1cm, left = 0.2cm of x1] {Label};
+            \node[text width=1cm, right = 0.2cm of y4] {Pixel};
 
             \draw[-] (x1) to (y1);
             \draw[-] (x2) to (y2);
@@ -201,15 +166,17 @@
             \draw[-] (x2) to (x4);
             \draw[-] (x3) to (x4);
           \end{scope}
+          
         \end{tikzpicture}
         \vskip 0.1cm
-        \hskip 1cm
-        Computer vision
-        \column{0.5\textwidth}
+        \centering
+        Vision Perception
+        \item % digital communication
         \begin{tikzpicture}[scale=0.7]
           \tikzstyle{enode} = [thick, draw, circle, inner sep = 3pt,  align=center]
-          \tikzstyle{cnode} = [thick, fill=black, draw, circle, inner sep = 3pt,  align=center]
-          \begin{scope}{scale=0.2}
+          \tikzstyle{cnode} = [thick, fill=gray, draw, circle, inner sep = 3pt,  align=center]
+      
+          \begin{scope}[local bounding box=mrf]{scale=0.2}
             \node[enode] (x1) at (-2, 1) {};
             \node[enode] (x2) at (-1, 1) {};
             \node[enode] (x3) at (0, 1) {};
@@ -218,6 +185,8 @@
             \node[cnode] (y2) at (-1, -1) {};
             \node[cnode] (y3) at (1, -1) {};
             
+            \node[text width=1cm, right = 0.2cm of x3] {True Symbol};
+            \node[text width=1cm, right = 0.2cm of y3] {Received Symbol};
 
             \draw[-] (x1) to (y1);
             \draw[-] (x1) to (y2);
@@ -230,28 +199,70 @@
             \draw[-] (x3) to (y1);
             \draw[-] (x3) to (y2);
             \draw[-] (x3) to (y3);
-            
-            % \draw[-] (x4) to (y4);
 
-            % \draw[-] (x1) to (x2);
-            % \draw[-] (x1) to (x3);
-            % \draw[-] (x2) to (x4);
-            % \draw[-] (x3) to (x4);
+          \end{scope}
+
+          \begin{scope}[shift={(-4,0)}, scale=0.9, every node/.append style={transform shape}]
+          \node[block](tx) at (-6,-1) {transmitter};
+          \node[antenna] at (tx.east) {};
+          \node[block,right = 1.5cm of tx](rx){receiver};
+          \node[antenna,xscale=-1] at (rx.west) {};
           \end{scope}
         \end{tikzpicture}
-        
         \centering
-        Control, reinforcement learning
-      \end{columns}
-    
-  \end{itemize}
-  Two key aspects to encode in a graphical model:
+        Digital communication
+      \item % Solid physics
+        \begin{columns}
+          \column{0.5\textwidth}
+          \centering
+        \begin{tikzpicture}
+          \tikzstyle{enode} = [thick, draw, circle, inner sep = 2pt,  align=center]
+          \tikzstyle{cnode} = [thick, fill=gray, draw, circle, inner sep = 3pt,  align=center]
+      
+          \begin{scope}[local bounding box=mrf, scale=0.6]
+            \node[enode] (x11) at (0, 0) {};
+            \node[enode] (x12) at (1, 0) {};
+            \node[enode] (x13) at (2, 0) {};
+            \node[enode] (x14) at (3, 0) {};
+            \node[enode] (x21) at (0, 1) {};
+            \node[enode] (x22) at (1, 1) {};
+            \node[enode] (x23) at (2, 1) {};
+            \node[enode] (x24) at (3, 1) {};
+            \node[enode] (x31) at (0, 2) {};
+            \node[enode] (x32) at (1, 2) {};
+            \node[enode] (x33) at (2, 2) {};
+            \node[enode] (x34) at (3, 2) {};
+            \node[enode] (x41) at (0, 3) {};
+            \node[enode] (x42) at (1, 3) {};
+            \node[enode] (x43) at (2, 3) {};
+            \node[enode] (x44) at (3, 3) {};
 
-    \begin{itemize}[label={$\bullet$}]
-    \item attributes of our interests in a system $\rightarrow$ variable nodes
-    \item relationship of these factors (dependencies or indepedencies) $\rightarrow$ structures of a graph
-    \end{itemize}
+            \draw (x11)--(x12)--(x13)--(x14);
+            \draw (x21)--(x22)--(x23)--(x24);
+            \draw (x31)--(x32)--(x33)--(x34);
+            \draw (x41)--(x42)--(x43)--(x44);
+
+            \draw (x11)--(x21)--(x31)--(x41);
+            \draw (x12)--(x22)--(x32)--(x42);
+            \draw (x13)--(x23)--(x33)--(x43);
+            \draw (x14)--(x24)--(x34)--(x44);
+          \end{scope}
+        \end{tikzpicture}\\
+        \centering
+        Physics (Ising or Potts model)
+        \column{0.5\textwidth}
+        \begin{itemize}[label=$\bullet$]
+        \item Error-control codes
+        \item Computational biology
+        \item Natural language processing
+        \item etc.
+        \end{itemize}
+      \end{columns}
+  \end{itemize}
+
+
 \end{frame}
+
 
 %%% Local Variables:
 %%% mode: latex

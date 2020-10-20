@@ -1,4 +1,5 @@
-\documentclass[xcolor=x11names,compress]{beamer}
+\documentclass[xcolor=x11names,handout]{beamer}
+\includeonlyframes{current}
 \usepackage{hyperref}
 \hypersetup{
     colorlinks=true,
@@ -12,6 +13,7 @@
 \usepackage{tikz}
 \usepackage{adjustbox}
 \usepackage{booktabs}       % professional-quality tables
+\usepackage{circuitikz}
 \setbeamercovered{transparent}
 \usetikzlibrary{calc,shapes,positioning}
 \usetikzlibrary{arrows}
@@ -21,7 +23,12 @@
 % alternative to 'Straight Barb' can be 'Latex, Stealth, Computer Modern Rightarrow'.
 \usetikzlibrary{arrows.meta}
 \tikzset{>={Straight Barb[width=1.3mm,length=1.3mm]}}
-
+\tikzset{block/.style = {draw, fill=white, rectangle,
+                  minimum height=3em, minimum width=2cm},
+        input/.style = {coordinate},
+        output/.style = {coordinate},
+        pinstyle/.style = {pin edge={to-,t,black}}
+    }
 
 \newcommand{\ubar}[1]{\mkern2mu\underline{\mkern-2mu #1\mkern-2mu}\mkern2mu}
 \begin{document}
@@ -51,11 +58,13 @@
   
 \end{frame}
 
-
+% decrease the size of font
+\scriptsize
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 % ------------------------------------------------
 %   Seciton motivation
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+
 
 \input{sections/motivation.tex}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
