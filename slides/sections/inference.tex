@@ -88,12 +88,37 @@
   }
 \end{frame}
 
-\begin{frame}[label=current]{Message Propagation Rule}
-  Updating message via $\alpha$-BP:
+\begin{frame}[label=current]
+  \begin{columns}
+    \column{0.5\textwidth}
+    Updating message via $\alpha$-BP:
+    \column{0.5\textwidth}
+
+    \begin{tikzpicture}
+     \begin{scope}[scale=0.7, shift={(-3,-4.5)}, every node/.append style={transform shape}, local bounding box=mmrfToy]
+     \tikzstyle{enode} = [thick, draw=black, circle, inner sep = 4pt, align=center]
+     \tikzstyle{nnode} = [thick, rectangle, rounded corners = 0pt, minimum size = 0.5cm,draw,inner sep = 2pt]
+     
+     \node[enode, label=above:{t}] (t) at (0 ,0) {};
+     \node[nnode, label=above:{$\phi_{st}$}, right=of t] (phiSt) {};
+     \node[enode, label=above:{s}, right=of phiSt] (s) {};
+     \node[nnode, label=above:{w}, above left= 0.5 and 1 of t] (w) {};
+     \node[label=above:{...}, left= of t] (w1) {};
+     \node[nnode, below left= 0.5 and 1 of t] (w2) {};
+
+     \draw[->] (w) -- node[midway,above=1em]{$m_{wt}$} (t);
+     \draw[->] (w2) to (t);
+     \draw[->] (t) to (phiSt);
+     \draw[->] (phiSt) to node[midway,above=1em]{$m_{st}$} (s);
+
+    \end{scope}
+    \end{tikzpicture}
+  \end{columns}
   \begin{align*}
-    {m}^{\mathrm{new}}_{ts}(x_s) \propto
-    m_{ts}(x_s)^{1-\alpha_{ts}} \bigg[\sum_{x_t} \phi_{ts}(x_t, x_s)^{\alpha_{ts}} {m}_{st}(x_t)^{1-\alpha_{ts}} \underbrace{{\phi}_t(x_t) \prod_{w\in \Nn(t)\backslash s}m_{wt}(x_t)}_{\text{msg. from variable node $t$ to factor $\phi_{st}$}} \bigg].
+    \underbrace{{m}^{\mathrm{new}}_{ts}(x_s)}_{\text{new msg. to s}} \propto
+    \underbrace{m_{ts}(x_s)^{1-\alpha_{ts}}}_{\text{old msg. to s}} \bigg[\sum_{x_t} \phi_{ts}(x_t, x_s)^{\alpha_{ts}} \underbrace{{m}_{st}(x_t)^{1-\alpha_{ts}}}_{\text{old msg. to t}} \underbrace{{\phi}_t(x_t) \prod_{w\in \Nn(t)\backslash s}m_{wt}(x_t)}_{\text{msg. from variable node $t$ to factor $\phi_{st}$}} \bigg].
   \end{align*}
+  
   \centering
   \begin{tikzpicture}
     \tikzstyle{enode} = [thick, draw, circle, inner sep = 2pt, align=center]
@@ -127,7 +152,7 @@
      \draw[dashed, ->] (mmrf) to (alpha);
 
    \end{scope}
-   \begin{scope}[scale=0.7, shift={(-3,-4.5)}, every node/.append style={transform shape}, local bounding box=mmrfToy]
+   \begin{scope}[scale=0.7, shift={(-3.5,-4.1)}, every node/.append style={transform shape}, local bounding box=mmrfToy]
      \tikzstyle{enode} = [thick, draw=black, circle, inner sep = 4pt, minimum size = 0.7cm, align=center]
      \tikzstyle{nnode} = [thick, rectangle, rounded corners = 0pt, minimum size = 0.5cm,draw,inner sep = 2pt]
      \tikzstyle{cnode} = [thick, cloud, draw,cloud puffs=10, cloud puff arc=120, aspect=2, inner ysep=4pt]
@@ -150,11 +175,36 @@
  \end{tikzpicture}
 \end{frame}
 
-\begin{frame}[label=current]{Message Propagation Rule}
-  Updating message via $\alpha$-BP:
+\begin{frame}[label=current]
+  \begin{columns}
+    \column{0.5\textwidth}
+    Updating message via $\alpha$-BP:
+    \column{0.5\textwidth}
+
+    \begin{tikzpicture}
+     \begin{scope}[scale=0.7, shift={(-3,-4.5)}, every node/.append style={transform shape}, local bounding box=mmrfToy]
+     \tikzstyle{enode} = [thick, draw=black, circle, inner sep = 4pt, align=center]
+     \tikzstyle{nnode} = [thick, rectangle, rounded corners = 0pt, minimum size = 0.5cm,draw,inner sep = 2pt]
+     
+     \node[enode, label=above:{t}] (t) at (0 ,0) {};
+     \node[nnode, label=above:{$\phi_{st}$}, right=of t] (phiSt) {};
+     \node[enode, label=above:{s}, right=of phiSt] (s) {};
+     \node[nnode, label=above:{w}, above left= 0.5 and 1 of t] (w) {};
+     \node[label=above:{...}, left= of t] (w1) {};
+     \node[nnode, below left= 0.5 and 1 of t] (w2) {};
+
+     \draw[->] (w) -- node[midway,above=1em]{$m_{wt}$} (t);
+     \draw[->] (w2) to (t);
+     \draw[->] (t) to (phiSt);
+     \draw[->] (phiSt) to node[midway,above=1em]{$m_{st}$} (s);
+
+    \end{scope}
+    \end{tikzpicture}
+  \end{columns}
+  
   \begin{align*}
-    {m}^{\mathrm{new}}_{ts}(x_s) \propto
-    m_{ts}(x_s)^{1-\alpha_{ts}} \bigg[\sum_{x_t} \phi_{ts}(x_t, x_s)^{\alpha_{ts}} {m}_{st}(x_t)^{1-\alpha_{ts}} \underbrace{{\phi}_t(x_t) \prod_{w\in \Nn(t)\backslash s}m_{wt}(x_t)}_{\text{msg. from variable node $t$ to factor $\phi_{st}$}} \bigg].
+    \underbrace{{m}^{\mathrm{new}}_{ts}(x_s)}_{\text{new msg. to s}} \propto
+    \underbrace{m_{ts}(x_s)^{1-\alpha_{ts}}}_{\text{old msg. to s}} \bigg[\sum_{x_t} \phi_{ts}(x_t, x_s)^{\alpha_{ts}} \underbrace{{m}_{st}(x_t)^{1-\alpha_{ts}}}_{\text{old msg. to t}} \underbrace{{\phi}_t(x_t) \prod_{w\in \Nn(t)\backslash s}m_{wt}(x_t)}_{\text{msg. from variable node $t$ to factor $\phi_{st}$}} \bigg].
   \end{align*}
   \centering
   \begin{tikzpicture}
@@ -189,7 +239,7 @@
      \draw[green, ->] (mmrf) to (alpha);
 
    \end{scope}
-   \begin{scope}[scale=0.7, shift={(-3,-4.5)}, every node/.append style={transform shape}, local bounding box=mmrfToy]
+   \begin{scope}[scale=0.7, shift={(-3.5,-4.1)}, every node/.append style={transform shape}, local bounding box=mmrfToy]
      \tikzstyle{enode} = [thick, draw=black, circle, inner sep = 4pt, minimum size = 0.7cm, align=center]
      \tikzstyle{nnode} = [thick, rectangle, rounded corners = 0pt, minimum size = 0.5cm,draw,inner sep = 2pt]
      \tikzstyle{cnode} = [thick, cloud, draw,cloud puffs=10, cloud puff arc=120, aspect=2, inner ysep=4pt]
@@ -209,7 +259,8 @@
       \draw[-] (xi) to (paik);
     \end{scope}
     \node[nnode, fit=(mmrf)(ext)(mmrfToy), inner sep=8pt, dashed,draw=black!40] {};
- \end{tikzpicture}
+  \end{tikzpicture}
+  
 \end{frame}
 
 \begin{frame}{Convergence}
