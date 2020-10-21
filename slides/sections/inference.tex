@@ -3,14 +3,219 @@
 { \setbeamercolor{background canvas}{bg=hl_bg}
   \setbeamercolor{normal text}{fg=hl_fg}
   \setbeamercolor{frametitle}{fg=hl_fg}
-  \begin{frame}
+  \begin{frame}[label=current]
     \usebeamercolor[fg]{normal text}
     \begin{center}
-      {\large Attempts with neural networks: an imitation game of message passing, or trials under free energy?}
+      {
+        \begin{tikzpicture}
+          \tikzstyle{cnode} = [thick, draw=white, ellipse, inner sep = 2pt,  align=center]
+          \tikzstyle{fnode} = [thick, draw=white, ellipse, inner sep = 10pt,  align=center]
+          \tikzstyle{rnode} = [thick, rectangle, inner sep = 1.5pt,  align=left]
+          \node[rnode] (inf) at (-2, 0) {\large Inference};
+          \node[rnode, below = 0.6cm of inf.west, anchor=west, draw=green] (abp) {$\bullet$ $\alpha$-BP};
+          \node[rnode, below = 1.2cm of inf.west, anchor=west] (renn) {$\bullet$ RENN};
+          \node[cnode, fit=(abp)(inf)(renn)] (infn) {};
+          
+          \node[rnode, right = 3 of inf] (lern) {\large Learning};
+          \node[rnode, below = 0.4 of lern.west, anchor=west] (genmm) {$\bullet$ GenMM};
+          \node[rnode, below = 0.8 of lern.west, anchor=west] (genhmm) {{$\bullet$} GenHMM};
+          \node[rnode, below = 1.2 of lern.west, anchor=west] (lfree) {{$\bullet$} EOTGM};
+          \node[cnode, fit=(lern)(genmm)(genhmm)(lfree)] (learn) {};
+
+          \node[fnode, fit=(infn)(lern)] (box) {};
+
+          
+          \node[below right = 0.5 and -0.5 of infn] {{Probabilistic} Graphical Model};
+          \draw[->,line width=0.2mm] (infn) to[out=15, in=165] (learn);
+          \draw[->,line width=0.2mm] (learn) to[out=195, in=-15] (infn);
+        \end{tikzpicture}
+      }
     \end{center}
     
   \end{frame}
 }
+
+\begin{frame}[label=current]{Alternative Veiw of BP: $\alpha$-BP}
+  Input:
+  \begin{columns}
+    \column{0.6\textwidth}
+    \begin{itemize}[label=$\bullet$]
+    \item A pairwise Markov random field: $p(\bm{x}) \propto \prod_{{s\in \Vv}} \phi_s(x_s) \prod_{(s,t) \in \Ee} \phi_{st}(x_s, x_t)$
+    \item A trial distribution: $q(\bm{x}) \propto \prod_{{s\in \Vv}} \tilde{\phi}_s(x_s) \prod_{(s,t) \in \Ee} \tilde{\phi}_{st}(x_s, x_t)$ with factorization $\tilde{\phi}_{s,t}(x_s, x_t) := m_{st}(x_t) m_{ts}(x_s)$
+    \item A metric: $\alpha$-Divergence 
+    \end{itemize}
+    
+    \column{0.4\textwidth}
+    \begin{tikzpicture}
+      \begin{scope}[scale=0.6, every node/.append style={transform shape}]
+        \tikzstyle{enode} = [thick, draw=black, circle, inner sep = 4pt, minimum size = 0.7cm, align=center]
+        \tikzstyle{nnode} = [thick, rectangle, rounded corners = 0pt, minimum size = 0.5cm,draw,inner sep = 2pt]
+        \tikzstyle{cnode} = [thick, cloud, draw,cloud puffs=10, cloud puff arc=120, aspect=2, inner ysep=4pt]
+        \node[cnode] (pajk) at (3, 1.5) {$\Nn(t)\backslash s$};
+        \node[cnode] (paik) at (-3, 1.5) {$\Nn(s)\backslash t$};
+        \node[nnode] (tk) at (0, 1.5) {};
+        \node[] at ($(tk) + (0, 0.5)$) {$\phi_{st}(x_s, x_t)$};
+        \node[enode] (xi) at (-1.5 ,0) {};
+        \node[] at ($(xi) + (0.75,0)$) {$x_s$};
+        \node[nnode] (fi) at (-1.5 , -1.5) {};
+        \node[] at ($(fi) + (0.95,0)$) {$\phi_s(x_s)$};
+        \node[enode] (xj) at (1.5 ,0) {};
+        \node[] at ($(xj) + (0.75,0)$) {$x_t$};
+        \node[nnode] (fj) at (1.5 , -1.5) {};
+        \node[] at ($(fj) + (0.95,0)$) {$\phi_t(x_t)$};
+        % connections
+        \draw[-] (xi) to (fi);
+        \draw[-] (xi) to (tk);
+        \draw[-] (xi) to (paik);
+        \draw[-] (xj) to (fj);
+        \draw[-] (xj) to (tk);
+        \draw[-] (xj) to (pajk);
+      \end{scope}
+    \end{tikzpicture}
+    \centering{$\Gg:=(\Vv, \Ee)$}
+  \end{columns}
+  \vskip 1cm
+  Approximate local minimization:
+  \begin{itemize}[label=$\bullet$]
+  \item Direct minimization: $ \!\!\!\uargmin{\tilde{\phi}_{ts}^{\mathrm{new}}(x_t, x_s)}\!\!\!\! \Dd_{\alpha_{ts}}\!\!\left(  p^{\backslash (t,s)}\!(\bm{x})\phi_{ts}(x_t, x_s)\|q^{\backslash (t,s)}\!(\bm{x})\tilde{\phi}_{ts}^{\mathrm{new}}(x_t, x_s)\right)$
+  \item Local minimization: $\!\!\!\uargmin{\tilde{\phi}_{ts}^{\mathrm{new}}(x_t, x_s)}\!\!\!\!  \Dd_{\alpha_{ts}}\!\!\left( q^{\backslash (t,s)}\!(\bm{x}){\phi}_{ts}(x_t, x_s) \|q^{\backslash (t,s)}\!(\bm{x})\tilde{\phi}_{ts}^{\mathrm{new}}(x_t, x_s) \right)$, say you are updating $\tilde{\phi}_{ts}^{\mathrm{new}}(x_t, x_s) = m_{ts}^{\mathrm{new}}(x_s) m_{st}(x_t)$
+
+  \end{itemize}
+
+  \let\thefootnote\relax\footnotetext{\tiny
+    \vskip -0.2cm
+    Definition of $\alpha$-divergence $\Dd_{\alpha}(p \| q ) = \frac{\sum_{\bm{x}} \alpha p(\bm{x}) + (1-\alpha) q (\bm{x}) - p(\bm{x})^{\alpha} q(\bm{x})^{1-\alpha}}{\alpha(1-\alpha)}$
+  }
+\end{frame}
+
+\begin{frame}[label=current]{Message Propagation Rule}
+  Updating message via $\alpha$-BP:
+  \begin{align*}
+    {m}^{\mathrm{new}}_{ts}(x_s) \propto
+    m_{ts}(x_s)^{1-\alpha_{ts}} \bigg[\sum_{x_t} \phi_{ts}(x_t, x_s)^{\alpha_{ts}} {m}_{st}(x_t)^{1-\alpha_{ts}} \underbrace{{\phi}_t(x_t) \prod_{w\in \Nn(t)\backslash s}m_{wt}(x_t)}_{\text{msg. from variable node $t$ to factor $\phi_{st}$}} \bigg].
+  \end{align*}
+  \centering
+  \begin{tikzpicture}
+    \tikzstyle{enode} = [thick, draw, circle, inner sep = 2pt, align=center]
+      \tikzstyle{nnode} = [thick, rectangle, rounded corners = 4pt, minimum size = 0.8cm,draw,inner sep = 2pt]
+      \tikzstyle{cnode} = [thick, cloud, draw, cloud puffs=10, cloud puff arc=120, aspect=2, inner ysep=4pt]
+
+    \begin{scope}
+      
+      \node[nnode] (Problem) at (-4, 0) {Problem};
+      \node[nnode, right= of Problem] (pGraph) 
+      {MRF
+     };
+     \node[enode, right=of pGraph] (alpha) {$\alpha$-BP};
+     \node[nnode, right=of alpha] (surrogate) {
+       \begin{tabular}{c}
+         Surrogate \\
+         Distribution
+       \end{tabular}};
+     \node[nnode, below=of surrogate] (sol) {Solution};
+
+     \node[nnode, below=of Problem] (ext) {\begin{tabular}{c}Exterior \\ Estimator\end{tabular}};
+     \node[nnode, right=of ext] (mmrf) {\begin{tabular}{c}Modified\\MRF\end{tabular}};
+     
+
+     \draw[green,->] (Problem) to (pGraph);
+     \draw[green,->] (pGraph) to (alpha);
+     \draw[green,->] (alpha) to (surrogate);
+     \draw[green,->] (surrogate) to (sol);
+     \draw[dashed, ->] (Problem) to (ext);
+     \draw[dashed, ->] (ext) to (mmrf);
+     \draw[dashed, ->] (mmrf) to (alpha);
+
+   \end{scope}
+   \begin{scope}[scale=0.7, shift={(-3,-4.5)}, every node/.append style={transform shape}, local bounding box=mmrfToy]
+     \tikzstyle{enode} = [thick, draw=black, circle, inner sep = 4pt, minimum size = 0.7cm, align=center]
+     \tikzstyle{nnode} = [thick, rectangle, rounded corners = 0pt, minimum size = 0.5cm,draw,inner sep = 2pt]
+     \tikzstyle{cnode} = [thick, cloud, draw,cloud puffs=10, cloud puff arc=120, aspect=2, inner ysep=4pt]
+
+      \node[cnode] (paik) at (-2, 0) {$\Nn(s)$};
+      \node[enode] (xi) at (0 ,0) {};
+      \node[] at ($(xi) + (0,0.6)$) {$x_s$};
+
+      \node[nnode] (fi) at (0 , -1.5) {};
+      \node[] at ($(fi) + (0.95, 0)$) {$\phi_s(x_s)$};
+
+      \node[nnode] (pi) at (2, 0) {};
+      \node[] at ($(pi) + (0, 0.6)$) {$\hat{p}_s(x_s)$};
+      % connections
+      \draw[-] (xi) to (fi);
+      \draw[-] (xi) to (pi);
+      \draw[-] (xi) to (paik);
+    \end{scope}
+    \node[nnode, fit=(mmrf)(ext)(mmrfToy), inner sep=8pt, dashed,draw=black!40] {};
+ \end{tikzpicture}
+\end{frame}
+
+\begin{frame}[label=current]{Message Propagation Rule}
+  Updating message via $\alpha$-BP:
+  \begin{align*}
+    {m}^{\mathrm{new}}_{ts}(x_s) \propto
+    m_{ts}(x_s)^{1-\alpha_{ts}} \bigg[\sum_{x_t} \phi_{ts}(x_t, x_s)^{\alpha_{ts}} {m}_{st}(x_t)^{1-\alpha_{ts}} \underbrace{{\phi}_t(x_t) \prod_{w\in \Nn(t)\backslash s}m_{wt}(x_t)}_{\text{msg. from variable node $t$ to factor $\phi_{st}$}} \bigg].
+  \end{align*}
+  \centering
+  \begin{tikzpicture}
+    \tikzstyle{enode} = [thick, draw, circle, inner sep = 2pt, align=center]
+      \tikzstyle{nnode} = [thick, rectangle, rounded corners = 4pt, minimum size = 0.8cm,draw,inner sep = 2pt]
+      \tikzstyle{cnode} = [thick, cloud, draw, cloud puffs=10, cloud puff arc=120, aspect=2, inner ysep=4pt]
+
+    \begin{scope}
+      
+      \node[nnode] (Problem) at (-4, 0) {Problem};
+      \node[nnode, right= of Problem] (pGraph) 
+      {MRF
+     };
+     \node[enode, right=of pGraph] (alpha) {$\alpha$-BP};
+     \node[nnode, right=of alpha] (surrogate) {
+       \begin{tabular}{c}
+         Surrogate \\
+         Distribution
+       \end{tabular}};
+     \node[nnode, below=of surrogate] (sol) {Solution};
+
+     \node[nnode, below=of Problem] (ext) {\begin{tabular}{c}Exterior \\ Estimator\end{tabular}};
+     \node[nnode, right=of ext] (mmrf) {\begin{tabular}{c}Modified\\MRF\end{tabular}};
+     
+
+     \draw[dashed,->] (Problem) to (pGraph);
+     \draw[dashed,->] (pGraph) to (alpha);
+     \draw[green,->] (alpha) to (surrogate);
+     \draw[green,->] (surrogate) to (sol);
+     \draw[green, ->] (Problem) to (ext);
+     \draw[green, ->] (ext) to (mmrf);
+     \draw[green, ->] (mmrf) to (alpha);
+
+   \end{scope}
+   \begin{scope}[scale=0.7, shift={(-3,-4.5)}, every node/.append style={transform shape}, local bounding box=mmrfToy]
+     \tikzstyle{enode} = [thick, draw=black, circle, inner sep = 4pt, minimum size = 0.7cm, align=center]
+     \tikzstyle{nnode} = [thick, rectangle, rounded corners = 0pt, minimum size = 0.5cm,draw,inner sep = 2pt]
+     \tikzstyle{cnode} = [thick, cloud, draw,cloud puffs=10, cloud puff arc=120, aspect=2, inner ysep=4pt]
+
+      \node[cnode] (paik) at (-2, 0) {$\Nn(s)$};
+      \node[enode] (xi) at (0 ,0) {};
+      \node[] at ($(xi) + (0,0.6)$) {$x_s$};
+
+      \node[nnode] (fi) at (0 , -1.5) {};
+      \node[] at ($(fi) + (0.95, 0)$) {$\phi_s(x_s)$};
+
+      \node[nnode] (pi) at (2, 0) {};
+      \node[] at ($(pi) + (0, 0.6)$) {$\hat{p}_s(x_s)$};
+      % connections
+      \draw[-] (xi) to (fi);
+      \draw[-] (xi) to (pi);
+      \draw[-] (xi) to (paik);
+    \end{scope}
+    \node[nnode, fit=(mmrf)(ext)(mmrfToy), inner sep=8pt, dashed,draw=black!40] {};
+ \end{tikzpicture}
+\end{frame}
+
+\begin{frame}{Convergence}
+
+\end{frame}
+
 % \subsection{GraphNet}
 
 % \begin{frame}{Learn the message update rule by NN}
@@ -24,11 +229,11 @@
 %   \item end-to-end learning that requires true marginal probability, which BP, GPB and mean field do no require
 %   \end{itemize}
 %   \let\thefootnote\relax\footnotetext{\tiny For related methods, see:\\
-%     Heess et al, Learning to Pass Expectation Propagation Messages\\
-%     Yoon, et al, 2019, Inference in Probabilistic Graphical Models by Graph Neural Networks\\
-%     Gilmer, et al, 2017, Neural message passing for quantum chemistry.\\
-%     Battaglia, et al, 2018, Relational inductive biases, deep learning, and graph networks
-%   }
+%   Heess et al, Learning to Pass Expectation Propagation Messages\\
+%   Yoon, et al, 2019, Inference in Probabilistic Graphical Models by Graph Neural Networks\\
+%   Gilmer, et al, 2017, Neural message passing for quantum chemistry.\\
+%   Battaglia, et al, 2018, Relational inductive biases, deep learning, and graph networks
+% }
 % \end{frame}
 
 % \subsection{AutoEncoder}
@@ -36,74 +241,74 @@
 % \begin{frame}
 %   {Variational Auto-encoder}
 %   \onslide<1->{
-%     \begin{itemize}[label=$\bullet$]
-%     \item Simplification on structures \\
-%       \begin{tikzpicture}
-%         \tikzstyle{enode} = [thick, draw=black, circle, inner sep = 2pt,  align=center]
-%         \tikzstyle{nnode} = [thick, rectangle, rounded corners = 2pt, minimum size = 0.5cm,draw,inner sep = 2pt]
-%         \tikzstyle{fnode} = [draw=blue, ellipse, inner sep = 1pt]
-%         \tikzstyle{fnoder} = [draw=red, ellipse, inner sep = 0.0pt, rotate=-20]
+%   \begin{itemize}[label=$\bullet$]
+%   \item Simplification on structures \\
+%     \begin{tikzpicture}
+%       \tikzstyle{enode} = [thick, draw=black, circle, inner sep = 2pt,  align=center]
+%       \tikzstyle{nnode} = [thick, rectangle, rounded corners = 2pt, minimum size = 0.5cm,draw,inner sep = 2pt]
+%       \tikzstyle{fnode} = [draw=blue, ellipse, inner sep = 1pt]
+%       \tikzstyle{fnoder} = [draw=red, ellipse, inner sep = 0.0pt, rotate=-20]
 
-%         \begin{scope}[scale=0.5]
-%           \node[enode] (x1) at (-1.5, 1) {$x_1$};
-%           \node[enode] (x2) at (-1.5, -1) {$x_2$};
-%           \node[enode] (x3) at (0.5, 1) {$x_3$};
-%           \node[enode] (x4) at (0.5, -1) {$x_4$};
-%           \draw (x1) -- (x2)
-%           (x1) -- (x3)
-%           (x4) -- (x3)
-%           (x4) -- (x2)
-%           ;
-%         \end{scope}
-%         \begin{scope}[scale=0.5, xshift=5cm]
-%           \node[enode] (x1) at (-1.5, 1) {$x_1$};
-%           \node[enode] (x2) at (-1.5, -1) {$x_2$};
-%           \node[enode] (x3) at (0.5, 1) {$x_3$};
-%           \node[enode] (x4) at (0.5, -1) {$x_4$};
-%         \end{scope}
+%       \begin{scope}[scale=0.5]
+%         \node[enode] (x1) at (-1.5, 1) {$x_1$};
+%         \node[enode] (x2) at (-1.5, -1) {$x_2$};
+%         \node[enode] (x3) at (0.5, 1) {$x_3$};
+%         \node[enode] (x4) at (0.5, -1) {$x_4$};
+%         \draw (x1) -- (x2)
+%         (x1) -- (x3)
+%         (x4) -- (x3)
+%         (x4) -- (x2)
+%         ;
+%       \end{scope}
+%       \begin{scope}[scale=0.5, xshift=5cm]
+%         \node[enode] (x1) at (-1.5, 1) {$x_1$};
+%         \node[enode] (x2) at (-1.5, -1) {$x_2$};
+%         \node[enode] (x3) at (0.5, 1) {$x_3$};
+%         \node[enode] (x4) at (0.5, -1) {$x_4$};
+%       \end{scope}
 
-%       \end{tikzpicture}
-%     }
+%     \end{tikzpicture}
+%   }
 %     \onslide<2->{
-%     \item Care about only a certain set of variables \\
-%       \begin{tikzpicture}
-%         \tikzstyle{enode} = [thick, draw=black, circle, inner sep = 2pt,  align=center]
-%         \tikzstyle{nnode} = [thick, rectangle, rounded corners = 2pt, minimum size = 0.5cm,draw,inner sep = 2pt]
-%         \tikzstyle{fnode} = [draw=blue, ellipse, inner sep = 3pt]
-        
+%   \item Care about only a certain set of variables \\
+%     \begin{tikzpicture}
+%       \tikzstyle{enode} = [thick, draw=black, circle, inner sep = 2pt,  align=center]
+%       \tikzstyle{nnode} = [thick, rectangle, rounded corners = 2pt, minimum size = 0.5cm,draw,inner sep = 2pt]
+%       \tikzstyle{fnode} = [draw=blue, ellipse, inner sep = 3pt]
 
-%         \begin{scope}[scale=0.5]
-%           \node[enode] (x1) at (-1.5, 1) {$x_1$};
-%           \node[enode] (x2) at (-1.5, -1) {$x_2$};
-%           \node[fnode, fit=(x1)(x2)] (xo){$\bm{x}_O$};
-%         \end{scope}
-%         \begin{scope}[scale=0.5, xshift=5cm]
-%           \node[enode] (x3) at (0.5, 1) {$x_3$};
-%           \node[enode] (x4) at (0.5, -1) {$x_4$};
-%           \node[fnode, fit=(x3)(x4)] (xu) {$\bm{x}_U$};
-%         \end{scope}
 
-%       \end{tikzpicture}
-%     }
+%       \begin{scope}[scale=0.5]
+%         \node[enode] (x1) at (-1.5, 1) {$x_1$};
+%         \node[enode] (x2) at (-1.5, -1) {$x_2$};
+%         \node[fnode, fit=(x1)(x2)] (xo){$\bm{x}_O$};
+%       \end{scope}
+%       \begin{scope}[scale=0.5, xshift=5cm]
+%         \node[enode] (x3) at (0.5, 1) {$x_3$};
+%         \node[enode] (x4) at (0.5, -1) {$x_4$};
+%         \node[fnode, fit=(x3)(x4)] (xu) {$\bm{x}_U$};
+%       \end{scope}
+
+%     \end{tikzpicture}
+%   }
 %     \onslide<3->{
-%     \item Amortizing the probabilities of interests and learn their parameters by sampling
-%       \begin{tikzpicture}
-%         \tikzstyle{enode} = [thick, draw=black, circle, inner sep = 2pt,  align=center]
-%         \tikzstyle{nnode} = [thick, rectangle, rounded corners = 2pt, minimum size = 0.5cm,draw,inner sep = 2pt]
-%         \tikzstyle{fnode} = [draw=blue, ellipse, inner sep = 3pt]
-        
-%         \node[fnode] (xo) at (0,0){$\bm{x}_O$};
-%         \node[fnode] (xu) at (3,0) {$\bm{x}_U$};
-%         \node[fnode] (hxo) at (6,0){$\hat{\bm{x}}_O$};
-%         \draw[->] (xo) to node[above]{$q(\bm{x}_U|\bm{x}_O)$} (xu);
-%         \draw[->](xu) to node[above]{${{p}(\bm{x}_O| \bm{x}_U; \bm{\theta})}$}(hxo);
-%       \end{tikzpicture}
-      
-%       with the \textbf{variational free energy $F_V$ rewritten as}
-%       \begin{equation*}
-%         F_V(q, \bm{\theta}) = \EE_{q(\bm{x}_U|\bm{x}_O)}\left[ \log{{p}(\bm{x}_O| \bm{x}_U; \bm{\theta})} + \log{{p}(\bm{x}_U; \bm{\theta})} \right] + H({q(\bm{x}_U|\bm{x}_O)}),
-%       \end{equation*}
-%     }
+%   \item Amortizing the probabilities of interests and learn their parameters by sampling
+%     \begin{tikzpicture}
+%       \tikzstyle{enode} = [thick, draw=black, circle, inner sep = 2pt,  align=center]
+%       \tikzstyle{nnode} = [thick, rectangle, rounded corners = 2pt, minimum size = 0.5cm,draw,inner sep = 2pt]
+%       \tikzstyle{fnode} = [draw=blue, ellipse, inner sep = 3pt]
+
+%       \node[fnode] (xo) at (0,0){$\bm{x}_O$};
+%       \node[fnode] (xu) at (3,0) {$\bm{x}_U$};
+%       \node[fnode] (hxo) at (6,0){$\hat{\bm{x}}_O$};
+%       \draw[->] (xo) to node[above]{$q(\bm{x}_U|\bm{x}_O)$} (xu);
+%       \draw[->](xu) to node[above]{${{p}(\bm{x}_O| \bm{x}_U; \bm{\theta})}$}(hxo);
+%     \end{tikzpicture}
+
+%     with the \textbf{variational free energy $F_V$ rewritten as}
+%     \begin{equation*}
+%       F_V(q, \bm{\theta}) = \EE_{q(\bm{x}_U|\bm{x}_O)}\left[ \log{{p}(\bm{x}_O| \bm{x}_U; \bm{\theta})} + \log{{p}(\bm{x}_U; \bm{\theta})} \right] + H({q(\bm{x}_U|\bm{x}_O)}),
+%     \end{equation*}
+%   }
 %   \end{itemize}
 % \end{frame}
 \subsection{RENN}
@@ -243,8 +448,8 @@
       \end{tikzpicture}
 
     \end{columns}
-  % }
-  % \onslide<3->{
+    % }
+    %   \onslide<3->{
     An alternative region graph of the same MRF:\\
     \centering
     \begin{tikzpicture}
