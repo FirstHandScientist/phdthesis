@@ -95,23 +95,23 @@
     \column{0.5\textwidth}
 
     \begin{tikzpicture}
-     \begin{scope}[scale=0.7, shift={(-3,-4.5)}, every node/.append style={transform shape}, local bounding box=mmrfToy]
-     \tikzstyle{enode} = [thick, draw=black, circle, inner sep = 4pt, align=center]
-     \tikzstyle{nnode} = [thick, rectangle, rounded corners = 0pt, minimum size = 0.5cm,draw,inner sep = 2pt]
-     
-     \node[enode, label=above:{t}] (t) at (0 ,0) {};
-     \node[nnode, label=above:{$\phi_{st}$}, right=of t] (phiSt) {};
-     \node[enode, label=above:{s}, right=of phiSt] (s) {};
-     \node[nnode, label=above:{w}, above left= 0.5 and 1 of t] (w) {};
-     \node[label=above:{...}, left= of t] (w1) {};
-     \node[nnode, below left= 0.5 and 1 of t] (w2) {};
+      \begin{scope}[scale=0.7, shift={(-3,-4.5)}, every node/.append style={transform shape}, local bounding box=mmrfToy]
+        \tikzstyle{enode} = [thick, draw=black, circle, inner sep = 4pt, align=center]
+        \tikzstyle{nnode} = [thick, rectangle, rounded corners = 0pt, minimum size = 0.5cm,draw,inner sep = 2pt]
+        
+        \node[enode, label=above:{t}] (t) at (0 ,0) {};
+        \node[nnode, label=above:{$\phi_{st}$}, right=of t] (phiSt) {};
+        \node[enode, label=above:{s}, right=of phiSt] (s) {};
+        \node[nnode, label=above:{w}, above left= 0.5 and 1 of t] (w) {};
+        \node[label=above:{...}, left= of t] (w1) {};
+        \node[nnode, below left= 0.5 and 1 of t] (w2) {};
 
-     \draw[->] (w) -- node[midway,above=1em]{$m_{wt}$} (t);
-     \draw[->] (w2) to (t);
-     \draw[->] (t) to (phiSt);
-     \draw[->] (phiSt) to node[midway,above=1em]{$m_{st}$} (s);
+        \draw[->] (w) -- node[midway,above=1em]{$m_{wt}$} (t);
+        \draw[->] (w2) to (t);
+        \draw[->] (t) to (phiSt);
+        \draw[->] (phiSt) to node[midway,above=1em]{$m_{st}$} (s);
 
-    \end{scope}
+      \end{scope}
     \end{tikzpicture}
   \end{columns}
   \begin{align*}
@@ -122,40 +122,40 @@
   \centering
   \begin{tikzpicture}
     \tikzstyle{enode} = [thick, draw, circle, inner sep = 2pt, align=center]
-      \tikzstyle{nnode} = [thick, rectangle, rounded corners = 4pt, minimum size = 0.8cm,draw,inner sep = 2pt]
-      \tikzstyle{cnode} = [thick, cloud, draw, cloud puffs=10, cloud puff arc=120, aspect=2, inner ysep=4pt]
+    \tikzstyle{nnode} = [thick, rectangle, rounded corners = 4pt, minimum size = 0.8cm,draw,inner sep = 2pt]
+    \tikzstyle{cnode} = [thick, cloud, draw, cloud puffs=10, cloud puff arc=120, aspect=2, inner ysep=4pt]
 
     \begin{scope}
       
       \node[nnode] (Problem) at (-4, 0) {Problem};
       \node[nnode, right= of Problem] (pGraph) 
       {MRF
-     };
-     \node[enode, right=of pGraph] (alpha) {$\alpha$-BP};
-     \node[nnode, right=of alpha] (surrogate) {
-       \begin{tabular}{c}
-         Surrogate \\
-         Distribution
-       \end{tabular}};
-     \node[nnode, below=of surrogate] (sol) {Solution};
+      };
+      \node[enode, right=of pGraph] (alpha) {$\alpha$-BP};
+      \node[nnode, right=of alpha] (surrogate) {
+        \begin{tabular}{c}
+          Surrogate \\
+          Distribution
+        \end{tabular}};
+      \node[nnode, below=of surrogate] (sol) {Solution};
 
-     \node[nnode, below=of Problem] (ext) {\begin{tabular}{c}Exterior \\ Estimator\end{tabular}};
-     \node[nnode, right=of ext] (mmrf) {\begin{tabular}{c}Modified\\MRF\end{tabular}};
-     
+      \node[nnode, below=of Problem, opacity=0.5] (ext) {\begin{tabular}{c}Exterior \\ Estimator\end{tabular}};
+      \node[nnode, right=of ext, opacity=0.5] (mmrf) {\begin{tabular}{c}Modified\\MRF\end{tabular}};
+      
 
-     \draw[green,->] (Problem) to (pGraph);
-     \draw[green,->] (pGraph) to (alpha);
-     \draw[green,->] (alpha) to (surrogate);
-     \draw[green,->] (surrogate) to (sol);
-     \draw[dashed, ->] (Problem) to (ext);
-     \draw[dashed, ->] (ext) to (mmrf);
-     \draw[dashed, ->] (mmrf) to (alpha);
+      \draw[green,->] (Problem) to (pGraph);
+      \draw[green,->] (pGraph) to (alpha);
+      \draw[green,->] (alpha) to (surrogate);
+      \draw[green,->] (surrogate) to (sol);
+      \draw[dashed, ->, opacity=0.5] (Problem) to (ext);
+      \draw[dashed, ->, opacity=0.5] (ext) to (mmrf);
+      \draw[dashed, ->, opacity=0.5] (mmrf) to (alpha);
 
-   \end{scope}
-   \begin{scope}[scale=0.7, shift={(-3.5,-4.1)}, every node/.append style={transform shape}, local bounding box=mmrfToy]
-     \tikzstyle{enode} = [thick, draw=black, circle, inner sep = 4pt, minimum size = 0.7cm, align=center]
-     \tikzstyle{nnode} = [thick, rectangle, rounded corners = 0pt, minimum size = 0.5cm,draw,inner sep = 2pt]
-     \tikzstyle{cnode} = [thick, cloud, draw,cloud puffs=10, cloud puff arc=120, aspect=2, inner ysep=4pt]
+    \end{scope}
+    \begin{scope}[scale=0.7, shift={(-3.5,-4.1)}, every node/.append style={transform shape}, local bounding box=mmrfToy, opacity=0.5]
+      \tikzstyle{enode} = [thick, draw=black, circle, inner sep = 4pt, minimum size = 0.7cm, align=center]
+      \tikzstyle{nnode} = [thick, rectangle, rounded corners = 0pt, minimum size = 0.5cm,draw,inner sep = 2pt]
+      \tikzstyle{cnode} = [thick, cloud, draw,cloud puffs=10, cloud puff arc=120, aspect=2, inner ysep=4pt]
 
       \node[cnode] (paik) at (-2, 0) {$\Nn(s)$};
       \node[enode] (xi) at (0 ,0) {};
@@ -172,7 +172,7 @@
       \draw[-] (xi) to (paik);
     \end{scope}
     \node[nnode, fit=(mmrf)(ext)(mmrfToy), inner sep=8pt, dashed,draw=black!40] {};
- \end{tikzpicture}
+  \end{tikzpicture}
 \end{frame}
 
 \begin{frame}[label=current]
@@ -182,23 +182,23 @@
     \column{0.5\textwidth}
 
     \begin{tikzpicture}
-     \begin{scope}[scale=0.7, shift={(-3,-4.5)}, every node/.append style={transform shape}, local bounding box=mmrfToy]
-     \tikzstyle{enode} = [thick, draw=black, circle, inner sep = 4pt, align=center]
-     \tikzstyle{nnode} = [thick, rectangle, rounded corners = 0pt, minimum size = 0.5cm,draw,inner sep = 2pt]
-     
-     \node[enode, label=above:{t}] (t) at (0 ,0) {};
-     \node[nnode, label=above:{$\phi_{st}$}, right=of t] (phiSt) {};
-     \node[enode, label=above:{s}, right=of phiSt] (s) {};
-     \node[nnode, label=above:{w}, above left= 0.5 and 1 of t] (w) {};
-     \node[label=above:{...}, left= of t] (w1) {};
-     \node[nnode, below left= 0.5 and 1 of t] (w2) {};
+      \begin{scope}[scale=0.7, shift={(-3,-4.5)}, every node/.append style={transform shape}, local bounding box=mmrfToy]
+        \tikzstyle{enode} = [thick, draw=black, circle, inner sep = 4pt, align=center]
+        \tikzstyle{nnode} = [thick, rectangle, rounded corners = 0pt, minimum size = 0.5cm,draw,inner sep = 2pt]
+        
+        \node[enode, label=above:{t}] (t) at (0 ,0) {};
+        \node[nnode, label=above:{$\phi_{st}$}, right=of t] (phiSt) {};
+        \node[enode, label=above:{s}, right=of phiSt] (s) {};
+        \node[nnode, label=above:{w}, above left= 0.5 and 1 of t] (w) {};
+        \node[label=above:{...}, left= of t] (w1) {};
+        \node[nnode, below left= 0.5 and 1 of t] (w2) {};
 
-     \draw[->] (w) -- node[midway,above=1em]{$m_{wt}$} (t);
-     \draw[->] (w2) to (t);
-     \draw[->] (t) to (phiSt);
-     \draw[->] (phiSt) to node[midway,above=1em]{$m_{st}$} (s);
+        \draw[->] (w) -- node[midway,above=1em]{$m_{wt}$} (t);
+        \draw[->] (w2) to (t);
+        \draw[->] (t) to (phiSt);
+        \draw[->] (phiSt) to node[midway,above=1em]{$m_{st}$} (s);
 
-    \end{scope}
+      \end{scope}
     \end{tikzpicture}
   \end{columns}
   
@@ -209,40 +209,40 @@
   \centering
   \begin{tikzpicture}
     \tikzstyle{enode} = [thick, draw, circle, inner sep = 2pt, align=center]
-      \tikzstyle{nnode} = [thick, rectangle, rounded corners = 4pt, minimum size = 0.8cm,draw,inner sep = 2pt]
-      \tikzstyle{cnode} = [thick, cloud, draw, cloud puffs=10, cloud puff arc=120, aspect=2, inner ysep=4pt]
+    \tikzstyle{nnode} = [thick, rectangle, rounded corners = 4pt, minimum size = 0.8cm,draw,inner sep = 2pt]
+    \tikzstyle{cnode} = [thick, cloud, draw, cloud puffs=10, cloud puff arc=120, aspect=2, inner ysep=4pt]
 
     \begin{scope}
       
       \node[nnode] (Problem) at (-4, 0) {Problem};
-      \node[nnode, right= of Problem] (pGraph) 
+      \node[nnode, right= of Problem, opacity=0.5] (pGraph) 
       {MRF
-     };
-     \node[enode, right=of pGraph] (alpha) {$\alpha$-BP};
-     \node[nnode, right=of alpha] (surrogate) {
-       \begin{tabular}{c}
-         Surrogate \\
-         Distribution
-       \end{tabular}};
-     \node[nnode, below=of surrogate] (sol) {Solution};
+      };
+      \node[enode, right=of pGraph] (alpha) {$\alpha$-BP};
+      \node[nnode, right=of alpha] (surrogate) {
+        \begin{tabular}{c}
+          Surrogate \\
+          Distribution
+        \end{tabular}};
+      \node[nnode, below=of surrogate] (sol) {Solution};
 
-     \node[nnode, below=of Problem] (ext) {\begin{tabular}{c}Exterior \\ Estimator\end{tabular}};
-     \node[nnode, right=of ext] (mmrf) {\begin{tabular}{c}Modified\\MRF\end{tabular}};
-     
+      \node[nnode, below=of Problem] (ext) {\begin{tabular}{c}Exterior \\ Estimator\end{tabular}};
+      \node[nnode, right=of ext] (mmrf) {\begin{tabular}{c}Modified\\MRF\end{tabular}};
+      
 
-     \draw[dashed,->] (Problem) to (pGraph);
-     \draw[dashed,->] (pGraph) to (alpha);
-     \draw[green,->] (alpha) to (surrogate);
-     \draw[green,->] (surrogate) to (sol);
-     \draw[green, ->] (Problem) to (ext);
-     \draw[green, ->] (ext) to (mmrf);
-     \draw[green, ->] (mmrf) to (alpha);
+      \draw[dashed,->,opacity=0.5] (Problem) to (pGraph);
+      \draw[dashed,->,opacity=0.5] (pGraph) to (alpha);
+      \draw[green,->] (alpha) to (surrogate);
+      \draw[green,->] (surrogate) to (sol);
+      \draw[green, ->] (Problem) to (ext);
+      \draw[green, ->] (ext) to (mmrf);
+      \draw[green, ->] (mmrf) to (alpha);
 
-   \end{scope}
-   \begin{scope}[scale=0.7, shift={(-3.5,-4.1)}, every node/.append style={transform shape}, local bounding box=mmrfToy]
-     \tikzstyle{enode} = [thick, draw=black, circle, inner sep = 4pt, minimum size = 0.7cm, align=center]
-     \tikzstyle{nnode} = [thick, rectangle, rounded corners = 0pt, minimum size = 0.5cm,draw,inner sep = 2pt]
-     \tikzstyle{cnode} = [thick, cloud, draw,cloud puffs=10, cloud puff arc=120, aspect=2, inner ysep=4pt]
+    \end{scope}
+    \begin{scope}[scale=0.7, shift={(-3.5,-4.1)}, every node/.append style={transform shape}, local bounding box=mmrfToy]
+      \tikzstyle{enode} = [thick, draw=black, circle, inner sep = 4pt, minimum size = 0.7cm, align=center]
+      \tikzstyle{nnode} = [thick, rectangle, rounded corners = 0pt, minimum size = 0.5cm,draw,inner sep = 2pt]
+      \tikzstyle{cnode} = [thick, cloud, draw,cloud puffs=10, cloud puff arc=120, aspect=2, inner ysep=4pt]
 
       \node[cnode] (paik) at (-2, 0) {$\Nn(s)$};
       \node[enode] (xi) at (0 ,0) {};
@@ -263,9 +263,83 @@
   
 \end{frame}
 
-\begin{frame}{Convergence}
+\begin{frame}[label=current]{Insights of $\alpha$-BP}
+  \begin{columns}
+    \column{0.5\textwidth}
+    \begin{block}{\small Connection to standard BP}
+      \begin{itemize}[label=$\bullet$]
+      \item $\alpha \rightarrow 0$ 
+      \item $\alpha$-divergence reduce KL-divergence
+      \item Update rule of $\alpha$-BP reduces to ${m}^{\text{new}}_{ts}(x_s) \propto \sum_{x_t} \phi_{st}(x_s, x_t) {\phi}_t(x_t) \prod_{w\in \Nn(t)\backslash s}m_{wt}(x_t)$, which is standard BP update rule
+        
+      \end{itemize}
+    \end{block}
+    \column{0.5\textwidth}
+    \begin{block}{\small Convergence}
+      \begin{theorem}
+        For an arbitrary pairwise Markov random field over binary variables,
+        if the largest singular value of matrix $\bm{M}(\bm{\alpha}, \bm{\theta})$ is less than one,
+        $\alpha$-BP converges to a fixed point. The associated fixed point is unique.
+      \end{theorem}
+      \vfill
+    \end{block}
+  \end{columns}
+  \vskip 0.5cm
+  \begin{block}{\small What does that mean}
+    \begin{itemize}[label=$\bullet$]
+    \item You can safely use $\alpha$-BP as an alternative to (loopy) BP
+    \item You can use matrix $\bm{M}$ to check if you are guaranteed to get stable solution from $\alpha$-BP
+    \end{itemize}
+  \end{block}
+  \let\thefootnote\relax\footnotetext{\tiny
+    \vskip -0.2cm
+    \begin{columns}
+      \column{0.5\textwidth}
+      For binary, symmetric log-potentials 
+      \begin{align*}
+        \phi_{st}(x_s, x_t) &= \exp\left\{ \theta_{st}(x_s, x_t)\right\}, \nonumber \\
+        \phi_{s}(x_s) &= \exp\left\{ \theta_{s}(x_s) \right\}.
+      \end{align*}
+      \column{0.5\textwidth}
+      Matrix $\bm{M}(\bm{\alpha}, \bm{\theta})$, size $\abs{\vec{\Ee}} \times \abs{\vec{\Ee}}$, indexed by directed edges $(t\rightarrow s)$, as
+      \begin{align*}
+        M_{(t\rightarrow s), (u \rightarrow v)} =
+        \begin{cases}
+          \abs{ 1 - \alpha_{ts}}, &\quad u=t, v=s, \\
+          \abs{ 1 - \alpha_{ts}} \tanh \abs{\alpha_{ts} \theta_{ts}}, & \quad u = s, v =t, \\
+          \tanh\abs{\alpha_{ts} \theta_{ts}}, & \quad u \in \Nn(t)\backslash s, v = t, \\
+          0, & \quad \mathrm{otherwise}.
+        \end{cases}
+      \end{align*}
+    \end{columns}
+  }
+\end{frame}
+\begin{frame}[label=current]{Some Numerical Results}
+  
+    \graphicspath{{../source/chapter3/}}
+    \begin{columns}
+      \column{0.5\textwidth}
+      \includegraphics[width=0.8\columnwidth]{figures/converge/converge_erp0_4_alpha_1_stn_0_5_vs_filter_false_crop.pdf}
+      \column{0.5\textwidth}
+      \includegraphics[width=0.8\columnwidth]{figures/converge/converge_erp0_2_alpha_0_5_stn_0_1_vs_filter_true-crop.pdf}
+    \end{columns}
+    \centering
+    {\tiny Numerical illustration of convergence, with normalized error ${\normd{\bm{m}^{(n)}-\bm{m}^{\ast}}}/{\normd{\bm{m}^{\ast}}}$ versus the number of iterations. Number of nodes $N=16$. Blue region denotes the range from minimum to maximum of the normalized error of $100$ graph realizations, whereas the curve stands for mean error of the $100$ realized graphs. }
+    \vskip -0.2cm
+    \begin{columns}
+      \column{0.5\textwidth}
+      \begin{center}
+        \includegraphics[width=0.8\columnwidth]{figures/alpha_compare_crop.pdf}
+      \end{center}
+      \column{0.5\textwidth}
+      \centering
+      \includegraphics[width=0.8\columnwidth]{figures/tbp/mf_tbp_compare.pdf}
+    \end{columns}
+    \centering
+    {\tiny Numerical results of $\alpha$-BP: symbol error of MIMO detection.}
 
 \end{frame}
+
 
 % \subsection{GraphNet}
 
@@ -363,6 +437,40 @@
 %   \end{itemize}
 % \end{frame}
 \subsection{RENN}
+{ \setbeamercolor{background canvas}{bg=hl_bg}
+  \setbeamercolor{normal text}{fg=hl_fg}
+  \setbeamercolor{frametitle}{fg=hl_fg}
+  \begin{frame}[label=current]
+    \usebeamercolor[fg]{normal text}
+    \begin{center}
+      {
+        \begin{tikzpicture}
+          \tikzstyle{cnode} = [thick, draw=white, ellipse, inner sep = 2pt,  align=center]
+          \tikzstyle{fnode} = [thick, draw=white, ellipse, inner sep = 10pt,  align=center]
+          \tikzstyle{rnode} = [thick, rectangle, inner sep = 1.5pt,  align=left]
+          \node[rnode] (inf) at (-2, 0) {\large Inference};
+          \node[rnode, below = 0.6cm of inf.west, anchor=west] (abp) {$\bullet$ $\alpha$-BP};
+          \node[rnode, below = 1.2cm of inf.west, anchor=west, draw=green] (renn) {$\bullet$ RENN};
+          \node[cnode, fit=(abp)(inf)(renn)] (infn) {};
+          
+          \node[rnode, right = 3 of inf] (lern) {\large Learning};
+          \node[rnode, below = 0.4 of lern.west, anchor=west] (genmm) {$\bullet$ GenMM};
+          \node[rnode, below = 0.8 of lern.west, anchor=west] (genhmm) {{$\bullet$} GenHMM};
+          \node[rnode, below = 1.2 of lern.west, anchor=west] (lfree) {{$\bullet$} EOTGM};
+          \node[cnode, fit=(lern)(genmm)(genhmm)(lfree)] (learn) {};
+
+          \node[fnode, fit=(infn)(lern)] (box) {};
+
+          
+          \node[below right = 0.5 and -0.5 of infn] {{Probabilistic} Graphical Model};
+          \draw[->,line width=0.2mm] (infn) to[out=15, in=165] (learn);
+          \draw[->,line width=0.2mm] (learn) to[out=195, in=-15] (infn);
+        \end{tikzpicture}
+      }
+    \end{center}
+    
+  \end{frame}
+}
 
 \begin{frame}{What is the state of $x$?}
   \framesubtitle{Yedidia, Freeman, Weiss: A step to generalization}
