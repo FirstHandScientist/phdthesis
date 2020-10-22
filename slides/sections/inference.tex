@@ -3,7 +3,7 @@
 { \setbeamercolor{background canvas}{bg=hl_bg}
   \setbeamercolor{normal text}{fg=hl_fg}
   \setbeamercolor{frametitle}{fg=hl_fg}
-  \begin{frame}[label=current]
+  \begin{frame}
     \usebeamercolor[fg]{normal text}
     \begin{center}
       {
@@ -12,7 +12,7 @@
           \tikzstyle{fnode} = [thick, draw=white, ellipse, inner sep = 10pt,  align=center]
           \tikzstyle{rnode} = [thick, rectangle, inner sep = 1.5pt,  align=left]
           \node[rnode] (inf) at (-2, 0) {\large Inference};
-          \node[rnode, below = 0.6cm of inf.west, anchor=west, draw=green] (abp) {$\bullet$ $\alpha$-BP};
+          \node[rnode, below = 0.6cm of inf.west, anchor=west, draw=green] (abp) {$\bullet$ \textbf{$\alpha$-BP}};
           \node[rnode, below = 1.2cm of inf.west, anchor=west] (renn) {$\bullet$ RENN};
           \node[cnode, fit=(abp)(inf)(renn)] (infn) {};
           
@@ -35,7 +35,7 @@
   \end{frame}
 }
 
-\begin{frame}[label=current]{Alternative Veiw of BP: $\alpha$-BP}
+\begin{frame}{Alternative Veiw of BP: $\alpha$-BP}
   Input:
   \begin{columns}
     \column{0.6\textwidth}
@@ -88,7 +88,7 @@
   }
 \end{frame}
 
-\begin{frame}[label=current]
+\begin{frame}
   \begin{columns}
     \column{0.5\textwidth}
     Updating message via $\alpha$-BP:
@@ -175,7 +175,7 @@
   \end{tikzpicture}
 \end{frame}
 
-\begin{frame}[label=current]
+\begin{frame}
   \begin{columns}
     \column{0.5\textwidth}
     Updating message via $\alpha$-BP:
@@ -263,7 +263,7 @@
   
 \end{frame}
 
-\begin{frame}[label=current]{Insights of $\alpha$-BP}
+\begin{frame}{Insights of $\alpha$-BP}
   \begin{columns}
     \column{0.5\textwidth}
     \begin{block}{\small Connection to standard BP}
@@ -313,7 +313,7 @@
     \end{columns}
   }
 \end{frame}
-\begin{frame}[label=current]{Some Numerical Results}
+\begin{frame}{Some Numerical Results}
   
     \graphicspath{{../source/chapter3/}}
     \begin{columns}
@@ -449,7 +449,7 @@
           \tikzstyle{rnode} = [thick, rectangle, inner sep = 1.5pt,  align=left]
           \node[rnode] (inf) at (-2, 0) {\large Inference};
           \node[rnode, below = 0.6cm of inf.west, anchor=west] (abp) {$\bullet$ $\alpha$-BP};
-          \node[rnode, below = 1.2cm of inf.west, anchor=west, draw=green] (renn) {$\bullet$ RENN};
+          \node[rnode, below = 1.2cm of inf.west, anchor=west, draw=green] (renn) {$\bullet$ \textbf{RENN}};
           \node[cnode, fit=(abp)(inf)(renn)] (infn) {};
           
           \node[rnode, right = 3 of inf] (lern) {\large Learning};
@@ -471,13 +471,14 @@
   \end{frame}
 }
 
-\begin{frame}{What is the state of $x$?}
+\begin{frame}[label=current]{Continuing: What is the state of $x$?}
   \framesubtitle{Yedidia, Freeman, Weiss: A step to generalization}
   \textbf{Message among variables \& factors $\rightarrow$ message among regions}
-  \vskip -0.5cm
-  \begin{figure}
+  \textcolor{red}{Maybe I should combine this slide to the next one}
+  \begin{columns}
+    \column{0.6\textwidth}
     \centering
-    \begin{tikzpicture}
+    \begin{tikzpicture}[scale=1, every node/.append style={transform shape}]
       % \tikzstyle{enode} = [thick, draw=blue, circle, inner sep = 3pt,
       % align=center]
       \tikzstyle{enode} = [thick, draw=black, circle, inner sep = 2pt,  align=center]
@@ -507,8 +508,13 @@
 
       \node[fnode, fit=(x2)(x3)(x4)(b)(c)] (box) {};
     \end{tikzpicture}
-  \end{figure}
-  \vskip -0.5cm
+    \column{0.4\textwidth}
+    \begin{itemize}[label=\textbullet]
+    \item Blue region: valid region
+      \item Red region: invalid region
+    \end{itemize}
+    \end{columns}
+    
   
   % A region in a region graph acts as a node, and there are directed edges between regions which are defined according to specific rules. Formally, a region graph is defined as follows:
 
@@ -527,23 +533,21 @@
   }
 \end{frame}
 
-\begin{frame}{RENN}
-  \framesubtitle{Region revisited}
-  \begin{itemize}[label=$\bullet$]
-  \item If you cannot collect true targets ($p(x_i)$)
-  \item If you are unwilling to be restricted to pre-defined inference  
-  \end{itemize}
-  \onslide<1->{
+\begin{frame}[label=current]{An Toy Example of Region Graphs}
     Factor graph representation of MRF (2-by-3 grid) with factor nodes.\\
     MRF $\rightarrow$ region graph:\\
+    \vskip 0.5cm
     \begin{columns}
-      \column{0.5\textwidth}
-      \hskip 1cm
+      \centering
+      \column{0.7\textwidth}
       \begin{tikzpicture}
-        \begin{scope}[scale=0.7]
+        \tikzstyle{cnode} = [thick, draw=black, circle, inner sep = 1pt,  align=center]
+        \tikzstyle{nnode} = [thick, rectangle, rounded corners = 0pt,draw,inner sep = 2pt]
 
-          \tikzstyle{cnode} = [thick, draw=black, circle, inner sep = 1pt,  align=center]
-          \tikzstyle{nnode} = [thick, rectangle, rounded corners = 0pt,draw,inner sep = 2pt]
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+        %% The 2-by-3 factor graph
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        \begin{scope}[scale=0.8, every node/.append style={transform shape}, local bounding box=grid]
           \node[cnode] (x1) at (0,0) {1};
           \node[cnode] (x2) at (2,0) {2};
           \node[cnode] (x3) at (4,0) {3};
@@ -584,16 +588,10 @@
           \draw[-] (x6) -- (fg);
 
         \end{scope}
-      \end{tikzpicture}
-    }
-    \onslide<2->{
-      \column{0.5\textwidth}
-
-      \begin{tikzpicture}
-        \tikzstyle{cnode} = [thick, draw=black, circle, inner sep = 1pt,  align=center]
-        \tikzstyle{nnode} = [thick, rectangle, rounded corners = 0pt,draw,inner sep = 2pt]
-
-        \begin{scope}[xshift=4.8cm, yshift=-0.3cm,scale=0.7]
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %% The 2-layer region graph
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        \begin{scope}[scale=0.8, every node/.append style={transform shape}, xshift=6.8cm, yshift=-0.3cm, local bounding box=rg2]
           \tikzstyle{rnode} = [thick, rectangle, rounded corners = 2pt,minimum size = 0.0cm,draw,inner sep = 2pt]
           \node[rnode] (r01) at (0,0) {\small \begin{tabular}[x]{@{}c@{}}1, 2, 4, 5 \\ $A,C,D,F$ \end{tabular}};
           \node[rnode] (r02) at (3,0) {\small \begin{tabular}[x]{@{}c@{}}2, 3, 5, 6\\ $B,D,E,G$ \end{tabular}};
@@ -601,20 +599,12 @@
 
           \draw[->] (r01.south) -- (r11.north);
           \draw[->] (r02.south) -- (r11.north);
-
         \end{scope}
-      \end{tikzpicture}
 
-    \end{columns}
-    % }
-    %   \onslide<3->{
-    An alternative region graph of the same MRF:\\
-    \centering
-    \begin{tikzpicture}
-      \tikzstyle{cnode} = [thick, draw=black, circle, inner sep = 1pt,  align=center]
-      \tikzstyle{nnode} = [thick, rectangle, rounded corners = 0pt,draw,inner sep = 2pt]
-
-      \begin{scope}[xshift=0.6cm, yshift=-2.35cm,scale=0.7]
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %% The 3-layer region graph
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        \begin{scope}[xshift=0.6cm, yshift=-3.1cm,scale=0.8, every node/.append style={transform shape},local bounding box=rg3, opacity=0.3]
         \tikzstyle{rnode} = [thick, rectangle, rounded corners = 2pt,minimum size = 0.0cm,draw,inner sep = 2pt]
         \node[rnode] (r01) at (0,0) {\small\begin{tabular}[x]{@{}c@{}}1, 2, 4, 5 \\ $A,C,D,F$ \end{tabular}};
         \node[rnode] (r02) at (3.7,0) {\small\begin{tabular}[x]{@{}c@{}}2, 3, 5, 6\\ $B,D,E,G$ \end{tabular}};
@@ -681,30 +671,46 @@
         \draw[->] (r15.south) -- (r26.north);
         \draw[->] (r17.south) -- (r26.north);
       \end{scope}
-    \end{tikzpicture}
-  }
+      \draw[green, ->, shorten >=5pt, shorten <=5pt] (grid) -- (rg2);
+      \draw[opacity=0.3, dashed, ->, shorten >=5pt, shorten <=5pt] (grid) -- (rg3);
+      
+
+      \end{tikzpicture}
+      \column{0.3\textwidth}
+      \begin{itemize}[label=\textbullet]
+      \item Clustering nodes
+      \item Valid regions
+      \item Energy Calculated per region
+      \item Msg. Scheduling
+      \item ...
+      \item See Section 4.1
+        
+      \end{itemize}
+    \end{columns}
+
+  
 \end{frame}
-\begin{frame}{RENN}
-  \onslide<1->{
-    The region-based free energy of a region graph is
+\begin{frame}[label=current]{RENN: Region-based Energy Neural Network}
+      The \textbf{region-based free energy} of a region graph is
     \begin{equation*}
-      F_R(\Bb; \bm{\theta}) = \sum_{R\in \Rr} \underbrace{c_R}_{counting~number} \sum_{\bm{x}_R}b_R(\bm{x}_R) (\underbrace{E_R(\bm{x}_R; \bm{\theta}_R)}_{region~average~energy} + \ln{b_R}(\bm{x}_R)),
+      F_R(\Bb; \bm{\theta}) = \sum_{R\in \Rr} \underbrace{c_R}_{\text{Counting number}} \sum_{\bm{x}_R}\underbrace{b_R(\bm{x}_R)}_{\text{Belief on region R}} (\underbrace{E_R(\bm{x}_R; \bm{\theta}_R)}_{\text{Region average energy}} + \ln{b_R}(\bm{x}_R)),
     \end{equation*}
     \begin{itemize}[label=$\bullet$]
     \item counting number: balance the contribution of each region
     \item region average energy: $- \sum_{a\in A_R} \ln{\phi_a(\bm{x}_a; \bm{\theta}_a)}$
     \end{itemize}
-  }
-  \onslide<2->{
+    
+    
+  
     \begin{columns}
-      \column{0.05\textwidth}
-      Denote
       \column{0.3\textwidth}
+      \centering
       \begin{tikzpicture}
+      
         \tikzstyle{cnode} = [thick, draw=black, circle, inner sep = 1pt,  align=center]
         \tikzstyle{nnode} = [thick, rectangle, rounded corners = 0pt,draw,inner sep = 2pt]
         
-        \begin{scope}[xshift=0cm, yshift=-2.3cm,scale=0.6]
+        \begin{scope}[xshift=0cm, scale=0.6, every node/.append style={transform shape}, local bounding box=rg2]
           \tikzstyle{rnode} = [thick, rectangle, rounded corners = 2pt,minimum size = 0.0cm,draw,inner sep = 2pt]
           \node[rnode] (r01) at (0,0) {\small \begin{tabular}[x]{@{}c@{}}1, 2, 4, 5 \\ $A,C,D,F$ \end{tabular}};
           \node[rnode] (r02) at (3,0) {\small \begin{tabular}[x]{@{}c@{}}2, 3, 5, 6\\ $B,D,E,G$ \end{tabular}};
@@ -714,38 +720,27 @@
           \draw[->] (r02.south) -- (r11.north);
 
         \end{scope}
-      \end{tikzpicture}
-      \column{0.05\textwidth}
-      by
-      \column{0.3\textwidth}
-
-      \begin{tikzpicture}
-        \tikzstyle{cnode} = [thick, draw=black, circle, inner sep = 1pt,  align=center]
-        \tikzstyle{nnode} = [dashed, draw=blue, rectangle, rounded corners = 2pt, inner sep = 2pt]
-        
-        \begin{scope}[xshift=0cm, yshift=2.3cm,scale=0.6]
+        \begin{scope}
+        \begin{scope}[yshift=-2cm, scale=0.6, every node/.append style={transform shape}]
+          \tikzstyle{cnode} = [thick, draw=black, circle, inner sep = 1pt,  align=center]
+          
           \tikzstyle{rnode} = [thick, circle, rounded corners = 2pt,minimum size = 0.0cm,draw,inner sep = 0.5pt]
           \node[rnode] (r01) at (0,0) {$R_1^{[0]}$};
           \node[rnode] (r02) at (3,0) {$R_2^{[0]}$};
           \node[rnode] (r11) at (1.5, -2.1) {$R_1^{[1]}$};
+        \end{scope}
+        \tikzstyle{nnode} = [dashed, draw=blue, rectangle, rounded corners = 2pt, inner sep = 4pt]
           \node[nnode, fit=(r01)(r02), label=right:$\Rr_0$] {};
           \node[nnode, fit=(r11), label=right:$\Rr_1$] {};
 
           \draw[->] (r01.south) -- (r11.north);
           \draw[->] (r02.south) -- (r11.north);
-
         \end{scope}
       \end{tikzpicture}
-    \end{columns}
-  }
-  \onslide<3->{
-    \begin{columns}
-      \column{0.1\textwidth}
-      Amortizing root beliefs:
+      
       \column{0.7\textwidth}
-
+      \centering
       \begin{tikzpicture}
-        
         \tikzstyle{enode} = [thick, draw=black, ellipse, inner sep = 2pt,  align=center]
         \tikzstyle{cnode} = [thick, draw=black, circle, inner sep = 0.0pt,  align=center]
         \tikzstyle{nnode} = [thick, rectangle, rounded corners = 0pt,draw,inner sep = 2pt]
@@ -819,14 +814,17 @@
         \draw[->] (r12) -- (r24);
         \draw[->] (r13) -- (r24);
 
+        \draw[green, ->] (-2.5,0.5) --node[black,midway,above]{Amortize root beliefs} (0.5,0.5);
+        \draw[green, ->] (1,0.5) --node[text width=2.8cm, black,midway,above]{Accumulate belief consistency error} (3.5,0.5);
+        \draw[green, ->] (3.5,-3.2) --node[text width=2.8cm, black,midway,below]{Back-propagation} (-2.5,-3.2);
         
         
       \end{tikzpicture}
     \end{columns}
-  }
+  
 \end{frame}
 
-\begin{frame}{RENN}
+\begin{frame}[label=current]{RENN}
   \onslide<1->{
     Objective of RENN\footnote{\tiny More detail on RENN? Refer to, Dong Liu, Ragnar Thobaben, and Lars K. Rasmussen. Region-based energy
       neural network for approximate inference. arxiv, 2020}:\\
@@ -877,7 +875,18 @@
   }
   
 \end{frame}
+\begin{frame}[label=current]{Insights of RENN}
+  Generalized Bethe free energy: diagram illustration
 
+  \emph{i) a RENN requires neither sampling technique nor training data (ground-truth marginal probabilities) in performing inference tasks};\newline
+  \emph{ii) a RENN does gradient descent w.r.t. its neural network parameter $\bm{\omega}$ instead of iterative message-passing, and returns approximation of marginal probabilities and partition estimation in one-shot
+    iii) No msg. propagation, thus no need of msg. scheduling
+    iv) competitive performance and efficiency
+  }.
+
+\end{frame}
+
+  
 % \section{Some Numerical Evaluation}
 \subsection{Numericals}
 \begin{frame}
