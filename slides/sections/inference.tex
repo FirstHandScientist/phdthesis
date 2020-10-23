@@ -276,11 +276,11 @@
     \end{block}
     \column{0.45\textwidth}
     \begin{block}{\small Convergence}
-        For an arbitrary pairwise Markov random field over binary variables,
-        if the largest singular value of matrix $\bm{M}(\bm{\alpha}, \bm{\theta})$ is less than one,
-        $\alpha$-BP converges to a fixed point. The associated fixed point is unique.
-        \vfill
-        {\tiny See Corollary 3.1 for relaxed condition where singular value computation is avoided.}
+      For an arbitrary pairwise Markov random field over binary variables,
+      if the largest singular value of matrix $\bm{M}(\bm{\alpha}, \bm{\theta})$ is less than one,
+      $\alpha$-BP converges to a fixed point. The associated fixed point is unique.
+      \vfill
+      {\tiny See Corollary 3.1 for relaxed condition where singular value computation is avoided.}
     \end{block}
   \end{columns}
   \vskip 0.5cm
@@ -315,27 +315,27 @@
 \end{frame}
 \begin{frame}{Some Numerical Results}
   
-    \graphicspath{{../source/chapter3/}}
-    \begin{columns}
-      \column{0.5\textwidth}
-      \includegraphics[width=0.8\columnwidth]{figures/converge/converge_erp0_4_alpha_1_stn_0_5_vs_filter_false_crop.pdf}
-      \column{0.5\textwidth}
-      \includegraphics[width=0.8\columnwidth]{figures/converge/converge_erp0_2_alpha_0_5_stn_0_1_vs_filter_true-crop.pdf}
-    \end{columns}
+  \graphicspath{{../source/chapter3/}}
+  \begin{columns}
+    \column{0.5\textwidth}
+    \includegraphics[width=0.8\columnwidth]{figures/converge/converge_erp0_4_alpha_1_stn_0_5_vs_filter_false_crop.pdf}
+    \column{0.5\textwidth}
+    \includegraphics[width=0.8\columnwidth]{figures/converge/converge_erp0_2_alpha_0_5_stn_0_1_vs_filter_true-crop.pdf}
+  \end{columns}
+  \centering
+  {\tiny Numerical illustration of convergence, with normalized error ${\normd{\bm{m}^{(n)}-\bm{m}^{\ast}}}/{\normd{\bm{m}^{\ast}}}$ versus the number of iterations. Number of nodes $N=16$. Blue region denotes the range from minimum to maximum of the normalized error of $100$ graph realizations, whereas the curve stands for mean error of the $100$ realized graphs. }
+  \vskip -0.2cm
+  \begin{columns}
+    \column{0.5\textwidth}
+    \begin{center}
+      \includegraphics[width=0.8\columnwidth]{figures/alpha_compare_crop.pdf}
+    \end{center}
+    \column{0.5\textwidth}
     \centering
-    {\tiny Numerical illustration of convergence, with normalized error ${\normd{\bm{m}^{(n)}-\bm{m}^{\ast}}}/{\normd{\bm{m}^{\ast}}}$ versus the number of iterations. Number of nodes $N=16$. Blue region denotes the range from minimum to maximum of the normalized error of $100$ graph realizations, whereas the curve stands for mean error of the $100$ realized graphs. }
-    \vskip -0.2cm
-    \begin{columns}
-      \column{0.5\textwidth}
-      \begin{center}
-        \includegraphics[width=0.8\columnwidth]{figures/alpha_compare_crop.pdf}
-      \end{center}
-      \column{0.5\textwidth}
-      \centering
-      \includegraphics[width=0.8\columnwidth]{figures/tbp/mf_tbp_compare.pdf}
-    \end{columns}
-    \centering
-    {\tiny Numerical results of $\alpha$-BP: symbol error of MIMO detection.}
+    \includegraphics[width=0.8\columnwidth]{figures/tbp/mf_tbp_compare.pdf}
+  \end{columns}
+  \centering
+  {\tiny Numerical results of $\alpha$-BP: symbol error of MIMO detection.}
 
 \end{frame}
 
@@ -511,10 +511,10 @@
     \column{0.4\textwidth}
     \begin{itemize}[label=\textbullet]
     \item Blue region: valid region
-      \item Red region: invalid region
+    \item Red region: invalid region
     \end{itemize}
-    \end{columns}
-    
+  \end{columns}
+  
   
   % A region in a region graph acts as a node, and there are directed edges between regions which are defined according to specific rules. Formally, a region graph is defined as follows:
 
@@ -534,77 +534,77 @@
 \end{frame}
 
 \begin{frame}[label=current]{An Toy Example of Region Graphs}
-    Factor graph representation of MRF (2-by-3 grid) with factor nodes.\\
-    MRF $\rightarrow$ region graph:\\
-    \vskip 0.5cm
-    \begin{columns}
-      \centering
-      \column{0.7\textwidth}
-      \begin{tikzpicture}
-        \tikzstyle{cnode} = [thick, draw=black, circle, inner sep = 1pt,  align=center]
-        \tikzstyle{nnode} = [thick, rectangle, rounded corners = 0pt,draw,inner sep = 2pt]
+  Factor graph representation of MRF (2-by-3 grid) with factor nodes.\\
+  MRF $\rightarrow$ region graph:\\
+  \vskip 0.5cm
+  \begin{columns}
+    \centering
+    \column{0.7\textwidth}
+    \begin{tikzpicture}
+      \tikzstyle{cnode} = [thick, draw=black, circle, inner sep = 1pt,  align=center]
+      \tikzstyle{nnode} = [thick, rectangle, rounded corners = 0pt,draw,inner sep = 2pt]
 
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
-        %% The 2-by-3 factor graph
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        \begin{scope}[scale=0.8, every node/.append style={transform shape}, local bounding box=grid]
-          \node[cnode] (x1) at (0,0) {1};
-          \node[cnode] (x2) at (2,0) {2};
-          \node[cnode] (x3) at (4,0) {3};
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+      %% The 2-by-3 factor graph
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+      \begin{scope}[scale=0.8, every node/.append style={transform shape}, local bounding box=grid]
+        \node[cnode] (x1) at (0,0) {1};
+        \node[cnode] (x2) at (2,0) {2};
+        \node[cnode] (x3) at (4,0) {3};
 
-          \node[cnode] (x4) at (0,-2) {4};
-          \node[cnode] (x5) at (2,-2) {5};
-          \node[cnode] (x6) at (4,-2) {6};
+        \node[cnode] (x4) at (0,-2) {4};
+        \node[cnode] (x5) at (2,-2) {5};
+        \node[cnode] (x6) at (4,-2) {6};
 
-          \node[nnode] (fa) at (1,0) {\small$A$};
-          \node[nnode] (fb) at (3,0) {\small$B$};
+        \node[nnode] (fa) at (1,0) {\small$A$};
+        \node[nnode] (fb) at (3,0) {\small$B$};
 
-          \node[nnode] (fc) at (0,-1) {\small$C$};
-          \node[nnode] (fd) at (2,-1) {\small$D$};
-          \node[nnode] (fe) at (4,-1) {\small$E$};
-          
-          \node[nnode] (ff) at (1,-2) {\small$F$};
-          \node[nnode] (fg) at (3,-2) {\small$G$};
+        \node[nnode] (fc) at (0,-1) {\small$C$};
+        \node[nnode] (fd) at (2,-1) {\small$D$};
+        \node[nnode] (fe) at (4,-1) {\small$E$};
+        
+        \node[nnode] (ff) at (1,-2) {\small$F$};
+        \node[nnode] (fg) at (3,-2) {\small$G$};
 
 
-          \draw[-] (x1) -- (fa);
-          \draw[-] (x1) -- (fc);
+        \draw[-] (x1) -- (fa);
+        \draw[-] (x1) -- (fc);
 
-          \draw[-] (x2) -- (fa);
-          \draw[-] (x2) -- (fb);
-          \draw[-] (x2) -- (fd);
+        \draw[-] (x2) -- (fa);
+        \draw[-] (x2) -- (fb);
+        \draw[-] (x2) -- (fd);
 
-          \draw[-] (x3) -- (fb);
-          \draw[-] (x3) -- (fe);
+        \draw[-] (x3) -- (fb);
+        \draw[-] (x3) -- (fe);
 
-          \draw[-] (x4) -- (fc);
-          \draw[-] (x4) -- (ff);
+        \draw[-] (x4) -- (fc);
+        \draw[-] (x4) -- (ff);
 
-          \draw[-] (x5) -- (fd);
-          \draw[-] (x5) -- (ff);
-          \draw[-] (x5) -- (fg);
+        \draw[-] (x5) -- (fd);
+        \draw[-] (x5) -- (ff);
+        \draw[-] (x5) -- (fg);
 
-          \draw[-] (x6) -- (fe);
-          \draw[-] (x6) -- (fg);
+        \draw[-] (x6) -- (fe);
+        \draw[-] (x6) -- (fg);
 
-        \end{scope}
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %% The 2-layer region graph
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        \begin{scope}[scale=0.8, every node/.append style={transform shape}, xshift=6.8cm, yshift=-0.3cm, local bounding box=rg2]
-          \tikzstyle{rnode} = [thick, rectangle, rounded corners = 2pt,minimum size = 0.0cm,draw,inner sep = 2pt]
-          \node[rnode] (r01) at (0,0) {\small \begin{tabular}[x]{@{}c@{}}1, 2, 4, 5 \\ $A,C,D,F$ \end{tabular}};
-          \node[rnode] (r02) at (3,0) {\small \begin{tabular}[x]{@{}c@{}}2, 3, 5, 6\\ $B,D,E,G$ \end{tabular}};
-          \node[rnode] (r11) at (1.5, -1.5) {\small 2, 5, $D$};
+      \end{scope}
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+      %% The 2-layer region graph
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+      \begin{scope}[scale=0.8, every node/.append style={transform shape}, xshift=6.8cm, yshift=-0.3cm, local bounding box=rg2]
+        \tikzstyle{rnode} = [thick, rectangle, rounded corners = 2pt,minimum size = 0.0cm,draw,inner sep = 2pt]
+        \node[rnode] (r01) at (0,0) {\small \begin{tabular}[x]{@{}c@{}}1, 2, 4, 5 \\ $A,C,D,F$ \end{tabular}};
+        \node[rnode] (r02) at (3,0) {\small \begin{tabular}[x]{@{}c@{}}2, 3, 5, 6\\ $B,D,E,G$ \end{tabular}};
+        \node[rnode] (r11) at (1.5, -1.5) {\small 2, 5, $D$};
 
-          \draw[->] (r01.south) -- (r11.north);
-          \draw[->] (r02.south) -- (r11.north);
-        \end{scope}
+        \draw[->] (r01.south) -- (r11.north);
+        \draw[->] (r02.south) -- (r11.north);
+      \end{scope}
 
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %% The 3-layer region graph
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        \begin{scope}[xshift=0.6cm, yshift=-3.1cm,scale=0.8, every node/.append style={transform shape},local bounding box=rg3, opacity=0.3]
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+      %% The 3-layer region graph
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+      \begin{scope}[xshift=0.6cm, yshift=-3.1cm,scale=0.8, every node/.append style={transform shape},local bounding box=rg3, opacity=0.3]
         \tikzstyle{rnode} = [thick, rectangle, rounded corners = 2pt,minimum size = 0.0cm,draw,inner sep = 2pt]
         \node[rnode] (r01) at (0,0) {\small\begin{tabular}[x]{@{}c@{}}1, 2, 4, 5 \\ $A,C,D,F$ \end{tabular}};
         \node[rnode] (r02) at (3.7,0) {\small\begin{tabular}[x]{@{}c@{}}2, 3, 5, 6\\ $B,D,E,G$ \end{tabular}};
@@ -675,52 +675,52 @@
       \draw[opacity=0.3, dashed, ->, shorten >=5pt, shorten <=5pt] (grid) -- (rg3);
       
 
-      \end{tikzpicture}
-      \column{0.3\textwidth}
-      \begin{itemize}[label=\textbullet]
-      \item Clustering nodes
-      \item Valid regions
-      \item Energy Calculated per region
-      \item Msg. Scheduling
-      \item ...
-      \item See Section 4.1
-        
-      \end{itemize}
-    \end{columns}
+    \end{tikzpicture}
+    \column{0.3\textwidth}
+    \begin{itemize}[label=\textbullet]
+    \item Clustering nodes
+    \item Valid regions
+    \item Energy Calculated per region
+    \item Msg. Scheduling
+    \item ...
+    \item See Section 4.1
+      
+    \end{itemize}
+  \end{columns}
 
   
 \end{frame}
 \begin{frame}[label=current]{RENN: Region-based Energy Neural Network}
-      The \textbf{region-based free energy} of a region graph is
-    \begin{equation*}
-      F_R(\Bb; \bm{\theta}) = \sum_{R\in \Rr} \underbrace{c_R}_{\text{Counting number}} \sum_{\bm{x}_R}\underbrace{b_R(\bm{x}_R)}_{\text{Belief on region R}} (\underbrace{E_R(\bm{x}_R; \bm{\theta}_R)}_{\text{Region average energy}} + \ln{b_R}(\bm{x}_R)),
-    \end{equation*}
-    \begin{itemize}[label=$\bullet$]
-    \item counting number: balance the contribution of each region
-    \item region average energy: $- \sum_{a\in A_R} \ln{\phi_a(\bm{x}_a; \bm{\theta}_a)}$
-    \end{itemize}
-    
-    
+  The \textbf{region-based free energy} of a region graph is
+  \begin{equation*}
+    F_R(\Bb; \bm{\theta}) = \sum_{R\in \Rr} \underbrace{c_R}_{\text{Counting number}} \sum_{\bm{x}_R}\underbrace{b_R(\bm{x}_R)}_{\text{Belief on region R}} (\underbrace{E_R(\bm{x}_R; \bm{\theta}_R)}_{\text{Region average energy}} + \ln{b_R}(\bm{x}_R)),
+  \end{equation*}
+  \begin{itemize}[label=$\bullet$]
+  \item counting number: balance the contribution of each region
+  \item region average energy: $- \sum_{a\in A_R} \ln{\phi_a(\bm{x}_a; \bm{\theta}_a)}$
+  \end{itemize}
   
-    \begin{columns}
-      \column{0.3\textwidth}
-      \centering
-      \begin{tikzpicture}
+  
+  
+  \begin{columns}
+    \column{0.3\textwidth}
+    \centering
+    \begin{tikzpicture}
       
-        \tikzstyle{cnode} = [thick, draw=black, circle, inner sep = 1pt,  align=center]
-        \tikzstyle{nnode} = [thick, rectangle, rounded corners = 0pt,draw,inner sep = 2pt]
-        
-        \begin{scope}[xshift=0cm, scale=0.6, every node/.append style={transform shape}, local bounding box=rg2]
-          \tikzstyle{rnode} = [thick, rectangle, rounded corners = 2pt,minimum size = 0.0cm,draw,inner sep = 2pt]
-          \node[rnode] (r01) at (0,0) {\small \begin{tabular}[x]{@{}c@{}}1, 2, 4, 5 \\ $A,C,D,F$ \end{tabular}};
-          \node[rnode] (r02) at (3,0) {\small \begin{tabular}[x]{@{}c@{}}2, 3, 5, 6\\ $B,D,E,G$ \end{tabular}};
-          \node[rnode] (r11) at (1.5, -2.1) {\small 2, 5, $D$};
+      \tikzstyle{cnode} = [thick, draw=black, circle, inner sep = 1pt,  align=center]
+      \tikzstyle{nnode} = [thick, rectangle, rounded corners = 0pt,draw,inner sep = 2pt]
+      
+      \begin{scope}[xshift=0cm, scale=0.6, every node/.append style={transform shape}, local bounding box=rg2]
+        \tikzstyle{rnode} = [thick, rectangle, rounded corners = 2pt,minimum size = 0.0cm,draw,inner sep = 2pt]
+        \node[rnode] (r01) at (0,0) {\small \begin{tabular}[x]{@{}c@{}}1, 2, 4, 5 \\ $A,C,D,F$ \end{tabular}};
+        \node[rnode] (r02) at (3,0) {\small \begin{tabular}[x]{@{}c@{}}2, 3, 5, 6\\ $B,D,E,G$ \end{tabular}};
+        \node[rnode] (r11) at (1.5, -2.1) {\small 2, 5, $D$};
 
-          \draw[->] (r01.south) -- (r11.north);
-          \draw[->] (r02.south) -- (r11.north);
+        \draw[->] (r01.south) -- (r11.north);
+        \draw[->] (r02.south) -- (r11.north);
 
-        \end{scope}
-        \begin{scope}
+      \end{scope}
+      \begin{scope}
         \begin{scope}[yshift=-2cm, scale=0.6, every node/.append style={transform shape}]
           \tikzstyle{cnode} = [thick, draw=black, circle, inner sep = 1pt,  align=center]
           
@@ -730,167 +730,170 @@
           \node[rnode] (r11) at (1.5, -2.1) {$R_1^{[1]}$};
         \end{scope}
         \tikzstyle{nnode} = [dashed, draw=blue, rectangle, rounded corners = 2pt, inner sep = 4pt]
-          \node[nnode, fit=(r01)(r02), label=right:$\Rr_0$] {};
-          \node[nnode, fit=(r11), label=right:$\Rr_1$] {};
+        \node[nnode, fit=(r01)(r02), label=right:$\Rr_0$] {};
+        \node[nnode, fit=(r11), label=right:$\Rr_1$] {};
 
-          \draw[->] (r01.south) -- (r11.north);
-          \draw[->] (r02.south) -- (r11.north);
-        \end{scope}
-      \end{tikzpicture}
+        \draw[->] (r01.south) -- (r11.north);
+        \draw[->] (r02.south) -- (r11.north);
+      \end{scope}
+    \end{tikzpicture}
+    
+    \column{0.7\textwidth}
+    \centering
+    \begin{tikzpicture}
+      \tikzstyle{enode} = [thick, draw=black, ellipse, inner sep = 2pt,  align=center]
+      \tikzstyle{cnode} = [thick, draw=black, circle, inner sep = 0.0pt,  align=center]
+      \tikzstyle{nnode} = [thick, rectangle, rounded corners = 0pt,draw,inner sep = 2pt]
+      \begin{scope}[xshift=-1cm, yshift=-1.3cm, scale=0.6]
+        \node[enode, rotate=90] (em) at (-2.5,0) {Embedings};
+        \node[enode, rotate=90] (nn) {Neural Network};
+      \end{scope}
       
-      \column{0.7\textwidth}
-      \centering
-      \begin{tikzpicture}
-        \tikzstyle{enode} = [thick, draw=black, ellipse, inner sep = 2pt,  align=center]
-        \tikzstyle{cnode} = [thick, draw=black, circle, inner sep = 0.0pt,  align=center]
-        \tikzstyle{nnode} = [thick, rectangle, rounded corners = 0pt,draw,inner sep = 2pt]
-        \begin{scope}[xshift=-1cm, yshift=-1.3cm, scale=0.6]
-          \node[enode, rotate=90] (em) at (-2.5,0) {Embedings};
-          \node[enode, rotate=90] (nn) {Neural Network};
-        \end{scope}
-        
-        % level0 regions
-        \begin{scope}[scale=0.6]
-          \node[cnode] (r01) at (1, 0) {\tiny$R_1^{[0]}$};
-          \node[cnode] (r02) at (1, -1) {\tiny$R_2^{[0]}$};
-          \node[cnode] (r03) at (1, -2) {\tiny$R_3^{[0]}$};
-          \node[cnode] (r04) at (1, -3) {\tiny$R_4^{[0]}$};
-          \node[cnode] (r05) at (1, -4) {\tiny$R_5^{[0]}$};
-          \node[label=below:$\Rr_0$, draw,rounded corners = 2pt, inner sep=1mm, fit=(r01) (r05)] {};
-        \end{scope}
+      % level0 regions
+      \begin{scope}[scale=0.6]
+        \node[cnode] (r01) at (1, 0) {\tiny$R_1^{[0]}$};
+        \node[cnode] (r02) at (1, -1) {\tiny$R_2^{[0]}$};
+        \node[cnode] (r03) at (1, -2) {\tiny$R_3^{[0]}$};
+        \node[cnode] (r04) at (1, -3) {\tiny$R_4^{[0]}$};
+        \node[cnode] (r05) at (1, -4) {\tiny$R_5^{[0]}$};
+        \node[label=below:$\Rr_0$, draw,rounded corners = 2pt, inner sep=1mm, fit=(r01) (r05)] {};
+      \end{scope}
 
-        \draw[->] (nn.351.9) |- (r01);
-        \draw[->] (nn.340) |- (r02);
-        \draw[->] (nn.295) |- (r03);
-        \draw[->] (nn.210) |- (r04);
-        \draw[->] (nn.191) |- (r05);
+      \draw[->] (nn.351.9) |- (r01);
+      \draw[->] (nn.340) |- (r02);
+      \draw[->] (nn.295) |- (r03);
+      \draw[->] (nn.210) |- (r04);
+      \draw[->] (nn.191) |- (r05);
 
-        \draw[->] (em) -- (nn);
+      \draw[->] (em) -- (nn);
 
 
-        % level 1 regions
-        \begin{scope}[xshift=1.5cm, yshift=-0.2cm, scale=0.6]
-          \node[cnode] (r11) at (1, 0) {\tiny$R_1^{[1]}$};
-          \node[cnode] (r12) at (1, -1) {\tiny$R_2^{[1]}$};
-          \node[cnode] (r13) at (1, -2) {\tiny$R_3^{[1]}$};
-          \node[cnode] (r14) at (1, -3) {\tiny$R_4^{[1]}$};
-          \node[label=below:$\Rr_1$, draw, rounded corners = 2pt, inner sep=1mm, fit=(r11) (r14)] {};
-        \end{scope}
+      % level 1 regions
+      \begin{scope}[xshift=1.5cm, yshift=-0.2cm, scale=0.6]
+        \node[cnode] (r11) at (1, 0) {\tiny$R_1^{[1]}$};
+        \node[cnode] (r12) at (1, -1) {\tiny$R_2^{[1]}$};
+        \node[cnode] (r13) at (1, -2) {\tiny$R_3^{[1]}$};
+        \node[cnode] (r14) at (1, -3) {\tiny$R_4^{[1]}$};
+        \node[label=below:$\Rr_1$, draw, rounded corners = 2pt, inner sep=1mm, fit=(r11) (r14)] {};
+      \end{scope}
 
-        
-        
-        % level 1 regions
-        \begin{scope}[xshift=3cm, yshift=-0.2cm, scale=0.6]
-          \node[cnode] (r21) at (1, 0) {\tiny$R_1^{[2]}$};
-          \node[cnode] (r22) at (1, -1) {\tiny$R_2^{[2]}$};
-          \node[cnode] (r23) at (1, -2) {\tiny$R_3^{[2]}$};
-          \node[cnode] (r24) at (1, -3) {\tiny$R_4^{[2]}$};
-          \node[label=below:$\Rr_2$, draw, rounded corners = 2pt, inner sep=1mm, fit=(r21) (r24)] {};
-        \end{scope}
+      
+      
+      % level 1 regions
+      \begin{scope}[xshift=3cm, yshift=-0.2cm, scale=0.6]
+        \node[cnode] (r21) at (1, 0) {\tiny$R_1^{[2]}$};
+        \node[cnode] (r22) at (1, -1) {\tiny$R_2^{[2]}$};
+        \node[cnode] (r23) at (1, -2) {\tiny$R_3^{[2]}$};
+        \node[cnode] (r24) at (1, -3) {\tiny$R_4^{[2]}$};
+        \node[label=below:$\Rr_2$, draw, rounded corners = 2pt, inner sep=1mm, fit=(r21) (r24)] {};
+      \end{scope}
 
-        \draw[->] (r01) -- (r11);
-        \draw[->] (r03) -- (r11);
+      \draw[->] (r01) -- (r11);
+      \draw[->] (r03) -- (r11);
 
-        \draw[->] (r02) -- (r12);
-        \draw[->] (r04) -- (r12);
-        \draw[->] (r05) -- (r12);
+      \draw[->] (r02) -- (r12);
+      \draw[->] (r04) -- (r12);
+      \draw[->] (r05) -- (r12);
 
-        \draw[->] (r01) -- (r13);
-        \draw[->] (r04) -- (r13);
+      \draw[->] (r01) -- (r13);
+      \draw[->] (r04) -- (r13);
 
-        \draw[->] (r03) -- (r14);
-        \draw[->] (r05) -- (r14);
+      \draw[->] (r03) -- (r14);
+      \draw[->] (r05) -- (r14);
 
 
-        \draw[->] (r11) -- (r21);
-        \draw[->] (r14) -- (r21);
+      \draw[->] (r11) -- (r21);
+      \draw[->] (r14) -- (r21);
 
-        \draw[->] (r11) -- (r22);
-        \draw[->] (r13) -- (r22);
+      \draw[->] (r11) -- (r22);
+      \draw[->] (r13) -- (r22);
 
-        \draw[->] (r12) -- (r23);
-        \draw[->] (r14) -- (r23);
+      \draw[->] (r12) -- (r23);
+      \draw[->] (r14) -- (r23);
 
-        \draw[->] (r12) -- (r24);
-        \draw[->] (r13) -- (r24);
+      \draw[->] (r12) -- (r24);
+      \draw[->] (r13) -- (r24);
 
-        \draw[green, ->] (-2.5,0.5) --node[black,midway,above]{Amortize root beliefs} (0.5,0.5);
-        \draw[green, ->] (1,0.5) --node[text width=2.8cm, black,midway,above]{Accumulate belief consistency error} (3.5,0.5);
-        \draw[green, ->] (3.5,-3.2) --node[text width=2.8cm, black,midway,below]{Back-propagation} (-2.5,-3.2);
-        
-        
-      \end{tikzpicture}
-    \end{columns}
+      \draw[green, ->] (-2.5,0.5) --node[black,midway,above]{Amortize root beliefs} (0.5,0.5);
+      \draw[green, ->] (1,0.5) --node[text width=2.8cm, black,midway,above]{Accumulate belief consistency error} (3.5,0.5);
+      \draw[green, ->] (3.5,-3.2) --node[text width=2.8cm, black,midway,below]{Back-propagation} (-2.5,-3.2);
+      
+      
+    \end{tikzpicture}
+  \end{columns}
   
 \end{frame}
 
 \begin{frame}[label=current]{RENN}
   \onslide<1->{
-    Objective of RENN\footnote{\tiny More detail on RENN? Refer to, Dong Liu, Ragnar Thobaben, and Lars K. Rasmussen. Region-based energy
-      neural network for approximate inference. arxiv, 2020}:\\
+    Objective of RENN:\\
     \begin{equation*}
-      \min \mathrm{\textbf{region-based free energy}} (F_R) + \underbrace{\mathrm{\textbf{panelty on belief consistency} }}_{along~ region~ graph~ struture}
+      \min_{\text{\begin{tabular}{c}parameter \\of NN\end{tabular}}} \mathrm{\underbrace{\textbf{region-based free energy} (F_R)}_{\text{Assumulated average of all regions}}} + \underbrace{\mathrm{\textbf{panelty on belief consistency} }}_{\text{Recursively computed via levels of region graph}}
     \end{equation*}
   }
   \\
   \onslide<2->{
-    Inference only\\
+    {RENN Inference}
     \begin{tikzpicture}
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+      %% use of RENN
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
       \tikzstyle{cnode} = [thick, draw=blue, rounded corners = 4pt, rectangle, inner sep = 4pt,  align=center]
       \tikzstyle{nnode} = [thick, rectangle, rounded corners = 0pt,draw,inner sep = 2pt]
-      \tikzstyle{rnode} = [thick, rectangle, rounded corners = 2pt,minimum size = 0.0cm,draw,inner sep = 2pt]
-      
-      \node[rnode] (r01) at (-1,0) {\small MRF};
-      \node[rnode] (r02) at (2,0) {\small \begin{tabular}[x]{@{}c@{}} Construct\\ Region Graph \end{tabular}};
-      \node[rnode] (r03) at (5, 0) {\small Optimization};
-      \node[rnode] (r04) at (8, 0) {\small Read out beliefs};
-      \node[cnode, fit=(r02)(r03), label=below:{RENN}] (renn) {};
-
+      \tikzstyle{rnode} = [thick, rectangle, rounded corners = 2pt,minimum size = 0.0cm,draw,inner sep = 4pt]
+      \begin{scope}[scale=0.8, every node/.append style={transform shape} ]
+        \node[rnode] (r01) at (-1,0) {MRF};
+        \node[rnode, right=of r01] (r02) {\begin{tabular}[x]{@{}c@{}} Construct Region Graph\\ {\tiny Tree-robust conditon} \\ {\tiny $+$ Cluster Variation Method} \\ {\tiny $+$ Validity} \end{tabular}};
+        \node[rnode, right=of r02] (r03) {\begin{tabular}{c}Free Energy Optimization\\ {\tiny Backpropagation}\\ {\tiny Gradient descent}\end{tabular}};
+        \node[rnode, right=of r03] (r04) {\begin{tabular}{c}Read out: \\Beliefs or \\Partition\end{tabular}};
+      \end{scope}
+      \begin{scope}[on background layer]
+        \node[cnode, fit=(r02)(r03), label=below:{RENN}, draw=black, fill=blue, opacity=0.2] (renn) {};
+      \end{scope}
       \draw[->] (r01) -- (renn);
       \draw[->] (renn) -- (r04);
       \draw[->] (r02) -- (r03);
     \end{tikzpicture}
-  }
-  \onslide<3->{
+  }\\
+  \onslide<2->{
     Learning alternatives of MRFs
-    \vskip 0.2cm
     \begin{columns}
       \column{0.5\textwidth}
       learn with customized optm.
       \begin{align*}
         \pd{\log{p}(\bm{x};\bm{\theta})}{\bm{\theta}_a} = &\pd{\log{{\phi_a}(\bm{x}_a; \bm{\theta}_a)}}{\bm{\theta}_a} \\
-                                                          &- \underbrace{\EE_{p(\bm{x}_a; \bm{\theta})}\left[ \pd{\log{{\phi_a}(\bm{x}_a; \bm{\theta}_a)}}{\bm{\theta}_a} \right]}_{est.~ beliefs}.
+                                                          &- \underbrace{\EE_{p(\bm{x}_a; \bm{\theta})}\left[ \pd{\log{{\phi_a}(\bm{x}_a; \bm{\theta}_a)}}{\bm{\theta}_a} \right]}_{\text{est. by beliefs}}.
       \end{align*}
-    }
-    \onslide<4->{
       \column{0.5\textwidth}
       learn with auto-grads
       \begin{align*}
-        \max_{\bm{\theta}} \log{p(\bm{x}; \bm{\theta})} =  \max_{\bm{\theta}}&\sum_{a}\log{ \psi_a(\bm{x}_a; \bm{\theta}_a) } \\
-                                                                             &-\underbrace{ \log{Z(\bm{\theta})}}_{ets.~ free~energy},
+        \max_{\bm{\theta}} \log{p(\bm{x}; \bm{\theta})} =  &\max_{\bm{\theta}}\sum_{a}\log{ \psi_a(\bm{x}_a; \bm{\theta}_a) } \\
+                                                           &\underbrace{ -\log{Z(\bm{\theta})}}_{\text{\begin{tabular}{c}ets. by the\\ Helmholtz free energy\\ $-\log{Z(\bm{\theta})} \simeq F_R$ \end{tabular}}}.
       \end{align*}
-      by $-\log{Z(\bm{\theta})} \simeq F_R$.
-
     \end{columns}
   }
-  
 \end{frame}
 \begin{frame}[label=current]{Insights of RENN}
-  Generalized Bethe free energy: diagram illustration
-
-  \emph{i) a RENN requires neither sampling technique nor training data (ground-truth marginal probabilities) in performing inference tasks};\newline
-  \emph{ii) a RENN does gradient descent w.r.t. its neural network parameter $\bm{\omega}$ instead of iterative message-passing, and returns approximation of marginal probabilities and partition estimation in one-shot
-    iii) No msg. propagation, thus no need of msg. scheduling
-    iv) competitive performance and efficiency
-  }.
-
+  \begin{block}{Generalization}
+    Bethe free energy can be recovered from region-based free energy:
+    \begin{itemize}[label=\textbullet]
+    \item two-level region graph representation
+    \item constraint that each region can contain at most one factor node
+    \end{itemize}
+    {\tiny Section 4.2.1}
+  \end{block}
+  \begin{block}{Attributes of RENN}
+    \begin{itemize}[label=\textbullet]
+    \item RENN requires neither sampling technique nor training data (ground-truth marginal probabilities) in performing inference tasks;
+    \item RENN does gradient descent w.r.t. its neural network parameter instead of iterative message-passing, and returns approximation of marginal probabilities and partition estimation in one-shot
+    \item No message propagation, thus no need of message scheduling
+    \item Competitive performance and efficiency
+    \end{itemize}
+  \end{block}
 \end{frame}
 
+\begin{frame}[label=current]{Some Numerical Comparisons}
   
-% \section{Some Numerical Evaluation}
-\subsection{Numericals}
-\begin{frame}
-  {Inference results}
   Ising model: $p(\bm{x}; \bm{\theta}) = \frac{1}{Z(\bm{\theta})}\exp{(\sum_{(i,j)\in \Ee_F} J_{ij} x_i x_j + \sum_{i\in \Vv}h_i x_i)}$, $\bm{x} \in \{-1, 1\}^{N}$,
   \begin{itemize}[label=$\bullet$]
   \item $J_{ij}$ is the pairwise log-potential between node $i$ and $j$, $J_{ij}\sim \Nn(0,1)$
@@ -940,81 +943,66 @@
   \item correlation $\rho$ between true and approximate marginals,
   \item $\log{Z}$ error, true v.s. free energy approximation.
   \end{itemize}
-
-
-  % \begin{table*}
-  %   \caption{Inference on grid Graph. ($\gamma=1$)}
-  %   \label{apdx:table:infer-grid-gamma1.0}
-  %   \vskip -0.1in
-  %   \begin{adjustbox}{width=1\textwidth}
-  %     \begin{tabular}{lcccccccc}
-  %       \toprule
-  %       Metric & $n$ & Mean Field & Loopy BP & Damped BP & GBP & Inference Net & RENN \\
-  %       \midrule
-  %       \multirow{4}{*}{\begin{tabular}[x]{@{}c@{}}$\ell_1$\\error \end{tabular} }
-  %       & 25   &  0.131 $\pm$ 0.080  &  \textbf{0.022} $\pm$ 0.017  &  0.022 $\pm$ 0.018  &  0.137 $\pm$ 0.026  &  0.043 $\pm$ 0.017  &  0.027 $\pm$ 0.014 \\
-  %       & 100  &  0.130 $\pm$ 0.041  &  0.025 $\pm$ 0.014  &  0.025 $\pm$ 0.014  &  0.146 $\pm$ 0.020  &  0.046 $\pm$ 0.009  &  \textbf{0.017} $\pm$ 0.002  \\
-
-  %       &225   &  0.135 $\pm$ 0.024  &  0.024 $\pm$ 0.010  &  0.023 $\pm$ 0.009  &  0.154 $\pm$ 0.012  &  0.052 $\pm$ 0.010  &  \textbf{0.017} $\pm$ 0.003 \\
-
-  %       &400   &  0.131 $\pm$ 0.020  &  0.020 $\pm$ 0.003  &  0.020 $\pm$ 0.003  &  0.158 $\pm$ 0.007  &  0.052 $\pm$ 0.007  &  \textbf{0.017} $\pm$ 0.001  \\
-
-
-
-  %       \midrule
-  %       \multirow{4}{*}{\begin{tabular}[x]{@{}c@{}}Corre-\\lation \\$\rho$\end{tabular}}
-  %       & 25   &  0.849 $\pm$ 0.159  &  \textbf{0.992} $\pm$ 0.011  &  0.991 $\pm$ 0.012  &  0.798 $\pm$ 0.088  &  0.980 $\pm$ 0.015  & 0.988 $\pm$ 0.025  \\
-  %       & 100  &  0.841 $\pm$ 0.087  &  0.988 $\pm$ 0.013  &  0.988 $\pm$ 0.012  &  0.788 $\pm$ 0.051  &  0.976 $\pm$ 0.013  &  \textbf{0.997} $\pm$0.001 \\
-
-  %       & 225  &  0.824 $\pm$ 0.057  &  0.989 $\pm$ 0.010  &  0.990 $\pm$ 0.010  &  0.764 $\pm$ 0.022  &  0.966 $\pm$ 0.016  &  \textbf{0.996} $\pm$ 0.001 \\
-
-  %       & 400  &  0.828 $\pm$ 0.043  &  0.993 $\pm$ 0.002  &  0.993 $\pm$ 0.002  &  0.759 $\pm$ 0.018  &  0.967 $\pm$ 0.013  &  \textbf{0.997} $\pm$ 0.001  \\
-
-  %       \midrule
-  %       \multirow{4}{*}{\begin{tabular}[x]{@{}c@{}}$\log{Z}$ \\error\end{tabular}}
-  %       & 25  &  2.113 $\pm$ 1.367  &  \textbf{0.170} $\pm$ 0.199  &  0.194 $\pm$ 0.188  &  0.605 $\pm$ 0.611  &  2.214 $\pm$ 0.775  &  0.649 $\pm$ 0.363  \\
-
-  %       &100  &  8.034 $\pm$ 2.523  &  \textbf{0.372} $\pm$ 0.427  &  0.415 $\pm$ 0.422  &  1.545 $\pm$ 1.081  &  11.14 $\pm$ 0.954  &  3.129 $\pm$ 0.520  \\
-
-  %       &225  &  17.923 $\pm$ 3.474 &  0.952 $\pm$ 1.037  &  \textbf{0.917} $\pm$ 0.922  &  3.143 $\pm$ 2.122  &  25.55 $\pm$ 2.025  &  7.473 $\pm$ 0.906  \\
-
-  %       &400  &  31.74 $\pm$ 4.766          &  \textbf{0.919} $\pm$ 0.684   &  1.011 $\pm$ 0.685  &  3.313 $\pm$ 1.872  &  46.61 $\pm$ 3.094  &  12.77 $\pm$ 0.991  \\
-
-  %       \bottomrule
-  %     \end{tabular}
-  %   \end{adjustbox}
-  % \end{table*}
-  \let\thefootnote\relax\footnotetext{\tiny
-    Inference Net: Wiseman, Kim, Amortized Bethe Free Energy Minimization for Learning MRFs, 2019.
-  }
+  
 \end{frame}
-\begin{frame}
-  {Learning MRFs}
-  What is $\bm{\theta}$ in $p(\bm{x};\bm{\theta})$?\\
-  Table of negative log-likelihood of learned MRFs \\
-  \begin{adjustbox}{width=1\textwidth}
-    \begin{tabular}{lcccccccc}
-      % std=1.0
-      \toprule
-      $n$ & True & Exact & Mean Field & Loopy BP & Damped BP & GBP & Inference Net & RENN \\
-      \toprule
-      \multicolumn{9}{c}{Grid Graph}\\
-      \midrule
-      25  &  9.000  &  9.004  &  9.811  &  {9.139}  &  9.196  &  10.56  &  9.252  &  \textbf{9.048}  \\
-      100 &  19.34  &  19.38  &  23.48  &  {19.92}  &  20.02  &  28.61  &  20. 29  &  \textbf{19.76} \\
-      225 &  63.90  &  63.97  &  69.01  &  66.44    &  66.25  &  92.62  &  68.15  &  \textbf{64.79}  \\
-      \toprule
-      % std=1.0
-      \multicolumn{9}{c}{Complete Graph}\\
-      \midrule
-      9  &  3.276  &  3.286  &  9.558  &  5.201  &  5.880  &  10.06  &  5.262  & \textbf{3.414}  \\
-      16  &  4.883  &  4.934  &  28.74  &  13.64  &  18.95  &  24.45  &  13.77  &  \textbf{5.178}  \\
+\begin{frame}[label=current]
+  {Some Numerical Comparisons}
+  {Richer Comparisons}
+  Inference on grid and complete graphs.
+  \begin{table}
+    \vskip -0.1in
+    \begin{adjustbox}{width=1\textwidth}
+      \begin{small}
+        \begin{tabular}{cl c ccccccc}
+          \toprule
+          {}&{}& Metric & {} & Mean Field & Loopy BP & Damped BP & GBP & Inference Net & RENN \\
+          \midrule
+          \multirow{4}{*}{\rotatebox[origin=c]{90}{\begin{tabular}{c}High Temp\\-erature\end{tabular}}}%  &
+            &\multirow{4}{*}{\rotatebox[origin=c]{0}{\begin{tabular} [x]{@{}c@{}} Complete graph \\ N=16 \\$J_{ij}\sim \Nn(0,1)$ \\ $h_i \sim \Nn(0, \gamma^{2})$ \end{tabular}}} &
+                                                                                                                                                                                    \multirow{2}{*}{\begin{tabular}[x]{@{}c@{}}$\ell_1$-\\error\end{tabular}}
+            & $\gamma=1$   &  0.273 $\pm$ 0.086  &  0.239 $\pm$ 0.059  &  0.239 $\pm$ 0.059  &  0.260 $\pm$ 0.086  &  0.249 $\pm$ 0.067  &  \textbf{0.181} $\pm$ 0.092  \\
+            & &       &  $\gamma=4$    &  0.197 $\pm$0.049   &  0.181 $\pm$ 0.035  &  0.180 $\pm$ 0.034  &  0.210 $\pm$ 0.070  &  0.174 $\pm$ 0.030  &  \textbf{0.125} $\pm$ 0.050  \\
+          \cmidrule{3-10}
+            &&\multirow{2}{*}{\begin{tabular}[x]{@{}c@{}}$\log{Z}$ \\error\end{tabular}}
+            &  $\gamma=1$    &  20.66 $\pm$ 5.451  &  178.7 $\pm$ 22.18  &  178.9 $\pm$ 21.88  &  153.3 $\pm$ 25.29  &  213.6 $\pm$ 12.75  &  \textbf{14.41} $\pm$ 4.135  \\
+            &&      &  $\gamma=4$    &  \textbf{10.74} $\pm$ 7.385  &  565.7 $\pm$ 73.33  &  566.1 $\pm$ 73.13  &  106.0 $\pm$ 54.43  &  588.3 $\pm$ 62.58  &  14.72 $\pm$ 4.155  \\
+          
+          
+          \bottomrule
+          {\multirow{4}{*}{\rotatebox[origin=c]{90}{\begin{tabular}{c}Low Temp\\-erature\end{tabular}}}}&\multirow{4}{*}{\rotatebox[origin=c]{0}{\begin{tabular} [x]{@{}c@{}} Grid graph \\ N=100\\ $J_{ij}\sim \Uu(-u,u)$ \\ $h_i \sim \Uu(-1, 1)$ \end{tabular}}}
+            &\multirow{2}{*}{\begin{tabular}[x]{@{}c@{}}$\ell_1$\\error \end{tabular} }
+            &    5   & $0.257 \pm 0.065$ &  $0.115 \pm 0.071$ & $0.120 \pm 0.073$ & $0.250 \pm 0.024$ & $ 0.164 \pm 0.036$ & \textbf{0.100} $\pm$ 0.046 \\
 
-      \bottomrule
-    \end{tabular}
-  \end{adjustbox}
+            &&&    15  & $0.328 \pm 0.068$ &  $0.228 \pm 0.088$ & $0.267 \pm 0.147$ & $0.303 \pm 0.026$ & $ 0.279 \pm 0.024$ & \textbf{0.207} $\pm$ 0.054 \\
+          \cmidrule{3-10}
+            & &\multirow{2}{*}{\begin{tabular}[x]{@{}c@{}}$\log{Z}$ \\error\end{tabular}}
+            &  5     & 42.65 $\pm$ 17.86  &  7.346 $\pm$ 7.744  &  \textbf{5.444} $\pm$ 4.811  &  {8.369} $\pm$ 7.401  &  65.60 $\pm$ 8.786  & 11.34 $\pm$ 4.724 \\
+            &&      &  15    & 164.9 $\pm$ 56.07  &  58.40 $\pm$ 41.36  &  101.9 $\pm$ 54.31  &  \textbf{23.10} $\pm$ 15.06  &  224.3 $\pm$ 25.52  & 78.85 $\pm$ 15.08 \\
+          \bottomrule
+        \end{tabular}
+      \end{small}
+    \end{adjustbox}
+    \vskip -0.1in
+  \end{table}
+  {Average consumed time per inference instance (unit: second)}
+  \begin{table}
+    
+    \vskip -0.1in
+    \centering
+    \begin{adjustbox}{width=0.98\textwidth}
+      \begin{tabular}{lcccccc}
+        \toprule
+        {} &  Mean Field & Loopy BP & Damped BP & GBP & Inference Net & RENN \\
+        \toprule
+        Grid $\Gg$, $N=400$, $J_{ij}\sim \Nn(0,1), h_i\sim\Nn(0,0.1^2)$ & 9.897 & 425.0 & 328.3 & 286.3 & 74.41 & 101.0 \\
+        Complete $\Gg$, $N=16$, $J_{ij}\sim \Nn(0,1), h_i\sim\Nn(0,1)$ & 0.457 & 0.777 & 1.285 & 14.29 &  12.45  & 16.16\\
+        Grid $\Gg$, $N=100$, $J_{ij}\sim \Uu(-15,15), h_i\sim\Uu(-1,1)$ & 2.314 & 253.3 & 229.3 & 53.72 & 103.4 & 79.38 \\
+        Complete $\Gg$, $N=9$, $J_{ij}\sim \Uu(-15,15), h_i\sim\Uu(-1,1)$ & 0.502 & 15.86 & 18.23 & 3.213 & 17.21 & 7.857 \\
+        \bottomrule
+      \end{tabular}
+    \end{adjustbox}
+  \end{table}
 \end{frame}
-
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "../ppgm_slide"
