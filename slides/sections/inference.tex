@@ -826,6 +826,23 @@
 
 \begin{frame}[label=current]{RENN}
   \onslide<1->{
+    Non-root belief: \\
+    \begin{center}
+    \begin{tikzpicture}
+        \begin{scope}[yshift=-2cm, scale=0.6, every node/.append style={transform shape}]
+          \tikzstyle{cnode} = [thick, draw=black, circle, inner sep = 1pt,  align=center]
+              \tikzstyle{rnode} = [thick, circle, rounded corners = 2pt,minimum size = 0.0cm,draw,inner sep = 0.5pt]
+          \node[rnode] (r01) at (0,0) {$R_1^{[0]}$};
+          \node[rnode] (r02) at (3,0) {$R_2^{[0]}$};
+          \node[rnode] (r11) at (1.5, -2.1) {$R_1^{[1]}$};
+        \end{scope}
+
+        \draw[->] (r01.south) -- node[align=center, text width=3cm, black,midway,left]{\tiny Marginalize to child region} (r11.north);
+        \draw[->] (r02.south) -- node[align=center, text width=3cm, black,midway,right]{\tiny Marginalize to child region}(r11.north);
+        \node[below=0.1cm of r11] {\tiny Average incoming marginalization from parents};
+      \end{tikzpicture}
+    \end{center}
+    
     Objective of RENN:\\
     \begin{equation*}
       \min_{\text{\begin{tabular}{c}parameter \\of NN\end{tabular}}} \mathrm{\underbrace{\textbf{region-based free energy} (F_R)}_{\text{Assumulated average of all regions}}} + \underbrace{\mathrm{\textbf{panelty on belief consistency} }}_{\text{Recursively computed via levels of region graph}}
@@ -833,7 +850,8 @@
   }
   \\
   \onslide<2->{
-    {RENN Inference}
+    RENN Inference:
+    \begin{center}
     \begin{tikzpicture}
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
       %% use of RENN
@@ -843,8 +861,8 @@
       \tikzstyle{rnode} = [thick, rectangle, rounded corners = 2pt,minimum size = 0.0cm,draw,inner sep = 4pt]
       \begin{scope}[scale=0.8, every node/.append style={transform shape} ]
         \node[rnode] (r01) at (-1,0) {MRF};
-        \node[rnode, right=of r01] (r02) {\begin{tabular}[x]{@{}c@{}} Construct Region Graph\\ {\tiny Tree-robust conditon} \\ {\tiny $+$ Cluster Variation Method} \\ {\tiny $+$ Validity} \end{tabular}};
-        \node[rnode, right=of r02] (r03) {\begin{tabular}{c}Free Energy Optimization\\ {\tiny Backpropagation}\\ {\tiny Gradient descent}\end{tabular}};
+        \node[rnode, right=of r01] (r02) {\begin{tabular}[x]{@{}c@{}} Construct Region Graph\\ {\tiny Tree-robust conditon} \\ {\tiny $+$ Cluster Variation Method} \\ {\tiny $+$ Validity} \\ {\tiny Section 4.3.2}\end{tabular}};
+        \node[rnode, right=of r02] (r03) {\begin{tabular}{c}Free Energy Optimization\\ {\tiny Backpropagation}\\ {\tiny Gradient descent} \\ Consistency Regularization\\ {\tiny Direct root belief reps.} \\ {\tiny Recursive non-root belief compt.}\end{tabular}};
         \node[rnode, right=of r03] (r04) {\begin{tabular}{c}Read out: \\Beliefs or \\Partition\end{tabular}};
       \end{scope}
       \begin{scope}[on background layer]
@@ -854,24 +872,25 @@
       \draw[->] (renn) -- (r04);
       \draw[->] (r02) -- (r03);
     \end{tikzpicture}
-  }\\
-  \onslide<2->{
-    Learning alternatives of MRFs
-    \begin{columns}
-      \column{0.5\textwidth}
-      learn with customized optm.
-      \begin{align*}
-        \pd{\log{p}(\bm{x};\bm{\theta})}{\bm{\theta}_a} = &\pd{\log{{\phi_a}(\bm{x}_a; \bm{\theta}_a)}}{\bm{\theta}_a} \\
-                                                          &- \underbrace{\EE_{p(\bm{x}_a; \bm{\theta})}\left[ \pd{\log{{\phi_a}(\bm{x}_a; \bm{\theta}_a)}}{\bm{\theta}_a} \right]}_{\text{est. by beliefs}}.
-      \end{align*}
-      \column{0.5\textwidth}
-      learn with auto-grads
-      \begin{align*}
-        \max_{\bm{\theta}} \log{p(\bm{x}; \bm{\theta})} =  &\max_{\bm{\theta}}\sum_{a}\log{ \psi_a(\bm{x}_a; \bm{\theta}_a) } \\
-                                                           &\underbrace{ -\log{Z(\bm{\theta})}}_{\text{\begin{tabular}{c}ets. by the\\ Helmholtz free energy\\ $-\log{Z(\bm{\theta})} \simeq F_R$ \end{tabular}}}.
-      \end{align*}
-    \end{columns}
+    \end{center}
   }
+  % \onslide<2->{
+  %   Learning alternatives of MRFs
+  %   \begin{columns}
+  %     \column{0.5\textwidth}
+  %     learn with customized optm.
+  %     \begin{align*}
+  %       \pd{\log{p}(\bm{x};\bm{\theta})}{\bm{\theta}_a} = &\pd{\log{{\phi_a}(\bm{x}_a; \bm{\theta}_a)}}{\bm{\theta}_a} \\
+  %                                                         &- \underbrace{\EE_{p(\bm{x}_a; \bm{\theta})}\left[ \pd{\log{{\phi_a}(\bm{x}_a; \bm{\theta}_a)}}{\bm{\theta}_a} \right]}_{\text{est. by beliefs}}.
+  %     \end{align*}
+  %     \column{0.5\textwidth}
+  %     learn with auto-grads
+  %     \begin{align*}
+  %       \max_{\bm{\theta}} \log{p(\bm{x}; \bm{\theta})} =  &\max_{\bm{\theta}}\sum_{a}\log{ \psi_a(\bm{x}_a; \bm{\theta}_a) } \\
+  %                                                          &\underbrace{ -\log{Z(\bm{\theta})}}_{\text{\begin{tabular}{c}ets. by the\\ Helmholtz free energy\\ $-\log{Z(\bm{\theta})} \simeq F_R$ \end{tabular}}}.
+  %     \end{align*}
+  %   \end{columns}
+  % }
 \end{frame}
 \begin{frame}[label=current]{Insights of RENN}
   \begin{block}{Generalization}
