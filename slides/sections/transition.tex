@@ -1,0 +1,156 @@
+\subsection{Bidirectional Impact}
+{ \setbeamercolor{background canvas}{bg=hl_bg}
+  \setbeamercolor{normal text}{fg=hl_fg}
+  \setbeamercolor{frametitle}{fg=hl_fg}
+  \begin{frame}[label=current]
+    \usebeamercolor[fg]{normal text}
+    \begin{center}
+      {
+        \begin{tikzpicture}
+          \tikzstyle{cnode} = [thick, draw=white, ellipse, inner sep = 2pt,  align=center]
+          \tikzstyle{fnode} = [thick, draw=white, ellipse, inner sep = 10pt,  align=center]
+          \tikzstyle{rnode} = [thick, rectangle, inner sep = 1.5pt,  align=left]
+          \node[rnode] (inf) at (-2, 0) {\large Inference};
+          \node[rnode, below = 0.6cm of inf.west, anchor=west] (abp) {$\bullet$ {$\alpha$-BP}};
+          \node[rnode, below = 1.2cm of inf.west, anchor=west] (renn) {$\bullet$ RENN};
+          \node[cnode, fit=(abp)(inf)(renn)] (infn) {};
+          
+          \node[rnode, right = 3 of inf] (lern) {\large Learning};
+          \node[rnode, below = 0.4 of lern.west, anchor=west] (genmm) {$\bullet$ GenMM};
+          \node[rnode, below = 0.8 of lern.west, anchor=west] (genhmm) {{$\bullet$} GenHMM};
+          \node[rnode, below = 1.2 of lern.west, anchor=west] (lfree) {{$\bullet$} EOTGM};
+          \node[cnode, fit=(lern)(genmm)(genhmm)(lfree)] (learn) {};
+
+          \node[fnode, fit=(infn)(lern)] (box) {};
+
+          
+          \node[below right = 0.5 and -0.5 of infn] {{Probabilistic} Graphical Model};
+          \draw[->,line width=0.5mm, green] (infn) to[out=15, in=165] (learn);
+          \draw[->,line width=0.5mm, green] (learn) to[out=195, in=-15] (infn);
+        \end{tikzpicture}
+      }
+    \end{center}
+    
+  \end{frame}
+}
+\begin{frame}[label=current]{Two Direction Impact}
+  Why impact in two direction?
+  \begin{itemize}[label=$\bullet$]
+    \onslide<1->{
+    \item Learning to Inference:\\
+      \begin{figure}[!t]
+        \centering
+        \begin{tikzpicture}
+          \tikzstyle{cnode} = [thick, draw=black, ellipse, inner sep = 2pt,  align=center]
+          \tikzstyle{fnode} = [thick, draw=black, ellipse, inner sep = 10pt,  align=center]
+          
+          \node[cnode] (infn) at (0,0) {Inference};
+          \node[cnode] (lern) at (3,0) {Learning};
+          
+          % \node[fnode, fit=(infn)(lern)] (box) {};
+          % \node[] at (1.4, -0.6) {Probabilistic Graphical Model};
+          \draw[->,line width=0.2mm] (infn) to[out=15, in=165] (lern);
+          \draw[green, ->,line width=0.2mm] (lern) to[out=195, in=-15] (infn);
+        \end{tikzpicture}
+      \end{figure}
+      Stuff we have been taken as default, a given $p(\bm{x};\bm{\theta})$
+      \begin{itemize}[label=$\bullet$]
+      \item built by expert knowledge, or
+      \item built by extracting information from evidence (empirical data).
+      \end{itemize}
+    }
+    \onslide<2->{
+    \item Inference to Learning:\\
+      \begin{figure}[!t]
+        \centering
+        \begin{tikzpicture}
+          \tikzstyle{cnode} = [thick, draw=black, ellipse, inner sep = 2pt,  align=center]
+          \tikzstyle{fnode} = [thick, draw=black, ellipse, inner sep = 10pt,  align=center]
+          
+          \node[cnode] (infn) at (0,0) {Inference};
+          \node[cnode] (lern) at (3,0) {Learning};
+          
+          % \node[fnode, fit=(infn)(lern)] (box) {};
+          % \node[] at (1.4, -0.6) {Probabilistic Graphical Model};
+          \draw[green, ->,line width=0.2mm] (infn) to[out=15, in=165] (lern);
+          \draw[->,line width=0.2mm] (lern) to[out=195, in=-15] (infn);
+        \end{tikzpicture}
+      \end{figure}
+      Model learning: an error trial process that compares inferred 'fact' and actual fact (evidence).\\
+      Model learning usually needs inference as a subroutine, which sometimes are replaced by sampling in particle based methods.
+    }
+  \end{itemize}
+  
+  
+\end{frame}
+
+\begin{frame}[label=current]{\large Inference Routine in Learning}
+  
+  What is $\bm{\theta}$ in $p(\bm{x}; \bm{\theta}) = \frac{1}{Z(\bm{\theta})} \prod_{a} \psi_a(\bm{x}_a; \bm{\theta}_a)$? \\
+  A direct view:
+  \begin{align*}
+    \max_{\bm{\theta}} \log{p(\bm{x}; \bm{\theta})} =  \max_{\bm{\theta}}\sum_{a}\log{ \psi_a(\bm{x}_a; \bm{\theta}_a) } \underbrace{- \log{Z(\bm{\theta})}}_{\text{Helmholtz free energy, can be est. by $F$}},
+  \end{align*}
+  An alternative view:
+  \begin{align*}
+    \pd{\log{p}(\bm{x};\bm{\theta})}{\bm{\theta}_a} = \pd{\log{{\phi_a}(\bm{x}_a; \bm{\theta}_a)}}{\bm{\theta}_a} - \underbrace{\EE_{p(\bm{x}_a; \bm{\theta})}\left[ \pd{\log{{\phi_a}(\bm{x}_a; \bm{\theta}_a)}}{\bm{\theta}_a} \right]}_{\text{can be est. by beliefs}}.
+  \end{align*}
+
+  Remark:
+  \begin{itemize}[label={$\bullet$}]
+  \item This essentially requires estimation of Helmholtz free energy or marginal probabilities.
+  \item Stationary points translate into moment matching.
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}[label=current]
+  {Learning MRFs}
+  {What is $\bm{\theta}$ in $p(\bm{x};\bm{\theta})$?}
+  \vskip 0.5cm
+  Table of negative log-likelihood of learned MRFs \\
+  \begin{table}
+    \begin{adjustbox}{width=0.9\textwidth}
+      \begin{tabular}{lcccccccc}
+        % std=1.0
+        \toprule
+        N & True & Exact & Mean Field & Loopy BP & Damped BP & GBP & Inference Net & RENN \\
+        \toprule
+        \multicolumn{9}{c}{Grid Graph}\\
+        \midrule
+        25  &  9.000  &  9.004  &  9.811  &  {9.139}  &  9.196  &  10.56  &  9.252  &  \textbf{9.048}  \\
+        100 &  19.34  &  19.38  &  23.48  &  {19.92}  &  20.02  &  28.61  &  20. 29  &  \textbf{19.76} \\
+        225 &  63.90  &  63.97  &  69.01  &  66.44    &  66.25  &  92.62  &  68.15  &  \textbf{64.79}  \\
+        \toprule
+        % std=1.0
+        \multicolumn{9}{c}{Complete Graph}\\
+        \midrule
+        9  &  3.276  &  3.286  &  9.558  &  5.201  &  5.880  &  10.06  &  5.262  & \textbf{3.414}  \\
+        16  &  4.883  &  4.934  &  28.74  &  13.64  &  18.95  &  24.45  &  13.77  &  \textbf{5.178}  \\
+
+        \bottomrule
+      \end{tabular}
+    \end{adjustbox}
+  \end{table}
+  \vskip 0.5cm
+  {Average consumed time per epoch (unit: second) for two MRF learning cases.}
+  \begin{table}
+    \centering
+    \begin{adjustbox}{width=0.9\textwidth}
+      \begin{tabular}{lcccccc}
+        \toprule
+        {} &  Mean Field & Loopy BP & Damped BP & GBP & Inference Net & RENN \\
+        \toprule
+        Grid $\Gg$,\! $N\!=\!225\!\!$ & 40.09 & 335.1 & 525.1 & 12.37 & 19.49 & 16.03 \\
+        Complete\! $\Gg$,\! $N=\!16\!\!$ & 2.499 & 12.40 & 5.431 & 1.387 & 0.882 & 2.262 \\
+        \bottomrule
+      \end{tabular}
+    \end{adjustbox}
+  \end{table}
+
+\end{frame}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../ppgm_slide"
+%%% End:

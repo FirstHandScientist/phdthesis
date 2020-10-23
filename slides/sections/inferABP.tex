@@ -1,0 +1,42 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+% ------------------------------------------------
+% Alpha-BP
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+
+\begin{frame}{What is the state of $x$?}
+  \framesubtitle{Belief propagation (BP): let us guess by propagating belief}
+  \onslide<1->{
+
+    Proposed by Pearl (1982) for Bayesian networks (tree-structured graphs), which then widely used for general graphs (loopy BP).
+    
+    {Yedidia, et al, connected the loopy BP with stationary points of \textbf{Bethe free energy}
+      \begin{align*}
+        F_{Bethe}(b) = \sum_{a\in \Ff} \sum_{\bm{x}_{a}}
+        b_{a}(\bm{x}_{a})\log{\frac{b_{a}(\bm{x}_{a})}{\phi_{a}(\bm{x}_{a})}
+        } -  \sum_{i=1}^{N} (|\mathrm{ne}_i| - 1) \sum_{x_i} b_i(x_i) \log{b_i(x_i)},
+      \end{align*}
+    }
+    
+    Corresponding to minimization of approximated \textbf{variational free energy $F_v(b)$  with trial $b$ includes $\{b_i\}$ and $\{b_a\}$}.
+
+    }
+    \let\thefootnote\relax\footnotetext{\tiny
+      \vskip -0.8cm
+      \begin{align*}
+    \mathrm{msg: factor~ to~ variable} ~~ m_{a\rightarrow i}(x_i) & \propto \sum_{\bm{x}_{a} \backslash x_i}
+                                \phi_{a}(\bm{x}_{a}) \prod_{j \in a \backslash i} m_{j\rightarrow a}(x_j), \\
+    \mathrm{msg: variable~ to~ factor} ~~  m_{j\rightarrow a}(x_j) & \propto  \prod_{a^{\prime} \in \mathrm{ne}_j
+                                \backslash a} m_{a^{\prime}\rightarrow j}(x_j)
+    \end{align*}
+    See, D. Liu, M. T. Vu, Z. Li, and Lars K. Rasmussen. $\alpha$ belief propagation for approximate inference. 2020 \\
+    D. Liu, N. N. Moghadam, L. K. Rasmussen, etc. $\alpha$ belief propagation as fully factorized approximation. In
+    GlobalSIP, 2019.
+    for alternative view to loopy BP.
+  }
+  
+\end{frame}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../ppgm_slide"
+%%% End:
