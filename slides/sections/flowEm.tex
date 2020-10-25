@@ -1,0 +1,245 @@
+
+{ \setbeamercolor{background canvas}{bg=hl_bg}
+  \setbeamercolor{normal text}{fg=hl_fg}
+  \setbeamercolor{frametitle}{fg=hl_fg}
+  \begin{frame}
+    \usebeamercolor[fg]{normal text}
+    \begin{center}
+      {
+        \begin{tikzpicture}
+          \tikzstyle{cnode} = [thick, draw=white, ellipse, inner sep = 2pt,  align=center]
+          \tikzstyle{fnode} = [thick, draw=white, ellipse, inner sep = 10pt,  align=center]
+          \tikzstyle{rnode} = [thick, rectangle, inner sep = 1.5pt,  align=left]
+          \node[rnode] (inf) at (-2, 0) {\large Inference};
+          \node[rnode, below = 0.6cm of inf.west, anchor=west] (abp) {$\bullet$ {$\alpha$-BP}};
+          \node[rnode, below = 1.2cm of inf.west, anchor=west] (renn) {$\bullet$ RENN};
+          \node[cnode, fit=(abp)(inf)(renn)] (infn) {};
+          
+          \node[rnode, right = 3 of inf] (lern) {\large Learning};
+          \node[rnode, below = 0.4 of lern.west, anchor=west] (genmm) {\textbf{$\bullet$ GenMM}};
+          \node[rnode, below = 0.8 of lern.west, anchor=west] (genhmm) {\textbf{{$\bullet$} GenHMM}};
+          \node[rnode, below = 1.2 of lern.west, anchor=west] (lfree) {{$\bullet$} EOTGM};
+          \node[cnode, fit=(lern)(genmm)(genhmm)(lfree)] (learn) {};
+          \node[rnode, draw=green, fit=(genmm)(genhmm)] () {};
+
+          \node[fnode, fit=(infn)(lern)] (box) {};
+
+          
+          \node[below right = 0.5 and -0.5 of infn] {{Probabilistic} Graphical Model};
+          \draw[->,line width=0.2mm] (infn) to[out=15, in=165] (learn);
+          \draw[->,line width=0.2mm] (learn) to[out=195, in=-15] (infn);
+        \end{tikzpicture}
+      }
+    \end{center}
+    
+  \end{frame}
+}
+\begin{frame}[label=current]
+  {Incomplete Observation}
+  Partial observation: $\bm{x} = [  \underbrace{\bm{x}_U}_{Unobserved}, \underbrace{\bm{x}_O}_{Observed}]$
+  \begin{equation*}
+    l(\bm{x}_O; \bm{\theta}) = \log{\sum_{\bm{x}_U}p(\bm{x}_U, \bm{x}_O; \bm{\theta})} = \log{\underbrace{Z(\bm{x}_O;\bm{\theta})}_{\sum_{\bm{x}_U}\tilde{p}(\bm{x}; \bm{\theta})}} - \log{Z(\bm{\theta})},
+  \end{equation*}
+
+  {Connect Free Energy to Evidence Lower Bounder}:
+  \begin{columns}
+    \column{0.6\textwidth}
+    \begin{align*}
+      l(\bm{x}_O; \bm{\theta}) &\geq - \underbrace{F_v(q(\bm{x}_U|\bm{x}_O))}_{Variational Free Energy} - \log{Z(\bm{\theta})} \nonumber \\
+                               & = \EE_{q(\bm{x}_U|\bm{x}_O)}\left[ \log{\frac{{p}(\bm{x}_U, \bm{x}_O; \bm{\theta})}{q(\bm{x}_U|\bm{x}_O)}} \right] \nonumber \\
+                               & = \underbrace{\EE_{q(\bm{x}_U|\bm{x}_O)}\left[ \log{{p}(\bm{x}_U, \bm{x}_O; \bm{\theta})} \right] + H({q(\bm{x}_U|\bm{x}_O)})}_{\text{Evidence Lower Bound $F(q, \bm{\theta})$}}
+    \end{align*}
+    
+    \column{0.4\textwidth}
+    Intuition of maximizing $F(q,\bm{\theta})$
+    \begin{itemize}[label=\textbullet]
+    \item Maximizing (incomplete) likelihood
+    \item Minimizing free energy
+    \end{itemize}
+
+  \end{columns}
+  This gives the EM as a coordinate ascent method:
+  \begin{align*}
+    \mathrm{E~step:}~~~ q^{(t+1)} &= \uargmax{q}{F(q, \bm{\theta}^{(t)})}, \\
+    \mathrm{M~step:}~~~\bm{\theta}^{(t+1)} &= \uargmax{\bm{\theta}}{F(q^{(t+1)}, \bm{\theta})}.
+  \end{align*}
+\end{frame}
+
+
+\begin{frame}[label=current]{Generator Mixed Model}
+  {Equipping EM with Normalizing Flows}
+  \begin{columns}
+    \column{0.4\textwidth}
+    \centering
+    \begin{tikzpicture}
+      \tikzstyle{enode} = [thick, draw=black, circle, align=center]
+      \tikzstyle{cnode} = [thick, draw=black, circle, align=center, inner sep = 0.3pt]
+      \tikzstyle{nnode} = [thick, rectangle, rounded corners = 2pt,minimum size = 0.8cm,draw,inner sep = 12pt]
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+      %% directed graphical model
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+      \begin{scope}[scale=1, every node/.append style={transform shape}]
+        \input{sections/genmm1.tex}
+      \end{scope}
+
+    \end{tikzpicture}
+    
+    \column{0.55\textwidth}
+    
+    \centering
+    \begin{minipage}{\linewidth}
+      
+      \begin{itemize}[label=\textbullet]
+      \item Ideal case: The underline true $p^{\ast}(\bm{x})$ is in hypothesis space $\Hh$, i.e. $p^{\ast}(\bm{x}) \in \Hh$.
+      \item Out of reach: Test $p^{\ast}(\bm{x}) \stackrel{?}{\in} \Hh$
+      \item A general desire:
+        \begin{equation*}
+          \Hh ~\mathrm{is~large}  \rightarrow \mathrm{condidate}~ p(\bm{x};\bm{\theta})~\mathrm{is~flexible}
+        \end{equation*}
+        
+      \end{itemize}
+      
+      This brings up the finite \textbf{mixture} models.
+
+      \begin{align*}\label{eq:FirstMixtureModel}
+        p(\bm{x};\bm{\Theta})  = \textstyle\sum_{k=1}^K \pi_k  p_k(\bm{x}) = \textstyle \sum_{k=1}^K \pi_k  p(\underbrace{\bm{g}(\bm{z};\bm{\theta}_k)}_{\text{\begin{tabular}{c}Variable change \\via generator $\bm{g}$\end{tabular}}}).
+      \end{align*}
+      
+    \end{minipage}
+  \end{columns}
+  
+  \vskip -0.5cm
+  What to expect from GenMM:
+  \begin{itemize}[label=\textbullet]
+  \item {Flexible and expressive model, enlarging hyperspace $\Hh$}
+  \item {Tractable likelihood} 
+  \item {Compatible with typical statistical models}
+  \item Compatible with NN tools/frameworks
+  \item {Scale to high-dimensional structured data}
+  \item {Efficient in sampling (data generation)}
+  \item {...}
+  \end{itemize}
+
+\end{frame}
+
+
+
+
+\begin{frame}[label=current]{A High-level View of GenMM: finite mixture}
+  \begin{tikzpicture}
+    \tikzstyle{enode} = [thick, draw=black, circle, align=center]
+    \tikzstyle{cnode} = [thick, draw=black, circle, align=center, inner sep = 0.3pt]
+    \tikzstyle{nnode} = [thick, rectangle, rounded corners = 2pt,minimum size = 0.8cm,draw,inner sep = 22pt]
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+    %% 1. directed graphical model
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+    \begin{scope}[scale=0.6, every node/.append style={transform shape}, local bounding box=dgm, opacity=0.3]
+      \input{sections/genmm1.tex}
+    \end{scope}
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+    %% 2. illustration of GenMM
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+    \begin{scope}[shift={($(dgm.east)+(3cm,0)$)}, local bounding box=illsGenMM]
+      \input{sections/genmm2.tex}
+    \end{scope}
+    \draw[green, ->, shorten >=5pt, shorten <=5pt] (dgm) --node [text width=2cm, black, midway,above]{\tiny Alternative illustration of GenMM} (illsGenMM);
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+    %% 3. illustration of flow
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+
+    \begin{scope}[shift={($(illsGenMM.south)+(-1cm,-1cm)$)}, scale=0.8, local bounding box=illFlow,opacity=\bgopacity]
+      \input{sections/genmm3.tex}
+    \end{scope}
+    
+    \draw[dashed, ->, shorten >=5pt, shorten <=5pt, opacity=\bgopacity] ($(gk.north)+(0,-1.0cm)$) -- ($(gk.north)+(0,-2.0cm)$);
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+    %% 4. one layer mapping of the flow
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+    \draw[dashed, ->, shorten >=5pt, shorten <=5pt, opacity=\bgopacity] ($(latentz.west)+(-0.1cm,0)$) -- ($(latentz.west)+(-1.5cm,0)$);
+    
+    \begin{scope}[shift={($(dgm.south)+(0,-3.5cm)$)}, scale=0.5, every node/.append style={transform shape}, local bounding box=oneLayer, opacity=\bgopacity]
+      \input{sections/genmm4.tex}
+    \end{scope}
+    
+  \end{tikzpicture}
+\end{frame}
+
+
+\begin{frame}[label=current]{A High-level View of GenMM: flow gears}
+  \begin{tikzpicture}
+    \tikzstyle{enode} = [thick, draw=black, circle, align=center]
+    \tikzstyle{cnode} = [thick, draw=black, circle, align=center, inner sep = 0.3pt]
+    \tikzstyle{nnode} = [thick, rectangle, rounded corners = 2pt,minimum size = 0.8cm,draw,inner sep = 22pt]
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+    %% 1. directed graphical model
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+    \begin{scope}[scale=0.4, every node/.append style={transform shape}, local bounding box=dgm, opacity=0.3]
+      \input{sections/genmm1.tex}
+    \end{scope}
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+    %% 2. illustration of GenMM
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+    \begin{scope}[scale=0.3, every node/.append style={transform shape}, shift={($(dgm.east)+(16cm,0)$)}, local bounding box=illsGenMM, opacity=\bgopacity]
+      \input{sections/genmm2.tex}
+    \end{scope}
+    \draw[dashed, ->, shorten >=5pt, shorten <=5pt, opacity=\bgopacity] (dgm) --node [text width=2cm, black, midway,above]{} (illsGenMM);
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+    %% 3. illustration of flow
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+
+    \begin{scope}[shift={($(illsGenMM.south)+(-0.5cm,0cm)$)}, scale=0.8, local bounding box=illFlow]
+      \input{sections/genmm3.tex}
+    \end{scope}
+    \node [black, below=-0.3cm of illFlow] (changeveq) {
+      \scriptsize
+      \begin{minipage}{0.7\textwidth}
+        When the $k$-th generator is selected, i.e. $s_k=1$ and $s_{k^{\prime}}=0$  for $k^{\prime}\neq k$, with notation $\tilde{\bm{x}} = \bm{x}|_{s_k=1}$,:
+        \begin{equation*}
+          p(\tilde{\bm{x}})|_{\tilde{\bm{x}} = \tilde{\bm{g}}(\bm{z})} =  p(\bm{z}) \bigg| \mathrm{det}\left({\pd{\bm{z}}{\tilde{\bm{x}}}}\right)\bigg|.
+        \end{equation*}
+        
+        by following the change of variable rule.\\
+        We implement generator $\tilde{g}$ as a $L$-layer neural network:
+      \end{minipage}};
+    \draw[green, ->, shorten >=5pt, shorten <=5pt] ($(gk.north)+(0,0cm)$) -- ($(gk.north)+(0,-0.8cm)$);
+
+    \begin{scope}[scale=0.8, shift={($(changeveq.south)+(-2cm,-1cm)$)}]
+      \node (z) at (0,0) {};
+      \node at ($(z)-(0.5,0)$){$\bm{z}=\bm{h}_0$};
+      \node (xi1) at (1.5,0) {$\bm{h}_1$};
+      \node (xi2) at (3,0) {};
+      \node (xi3) at (4.5,0){};
+      \node (x) at (6,0) {};
+      \node at ($(x)+(0.5,0)$){$\bm{x} = \bm{h}_L$};
+      \draw[->] ($(z) + (0.3,0.1)$) -- node[above]{$\tilde{\bm{g}}_1$} ($(xi1)+(-0.3,0.1)$); 
+      \draw[->] ($(xi1)-(0.3,0.1)$) -- node[below]{$\tilde{\bm{f}}_1$}($(z) - (-0.3,0.1)$);
+      \draw[->] ($(xi1) + (0.3,0.1)$) -- node[above]{$\tilde{\bm{g}}_2$} ($(xi2)+(-0.3,0.1)$); 
+      \draw[->] ($(xi2)-(0.3,0.1)$) -- node[below]{$\tilde{\bm{f}}_2$}($(xi1) - (-0.3,0.1)$);
+      \draw[->] ($(xi3) + (0.3,0.1)$) -- node[above]{$\tilde{\bm{g}}_L$} ($(x)+(-0.3,0.1)$); 
+      \draw[->] ($(x)-(0.3,0.1)$) -- node[below]{$\tilde{\bm{f}}_L$}($(xi3) - (-0.3,0.1)$);
+      \draw[dotted,line width = 0.3 mm] (xi2) -- (xi3);
+    \end{scope}
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+    %% 4. one layer mapping of the flow
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+    
+    \begin{scope}[shift={($(dgm.south)+(0,-3.5cm)$)}, scale=0.3, every node/.append style={transform shape}, local bounding box=oneLayer, opacity=\bgopacity]
+      \input{sections/genmm4.tex}
+    \end{scope}
+    \draw[dashed, ->, shorten >=5pt, shorten <=5pt, opacity=\bgopacity] ($(oneLayer.east)+(1.5cm,0cm)$) -- ($(oneLayer.east)+(0.1cm,0)$);
+    
+  \end{tikzpicture}
+\end{frame}
+
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../ppgm_slide"
+%%% End:

@@ -1,0 +1,26 @@
+
+% \tikzstyle{enode} = [thick, draw=blue, circle, inner sep = 3pt,
+% align=center]
+\tikzstyle{enode} = [thick, draw=black, ellipse, inner sep = 2pt,  align=center]
+\tikzstyle{nnode} = [thick, rectangle, rounded corners = 2pt,minimum size = 0.8cm,draw,inner sep = 2pt]
+\node[enode] (z) at (0,0) {$\bm{z}\sim p(\bm{z})$};
+\node[enode] (x) at (5.5,0){$\bm{x}\sim p(\bm{x}; \bm{\Phi})$};
+% \node at (5.2,-1) {$p(\bm{x};\bm{\Phi}) = \textstyle\sum_{k=1}^K \pi_k  p_k(\bm{x})$};
+\node[nnode] (g1) at (2.6,1.8) {$\bm{g}_1$};
+\node[nnode] (g2) at (2.6,0.5) {$\bm{g}_2$};
+\node[nnode] (gk) at (2.6,-1.8) {$\bm{g}_K$};
+\draw[dotted,line width=2pt] (2.6,-0.3) -- (2.6,-1.2);
+\draw[->] (z) [in= 180, out =0] to (g1);
+\draw[->] (z) [in= 180, out =0] to (g2);
+\draw[->] (z) [in= 180, out =0] to (gk);
+\filldraw[->] (3.7, 0.5)circle (2pt) -- node[above=0.2](switch){$\bm{s}\sim \bm{\pi}$} (x);
+\node[above= 0.2 of switch.east] {\tiny \begin{tabular}{c}Categorical variable\\ as generator switch\end{tabular}};
+% \draw[->] (3,-0.8) -- (3.5, -0.8);
+\draw[->] (g1) -- (3.5,1.8);
+\draw[->] (g2) -- (3.5, 0.5);
+\draw[->] (gk) -- (3.5, -1.8);
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../ppgm_slide"
+%%% End:

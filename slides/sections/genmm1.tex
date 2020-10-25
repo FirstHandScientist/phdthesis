@@ -1,0 +1,17 @@
+\node[enode] (x) at (0,0){$\bm{x}$};
+
+\node[enode, above=of x] (s) {$\bm{s}$};
+\node[enode, left=of s] (z) {$\bm{z}$};
+\node[enode, right=of s] (pi) {$\bm{\pi}$};
+\node[cnode, right=of x] (phi) {$\{ \bm{\theta}_k \}$};
+\node[nnode, fit=(x)(z)(s)] (box) {};
+
+\draw[->] (z) to (x);
+\draw[->] (s) to (x);
+\draw[->] (pi) to (s);
+\draw[->] (phi) to (x);
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../ppgm_slide"
+%%% End:

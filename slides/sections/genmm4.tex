@@ -1,0 +1,25 @@
+% \tikzstyle{enode} = [thick, draw=blue, circle, inner sep = 3pt,
+% align=center]
+\tikzstyle{enode} = [thick, draw=black, circle, inner sep = 0, minimum size = 1cm,  align=center]
+\tikzstyle{nnode} = [thick, rectangle, rounded corners = 2pt,minimum size = 0.4cm,draw,inner sep = 2pt]
+\node[enode] (hal) at (-2,1) {$\bm{h}_{l,a}$};
+\node[enode] (hbl) at (-2,-1) {$\bm{h}_{l,b}$};
+\node[enode] (hal-1) at (2,1) {$\bm{h}_{l-1,a}$};
+\node[enode] (hbl-1) at (2,-1) {$\bm{h}_{l-1,b}$};
+\node[nnode] (times) at (-0.5,-1) {$\times$};
+\node[nnode] (plus) at (0.5,-1) {$+$};
+\node[nnode] (eq) at (0,1) {$=$};
+\draw[->] (hal) -- node[fill=white] {$m_a$} (times);
+\draw[->] (hal) -- node[fill=white] {$m_b$} (plus);
+\draw[->] (hal) to (eq);
+
+\draw[->] (eq) to (hal-1);
+\draw[->] (hbl) to (times);
+\draw[->] (times) to (plus);
+\draw[->] (plus) to (hbl-1);
+% \draw[draw=black] (-0.5,-0.5) rectangle ++(1,2);
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../ppgm_slide"
+%%% End:
