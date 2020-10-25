@@ -1,0 +1,40 @@
+{ \setbeamercolor{background canvas}{bg=hl_bg}
+  \setbeamercolor{normal text}{fg=hl_fg}
+  \setbeamercolor{frametitle}{fg=hl_fg}
+  \begin{frame}[label=current]
+    \usebeamercolor[fg]{normal text}
+    \begin{center}
+      {
+        \begin{tikzpicture}
+          \tikzstyle{cnode} = [thick, draw=white, ellipse, inner sep = 2pt,  align=center]
+          \tikzstyle{fnode} = [thick, draw=white, ellipse, inner sep = 10pt,  align=center]
+          \tikzstyle{rnode} = [thick, rectangle, inner sep = 1.5pt,  align=left]
+          \node[rnode] (inf) at (-2, 0) {\large Inference};
+          \node[rnode, below = 0.6cm of inf.west, anchor=west] (abp) {$\bullet$ {$\alpha$-BP}};
+          \node[rnode, below = 1.2cm of inf.west, anchor=west] (renn) {$\bullet$ RENN};
+          \node[cnode, fit=(abp)(inf)(renn)] (infn) {};
+          
+          \node[rnode, right = 3 of inf] (lern) {\large Learning};
+          \node[rnode, below = 0.4 of lern.west, anchor=west] (genmm) {$\bullet$ GenMM};
+          \node[rnode, below = 0.8 of lern.west, anchor=west] (genhmm) {{$\bullet$} GenHMM};
+          \node[rnode, below = 1.2 of lern.west, anchor=west] (lfree) {\textbf{{$\bullet$} EOTGM}};
+          \node[cnode, fit=(lern)(genmm)(genhmm)(lfree)] (learn) {};
+          \node[rnode, draw=green, fit=(lfree)] () {};
+
+          \node[fnode, fit=(infn)(lern)] (box) {};
+
+          
+          \node[below right = 0.5 and -0.5 of infn] {{Probabilistic} Graphical Model};
+          \draw[->,line width=0.2mm] (infn) to[out=15, in=165] (learn);
+          \draw[->,line width=0.2mm] (learn) to[out=195, in=-15] (infn);
+        \end{tikzpicture}
+      }
+    \end{center}
+    
+  \end{frame}
+}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../ppgm_slide"
+%%% End:
