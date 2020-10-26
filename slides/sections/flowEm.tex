@@ -195,36 +195,49 @@
     \begin{scope}[shift={($(illsGenMM.south)+(-0.5cm,0cm)$)}, scale=0.8, local bounding box=illFlow]
       \input{sections/genmm3.tex}
     \end{scope}
-    \node [black, below=-0.3cm of illFlow] (changeveq) {
+    \node [black, below=-0.05cm of illFlow] (changeveq) {
       \scriptsize
       \begin{minipage}{0.7\textwidth}
-        When the $k$-th generator is selected, i.e. $s_k=1$ and $s_{k^{\prime}}=0$  for $k^{\prime}\neq k$, with notation $\tilde{\bm{x}} = \bm{x}|_{s_k=1}$,:
+        When the $k$-th generator is selected, i.e., $s_k=1$ and $s_{k^{\prime}}=0$  for $k^{\prime}\neq k$, say $\tilde{\bm{x}} = \bm{x}|_{s_k=1}$. By following the \href{https://online.stat.psu.edu/stat414/lesson/23/23.1}{change of variable rule}
+        \vskip -0.4cm
         \begin{equation*}
-          p(\tilde{\bm{x}})|_{\tilde{\bm{x}} = \tilde{\bm{g}}(\bm{z})} =  p(\bm{z}) \bigg| \mathrm{det}\left({\pd{\bm{z}}{\tilde{\bm{x}}}}\right)\bigg|.
+          \underbrace{p(\tilde{\bm{x}})|_{\tilde{\bm{x}} = \tilde{\bm{g}}(\bm{z})}}_{\text{Induced distribution}} =  \underbrace{p(\bm{z})}_{\text{\begin{tabular}{c}Assumed known distribution \\ easy to sample\end{tabular}}}\cdot \underbrace{\bigg| \mathrm{det}\left({\pd{\bm{z}}{\tilde{\bm{x}}}}\right)\bigg|}_{\text{\begin{tabular}{c}Computational load\\ depends on the mapping\end{tabular}}}.
         \end{equation*}
-        
-        by following the change of variable rule.\\
-        We implement generator $\tilde{g}$ as a $L$-layer neural network:
+        \only<1>{
+          \vskip -0.4cm
+          A toy example:\\
+        }
+        \only<2>{
+          \vskip -0.4cm
+          Powering it with a $L$-layer neural network implementation:
+        }
       \end{minipage}};
     \draw[green, ->, shorten >=5pt, shorten <=5pt] ($(gk.north)+(0,0cm)$) -- ($(gk.north)+(0,-0.8cm)$);
-
-    \begin{scope}[scale=0.8, shift={($(changeveq.south)+(-2cm,-1cm)$)}]
-      \node (z) at (0,0) {};
-      \node at ($(z)-(0.5,0)$){$\bm{z}=\bm{h}_0$};
-      \node (xi1) at (1.5,0) {$\bm{h}_1$};
-      \node (xi2) at (3,0) {};
-      \node (xi3) at (4.5,0){};
-      \node (x) at (6,0) {};
-      \node at ($(x)+(0.5,0)$){$\bm{x} = \bm{h}_L$};
-      \draw[->] ($(z) + (0.3,0.1)$) -- node[above]{$\tilde{\bm{g}}_1$} ($(xi1)+(-0.3,0.1)$); 
-      \draw[->] ($(xi1)-(0.3,0.1)$) -- node[below]{$\tilde{\bm{f}}_1$}($(z) - (-0.3,0.1)$);
-      \draw[->] ($(xi1) + (0.3,0.1)$) -- node[above]{$\tilde{\bm{g}}_2$} ($(xi2)+(-0.3,0.1)$); 
-      \draw[->] ($(xi2)-(0.3,0.1)$) -- node[below]{$\tilde{\bm{f}}_2$}($(xi1) - (-0.3,0.1)$);
-      \draw[->] ($(xi3) + (0.3,0.1)$) -- node[above]{$\tilde{\bm{g}}_L$} ($(x)+(-0.3,0.1)$); 
-      \draw[->] ($(x)-(0.3,0.1)$) -- node[below]{$\tilde{\bm{f}}_L$}($(xi3) - (-0.3,0.1)$);
-      \draw[dotted,line width = 0.3 mm] (xi2) -- (xi3);
-    \end{scope}
-    
+    \only<1>{
+      \begin{scope}[scale=0.8, shift={($(changeveq.south)+(-2.5cm,-0.7cm)$)}]
+        \node[black] at (2.5cm, 0) {\scriptsize
+          Gaussian linear transform: $Z \sim \mathsf{N}\left( 0, 1  \right)$ $\xrightarrow{X=\sigma\cdot Z + \mu}$ $X \sim \mathsf{N}\left( \mu, \sigma  \right)$
+        };
+      \end{scope}
+    }
+    \only<2>{
+      \begin{scope}[scale=0.8, shift={($(changeveq.south)+(-2.5cm,-0.7cm)$)}]
+        \node (z) at (0,0) {};
+        \node at ($(z)-(0.5,0)$){$\bm{z}=\bm{h}_0$};
+        \node (xi1) at (1.5,0) {$\bm{h}_1$};
+        \node (xi2) at (3,0) {};
+        \node (xi3) at (4.5,0){};
+        \node (x) at (6,0) {};
+        \node at ($(x)+(0.5,0)$){$\bm{x} = \bm{h}_L$};
+        \draw[->] ($(z) + (0.3,0.1)$) -- node[above]{$\tilde{\bm{g}}_1$} ($(xi1)+(-0.3,0.1)$); 
+        \draw[->] ($(xi1)-(0.3,0.1)$) -- node[below]{$\tilde{\bm{f}}_1$}($(z) - (-0.3,0.1)$);
+        \draw[->] ($(xi1) + (0.3,0.1)$) -- node[above]{$\tilde{\bm{g}}_2$} ($(xi2)+(-0.3,0.1)$); 
+        \draw[->] ($(xi2)-(0.3,0.1)$) -- node[below]{$\tilde{\bm{f}}_2$}($(xi1) - (-0.3,0.1)$);
+        \draw[->] ($(xi3) + (0.3,0.1)$) -- node[above]{$\tilde{\bm{g}}_L$} ($(x)+(-0.3,0.1)$); 
+        \draw[->] ($(x)-(0.3,0.1)$) -- node[below]{$\tilde{\bm{f}}_L$}($(xi3) - (-0.3,0.1)$);
+        \draw[dotted,line width = 0.3 mm] (xi2) -- (xi3);
+      \end{scope}
+    }
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
     %% 4. one layer mapping of the flow
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
@@ -237,6 +250,164 @@
   \end{tikzpicture}
 \end{frame}
 
+
+
+\begin{frame}[label=current]{A High-level View of GenMM: Zoom into Layer}
+  \begin{tikzpicture}
+    \tikzstyle{enode} = [thick, draw=black, circle, align=center]
+    \tikzstyle{cnode} = [thick, draw=black, circle, align=center, inner sep = 0.3pt]
+    \tikzstyle{nnode} = [thick, rectangle, rounded corners = 2pt,minimum size = 0.8cm,draw,inner sep = 22pt]
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+    %% 1. directed graphical model
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+    \begin{scope}[scale=0.4, every node/.append style={transform shape}, local bounding box=dgm, opacity=0.3]
+      \input{sections/genmm1.tex}
+    \end{scope}
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+    %% 2. illustration of GenMM
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+    \begin{scope}[scale=0.3, every node/.append style={transform shape}, shift={($(dgm.east)+(20cm,0)$)}, local bounding box=illsGenMM, opacity=\bgopacity]
+      \input{sections/genmm2.tex}
+    \end{scope}
+    \draw[dashed, ->, shorten >=5pt, shorten <=5pt, opacity=\bgopacity] (dgm) --node [text width=2cm, black, midway,above]{} (illsGenMM);
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+    %% 3. illustration of flow
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+
+    \begin{scope}[shift={($(illsGenMM.south)+(-0.5cm,0cm)$)}, scale=0.5, local bounding box=illFlow, opacity=\bgopacity]
+      \input{sections/genmm3.tex}
+    \end{scope}
+    \draw[dashed, ->, shorten >=5pt, shorten <=5pt, opacity=\bgopacity] ($(gk.north)+(0,0cm)$) -- ($(gk.north)+(0,-0.8cm)$);
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+    %% 4. one layer mapping of the flow
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+    
+    \begin{scope}[shift={($(dgm.south)+(0,-1.5cm)$)}, scale=0.7, every node/.append style={transform shape}, local bounding box=oneLayer]
+      \input{sections/genmm4.tex}
+    \end{scope}
+    \node [black, right=-0.5cm of oneLayer.east] {\scriptsize{Forward}};
+    \node [black, below=1.3cm of oneLayer.west,anchor=west] (forwardmap) {
+      \tiny
+      \begin{minipage}{0.4\linewidth}
+        \begin{equation*}
+          \bm{h}_{l-1} =
+          \begin{bmatrix}
+            \bm{h}_{l-1,a}\\
+            \bm{h}_{l-1,b}
+          \end{bmatrix}
+          =
+          \begin{bmatrix}
+            \bm{h}_{l,a}\\
+            \bm{m}_a(\bm{h}_{l,a})\odot \bm{h}_{l,b} + \bm{m}_b(\bm{h}_{l,a})
+          \end{bmatrix}
+        \end{equation*}
+      \end{minipage}
+    };
+    
+    \begin{scope}[shift={($(oneLayer.south)+(0,-2.0cm)$)}, scale=0.7, every node/.append style={transform shape}, local bounding box=oneLayerInverse]
+      \input{sections/genmm5.tex}
+    \end{scope}
+    \node [black, right=-0.5cm of oneLayerInverse.east] {\scriptsize{Inverse}};
+
+    \node [black, below=1.3cm of oneLayerInverse.west,anchor=west] (backwardmap) {
+      \tiny
+      \begin{minipage}{0.4\linewidth}
+        \begin{equation*}
+          \bm{h}_{l} =
+          \begin{bmatrix}
+            \bm{h}_{l,a}\\
+            \bm{h}_{l,b}
+          \end{bmatrix}
+          =
+          \begin{bmatrix}
+            \bm{h}_{l-1,a}\\
+            \left(  \bm{h}_{l-1,b} - \bm{m}_b(\bm{h}_{l-1,a}) \right)\oslash \bm{m}_a(\bm{h}_{l-1,a}) 
+          \end{bmatrix}
+        \end{equation*}
+      \end{minipage}
+    };
+
+    \node [black, right=-0.5cm of oneLayerInverse.east] {\scriptsize{Inverse}};
+
+    \node [black, right=2.3cm of oneLayerInverse.east,anchor=west] (attrtext) {
+      \scriptsize
+      \begin{minipage}{0.5\linewidth}
+        \begin{itemize}[label=\textbullet]
+        \item $\odot$ denotes element-wise product, $\oslash$ denotes
+          element-wise division
+        \item Mapping $\bm{m}_a$, $\bm{m}_b$ can be as complex as possible and not necessary invertible
+        \item Same computation complexity of forward and inverse mapping
+        \item Triangular matix of Jacobian
+        \end{itemize}
+        Alternative arch. on market: Auto-regressive flow, Glow, ODE, etc.
+      \end{minipage}
+    };
+    \draw[green, ->] ($(oneLayer.east)+(3.5cm,0cm)$) --node [text width=5cm, black, right,above, anchor=north west]{\tiny Pick up one layer to zoom in} ($(oneLayer.east)+(1.1cm,0)$);
+    
+  \end{tikzpicture}
+\end{frame}
+
+\begin{frame}[label=current]{Remark}
+  \begin{block}{On GenMM/GenHMM}
+    free dimension to flexible model: number of mixture + complexity NNs;
+    Compatible with statistic models and NN techniques;
+    M-step, batch-gradient descent;
+    duplicated NN for EM steps;
+  \end{block}
+\end{frame}
+
+\begin{frame}[label=current]{Remark}
+  \begin{block}{A diagram}
+    \begin{tikzpicture}
+      \tikzstyle{cnode} = [thick, draw=black, circle, align=center, inner sep = 0.3pt]
+      \tikzstyle{nnode} = [thick, rectangle, rounded corners = 2pt,minimum size = 0.8cm,draw,inner sep = 6pt]
+      \node[nnode] (kl) at (0,0) {KL-divergence};
+      \node[nnode, right= 5cm of kl] (freeEnergy) {\begin{tabular}{c}Free energy $F_V(q(\bm{x}_U|\bm{x}_O))$ \\ (Variational/Gibbs)\end{tabular}};
+      \node[nnode, below= of freeEnergy] (elbo) {\begin{tabular}{c}Evidence lower\\ bound $F(q(\bm{x}_U|\bm{x}_O))$ (ELBO)\end{tabular}};
+      \node[nnode, below= of kl] (q-fun) {\begin{tabular}{c}Q-function\\ in EM\end{tabular}};
+      \node[nnode, below right= of q-fun] (llk) {log-likelihood $\log{p(\bm{x}_O;\bm{\theta})}$};
+      \draw[black, ->] (kl) --node [text width=5cm, black, midway, above]{\tiny
+        \begin{tabular}{c}
+          Diff. by a sub-partition func. \\
+          $F_V(q(\bm{x}_U|\bm{x}_O)) = \mathrm{KL}(q(\bm{x}_U|\bm{x}_O) || p(\bm{x}_U|\bm{x}_O; \bm{\theta})) $ \\
+          $- \log{Z(\bm{x}_O; \bm{\theta})}$
+        \end{tabular}}
+      (freeEnergy);
+      \draw[black, ->] (freeEnergy) --node [text width=3cm, black, midway, left]{\tiny
+        \begin{tabular}{c}
+          Negative \\
+          $F(q(\bm{x}_U|\bm{x}_O)) = -F_V(q(\bm{x}_U|\bm{x}_O))- \underbrace{\log{Z(\bm{\theta})}}_{\text{0 in DAGs}}$
+        \end{tabular}}
+      (elbo);
+
+      \draw[black, ->] (kl) --node [text width=3cm, black, midway, left]{\tiny
+        \begin{tabular}{c}
+          $-\mathrm{KL}(q(\bm{x}_U|\bm{x}_O) || p(\bm{x}_U,\bm{x}_O; \bm{\theta})) $
+        \end{tabular}}
+      (elbo);
+
+      \draw[black, ->] (elbo) --node [text width=3cm, black, midway, above]{\tiny
+        \begin{tabular}{c}
+          Diff. by an Entropy term\\
+          $F(q(\bm{x}_U|\bm{x}_O))= \Qq + H({q(\bm{x}_U|\bm{x}_O)})$
+        \end{tabular}}
+      (q-fun);
+
+      \draw[black, ->] (elbo) --node [text width=3cm, black, midway, above]{\tiny
+        Below
+        }
+      (llk);
+      \draw[black, ->] (q-fun) --node [text width=3cm, black, midway, right]{\tiny
+        Below
+        }
+      (llk);
+
+      
+    \end{tikzpicture}
+  \end{block}
+\end{frame}
 
 
 %%% Local Variables:
