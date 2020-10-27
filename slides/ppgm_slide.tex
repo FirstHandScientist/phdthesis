@@ -9,7 +9,14 @@
 }
 \usepackage{mybeamer}
 \usepackage{mystyle}
+\usepackage[overlay,absolute]{textpos}
 \usepackage{bm}
+\newcommand{\ubm}[1]{\ubar{\bm{#1}}}
+\newcommand{\ubmr}[2]{\ubar{\bm{#1}}^{#2}}
+\newcommand{\bmtr}[3]{\bm{#1}^{#3}_{#2}}
+\newcommand{\smtr}[3]{{#1}^{#3}_{#2}}
+
+\def\Put(#1,#2)#3{\leavevmode\makebox(0,0){\put(#1,#2){#3}}}
 \usepackage{tikz}
 \usetikzlibrary{backgrounds}
 \usepackage{adjustbox}
@@ -23,7 +30,7 @@
 % set arrow type and size by tikz
 % alternative to 'Straight Barb' can be 'Latex, Stealth, Computer Modern Rightarrow'.
 \usetikzlibrary{arrows.meta}
-\tikzset{>={Straight Barb[width=1.3mm,length=1.3mm]}}
+\tikzset{>={Straight Barb[width=1.0mm,length=1.0mm]}}
 \tikzset{block/.style = {draw, fill=white, rectangle,
                   minimum height=3em, minimum width=2cm},
         input/.style = {coordinate},
@@ -33,8 +40,11 @@
 
 \newcommand{\ubar}[1]{\mkern2mu\underline{\mkern-2mu #1\mkern-2mu}\mkern2mu}
 \logo{\copyright Dong Liu\vspace{-0.43cm}\hspace{2cm}}
+% \logo{\copyright Dong Liu}
+
 \begin{document}
 
+\def\bgopacity{0.3}
 
 \begin{frame}
   \title{Perspectives on Probabilistic Graphical Models}

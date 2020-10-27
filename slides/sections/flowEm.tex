@@ -287,6 +287,8 @@
     \begin{scope}[shift={($(dgm.south)+(0,-1.5cm)$)}, scale=0.7, every node/.append style={transform shape}, local bounding box=oneLayer]
       \input{sections/genmm4.tex}
     \end{scope}
+    \node [black, above=-0.1cm of oneLayer] {\scriptsize{RealNVP structure by Dinh et al}};
+
     \node [black, right=-0.5cm of oneLayer.east] {\scriptsize{Forward}};
     \node [black, below=1.3cm of oneLayer.west,anchor=west] (forwardmap) {
       \tiny

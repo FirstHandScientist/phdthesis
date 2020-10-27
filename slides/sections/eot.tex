@@ -1,6 +1,74 @@
 { \setbeamercolor{background canvas}{bg=hl_bg}
   \setbeamercolor{normal text}{fg=hl_fg}
   \setbeamercolor{frametitle}{fg=hl_fg}
+  \begin{frame}{What Have We been Talking About?}
+    \usebeamercolor[fg]{normal text}
+  
+    \begin{tikzpicture}
+      \tikzstyle{cnode} = [thick, ellipse, align=center, draw, inner sep = 6pt]
+      \tikzstyle{nnode} = [thick, rectangle, rounded corners = 2pt,minimum size = 0.8cm,draw,inner sep = 6pt]
+      \node[nnode] (kl) at (0,0) {KL-divergence};
+      \node[nnode, right= 5cm of kl] (freeEnergy) {\begin{tabular}{c}Free energy $F_V(q(\bm{x}_U|\bm{x}_O))$ \\ (Variational/Gibbs)\end{tabular}};
+      \node[nnode, below= of freeEnergy] (elbo) {\begin{tabular}{c}Evidence lower\\ bound $F(q(\bm{x}_U|\bm{x}_O))$ (ELBO)\end{tabular}};
+      \node[nnode, below= of kl] (q-fun) {\begin{tabular}{c}Q-function\\ in EM\end{tabular}};
+      \node[nnode, below right= of q-fun] (llk) {log-likelihood $\log{p(\bm{x}_O;\bm{\theta})}$};
+      \draw[black, ->] (kl) --node [text width=5cm, black, midway, above]{\tiny
+        \begin{tabular}{c}
+          Diff. by a sub-partition func. \\
+          $F_V(q(\bm{x}_U|\bm{x}_O)) = \mathrm{KL}(q(\bm{x}_U|\bm{x}_O) || p(\bm{x}_U|\bm{x}_O; \bm{\theta})) $ \\
+          $- \log{Z(\bm{x}_O; \bm{\theta})}$
+        \end{tabular}}
+      (freeEnergy);
+      \draw[black, ->] (freeEnergy) --node [text width=3cm, black, midway, left]{\tiny
+        \begin{tabular}{c}
+          Negative \\
+          $F(q(\bm{x}_U|\bm{x}_O)) = -F_V(q(\bm{x}_U|\bm{x}_O))- \underbrace{\log{Z(\bm{\theta})}}_{\text{0 in DAGs}}$
+        \end{tabular}}
+      (elbo);
+
+      \draw[black, ->] (kl) --node [text width=3cm, black, midway, left]{\tiny
+        \begin{tabular}{c}
+          $-\mathrm{KL}(q(\bm{x}_U|\bm{x}_O) || p(\bm{x}_U,\bm{x}_O; \bm{\theta})) $
+        \end{tabular}}
+      (elbo);
+
+      \draw[black, ->] (elbo) --node [text width=3cm, black, midway, above]{\tiny
+        \begin{tabular}{c}
+          Diff. by an Entropy term\\
+          $F(q(\bm{x}_U|\bm{x}_O))= \Qq + H({q(\bm{x}_U|\bm{x}_O)})$
+        \end{tabular}}
+      (q-fun);
+
+      \draw[black, ->] (elbo) --node [text width=3cm, black, midway, above]{\tiny
+        Below
+      }
+      (llk);
+      \draw[black, ->] (q-fun) --node [text width=3cm, black, midway, right]{\tiny
+        Below
+      }
+      (llk);
+      
+    \end{tikzpicture}
+    \only<2->{
+      \begin{textblock}{5}(6,6)
+        \begin{tikzpicture}[scale=1.2,auto,rotate=-5,transform shape]
+          \tikzstyle{cnode} = [fill=blue!20,thick, ellipse, align=center, draw, inner sep = 6pt]
+        \node [cnode, text=black] (question) at (0, 0) {\begin{tabular}{c}What if lklh. \\is not tractable?\end{tabular}};
+  
+      \end{tikzpicture}
+    \end{textblock}
+      }
+  % \let\thefootnote\relax\footnotetext{\tiny
+  %   \vskip -0.2cm
+  %   A bit notation abuse, $\bm{x}_U$ corresponds to unobserved variable $\bm{z}$.
+  % }
+  
+\end{frame}
+}
+
+{ \setbeamercolor{background canvas}{bg=hl_bg}
+  \setbeamercolor{normal text}{fg=hl_fg}
+  \setbeamercolor{frametitle}{fg=hl_fg}
   \begin{frame}[label=current]
     \usebeamercolor[fg]{normal text}
     \begin{center}
