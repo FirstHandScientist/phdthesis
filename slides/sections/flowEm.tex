@@ -383,62 +383,138 @@
   \end{block}
 \end{frame}
 
-\begin{frame}[label=current]{Remark}
-  \begin{block}{A diagram of connections}
-    \begin{tikzpicture}
-      \tikzstyle{cnode} = [thick, draw=black, circle, align=center, inner sep = 0.3pt]
-      \tikzstyle{nnode} = [thick, rectangle, rounded corners = 2pt,minimum size = 0.8cm,draw,inner sep = 6pt]
-      \node[nnode] (kl) at (0,0) {KL-divergence};
-      \node[nnode, right= 5cm of kl] (freeEnergy) {\begin{tabular}{c}Free energy $F_V(q(\bm{x}_U|\bm{x}_O))$ \\ (Variational/Gibbs)\end{tabular}};
-      \node[nnode, below= of freeEnergy] (elbo) {\begin{tabular}{c}Evidence lower\\ bound $F(q(\bm{x}_U|\bm{x}_O))$ (ELBO)\end{tabular}};
-      \node[nnode, below= of kl] (q-fun) {\begin{tabular}{c}Q-function\\ in EM\end{tabular}};
-      \node[nnode, below right= of q-fun] (llk) {log-likelihood $\log{p(\bm{x}_O;\bm{\theta})}$};
-      \draw[black, ->] (kl) --node [text width=5cm, black, midway, above]{\tiny
-        \begin{tabular}{c}
-          Diff. by a sub-partition func. \\
-          $F_V(q(\bm{x}_U|\bm{x}_O)) = \mathrm{KL}(q(\bm{x}_U|\bm{x}_O) || p(\bm{x}_U|\bm{x}_O; \bm{\theta})) $ \\
-          $- \log{Z(\bm{x}_O; \bm{\theta})}$
-        \end{tabular}}
-      (freeEnergy);
-      \draw[black, ->] (freeEnergy) --node [text width=3cm, black, midway, left]{\tiny
-        \begin{tabular}{c}
-          Negative \\
-          $F(q(\bm{x}_U|\bm{x}_O)) = -F_V(q(\bm{x}_U|\bm{x}_O))- \underbrace{\log{Z(\bm{\theta})}}_{\text{0 in DAGs}}$
-        \end{tabular}}
-      (elbo);
 
-      \draw[black, ->] (kl) --node [text width=3cm, black, midway, left]{\tiny
-        \begin{tabular}{c}
-          $-\mathrm{KL}(q(\bm{x}_U|\bm{x}_O) || p(\bm{x}_U,\bm{x}_O; \bm{\theta})) $
-        \end{tabular}}
-      (elbo);
+\begin{frame}[label=current]{Semantic Scores and Examples}
+  \graphicspath{{/home/dong/Documents/phd_research/phdthesis/source/chapter6/}}
+  \begin{figure}
+    \captionsetup[subfigure]{justification=centering}
+    \centering
+    \begin{subfigure}{.24\textwidth}
+      \centering
+      \includegraphics[width=1\linewidth]{images/mnist/scores/std1EMGM-NM/EMGM-NM-IS-K.pdf}
+      % \caption{IS score}
+      % \label{fig-nm-isk}
+    \end{subfigure}
+    \vspace{-2pt}
+    \begin{subfigure}{.24\textwidth}
+      \centering
+      \includegraphics[width=1\linewidth]{images/mnist/scores/std1EMGM-NM/EMGM-NM-FID-K.pdf}
+      % \caption{FID score}
+      % \label{fig-nm-fidk}
+    \end{subfigure}
+    \centering
+    \begin{subfigure}{.24\textwidth}
+      \centering
+      \includegraphics[width=1\linewidth]{images/mnist/scores/std1EMGM-NM/EMGM-NM-MMD-K.pdf}
+      % \caption{MMD score}
+      % \label{fig-nm-mmdk}
+    \end{subfigure}
+    \centering
+    \begin{subfigure}{0.24\textwidth}
+      \centering
+      \includegraphics[width=1\linewidth]{images/mnist/scores/std1EMGM-NM/EMGM-NM-1NN-K.pdf}
+      % \caption{1NN score}
+      % \label{fig-nm-1nnk}
+    \end{subfigure}
+    \centering
+    \begin{subfigure}{.24\textwidth}
+      \centering
+      \includegraphics[width=1\linewidth]{images/mnist/scores/std1EMGM-SM/EMGM-SM-IS-K.pdf}
+      % \caption{IS score}
+      % \label{fig-sm-is}
+    \end{subfigure}
+    \centering
+    \begin{subfigure}{.24\textwidth}
+      \centering
+      \includegraphics[width=1\linewidth]{images/mnist/scores/std1EMGM-SM/EMGM-SM-FID-K.pdf}
+      % \caption{FID score}
+      % \label{fig-sm-fid}
+    \end{subfigure}
+    \centering
+    \begin{subfigure}{.24\textwidth}
+      \centering
+      \includegraphics[width=1\linewidth]{images/mnist/scores/std1EMGM-SM/EMGM-SM-MMD-K.pdf}
+      % \caption{MMD score}
+      % \label{fig-sm-mmd}
+    \end{subfigure}
+    \begin{subfigure}{0.24\textwidth}
+      \centering
+      \includegraphics[width=1.\linewidth]{images/mnist/scores/std1EMGM-SM/EMGM-SM-1NN-K.pdf}
+      % \caption{1NN score}
+      % \label{fig-sm-1nn}
+    \end{subfigure}
+  \end{figure}
+  \only<1>{
+    IS, FID, MMD and 1NN of GenMM and LatMM for MNIST dataset.
+    \begin{itemize}
+    \item[-]{IS: Inseption Score}
+    \item[-]{FID: Frechet Inception Distance}
+    \item[-]{MMD: Maximum Mean Discrepancy}
+    \item[-]{1NN: 1-Nearest Neighbor}
+    \end{itemize}
+    \vfill
+  }
+  \only<2>{
+    \vskip -0.7cm
+    \begin{columns}
+      \column{0.5\textwidth}
+      \centering
+      \begin{figure}[!t]
+        \captionsetup[subfigure]{justification=centering}
+        \centering
+        \begin{subfigure}[b]{0.45\textwidth}
+          \centering
+          \includegraphics[width=1\linewidth]{images/mnist/samples/genMNIST_GenMM_K7_std089.png}
 
-      \draw[black, ->] (elbo) --node [text width=3cm, black, midway, above]{\tiny
-        \begin{tabular}{c}
-          Diff. by an Entropy term\\
-          $F(q(\bm{x}_U|\bm{x}_O))= \Qq + H({q(\bm{x}_U|\bm{x}_O)})$
-        \end{tabular}}
-      (q-fun);
-
-      \draw[black, ->] (elbo) --node [text width=3cm, black, midway, above]{\tiny
-        Below
-      }
-      (llk);
-      \draw[black, ->] (q-fun) --node [text width=3cm, black, midway, right]{\tiny
-        Below
-      }
-      (llk);
+        \end{subfigure}
+        \hspace{5pt}
+        \begin{subfigure}[b]{0.45\textwidth}
+          \centering
+          \includegraphics[width=1\linewidth]{images/fashion-mnist/samples/gen_s7_std1.png}
+          %     \caption{Generated samples. (LatMM, K=7)}
+        \end{subfigure}
+        \vspace{-0.2cm}
+      \end{figure}
+      Generated samples by GenMM and LatMM.
 
       
-    \end{tikzpicture}
-    
-  \end{block}
-  \let\thefootnote\relax\footnotetext{\tiny
-    \vskip -0.2cm
-    A bit notation abuse, $\bm{x}_U$ corresponds to unobserved variable $\bm{z}$.
-  }
+      \column{0.5\textwidth}
+      \centering
+      \begin{figure}
+        \centering
+        \captionsetup[subfigure]{justification=centering}
+        \begin{subfigure}[b]{0.43\textwidth}
+          \centering
+          \includegraphics[width=1\linewidth]{images/mnist/interpolation/interpoMNIST_heter_LatMM_K9_sample_grid.png}
+          %     \caption{Interpolation by LatMM, K=9.}\label{fig-interpo-latmm2}
+        \end{subfigure}
+        \hspace{5pt}
+        \begin{subfigure}[b]{0.43\textwidth}
+          \centering
+          \includegraphics[width=1\linewidth]{images/fashion-mnist/interpolation/interpoFashion_heter_LatMM_K9_grid.png}
+          %     \caption{Interpolation by LatMM, K=9.}\label{fig-interpo-latmm3}
+        \end{subfigure}
+        \vspace{-0.2cm}
+      \end{figure}
+      Interpolation in latent space
+  \end{columns}
+}
 \end{frame}
 
+\begin{frame}[label=current]{Application to Classification Tasks}
+  Application to classification with maximum likelihood. Test Accuracy Table of GenMM for Classification Task
+  \begin{table}
+    \centering
+    \begin{tabular}{lccccccc} \toprule
+      {Dataset} &  K=1 &  K=2 &  K=3 &  K=4 & K=10 & K=20 & State Of Art \\ \midrule
+      Letter & 0.9459 &  0.9513 & 0.9578  & 0.9581 & 0.9657 & \textbf{0.9674} & {0.9582}  \\ \midrule
+      Satimage & 0.8900 & 0.8975 & 0.9045 & 0.9085 & 0.9105 & \textbf{0.9160} & 0.9090    \\ \midrule
+      Norb & 0.9184 & 0.9257 & 0.9406 & 0.9459 & 0.9538 & \textbf{0.9542} & 0.8920   \\
+      \bottomrule
+    \end{tabular}
+
+  \end{table}
+\end{frame}
 
 %%% Local Variables:
 %%% mode: latex
