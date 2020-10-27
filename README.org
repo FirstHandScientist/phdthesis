@@ -18,10 +18,10 @@ The repository contains the source files and compile recipe for making my thesis
 #+BEGIN_SRC bash
 $ echo '$pdf_previewer = 'start evince';' >> ~/.latexmkrc
 #+END_SRC
-It is possible to have local configuration for the project only, see [[https://mg.readthedocs.io/latexmk.html][local configuration]]. 
+It is possible to have local configuration for the project only, just edit the [[file:latexmkrc][latexmkrc]] here in the root directory of the repository. See [[https://mg.readthedocs.io/latexmk.html][local configuration]]. 
 
 
-** Compile from Souce
+** Compile the dissertation from source
 
 Default clean-compile removes cached or intermediate files made previous, and compile from scratch, just do
 #+BEGIN_SRC bash
@@ -38,7 +38,8 @@ To start the pdf viewer manually, run
 $ make run
 #+END_SRC
 
-To compile the slides:
+** Compile the slides from source
+
 #+BEGIN_SRC bash
 $ make slide
 #+END_SRC
