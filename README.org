@@ -12,7 +12,8 @@ The repository contains the source files and compile recipe for making my thesis
 *** To compile from source, you need to have the following utilities installed
 - GUN Make
 - Latexmk
-
+*** bst
+    Copy the bibliographystyle (.bst) file to the root directory of the repository from [[file:preamble/][preamble]] if you are not in a linux distro, since the default softlink may not invalid in your os.
 *** Optional
    It is preferable to have a global configuration for your Latexmk. For install, tell latexmk which pdf viewer you want to use:
 #+BEGIN_SRC bash

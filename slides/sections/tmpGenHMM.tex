@@ -1,0 +1,24 @@
+\tikzstyle{enode} = [thick, draw=black, circle, align=center]
+\tikzstyle{cnode} = [thick, draw=black, circle, align=center, inner sep = 0.3pt]
+\tikzstyle{nnode} = [thick, rectangle, rounded corners = 2pt,minimum size = 0.8cm,draw,inner sep = 8pt]
+\node[enode] (s) at (-1.5,-1) {${s}$};
+\node[enode] (k) at (-1.5,1) {${\kappa}$};
+\node[enode] (z) at (-1.5,0) {$\bm{z}$};
+
+\node[enode] (sp) at (0,-1){${s}^{\prime}$};
+\node[enode] (kp) at (0,1){${\kappa}^{\prime}$};
+\node[enode] (zp) at (0,0){$\bm{z}^{\prime}$};
+
+\node[enode] (x) at (1.4,-2){$\bm{x}^{\prime}$};
+
+\node[nnode, fit=(x)(z)(k)(s)] (box) {};
+% \node[] at (-1.8,-0.4) {$\abs{\Dd}$};
+
+\draw[->] (s) to (sp);
+\draw[->] (sp) to (x);
+\draw[->] (zp) to (x);
+\draw[->] (kp) to (x);
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../ppgm_slide"
+%%% End:

@@ -1,0 +1,278 @@
+
+\begin{frame}[label=current]
+  {GenHMM: Bring the concept into HMM}
+  \begin{tikzpicture}
+    \begin{scope}[scale=0.8, local bounding box=genhmmTemplate]
+      \input{sections/tmpGenHMM.tex}
+      
+    \end{scope}
+    \node (defText) [right=of box] {
+      \begin{minipage}{0.6\linewidth}
+        At time $t$, the probabilistic model of a state $s\in\Ss$ is then given by
+        \vskip -0.1cm
+        \begin{equation*}\label{eq:state-prob-model}
+          p(\bm{x}| s; \bm{\Phi}_{s}) = \sum_{\kappa=1}^{K}\pi_{s, \kappa} p(\bm{x}| s, \kappa; \bm{\theta}_{s, \kappa}),
+        \end{equation*}
+        \vskip -0.1cm
+        where 
+        \begin{itemize}
+        \item[-] $\pi_{s, \kappa} = p(\kappa | s; \bm{H})$, naturally $\sum_{\kappa = 1}^{K} \pi_{s, \kappa}= 1$
+        \item[-]$p_k(\bm{x})$ is induced by the $k$th generator $\bm{g}_k(\bm{z})=\bm{g}(\bm{z};\boldsymbol{\theta}_k)$
+        \end{itemize}
+      \end{minipage}
+    };
+    \begin{scope}[scale=0.8,every node/.append style={transform shape}, shift={($(genhmmTemplate.south)+(3.5, -2cm)$)}, local bounding box=unroll]
+      \input{sections/unrollHMM.tex}
+    \end{scope}
+    \draw[->, shorten >=10pt, shorten <=10pt] (genhmmTemplate) to [out=-120, in=180] (unroll);
+    \node [text width=2cm, black, left=-0.2cm of s1]{\tiny Unroll the template};
+  \end{tikzpicture}
+  
+\end{frame}
+
+\begin{frame}[label=current]
+  {GenHMM: Bring the concept into HMM}
+  \begin{tikzpicture}
+    \begin{scope}[scale=0.8, local bounding box=genhmmTemplate]
+      \input{sections/tmpGenHMM.tex}
+      \draw[green,->] (sp) to (x);
+      \draw[green,->] (zp) to (x);
+      \draw[green,->] (kp) to (x);
+
+    \end{scope}
+    \begin{scope}[scale=0.75,every node/.append style={transform shape}, shift={($(genhmmTemplate.east)+(4, 0)$)}]
+      \tikzstyle{enode} = [thick, draw=black, ellipse, inner sep = 2pt,  align=center]
+      \tikzstyle{nnode} = [thick, rectangle, rounded corners = 2pt,minimum size = 0.8cm,draw,inner sep = 2pt]
+      \node[enode] (z1) at (-1.2,1.8) {$\bm{z}\sim p_{s,1}(\bm{z})$};
+      \node[nnode] (g1) at (1,1.8) {$\bm{g}_{s,1}$};
+      \node[enode] (z2) at (-1.2,0.5){$\bm{z}\sim p_{s,2}(\bm{z})$};
+      \node[nnode] (g2) at (1,0.5) {$\bm{g}_{s,2}$};
+      \node[enode] (zK) at (-1.2,-1.8) {$\bm{z}\sim p_{s,K}(\bm{z})$};
+      \node[nnode] (gs) at (1, -1.8) {$\bm{g}_{s,K}$};
+      \node[enode, label={below:{Induced distribution}}] (x) at (4.5,0){$\bm{x}\sim p(\bm{x}| s; \bm{\Phi}_{s})$};
+      
+      \draw[dotted,line width=2pt] (0,-0.3) -- (0,-1.2);
+      \filldraw[->] (1.9, 0.5)circle (2pt) --  node[above=0.2]{${\kappa}\sim \bm{\pi}_{s}$} (x)  ;
+      \draw[->] (z1) -- (g1);
+      \draw[->] (g1) -- (1.8, 1.8);
+
+      \draw[->] (z2) -- (g2);
+      \draw[->] (g2) -- (1.8, 0.5);
+
+      \draw[->] (zK) -- (gs);
+      \draw[->] (gs) -- (1.8, -1.8);
+    
+    \end{scope}
+    \begin{scope}[on background layer, every node/.append style={transform shape}]
+        \node [rounded corners = 2pt, inner sep=4pt, fill=blue!30,fit=(g1)(g2)(gs), label={[label distance=0.3cm]-60:{\tiny Mixture of generators}}] {};
+      \end{scope}
+
+    \begin{scope}[scale=0.8,every node/.append style={transform shape}, shift={($(genhmmTemplate.south)+(3.5, -2cm)$)}, local bounding box=unroll]
+      \input{sections/unrollHMM.tex}
+    \end{scope}
+    \draw[dashed, ->, shorten >=10pt, shorten <=10pt] (genhmmTemplate) to [out=-120, in=180] (unroll);
+    \node [text width=2cm, black, left=-0.2cm of s1]{\tiny Unroll the template};
+  \end{tikzpicture}
+  
+\end{frame}
+
+
+
+\begin{frame}[label=current]{Alternative View of GenHMM}
+    \centering
+    \begin{tikzpicture}
+      \begin{scope}[scale=0.8]
+        \tikzstyle{enode} = [thick, draw=black, ellipse, inner sep = 1pt,  align=center]
+        \tikzstyle{nnode} = [thick, rectangle, rounded corners = 2pt,minimum size = 0.8cm,draw,inner sep = 2pt]
+        \node[enode, pin={[pin edge={->}]right:{}}] (g1) at (-0.5,1.8) {$p(\bm{x}| s=1, \kappa=1; \bm{\Phi}_{1})$};
+        \node[enode] (g2) at (-0.5,0.5) {$p(\bm{x}| s=2, \kappa=1; \bm{\Phi}_{2})$};
+        \node[enode, pin={[pin edge={->}]right:{}}] (gs) at (-0.5, -1.8) {$p(\bm{x}| s=|\Ss|, \kappa=K; \bm{\Phi}_{|\Ss|})$};
+        \node[enode] (x) at (5.5,1.5){$\ubm{x}\sim p(\ubm{x};\bm{H})$};
+
+        \draw[dotted,line width=2pt] (0,-0.3) -- (0,-1.2);
+        \filldraw[->] (1.9, 0.5)circle (2pt) --  (x) ;
+        % \draw[->] (g1) -- (1.8, 1.8);
+        % \draw[->] (g2) -- (1.8, 0.5);
+        % \draw[->] (gs) -- (1.8, -1.8);
+
+        \begin{scope}[xshift=1.5cm, thick, every node/.style={sloped,allow upside down}]
+          \node[nnode] (m) at (3.5,-2) {Memory};
+          \node[nnode] (a) at (3.5,-0.5) {$\bm{A}$};
+
+          \draw (2.1,0.9)-- (2.2, 0.);
+          \draw (2.2,0.)-- node {\midarrow} (2.2,-2);
+          \draw (2.2,-2)-- (m);
+          \draw (m)-- (5, -2);
+          \draw (5, -2)-- node {\midarrow} (5 ,-0.5);
+          \draw (5, -0.5) -- (a);
+          \draw (a)-- node {\midarrow} (2.2, -0.5);
+          \node (st) at (4.8, -1) {$s_{t}$};
+          \node (st1) at (2.56, -0.25) {$s_{t+1}$};
+        \end{scope}
+        \begin{scope}[on background layer]
+          \node [rounded corners = 4pt, rectangle, inner sep = 4pt,  align=center, fit=(a)(m)(st)(st1), label=below:{($s,\kappa$)}, fill=blue!30] () {};
+        \end{scope}
+        
+      \end{scope}
+    \end{tikzpicture}
+  
+  We define the hypothesis set of HMM as $\Hh := \{\bm{H} | \bm{H}=\{\Ss, \bm{q}, \bm{A}, p(\bm{x}|{s}; \bm{\Phi}_{s})\}\}$, where
+  \begin{itemize}
+  \item[-] $\Ss$ is the set of hidden states of $\bm{H}$.
+  \item[-] $\bm{q} = \left[ q_1, q_2, \cdots, q_{|\Ss|}\right]^\intercal$ is the initial state distribution of $\bm{H}$ with $|\Ss|$ as cardinality of $\Ss$. For $i \in \Ss$, $q_i = p(s_{1}=i;\bm{H})$. We use $s_t$ to denote the state $s$ at time $t$.
+  \item[-] $\bm{A}$ matrix of size $|\Ss| \times |\Ss|$ is the transition matrix of states in $\bm{H}$. That is, $\forall i, j \in \Ss$,  $\bm{A}_{i,j} = p(s_{t+1}=j|s_{t}=i; \bm{H})$.
+  \item[-] For a given hidden state $s$, the density function of the observable signal is $p({\bm{x}}|{s};\bm{\Phi}_{s})$, where $\bm{\Phi}_{s}$ is the parameter set that defines this probabilistic model. Denote $\bm{\Phi} = \left\{ \bm{\Phi}_{s}| s \in \Ss \right\}$.
+  \end{itemize}
+\end{frame}
+
+
+
+\begin{frame}[label=current]{Learning Intuition}
+  
+  With empirical distribution $\hat{p}(\ubm{x}) = \frac{1}{N}\sum_{n}\delta_{\ubm{x}^{(n)}}(\ubm{x})$, learning of GenHMM boils down to
+  \begin{equation*}
+    \min_{\bm{H}\in \Hh}\;\mathrm{KL}(\hat{p}(\ubm{x})\|p(\ubm{x};\bm{H}))
+  \end{equation*}
+  Then problem becomes maximum likelihood estimation \\
+  \begin{equation*}
+    \hat{\bm{H}} =    \arg \max_{\bm{H} \in \Hh} \log \textstyle\prod_{i} p(\ubm{x}^{(i)};\bm{H}),
+  \end{equation*}
+
+  Use EM to solve:
+  \begin{itemize}
+  \item E-step: % the posterior probability of $\ubm{s}$:
+    % \begin{equation}
+    %   p(\ubm{s}|\ubm{x})
+    % \end{equation}
+    the expected likelihood function
+    \begin{equation*}\label{eq:em-q-funciton}
+      \Qq(\bm{H}; \bm{H}^{\mathrm{old}}) = \EE_{\hat{p}(\ubm{x}),p(\ubm{s},\ubm{\kappa}| \ubm{x}; \bm{H}^{\mathrm{old}})}\left[ \log\,p(\ubm{x}, \ubm{s}, \ubm{\kappa}; \bm{H})\right],
+    \end{equation*}
+    where $\EE_{\hat{p}(\ubm{x}),p(\ubm{s},\ubm{\kappa}| \ubm{x}; \bm{H}^{\mathrm{old}})}\left[ \cdot\right]$ denotes the expectation operator by distribution $\hat{p}(\ubm{x})$ and $p(\ubm{s},\ubm{\kappa}| \ubm{x}; \bm{H}^{\mathrm{old}})$.
+
+  \item M-step: the maximization step
+    \begin{equation*}\label{eq:em-m-opt}
+      \umax{\bm{H}} \Qq(\bm{H}; \bm{H}^{\mathrm{old}}).
+    \end{equation*}
+
+    The problem \eqref{eq:em-m-opt} can be reformulated as
+    \begin{align}\label{eq:m-step-subs}
+      \umax{\bm{H}} \Qq(\bm{H}; \bm{H}^{\mathrm{old}})
+      =\underbrace{\umax{\bm{q}}\Qq(\bm{q}; \bm{H}^{\mathrm{old}})}_\text{Initial State}
+      + \underbrace{\umax{\bm{A}}\Qq(\bm{A}; \bm{H}^{\mathrm{old}})}_\text{Transition} 
+      + \underbrace{\umax{\bm{\Phi}}\Qq(\bm{\Phi}; \bm{H}^{\mathrm{old}})}_\text{Generators},
+    \end{align}
+    Maximizing a lower bound of $\log \textstyle\prod_{i} p(\ubm{x}^{(i)};\bm{H})$.
+
+  \end{itemize}
+  \only<2->{
+    \begin{textblock}{5}(3,6)
+      \begin{tikzpicture}[auto,rotate=-5,transform shape]
+        % \node [black] (a) at (0,0) {
+        % \textcolor{blue}{em block, message passing or backward-forward}
+        % };
+        \node[text width=7cm, align=left] (asent) at (6,0)
+        {\begin{minipage}{1\textwidth}
+            \begin{itemize}[label=\textbullet]
+            \item $F$ = $\Qq$ + Entropy
+            \item E-step require inference (message-passing)
+            \item No optimality in M-step (NN generators).
+            \item Still, guaranteed non-decreasing lklh. (c.f. Proposition 7.1)
+            \end{itemize}
+          \end{minipage}
+          % $\begin{aligned}
+          %   F &:= \Ee + H
+          %   \mathrm{E~step:}~&\max_{q} F(q,\bm{\Phi}^{\mathrm{old}}) \\
+          %   \mathrm{M~step:}~&\max_{\bm{\Phi}} F(q^{\mathrm{old}},\bm{\Phi})
+          % \end{aligned}$
+        };
+        \begin{scope}[on background layer]
+          \node [rounded corners = 4pt, rectangle, inner sep = 4pt,  align=center, fit=(asent), label=below:{}, fill=blue!30] () {};
+        \end{scope}
+        % \draw[-] (-3, 0.6) to (8, 0.6);
+
+
+      \end{tikzpicture}
+    \end{textblock}
+  }
+\end{frame}
+
+
+
+\begin{frame}[label=current]{Application to Speech Recognition}
+  Configuration of generators of GenHMM in Experiments on TIMIT
+  \begin{table}
+    \centering
+    \begin{adjustbox}{width=0.65\textwidth}
+    \begin{tabular}{lc}
+      \toprule
+      \begin{tabular}[x]{@{}c@{}} Latent distribution $p_{s,\kappa}(\bm{z})$ \\ $s\in \Ss, \kappa=1, 2, \cdots, K $ \end{tabular} & Standard Gaussian \\
+      \hline
+      Number of flow blocks & $4$ \\
+      \hline
+      Non-linear mapping $\bm{m}_a$, $\bm{m}_b$ & \begin{tabular}[x]{@{}c@{}} Multiple layer perception \\ $3$ layers and with hidden dimension $24$ \end{tabular}\\
+      \bottomrule
+    \end{tabular}
+      \end{adjustbox}
+  \end{table}
+
+  \begin{columns}
+    \column{0.5\textwidth}
+    \centering
+  {Phoneme classification / recognition}
+  \begin{table}
+    \centering
+    \begin{adjustbox}{width=0.8\textwidth}
+    \begin{tabular}{llccc}
+      \toprule
+      {Model} & Criterion &  K=1 &  K=3 &  K=5  \\  \midrule
+      \multirow{3}{*}{GMM-HMM}
+              & Accuracy    & 62.3 &  68.0 &  68.7  \\
+              & {Precision} & 67.9 &  72.6 &  73.0  \\
+              & {F1}        & 63.7 &  69.1 &  69.7 \\
+      \midrule
+      \multirow{3}{*}{GenHMM}
+              & Accuracy    & 76.7   & \textbf{77.7} &  {77.7} \\ 
+              & {Precision} & 76.9   & \textbf{78.1} &  78.0 \\
+              & {F1}        & 76.1   & \textbf{77.1} &  77.0\\
+      \bottomrule                                                                  
+    \end{tabular}
+    \end{adjustbox}
+  \end{table}
+  \column{0.5\textwidth}
+  \centering
+  Robustness to perturbation of noise.
+  \begin{table}
+    \centering
+    \begin{adjustbox}{width=0.90\textwidth}
+    \begin{tabular}{llcccc}
+      \toprule
+      \multirow{2}{*}{Model} & \multirow{2}{*}{Criterion} &
+                                                            \multicolumn{4}{c}{White Noise SNR} \\
+                                                            % \cline{3-6}
+      
+                             && {15dB} &  {20dB} &  {25dB} & {30dB}  \\
+      \midrule
+      \multirow{3}{*}{GMM-HMM}
+                             & Accuracy & 36.6 &  44.2 &  50.8 & 57.1
+      \\
+                             &Precision & 59.2 &  64.2 &  68.4 & 70.6  \\
+                             & F1       & 39.9 &  47.7 &  53.9 & 59.9 \\
+      \midrule
+      \multirow{3}{*}{GenHMM}
+                             & Accuracy & 52.4 & 62.0 &  69.7 & \textbf{74.3} \\
+                             &Precision & 60.0 &  65.9 &  71.7 & \textbf{74.8}  \\
+                             & F1       & 52.5 &  62.0 &  69.3 & \textbf{73.5} \\
+      \bottomrule                                                                  
+    \end{tabular}
+    \end{adjustbox}
+    \vspace{0.1cm}
+  \end{table}
+\end{columns}
+For our conducted experiments of applying GenHMM to sepsis detection for infants, see Section 7.5.
+\end{frame}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../ppgm_slide"
+%%% End:

@@ -1,0 +1,53 @@
+
+\tikzstyle{enode} = [thick, draw, circle, inner sep = 3pt,  align=center]
+\tikzstyle{cnode} = [thick, fill=gray, draw, circle, inner sep = 3pt,  align=center]
+\node[enode] (k1) at (-2, 1) {$\kappa_1$};
+\node[enode] (k2) at (0, 1) {$\kappa_2$};
+\node[enode] (k3) at (2, 1) {$\kappa_3$};
+\node[enode] (k4) at (4, 1) {$\kappa_4$};
+
+\node[enode] (z1) at (-2, 0) {$\bm{z}_1$};
+\node[enode] (z2) at (0, 0) {$\bm{z}_2$};
+\node[enode] (z3) at (2, 0) {$\bm{z}_3$};
+\node[enode] (z4) at (4, 0) {$\bm{z}_4$};
+
+\node[enode] (s1) at (-2, -1) {$s_1$};
+\node[enode] (s2) at (0, -1) {$s_2$};
+\node[enode] (s3) at (2, -1) {$s_3$};
+\node[enode] (s4) at (4, -1) {$s_4$};
+
+
+\node[cnode] (x1) at (-1, -2) {$\bm{x}_1$};
+\node[cnode] (x2) at (1, -2) {$\bm{x}_2$};
+\node[cnode] (x3) at (3, -2) {$\bm{x}_3$};
+\node[cnode] (x4) at (5, -2) {$\bm{x}_4$};
+
+\draw[->] (s1) to (s2);
+\draw[->] (s2) to (s3);
+\draw[->] (s3) to (s4);
+
+\draw[->] (s1) to (x1);
+\draw[->] (s2) to (x2);
+\draw[->] (s3) to (x3);
+\draw[->] (s4) to (x4);
+
+\draw[->] (k1) to [out=-45, in=90] (x1);
+\draw[->] (k2) to [out=-45, in=90] (x2);
+\draw[->] (k3) to [out=-45, in=90] (x3);
+\draw[->] (k4) to [out=-45, in=90] (x4);
+
+% \draw[->] (s2) to [out=15, in=-15] (o2);
+% \draw[->] (s3) to [out=15, in=-15] (o3);
+% \draw[->] (s4) to [out=15, in=-15] (o4);
+\draw[->] (z1) to [out=-25, in=100] (x1);
+\draw[->] (z2) to [out=-25, in=100] (x2);
+\draw[->] (z3) to [out=-25, in=100] (x3);
+\draw[->] (z4) to [out=-25, in=100] (x4);
+
+
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../ppgm_slide"
+%%% End:
