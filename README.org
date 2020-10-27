@@ -40,8 +40,8 @@ $ make run
 #+END_SRC
 
 ** Compile the slides from source
-
+Just execute the following target-making in the root directory.
 #+BEGIN_SRC bash
 $ make slide
 #+END_SRC
-
+Or go to the sub-directory [[file:slides/][slides]] and use the Makefile there.
