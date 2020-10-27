@@ -1,3 +1,6 @@
 #+TITLE: The slide source files
 
-The slides are made by beamer and tikz. 
+The slides are made by beamer and tikz, compiled by latexmk.
+#+BEGIN_SRC bash
+$ make
+#+END_SRC
