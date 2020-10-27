@@ -349,17 +349,42 @@
   \end{tikzpicture}
 \end{frame}
 
-\begin{frame}[label=current]{Remark}
-  \begin{block}{On GenMM/GenHMM}
-    free dimension to flexible model: number of mixture + complexity NNs;
-    Compatible with statistic models and NN techniques;
-    M-step, batch-gradient descent;
-    duplicated NN for EM steps;
+\begin{frame}[label=current]
+  {Alternative Mixture and Remark}
+  \centering
+  \begin{tikzpicture}[scale=0.7, every node/.append style={transform shape}]
+    \tikzstyle{enode} = [thick, draw=black, ellipse, inner sep = 1pt,  align=center]
+    \tikzstyle{nnode} = [thick, rectangle, rounded corners = 2pt,minimum size = 0.8cm,draw,inner sep = 2pt]
+    \node[enode] (z1) at (0,1.8) {$\bm{z}\sim p_1(\bm{z})$};
+    \node[enode] (z2) at (0,0.5){$\bm{z}\sim p_{2}(\bm{z})$};
+    \node[enode] (zK) at (0,-1.8) {$\bm{z}\sim p_{K}(\bm{z})$}; 
+    \node[enode, label={[label distance=0.3cm]-90:Induced Distribution}] (x) at (5.5,0){$\bm{x}\sim p(\bm{x};\ubar{\bm{\Phi}})$};
+    
+    \node[nnode, label={[label distance=0.5cm]-90:Share Generator}] (g) at (3.2,0) {$\bm{g}$};
+    \draw[dotted,line width=2pt] (0,-0.3) -- (0,-1.2);
+    \filldraw[->] (1.8, 0.5)circle (2pt) -- node[above=0.2]{$\bm{s}\sim \bm{\pi}$} (g) ;
+    \draw[->] (z1) -- (1.6, 1.8);
+    \draw[->] (z2) -- (1.6, 0.5);
+    \draw[->] (zK) -- (1.6, -1.8);
+    \begin{scope}[on background layer]
+      \node[rounded corners = 4pt, rectangle, inner sep = 20pt,  align=center, fit=(z1)(z2)(zK), label=below:{Multiple Latent Sources}, fill=blue!30] (latSource) {};
+    \end{scope}
+    \draw[->] (g) to (x);
+  \end{tikzpicture}
+  
+  \begin{block}{Remark On GenMM/GenHMM}
+    \begin{itemize}[label=\textbullet]
+    \item Free dimension for flexibility: number of mixture + complexity of functional form of neural networks
+    \item Compatible with statistic methods and neural network techniques (error back-propagation, optimizer)
+    \item Embed batch-gradient descent into M-step
+    \item Lack of closed-form update rule and generator changes at each gradient step. We tackle by maintaining old and new generators in EM steps
+    \end{itemize}
+    
   \end{block}
 \end{frame}
 
 \begin{frame}[label=current]{Remark}
-  \begin{block}{A diagram}
+  \begin{block}{A diagram of connections}
     \begin{tikzpicture}
       \tikzstyle{cnode} = [thick, draw=black, circle, align=center, inner sep = 0.3pt]
       \tikzstyle{nnode} = [thick, rectangle, rounded corners = 2pt,minimum size = 0.8cm,draw,inner sep = 6pt]
@@ -397,16 +422,21 @@
 
       \draw[black, ->] (elbo) --node [text width=3cm, black, midway, above]{\tiny
         Below
-        }
+      }
       (llk);
       \draw[black, ->] (q-fun) --node [text width=3cm, black, midway, right]{\tiny
         Below
-        }
+      }
       (llk);
 
       
     \end{tikzpicture}
+    
   \end{block}
+  \let\thefootnote\relax\footnotetext{\tiny
+    \vskip -0.2cm
+    A bit notation abuse, $\bm{x}_U$ corresponds to unobserved variable $\bm{z}$.
+  }
 \end{frame}
 
 

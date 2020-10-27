@@ -1,8 +1,8 @@
-\subsection{Bidirectional Impact}
+
 { \setbeamercolor{background canvas}{bg=hl_bg}
   \setbeamercolor{normal text}{fg=hl_fg}
   \setbeamercolor{frametitle}{fg=hl_fg}
-  \begin{frame}[label=current]
+  \begin{frame}
     \usebeamercolor[fg]{normal text}
     \begin{center}
       {
@@ -33,7 +33,7 @@
     
   \end{frame}
 }
-\begin{frame}[label=current]{Two Direction Impact}
+\begin{frame}{Two Direction Impact}
   Why impact in two direction?
   \begin{itemize}[label=$\bullet$]
     \onslide<1->{
@@ -83,28 +83,80 @@
   
   
 \end{frame}
+\begin{frame}{\large Inference Routine in Learning}
+  \begin{tikzpicture}
+    \node[black] (grad) at (0,0) {
+      \begin{minipage}{1\linewidth}
+        What is $\bm{\theta}$ in $p(\bm{x}; \bm{\theta}) = \frac{1}{Z(\bm{\theta})} \prod_{a} \psi_a(\bm{x}_a; \bm{\theta}_a)$? \\
+        A direct view:
+        \begin{align*}
+          \max_{\bm{\theta}} \log{p(\bm{x}; \bm{\theta})} =  \max_{\bm{\theta}}\sum_{a}\log{ \psi_a(\bm{x}_a; \bm{\theta}_a) } \underbrace{- \log{Z(\bm{\theta})}}_{\text{Helmholtz free energy, can be est. by $F$}},
+        \end{align*}
+        An alternative view:
+        \begin{align*}
+          \pd{\log{p}(\bm{x};\bm{\theta})}{\bm{\theta}_a} = \pd{\log{{\phi_a}(\bm{x}_a; \bm{\theta}_a)}}{\bm{\theta}_a} - \underbrace{\EE_{p(\bm{x}_a; \bm{\theta})}\left[ \pd{\log{{\phi_a}(\bm{x}_a; \bm{\theta}_a)}}{\bm{\theta}_a} \right]}_{\text{can be est. by beliefs}}.
+        \end{align*}
 
-\begin{frame}[label=current]{\large Inference Routine in Learning}
-  
-  What is $\bm{\theta}$ in $p(\bm{x}; \bm{\theta}) = \frac{1}{Z(\bm{\theta})} \prod_{a} \psi_a(\bm{x}_a; \bm{\theta}_a)$? \\
-  A direct view:
-  \begin{align*}
-    \max_{\bm{\theta}} \log{p(\bm{x}; \bm{\theta})} =  \max_{\bm{\theta}}\sum_{a}\log{ \psi_a(\bm{x}_a; \bm{\theta}_a) } \underbrace{- \log{Z(\bm{\theta})}}_{\text{Helmholtz free energy, can be est. by $F$}},
-  \end{align*}
-  An alternative view:
-  \begin{align*}
-    \pd{\log{p}(\bm{x};\bm{\theta})}{\bm{\theta}_a} = \pd{\log{{\phi_a}(\bm{x}_a; \bm{\theta}_a)}}{\bm{\theta}_a} - \underbrace{\EE_{p(\bm{x}_a; \bm{\theta})}\left[ \pd{\log{{\phi_a}(\bm{x}_a; \bm{\theta}_a)}}{\bm{\theta}_a} \right]}_{\text{can be est. by beliefs}}.
-  \end{align*}
-
-  Remark:
-  \begin{itemize}[label={$\bullet$}]
-  \item This essentially requires estimation of Helmholtz free energy or marginal probabilities.
-  \item Stationary points translate into moment matching.
-  \end{itemize}
+        Remark:
+        \begin{itemize}[label={$\bullet$}]
+        \item This essentially requires estimation of Helmholtz free energy or marginal probabilities.
+        \item Stationary points translate into moment matching.
+        \item The two modules are not necessarily coupled, and each module may be replaced by another algorithm while the other one remains.\textcolor{blue}{may give overlap effect}
+        \end{itemize}
+      \end{minipage}
+    };
+    
+  \end{tikzpicture}
 \end{frame}
 
+% \begin{frame}[label=current]{\large Inference Routine in Learning}
+%   \begin{tikzpicture}
+%     \node[black] (grad) at (0,0) {
+%       \begin{minipage}{1\linewidth}
+%         What is $\bm{\theta}$ in $p(\bm{x}; \bm{\theta}) = \frac{1}{Z(\bm{\theta})} \prod_{a} \psi_a(\bm{x}_a; \bm{\theta}_a)$? \\
+%         A direct view:
+%         \begin{align*}
+%           \max_{\bm{\theta}} \log{p(\bm{x}; \bm{\theta})} =  \max_{\bm{\theta}}\sum_{a}\log{ \psi_a(\bm{x}_a; \bm{\theta}_a) } \underbrace{- \log{Z(\bm{\theta})}}_{\text{Helmholtz free energy, can be est. by $F$}},
+%         \end{align*}
+%         An alternative view:
+%         \begin{align*}
+%           \pd{\log{p}(\bm{x};\bm{\theta})}{\bm{\theta}_a} = \pd{\log{{\phi_a}(\bm{x}_a; \bm{\theta}_a)}}{\bm{\theta}_a} - \underbrace{\EE_{p(\bm{x}_a; \bm{\theta})}\left[ \pd{\log{{\phi_a}(\bm{x}_a; \bm{\theta}_a)}}{\bm{\theta}_a} \right]}_{\text{can be est. by beliefs}}.
+%         \end{align*}
 
-\begin{frame}[label=current]
+%         Remark:
+%         \begin{itemize}[label={$\bullet$}]
+%         \item This essentially requires estimation of Helmholtz free energy or marginal probabilities.
+%         \item Stationary points translate into moment matching.
+%         \end{itemize}
+%       \end{minipage}
+%     };
+%     \pause {
+%       \begin{scope}[local bounding box=uncouple]
+%         \tikzstyle{cnode} = [thick, draw=black, ellipse, inner sep = 2pt,  align=center]
+%         \tikzstyle{fnode} = [thick, draw=black, ellipse, inner sep = 10pt,  align=center]
+        
+%         \node[cnode] (infn) at (0,0) {Inference};
+%         \node[cnode] (lern) at (3,0) {Learning};
+%         \node[black, above=of infn.north] (txt1) {at The two modules are not necessarily coupled};
+%         % \node[fnode, fit=(infn)(lern)] (box) {};
+%         % \node[] at (1.4, -0.6) {Probabilistic Graphical Model};
+%         \draw[->,line width=0.2mm] (infn) to[out=15, in=165] (lern);
+%         \draw[->,line width=0.2mm] (lern) to[out=195, in=-15] (infn);
+%         \node[black,fill=white, below=of infn.south] (txt2) {Each module may be replaced by another algorithm while the other one remains.};
+%         \begin{scope}[on background layer]
+%           \node[rectangle, inner sep = 10pt,  align=center, fit=(txt1)(txt2)(infn)(learn), fill=white] {};
+%         \end{scope}
+        
+%       \end{scope}
+      
+%     }  
+%   \end{tikzpicture}
+% \end{frame}
+
+
+
+
+\begin{frame}
   {Learning MRFs}
   {What is $\bm{\theta}$ in $p(\bm{x};\bm{\theta})$?}
   \vskip 0.5cm

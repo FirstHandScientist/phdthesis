@@ -3,8 +3,8 @@
 % align=center]
 \tikzstyle{enode} = [thick, draw=black, ellipse, inner sep = 2pt,  align=center]
 \tikzstyle{nnode} = [thick, rectangle, rounded corners = 2pt,minimum size = 0.8cm,draw,inner sep = 2pt]
-\node[enode] (z) at (0,0) {$\bm{z}\sim p(\bm{z})$};
-\node[enode] (x) at (5.5,0){$\bm{x}\sim p(\bm{x}; \bm{\Phi})$};
+\node[enode,label={below:{\tiny Shared latent source}}] (z) at (0,0) {$\bm{z}\sim p(\bm{z})$};
+\node[enode, label={below:{\tiny Induced distribution}}] (x) at (5.5,0){$\bm{x}\sim p(\bm{x}; \bm{\Phi})$};
 % \node at (5.2,-1) {$p(\bm{x};\bm{\Phi}) = \textstyle\sum_{k=1}^K \pi_k  p_k(\bm{x})$};
 \node[nnode] (g1) at (2.6,1.8) {$\bm{g}_1$};
 \node[nnode] (g2) at (2.6,0.5) {$\bm{g}_2$};
@@ -19,7 +19,9 @@
 \draw[->] (g1) -- (3.5,1.8);
 \draw[->] (g2) -- (3.5, 0.5);
 \draw[->] (gk) -- (3.5, -1.8);
-
+\begin{scope}[on background layer, every node/.append style={transform shape}]
+\node [rounded corners = 2pt, inner sep=4pt, fill=blue!30,fit=(g1)(g2)(gk), label={[label distance=0.3cm]-60:{\tiny Mixture of generators}}] {};
+\end{scope}
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "../ppgm_slide"

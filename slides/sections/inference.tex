@@ -439,7 +439,7 @@
 { \setbeamercolor{background canvas}{bg=hl_bg}
   \setbeamercolor{normal text}{fg=hl_fg}
   \setbeamercolor{frametitle}{fg=hl_fg}
-  \begin{frame}[label=current]
+  \begin{frame}
     \usebeamercolor[fg]{normal text}
     \begin{center}
       {
@@ -471,7 +471,7 @@
   \end{frame}
 }
 
-\begin{frame}[label=current]{Continuing: What is the state of $x$?}
+\begin{frame}{Continuing: What is the state of $x$?}
   \framesubtitle{Yedidia, Freeman, Weiss: A step to generalization}
   \textbf{Message among variables \& factors $\rightarrow$ message among regions}
   \textcolor{red}{Maybe I should combine this slide to the next one}
@@ -533,7 +533,7 @@
   }
 \end{frame}
 
-\begin{frame}[label=current]{An Toy Example of Region Graphs}
+\begin{frame}{An Toy Example of Region Graphs}
   Factor graph representation of MRF (2-by-3 grid) with factor nodes.\\
   MRF $\rightarrow$ region graph:\\
   \vskip 0.5cm
@@ -690,7 +690,7 @@
 
   
 \end{frame}
-\begin{frame}[label=current]{RENN: Region-based Energy Neural Network}
+\begin{frame}{RENN: Region-based Energy Neural Network}
   The \textbf{region-based free energy} of a region graph is
   \begin{equation*}
     F_R(\Bb; \bm{\theta}) = \sum_{R\in \Rr} \underbrace{c_R}_{\text{Counting number}} \sum_{\bm{x}_R}\underbrace{b_R(\bm{x}_R)}_{\text{Belief on region R}} (\underbrace{E_R(\bm{x}_R; \bm{\theta}_R)}_{\text{Region average energy}} + \ln{b_R}(\bm{x}_R)),
@@ -824,7 +824,7 @@
   
 \end{frame}
 
-\begin{frame}[label=current]{RENN}
+\begin{frame}{RENN}
   \onslide<1->{
     Non-root belief: \\
     \begin{center}
@@ -892,7 +892,7 @@
   %   \end{columns}
   % }
 \end{frame}
-\begin{frame}[label=current]{Insights of RENN}
+\begin{frame}{Insights of RENN}
   \begin{block}{Generalization}
     Bethe free energy can be recovered from region-based free energy:
     \begin{itemize}[label=\textbullet]
@@ -911,7 +911,7 @@
   \end{block}
 \end{frame}
 
-\begin{frame}[label=current]{Some Numerical Comparisons}
+\begin{frame}{Some Numerical Comparisons}
   
   Ising model: $p(\bm{x}; \bm{\theta}) = \frac{1}{Z(\bm{\theta})}\exp{(\sum_{(i,j)\in \Ee_F} J_{ij} x_i x_j + \sum_{i\in \Vv}h_i x_i)}$, $\bm{x} \in \{-1, 1\}^{N}$,
   \begin{itemize}[label=$\bullet$]
@@ -964,7 +964,7 @@
   \end{itemize}
   
 \end{frame}
-\begin{frame}[label=current]
+\begin{frame}
   {Some Numerical Comparisons}
   {Richer Comparisons}
   Inference on grid and complete graphs.
