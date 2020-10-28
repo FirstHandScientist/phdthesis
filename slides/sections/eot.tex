@@ -166,13 +166,13 @@
   Alternatively scale the rows \& columns of matrix $e^{-\bm{M}/\lambda}$ (Sinkhorn) gives 'soft' solution
   \begin{itemize}[label=\textbullet]
   \item joint distribution $\pi^{\ast}$
-    \item subgradient $\beta^{\ast}$
-    \end{itemize}
-    which provides the gradient information for adjusting $\bm{g}$.
-    \only<2>{
+  \item subgradient $\beta^{\ast}$
+  \end{itemize}
+  which provides the gradient information for adjusting $\bm{g}$.
+  \only<2>{
     \begin{textblock}{5}(2,4.3)
       \begin{tikzpicture}
-               
+        
         \begin{scope}[scale=1.6, local bounding box=algo]
           \input{images/eot/alo_flow.tex}
 
@@ -185,36 +185,118 @@
     \end{textblock}
   }
 
-  % \caption{Problem Connections}
-
-  % \begin{itemize}
-  % \item[-] Two iterative steps of matrix scaling. (May be unrolled as multiple-layer affine mapping/neural net)
-  % \item[-] A subgradient method based on fixed support computation method (Sinkhorn).
-  %   \begin{itemize}
-  %   \item[$\cdot$] Use subgradient for parameterized model
-  %   \item[$\cdot$] Formulate cost for neural network based model
-  %   \end{itemize}
-  % \item[-] Use EOT with feature mapping
-  % \end{itemize}
   \let\thefootnote\relax\footnotetext{\tiny
-     Marco Cuturi. Sinkhorn distances: Lightspeed computation of optimal transport}
+    Marco Cuturi. Sinkhorn distances: Lightspeed computation of optimal transport}
 \end{frame}
 
-\begin{frame}
-   \begin{tikzpicture}
+\begin{frame}[label=current]{EOTGM and EOTGAN}
+  EOTGM\\
+  \begin{tikzpicture}
+    \tikzstyle{enode} = [draw, circle, inner sep = 4pt,  align=center]
+    \tikzstyle{nnode} = [rectangle, rounded corners = 2pt,draw,inner sep = 4pt]
+    \tikzstyle{ecnode} = [draw, ellipse, inner sep = 4pt,  align=center]
+
     \begin{scope}[scale=0.7, every node/.append style={transform shape}]
-      \tikzstyle{enode} = [thick, draw, circle, inner sep = 4pt,  align=center]
-      \tikzstyle{nnode} = [thick, rectangle, rounded corners = 2pt,draw,inner sep = 4pt]
       \node[enode] (z) at (-4,0) {$\bm{Z}$};
       \node[enode, right=2cm of z] (x) {$\bm{X}$};
       \node[enode, below= of x] (hx) {$\hat{\bm{X}}$};
+      \node[ecnode, below= of z] (data) {Dataset};
+
       \draw[->] (z) -- node[nnode,fill=white] {$\bm{g}$} (x);
-      \node[nnode,fit=(x)(hx), label={below:{Input}}] (inPair) {};
-      \node[nnode, right=of inPair] (rowScale) {Row Scale};
-      \node[nnode, right=of rowScale] (colScale) {Column Scale};
+      \draw[->] (data) -- (hx);
     \end{scope}
-  
+    \node[nnode,fit=(x)(hx), label={below:{Input}}, dashed] (inPair) {};
+    
+    \node[nnode, rotate=-90, inner sep = 8pt, fill=gray!15] (rowScale) at (1,-0.6) {~~Row Scale~~~~};
+    \node[nnode, rotate=-90, inner sep = 8pt, fill=gray!5] (colScale) at (3,-0.6) {Column Scale};
+
+    \draw[->] (inPair) to (rowScale);
+    \draw [-{Straight Barb[left]}] ($(rowScale.north) + (0, 0.1) $) to ($(colScale.south) +(0,0.1)$);
+    \draw [-{Straight Barb[left]}] (colScale) -- node[black, midway, below] {\tiny iterative} (rowScale) ;
+    
   \end{tikzpicture}
+
+  
+  EOTGAN\\
+  
+  \begin{tikzpicture}
+    \tikzstyle{ecnode} = [draw, ellipse, inner sep = 4pt,  align=center]
+    \tikzstyle{enode} = [draw, circle, inner sep = 4pt,  align=center]
+    \tikzstyle{nnode} = [rectangle, rounded corners = 2pt,draw,inner sep = 4pt]
+    
+    \begin{scope}[scale=0.85, every node/.append style={transform shape}]
+      \node[enode] (z) at (-4,0) {$\bm{Z}$};
+      % \node[enode, right=2cm of z] (x) {$\bm{X}$};
+      % \node[nnode, right=2cm of x] (fx) {};
+      \node[nnode, above right=-0.5cm and 3cm of z, minimum height=2cm] (f1) {$\bm{f}$};
+      \node[nnode, right= of z] (g) {$\bm{g}$};
+      \draw[->] (z) -- (g);
+      \draw[->] (g) -- ($(f1.west) + (0,-0.6)$);
+
+
+      \node[ecnode, above= of g] (dt) {Dataset};
+      \draw[->] ($(dt.east) + (0, 0)$) -- ($(f1.west) + (0,0.6)$);
+      \draw[->] ($(dt.south) + (0, 0)$) -- ($(f1.west) + (0,0.2)$);
+
+      \node[ecnode, right= of f1] (gan) {\begin{tabular}{c} EOT based triplet loss \\ offer grad. for\\ generator $\bm{g}$ \\ feature mapping $\bm{f}$\end{tabular}};
+      \draw[->] ($(f1.east) + (0,0.4)$) -- (gan.175) ;
+      \draw[->] ($(f1.east) + (0,0)$) -- (gan.180) ;
+      \draw[->] ($(f1.east) + (0,-0.4)$) -- (gan.185) ;
+
+
+    \end{scope}
+    % \begin{scope}[scale=1.0]
+    %   \input{images/eot/triplet.tex}
+    % \end{scope}
+  \end{tikzpicture}
+  
+\end{frame}
+
+\graphicspath{{../source/chapter8/}}
+
+\begin{frame}[label=current]{Numerical}
+  \begin{figure}[!ht]
+    \captionsetup[subfigure]{justification=centering}
+    \centering
+    \begin{subfigure}[b]{0.44\textwidth}
+      \centering
+      \includegraphics[width=1\linewidth]{images/toy/gauss4/frame8.jpg}\vspace{-3pt}
+      \caption{}
+      \label{fig-toy}
+    \end{subfigure}
+    % \centering
+    % \begin{subfigure}[b]{0.44\textwidth}
+    %   \centering
+    %   \includegraphics[width=0.8\linewidth]{images/mnist/fake/eot_18500_crop.png}\vspace{5pt}
+    %   \caption{}
+    %   \label{fig-fake-wgan}
+    % \end{subfigure}
+    \centering
+    
+
+    \begin{subfigure}[b]{0.44\textwidth}
+      \centering
+      \includegraphics[width=1.1\linewidth]{images/mnist/tra_score/IS_29.pdf}\vspace{-3pt}
+      % \caption{}
+    \end{subfigure}
+    \vspace{20pt}  
+    \begin{subfigure}[b]{0.44\textwidth}
+      \centering
+      \includegraphics[width=1.1\linewidth]{images/mnist/tra_score/FID_29.pdf}\vspace{-3pt}
+      % \caption{}
+      
+    \end{subfigure}
+    % \vspace{-15pt}
+    \captionsetup{labelformat=empty,justification=centering}
+    \caption{Comparison of IS and FID (on MNIST) versus mixing ratio $r$. % (For
+      % each model at a certain mixture ratio, $5$ experiments are
+      % independently performed. Each solid curve with markers plots the mean of $5$
+      % experiments with shaded areas denoting the range of corresponding
+      % results.
+    }\vspace{-1cm}
+    
+  \end{figure}
+
 \end{frame}
 
 %%% Local Variables:
