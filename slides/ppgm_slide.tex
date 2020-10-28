@@ -1,5 +1,11 @@
+
+\ifdefined\ishandout
+  \documentclass[xcolor=x11names, handout]{beamer}
+\else
 \documentclass[xcolor=x11names]{beamer}
-% \includeonlyframes{current}
+\fi
+\includeonlyframes{current}
+
 \usepackage{hyperref}
 \hypersetup{
     colorlinks=true,
@@ -147,6 +153,7 @@
 
 
 \end{document}
+
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: t
