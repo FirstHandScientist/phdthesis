@@ -9,6 +9,7 @@ LATEXMK=latexmk
 LATEXMKOPT=-pdf
 CONTINUOUS=-pvc
 SLIDES=ppgm_slide
+SLIDE_DEV=ppgm_dev
 
 all: slide
 
@@ -18,3 +19,6 @@ slide: $(SLIDES).tex
 
 # run: slide
 # 	xdg-open $(SLIDES).pdf
+dev: $(SLIDE_DEV).tex
+	$(LATEXMK) $(LATEXMKOPT) $(CONTINUOUS) \
+	-pdflatex="$(LATEX) $(LATEXOPT) $(NONSTOP) %O %S" $(SLIDE_DEV)

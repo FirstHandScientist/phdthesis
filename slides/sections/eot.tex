@@ -3,7 +3,7 @@
   \setbeamercolor{frametitle}{fg=hl_fg}
   \begin{frame}{What Have We been Talking About?}
     \usebeamercolor[fg]{normal text}
-  
+    
     \begin{tikzpicture}
       \tikzstyle{cnode} = [thick, ellipse, align=center, draw, inner sep = 6pt]
       \tikzstyle{nnode} = [thick, rectangle, rounded corners = 2pt,minimum size = 0.8cm,draw,inner sep = 6pt]
@@ -53,17 +53,17 @@
       \begin{textblock}{5}(6,6)
         \begin{tikzpicture}[scale=1.2,auto,rotate=-5,transform shape]
           \tikzstyle{cnode} = [fill=blue!20,thick, ellipse, align=center, draw, inner sep = 6pt]
-        \node [cnode, text=black] (question) at (0, 0) {\begin{tabular}{c}What if lklh. \\is not tractable?\end{tabular}};
-  
-      \end{tikzpicture}
-    \end{textblock}
-      }
-  % \let\thefootnote\relax\footnotetext{\tiny
-  %   \vskip -0.2cm
-  %   A bit notation abuse, $\bm{x}_U$ corresponds to unobserved variable $\bm{z}$.
-  % }
-  
-\end{frame}
+          \node [cnode, text=black] (question) at (0, 0) {\begin{tabular}{c}What if lklh. \\is not tractable?\end{tabular}};
+          
+        \end{tikzpicture}
+      \end{textblock}
+    }
+    % \let\thefootnote\relax\footnotetext{\tiny
+    % \vskip -0.2cm
+    % A bit notation abuse, $\bm{x}_U$ corresponds to unobserved variable $\bm{z}$.
+    % }
+    
+  \end{frame}
 }
 
 { \setbeamercolor{background canvas}{bg=hl_bg}
@@ -101,6 +101,121 @@
     
   \end{frame}
 }
+
+\begin{frame}[label=current]{Where is the learning info. from?}
+  \begin{tikzpicture}
+    \tikzstyle{enode} = [thick, draw, circle, inner sep = 4pt,  align=center]
+    \tikzstyle{elnode} = [thick, draw, ellipse, inner sep = 1pt,  align=center]
+    \tikzstyle{nnode} = [thick, rectangle, rounded corners = 2pt,draw,inner sep = 4pt]
+    \node[enode] (z) at (-4,0) {$\bm{Z}$};
+    \node[enode, right=2cm of z] (x) {$\bm{X}$};
+    \node[elnode] (emp) [right= 6.5cm of x] {Empirical \\samples};
+    
+    \draw[->] (z) -- node[nnode,fill=white] {$\bm{g}$} (x);
+    \draw[<->] (x) -- node[draw, rounded corners = 2pt, fill=blue!30, align=center] (trckmetric) {
+      \begin{minipage}{0.45\textwidth}
+        How different they are
+        \begin{itemize}[label=\textbullet]
+        \item likelihood
+        \item Evidence lower bound, free energy 
+        \item KL-divergence, $\alpha$-divergence
+        \end{itemize}
+      \end{minipage}} (emp);
+    \node[fill=white!30, below= of trckmetric, align=center] (ot) {
+      \begin{minipage}{0.6\textwidth}
+        Optimal transport (OT): moving mass from a dist. to another
+        \begin{equation*}
+          T(p^{\ast},p)=\min_{ \pi \in \Pi(p^{\ast},p)} \dotp{\underbrace{\pi}_{\text{marginalize to $p^{\ast},p$}}}{\underbrace{\bm{M}}_{\text{\begin{tabular}{c}cost matrix\\ sample difference \end{tabular}}}},
+        \end{equation*}
+        Key attributes:
+        \begin{itemize}[label=\textbullet]
+        \item Doesnot require tractible lklh.
+        \item Learning gradient info. from sample comparison
+        \item High complexity, each evaluation is sovling an optimization problem
+        \end{itemize}
+      \end{minipage}
+    };
+    \draw[->] (trckmetric) -- node[black, midway, right] {add-on} (ot);
+
+  \end{tikzpicture}
+  \only<2>{
+    \begin{textblock}{5}(2,4.3)
+      \begin{tikzpicture}
+        \node[rounded corners = 4pt, rectangle, inner sep = 4pt, fill=gray!20, align=center, text width=10cm, label=below:{A toy example}] (ot_kl) at (0,0)
+        {\includegraphics[width=1\linewidth]{images/ot_kl.pdf}};
+      \end{tikzpicture}
+    \end{textblock}
+  }
+\end{frame}
+
+
+\begin{frame}[label=current]{EOTGM Explained}
+  \begin{tikzpicture}
+    \tikzstyle{enode}=[thick, draw, circle, inner sep = 8pt,  align=center]
+    \tikzstyle{elnode}=[thick, draw, rectangle, rounded corners = 2pt, inner sep = 4pt, align=center]
+    \tikzstyle{nnode} = [thick, rectangle, rounded corners = 2pt,minimum size = 4.8cm,draw,inner sep = 2pt]
+    \node[elnode] (ot) at (-1,0) {OT $\min\;T(p^{\ast},p)$};
+    % \node[nnode] at (0,1) {$T(P,Q) = \min_{\Gamma\in\Pp(P,Q) }\EE_{(X,Y)\sim \Gamma}\left[ c(X,Y) \right]$};
+    \node[elnode] (wgan) at (6,0) {\begin{tabular}{c}WGAN, Arjovsky, et al\\ {\tiny Wasserstein Generative Adversarial Network} \\ {\tiny An adversarial game} \\ {\tiny \textit{1-Lipschitz function family}}\end{tabular}};
+    \node[elnode] (eot) at (3,-2) {\begin{tabular}{c} EOTGM \\ {\tiny NN generator + Sinkhorn solver} \\ {\tiny Applicable to implicit \& explicit models} \end{tabular}};
+    \draw[->] (ot) -- node[midway,above] {\tiny Kantorovich duality} (wgan);
+    \draw[->] (ot) -- node[midway,right] {\tiny Entropy regularization} (eot);
+    \node[text width=4cm] [right=-0.1cm of eot] {\begin{equation*} \min_{p} \underbrace{\min_{\pi\in\Pp(p^{\ast},p) } \dotp{\pi}{\bm{M}} - \la H(\pi)}_{W(p^{\ast}, p)}
+      \end{equation*}};   
+  \end{tikzpicture}
+  Alternatively scale the rows \& columns of matrix $e^{-\bm{M}/\lambda}$ (Sinkhorn) gives 'soft' solution
+  \begin{itemize}[label=\textbullet]
+  \item joint distribution $\pi^{\ast}$
+    \item subgradient $\beta^{\ast}$
+    \end{itemize}
+    which provides the gradient information for adjusting $\bm{g}$.
+    \only<2>{
+    \begin{textblock}{5}(2,4.3)
+      \begin{tikzpicture}
+               
+        \begin{scope}[scale=1.6, local bounding box=algo]
+          \input{images/eot/alo_flow.tex}
+
+        \end{scope}
+        \begin{scope}[on background layer]
+          \node[rounded corners = 4pt, rectangle, inner sep = 4pt, fill=gray!20, align=center, text width=10cm, label=below:{}, fit=(algo)] () {};
+        \end{scope}
+        
+      \end{tikzpicture}
+    \end{textblock}
+  }
+
+  % \caption{Problem Connections}
+
+  % \begin{itemize}
+  % \item[-] Two iterative steps of matrix scaling. (May be unrolled as multiple-layer affine mapping/neural net)
+  % \item[-] A subgradient method based on fixed support computation method (Sinkhorn).
+  %   \begin{itemize}
+  %   \item[$\cdot$] Use subgradient for parameterized model
+  %   \item[$\cdot$] Formulate cost for neural network based model
+  %   \end{itemize}
+  % \item[-] Use EOT with feature mapping
+  % \end{itemize}
+  \let\thefootnote\relax\footnotetext{\tiny
+     Marco Cuturi. Sinkhorn distances: Lightspeed computation of optimal transport}
+\end{frame}
+
+\begin{frame}
+   \begin{tikzpicture}
+    \begin{scope}[scale=0.7, every node/.append style={transform shape}]
+      \tikzstyle{enode} = [thick, draw, circle, inner sep = 4pt,  align=center]
+      \tikzstyle{nnode} = [thick, rectangle, rounded corners = 2pt,draw,inner sep = 4pt]
+      \node[enode] (z) at (-4,0) {$\bm{Z}$};
+      \node[enode, right=2cm of z] (x) {$\bm{X}$};
+      \node[enode, below= of x] (hx) {$\hat{\bm{X}}$};
+      \draw[->] (z) -- node[nnode,fill=white] {$\bm{g}$} (x);
+      \node[nnode,fit=(x)(hx), label={below:{Input}}] (inPair) {};
+      \node[nnode, right=of inPair] (rowScale) {Row Scale};
+      \node[nnode, right=of rowScale] (colScale) {Column Scale};
+    \end{scope}
+  
+  \end{tikzpicture}
+\end{frame}
 
 %%% Local Variables:
 %%% mode: latex
