@@ -36,6 +36,7 @@
 \usetikzlibrary{arrows}
 \usetikzlibrary{fit}
 \newcommand{\midarrow}{\tikz \draw[-triangle 90] (0,0) -- +(.1,0);}
+\tikzstyle{every node}=[line width=1pt]
 % set arrow type and size by tikz
 % alternative to 'Straight Barb' can be 'Latex, Stealth, Computer Modern Rightarrow'.
 \usetikzlibrary{arrows.meta}
@@ -53,7 +54,11 @@
 
 \begin{document}
 
+% define the background opacity
 \def\bgopacity{0.3}
+% define the background color for stamp block
+\def\stampcolor{blue!20}
+
 
 \begin{frame}
   \title{Perspectives on Probabilistic Graphical Models}

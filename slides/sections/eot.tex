@@ -152,8 +152,8 @@
 \begin{frame}{EOTGM: EOT based Generative Model}
   \begin{tikzpicture}
     \tikzstyle{enode}=[draw, circle, inner sep = 8pt,  align=center]
-    \tikzstyle{elnode}=[draw, rectangle, rounded corners = 2pt, inner sep = 4pt, align=center]
-    \tikzstyle{nnode} = [rectangle, rounded corners = 2pt,minimum size = 4.8cm,draw,inner sep = 2pt]
+    \tikzstyle{elnode}=[thick, draw, rectangle, rounded corners = 2pt, inner sep = 4pt, align=center]
+    \tikzstyle{nnode} = [thick,rectangle, rounded corners = 2pt,minimum size = 4.8cm,draw,inner sep = 2pt]
     \node[elnode] (ot) at (-1,0) {OT $\min\;T(p^{\ast},p)$};
     % \node[nnode] at (0,1) {$T(P,Q) = \min_{\Gamma\in\Pp(P,Q) }\EE_{(X,Y)\sim \Gamma}\left[ c(X,Y) \right]$};
     \node[elnode] (wgan) at (6,0) {\begin{tabular}{c}WGAN, Arjovsky, et al\\ {\tiny Wasserstein Generative Adversarial Network} \\ {\tiny An adversarial game} \\ {\tiny \textit{1-Lipschitz function family}}\end{tabular}};
@@ -209,7 +209,7 @@
       \draw[green, ->] ($(z.north) + (0,0.6)$) -- node [black, midway, above] {\tiny generated v.s. empirical sample comparison} ($(z.north) + (5,0.6)$);
       \draw[green, <-] ($(z.north) + (0,-3.6)$) -- node [black, midway, below] {\tiny subgradient info.} ($(z.north) + (5,-3.6)$);
     \end{scope}
-    \node[nnode, fit=(x) (hx), label={below:{\tiny Input}}, dashed] (inPair) {};  
+    \node[nnode, fit=(x) (hx), thin, label={below:{\tiny Input}}, dashed] (inPair) {};  
     \node[nnode, rotate=-90, inner sep = 8pt, fill=gray!15] (rowScale) at (1,-0.6) {\tiny ~~Row Scale~~~~};
     \node[nnode, rotate=-90, inner sep = 8pt, fill=gray!5] (colScale) at (3,-0.6) {\tiny Column Scale};
 
