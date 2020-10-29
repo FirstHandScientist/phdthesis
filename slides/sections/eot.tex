@@ -196,8 +196,8 @@
     \tikzstyle{nnode} = [rectangle, rounded corners = 2pt,draw,inner sep = 4pt]
     \tikzstyle{ecnode} = [draw, ellipse, inner sep = 4pt,  align=center]
 
-    \begin{scope}[scale=0.7, every node/.append style={transform shape}]
-      \node[enode] (z) at (-4,0) {$\bm{Z}$};
+    \begin{scope}[scale=0.85, every node/.append style={transform shape}]
+      \node[enode] (z) at (-4,0.15) {$\bm{Z}$};
       \node[enode, right=2cm of z] (x) {$\bm{X}$};
       \node[enode, below= of x] (hx) {$\hat{\bm{X}}$};
       \node[ecnode, below= of z] (data) {Dataset};
@@ -243,7 +243,7 @@
     \tikzstyle{enode} = [draw, circle, inner sep = 4pt,  align=center]
     \tikzstyle{nnode} = [rectangle, rounded corners = 2pt,draw,inner sep = 4pt]
 
-    \begin{scope}[scale=0.85, every node/.append style={transform shape}]
+    \begin{scope}[scale=1, every node/.append style={transform shape}]
       \input{sections/eotgan.tex}
     \end{scope}
 
