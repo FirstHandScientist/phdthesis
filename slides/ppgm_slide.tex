@@ -4,8 +4,9 @@
 \else
 \documentclass[xcolor=x11names]{beamer}
 \fi
-% \includeonlyframes{current}
-
+\ifdefined\isdev
+\includeonlyframes{current}
+\fi
 \usepackage{hyperref}
 \hypersetup{
     colorlinks=true,

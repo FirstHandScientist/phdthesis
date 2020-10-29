@@ -19,6 +19,5 @@ slide: $(SLIDES).tex
 
 # run: slide
 # 	xdg-open $(SLIDES).pdf
-dev: $(SLIDE_DEV).tex
-	$(LATEXMK) $(LATEXMKOPT) $(CONTINUOUS) \
-	-pdflatex="$(LATEX) $(LATEXOPT) $(NONSTOP) %O %S" $(SLIDE_DEV)
+dev: $(SLIDES).tex
+	pdflatex "\def\isdev{1} \input{ppgm_slide.tex}"
