@@ -69,7 +69,7 @@
 { \setbeamercolor{background canvas}{bg=hl_bg}
   \setbeamercolor{normal text}{fg=hl_fg}
   \setbeamercolor{frametitle}{fg=hl_fg}
-  \begin{frame}[label=current]
+  \begin{frame}
     \usebeamercolor[fg]{normal text}
     \begin{center}
       {
@@ -102,7 +102,7 @@
   \end{frame}
 }
 
-\begin{frame}[label=current]{Where is the learning info. from?}
+\begin{frame}{Where is the learning info. from?}
   \begin{tikzpicture}
     \tikzstyle{enode} = [thick, draw, circle, inner sep = 4pt,  align=center]
     \tikzstyle{elnode} = [thick, draw, ellipse, inner sep = 1pt,  align=center]
@@ -149,7 +149,7 @@
 \end{frame}
 
 
-\begin{frame}[label=current]{EOTGM Explained}
+\begin{frame}{EOTGM: EOT based Generative Model}
   \begin{tikzpicture}
     \tikzstyle{enode}=[thick, draw, circle, inner sep = 8pt,  align=center]
     \tikzstyle{elnode}=[thick, draw, rectangle, rounded corners = 2pt, inner sep = 4pt, align=center]
@@ -163,7 +163,7 @@
     \node[text width=4cm] [right=-0.1cm of eot] {\begin{equation*} \min_{p} \underbrace{\min_{\pi\in\Pp(p^{\ast},p) } \dotp{\pi}{\bm{M}} - \la H(\pi)}_{W(p^{\ast}, p)}
       \end{equation*}};   
   \end{tikzpicture}
-  Alternatively scale the rows \& columns of matrix $e^{-\bm{M}/\lambda}$ (Sinkhorn) gives 'soft' solution
+  Alternatively scale the rows \& columns of matrix $e^{-\bm{M}/\lambda}$ (Sinkhorn \& Knopp) gives 'soft' solution
   \begin{itemize}[label=\textbullet]
   \item joint distribution $\pi^{\ast}$
   \item subgradient $\beta^{\ast}$
@@ -189,7 +189,7 @@
     Marco Cuturi. Sinkhorn distances: Lightspeed computation of optimal transport}
 \end{frame}
 
-\begin{frame}[label=current]{EOTGM and EOTGAN}
+\begin{frame}{EOTGM and EOTGAN}
   EOTGM\\
   \begin{tikzpicture}
     \tikzstyle{enode} = [draw, circle, inner sep = 4pt,  align=center]
@@ -204,75 +204,75 @@
 
       \draw[->] (z) -- node[nnode,fill=white] {$\bm{g}$} (x);
       \draw[->] (data) -- (hx);
+      % \node[nnode, fit=(x) (hx) ($(hx.south west) + (-0.2, -0.2)$), label={below:{\tiny Input}}, dashed] (inPair) {};
+
+      \draw[green, ->] ($(z.north) + (0,0.6)$) -- node [black, midway, above] {\tiny generated v.s. empirical sample comparison} ($(z.north) + (5,0.6)$);
+      \draw[green, <-] ($(z.north) + (0,-3.6)$) -- node [black, midway, below] {\tiny subgradient info.} ($(z.north) + (5,-3.6)$);
     \end{scope}
-    \node[nnode,fit=(x)(hx), label={below:{Input}}, dashed] (inPair) {};
-    
-    \node[nnode, rotate=-90, inner sep = 8pt, fill=gray!15] (rowScale) at (1,-0.6) {~~Row Scale~~~~};
-    \node[nnode, rotate=-90, inner sep = 8pt, fill=gray!5] (colScale) at (3,-0.6) {Column Scale};
+    \node[nnode, fit=(x) (hx), label={below:{\tiny Input}}, dashed] (inPair) {};  
+    \node[nnode, rotate=-90, inner sep = 8pt, fill=gray!15] (rowScale) at (1,-0.6) {\tiny ~~Row Scale~~~~};
+    \node[nnode, rotate=-90, inner sep = 8pt, fill=gray!5] (colScale) at (3,-0.6) {\tiny Column Scale};
 
     \draw[->] (inPair) to (rowScale);
-    \draw [-{Straight Barb[left]}] ($(rowScale.north) + (0, 0.1) $) to ($(colScale.south) +(0,0.1)$);
-    \draw [-{Straight Barb[left]}] (colScale) -- node[black, midway, below] {\tiny iterative} (rowScale) ;
-    
+    \only<1>{
+      \draw [-{Straight Barb[left]}] ($(rowScale.north) + (0, 0.1) $) to ($(colScale.south) +(0,0.1)$);
+      \draw [-{Straight Barb[left]}] (colScale) -- node[black, midway, below] {\tiny iterative} (rowScale) ;
+    }
+    \only<2>{
+      \node[nnode, rotate=-90, inner sep = 8pt, fill=gray!15] (rowScale1) at (5,-0.6) {\tiny ~~Row Scale~~~~};
+      \node[nnode, rotate=-90, inner sep = 8pt, fill=gray!5] (colScale1) at (7,-0.6) {\tiny Column Scale};
+      
+      \foreach \x in {-0.5, -.25, 0, 0.25, 0.5}{
+        \draw [->] ($(rowScale.north) + (0,\x)$) -- ($(colScale.south) +(0,\x)$);
+      }
+      \foreach \x in {-0.5, -.25, 0, 0.25, 0.5}{
+        \draw [->] ($(rowScale1.north) + (0,\x)$) -- ($(colScale1.south) +(0,\x)$);
+      }
+      \draw [dashed] ($(colScale.north) + (0,0)$) -- node[black, fill=white] {......} ($(rowScale1.south) +(0,0)$);
+      % under brace
+      \draw [thick, decoration={ brace, mirror, raise=0.5cm }, decorate ] (rowScale.east) -- (colScale1.east) 
+      node [pos=0.5,anchor=north,yshift=-0.55cm] {\tiny Unrolled concatenated feed-forward neural network}; 
+    }
   \end{tikzpicture}
 
   
-  EOTGAN\\
+  EOTGAN: learn implicit distribution with feature mapping\\
   
   \begin{tikzpicture}
     \tikzstyle{ecnode} = [draw, ellipse, inner sep = 4pt,  align=center]
     \tikzstyle{enode} = [draw, circle, inner sep = 4pt,  align=center]
     \tikzstyle{nnode} = [rectangle, rounded corners = 2pt,draw,inner sep = 4pt]
-    
+
     \begin{scope}[scale=0.85, every node/.append style={transform shape}]
-      \node[enode] (z) at (-4,0) {$\bm{Z}$};
-      % \node[enode, right=2cm of z] (x) {$\bm{X}$};
-      % \node[nnode, right=2cm of x] (fx) {};
-      \node[nnode, above right=-0.5cm and 3cm of z, minimum height=2cm] (f1) {$\bm{f}$};
-      \node[nnode, right= of z] (g) {$\bm{g}$};
-      \draw[->] (z) -- (g);
-      \draw[->] (g) -- ($(f1.west) + (0,-0.6)$);
-
-
-      \node[ecnode, above= of g] (dt) {Dataset};
-      \draw[->] ($(dt.east) + (0, 0)$) -- ($(f1.west) + (0,0.6)$);
-      \draw[->] ($(dt.south) + (0, 0)$) -- ($(f1.west) + (0,0.2)$);
-
-      \node[ecnode, right= of f1] (gan) {\begin{tabular}{c} EOT based triplet loss \\ offer grad. for\\ generator $\bm{g}$ \\ feature mapping $\bm{f}$\end{tabular}};
-      \draw[->] ($(f1.east) + (0,0.4)$) -- (gan.175) ;
-      \draw[->] ($(f1.east) + (0,0)$) -- (gan.180) ;
-      \draw[->] ($(f1.east) + (0,-0.4)$) -- (gan.185) ;
-
-
+      \input{sections/eotgan.tex}
     \end{scope}
-    % \begin{scope}[scale=1.0]
-    %   \input{images/eot/triplet.tex}
-    % \end{scope}
+
   \end{tikzpicture}
   
 \end{frame}
 
 \graphicspath{{../source/chapter8/}}
 
-\begin{frame}[label=current]{Numerical}
+\begin{frame}{Numerical}
+  \begin{columns}
+    \column{0.5\textwidth}
+    \vskip 0.5cm
+    {\tiny $\bm{\rightarrow}$ Toy distribution learning (target at $4$-mixture Gaussians) using EOTGM. Real samples (red '+') and contour
+      (red curve), versus generated samples (blue 'o') and contour (blue curve) by $\bm{g}$.
+      \vskip 0.2cm
+      $\bm{\downarrow}$
+      Comparison of IS and FID (on MNIST) versus mixing ratio r.
+    }
+    \column{0.4\textwidth}
+    
+    \begin{figure}
+      \centering
+      \includegraphics[width=1\linewidth]{images/toy/gauss4/frame8.jpg}
+    \end{figure}
+  \end{columns}
+  \vskip -0.4cm
   \begin{figure}[!ht]
     \captionsetup[subfigure]{justification=centering}
-    \centering
-    \begin{subfigure}[b]{0.44\textwidth}
-      \centering
-      \includegraphics[width=1\linewidth]{images/toy/gauss4/frame8.jpg}\vspace{-3pt}
-      \caption{}
-      \label{fig-toy}
-    \end{subfigure}
-    % \centering
-    % \begin{subfigure}[b]{0.44\textwidth}
-    %   \centering
-    %   \includegraphics[width=0.8\linewidth]{images/mnist/fake/eot_18500_crop.png}\vspace{5pt}
-    %   \caption{}
-    %   \label{fig-fake-wgan}
-    % \end{subfigure}
-    \centering
-    
 
     \begin{subfigure}[b]{0.44\textwidth}
       \centering
