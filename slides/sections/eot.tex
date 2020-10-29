@@ -151,9 +151,9 @@
 
 \begin{frame}{EOTGM: EOT based Generative Model}
   \begin{tikzpicture}
-    \tikzstyle{enode}=[thick, draw, circle, inner sep = 8pt,  align=center]
-    \tikzstyle{elnode}=[thick, draw, rectangle, rounded corners = 2pt, inner sep = 4pt, align=center]
-    \tikzstyle{nnode} = [thick, rectangle, rounded corners = 2pt,minimum size = 4.8cm,draw,inner sep = 2pt]
+    \tikzstyle{enode}=[draw, circle, inner sep = 8pt,  align=center]
+    \tikzstyle{elnode}=[draw, rectangle, rounded corners = 2pt, inner sep = 4pt, align=center]
+    \tikzstyle{nnode} = [rectangle, rounded corners = 2pt,minimum size = 4.8cm,draw,inner sep = 2pt]
     \node[elnode] (ot) at (-1,0) {OT $\min\;T(p^{\ast},p)$};
     % \node[nnode] at (0,1) {$T(P,Q) = \min_{\Gamma\in\Pp(P,Q) }\EE_{(X,Y)\sim \Gamma}\left[ c(X,Y) \right]$};
     \node[elnode] (wgan) at (6,0) {\begin{tabular}{c}WGAN, Arjovsky, et al\\ {\tiny Wasserstein Generative Adversarial Network} \\ {\tiny An adversarial game} \\ {\tiny \textit{1-Lipschitz function family}}\end{tabular}};
@@ -192,9 +192,9 @@
 \begin{frame}[label=current]{EOTGM and EOTGAN}
   EOTGM\\
   \begin{tikzpicture}
-    \tikzstyle{enode} = [draw, circle, inner sep = 4pt,  align=center]
-    \tikzstyle{nnode} = [rectangle, rounded corners = 2pt,draw,inner sep = 4pt]
-    \tikzstyle{ecnode} = [draw, ellipse, inner sep = 4pt,  align=center]
+    \tikzstyle{enode} = [thick, draw, circle, inner sep = 4pt,  align=center]
+    \tikzstyle{nnode} = [thick, rectangle, rounded corners = 2pt,draw,inner sep = 4pt]
+    \tikzstyle{ecnode} = [thick, draw, ellipse, inner sep = 4pt,  align=center]
 
     \begin{scope}[scale=0.85, every node/.append style={transform shape}]
       \node[enode] (z) at (-4,0.15) {$\bm{Z}$};
@@ -239,9 +239,9 @@
   EOTGAN: learn implicit distribution with feature mapping\\
   
   \begin{tikzpicture}
-    \tikzstyle{ecnode} = [draw, ellipse, inner sep = 4pt,  align=center]
-    \tikzstyle{enode} = [draw, circle, inner sep = 4pt,  align=center]
-    \tikzstyle{nnode} = [rectangle, rounded corners = 2pt,draw,inner sep = 4pt]
+    \tikzstyle{ecnode} = [thick, draw, ellipse, inner sep = 4pt,  align=center]
+    \tikzstyle{enode} = [thick, draw, circle, inner sep = 4pt,  align=center]
+    \tikzstyle{nnode} = [thick, rectangle, rounded corners = 2pt,draw,inner sep = 4pt]
 
     \begin{scope}[scale=1, every node/.append style={transform shape}]
       \input{sections/eotgan.tex}
