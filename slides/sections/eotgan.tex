@@ -1,0 +1,30 @@
+\node[enode] (z) at (-4,0) {$\bm{Z}$};
+% \node[enode, right=2cm of z] (x) {$\bm{X}$};
+% \node[nnode, right=2cm of x] (fx) {};
+\node[nnode, above right=-0.5cm and 3cm of z, minimum height=2cm, label={below:{\tiny Feature mapping}}] (f1) {$\bm{f}$};
+\node[nnode, right= of z] (g) {$\bm{g}$};
+\draw[->] (z) -- (g);
+\draw[->] (g) -- ($(f1.west) + (0,-0.6)$);
+
+
+\node[ecnode, above= of g] (dt) {Dataset};
+\draw[->] ($(dt.east) + (0, 0)$) -- ($(f1.west) + (0,0.6)$);
+\draw[->] ($(dt.south) + (0, 0)$) -- ($(f1.west) + (0,0.2)$);
+
+\node[ecnode, right= 3cm of f1] (gan) {\begin{tabular}{c} EOT based triplet loss \\ offer grad. for:\\ generator $\bm{g}$ \\ feature mapping $\bm{f}$\end{tabular}};
+\draw[->] ($(f1.east) + (0,0.4)$) -- (gan.175) node[black, midway, above=0.51cm] (gf) {\tiny comparison gives grad. for $\bm{f}$};
+\draw[->] ($(f1.east) + (0,0)$) -- (gan.180) ;
+\draw[->] ($(f1.east) + (0,-0.4)$) -- (gan.185) node[black, midway, below=0.45cm] (gg) {\tiny comparison gives grad. for $\bm{g}$};
+
+\node[ecnode, draw=blue,dashed,thin, minimum height=0.8cm] (gfan) at ($(f1.east) + (0.5,0.25)$) {};
+\node[ecnode, draw=blue,dashed,thin, minimum height=0.8cm] (ggan) at ($(gan.185) + (-0.5,0)$) {};
+
+\draw[blue] (gfan) -- (gf);
+\draw[blue] (ggan) -- (gf);
+
+\draw[blue] (ggan) -- (gg);
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../ppgm_slide"
+%%% End:
