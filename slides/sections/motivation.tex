@@ -133,17 +133,19 @@
 
 
 \subsection{Undirected}
-\begin{frame}[label=current]{Undirected Graph Representations}
+\begin{frame}{Undirected Graph Representations}
   \begin{itemize}
   \item % image segmentation
         \begin{tikzpicture}
           \tikzstyle{enode} = [thick, draw, thick,fill=white, circle, inner sep = 2pt,  align=center]
           \tikzstyle{cnode} = [thick, fill=gray, draw, circle, inner sep = 2pt,  align=center]
           \begin{scope}{scale=0.4}
-            \node[inner sep=0pt] (img) at (-8,0) {\includegraphics[width=.25\textwidth]{images/illustrate/slam_img.png}};
+            \node[inner sep=0pt] (img) at (-8,0) {\includegraphics[width=.25\textwidth]{images/illustrate/cocoDemo.png}};
+            \node[black, above=0.05 of img] () {\tiny Coco};
           \end{scope}
           \begin{scope}{scale=0.4}
-            \node[inner sep=0pt] (slam) at (0,0) {\includegraphics[width=.25\textwidth]{images/illustrate/slam_lab.png}};
+            \node[inner sep=0pt] (slam) at (0,0) {\includegraphics[width=.25\textwidth]{images/illustrate/cocoSlam.png}};
+            
           \end{scope}
           
           \begin{scope}[local bounding box=crf, scale=0.6, shift={(-8, -1)}]

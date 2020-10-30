@@ -114,6 +114,7 @@
       \end{scope}
     \end{tikzpicture}
   \end{columns}
+  \vskip -0.3cm
   \begin{align*}
     \underbrace{{m}^{\mathrm{new}}_{ts}(x_s)}_{\text{new msg. to s}} \propto
     \underbrace{m_{ts}(x_s)^{1-\alpha_{ts}}}_{\text{old msg. to s}} \bigg[\sum_{x_t} \phi_{ts}(x_t, x_s)^{\alpha_{ts}} \underbrace{{m}_{st}(x_t)^{1-\alpha_{ts}}}_{\text{old msg. to t}} \underbrace{{\phi}_t(x_t) \prod_{w\in \Nn(t)\backslash s}m_{wt}(x_t)}_{\text{msg. from variable node $t$ to factor $\phi_{st}$}} \bigg].
@@ -201,7 +202,7 @@
       \end{scope}
     \end{tikzpicture}
   \end{columns}
-  
+  \vskip -0.3cm
   \begin{align*}
     \underbrace{{m}^{\mathrm{new}}_{ts}(x_s)}_{\text{new msg. to s}} \propto
     \underbrace{m_{ts}(x_s)^{1-\alpha_{ts}}}_{\text{old msg. to s}} \bigg[\sum_{x_t} \phi_{ts}(x_t, x_s)^{\alpha_{ts}} \underbrace{{m}_{st}(x_t)^{1-\alpha_{ts}}}_{\text{old msg. to t}} \underbrace{{\phi}_t(x_t) \prod_{w\in \Nn(t)\backslash s}m_{wt}(x_t)}_{\text{msg. from variable node $t$ to factor $\phi_{st}$}} \bigg].
@@ -226,7 +227,7 @@
         \end{tabular}};
       \node[nnode, below=of surrogate] (sol) {Solution};
 
-      \node[nnode, below=of Problem] (ext) {\begin{tabular}{c}Exterior \\ Estimator\end{tabular}};
+      \node[nnode, below= of Problem] (ext) {\begin{tabular}{c}Exterior \\ Estimator\end{tabular}};
       \node[nnode, right=of ext] (mmrf) {\begin{tabular}{c}Modified\\MRF\end{tabular}};
       
 
@@ -323,8 +324,12 @@
     \includegraphics[width=0.8\columnwidth]{figures/converge/converge_erp0_2_alpha_0_5_stn_0_1_vs_filter_true-crop.pdf}
   \end{columns}
   \centering
-  {\tiny Numerical illustration of convergence, with normalized error ${\normd{\bm{m}^{(n)}-\bm{m}^{\ast}}}/{\normd{\bm{m}^{\ast}}}$ versus the number of iterations. Number of nodes $N=16$. Blue region denotes the range from minimum to maximum of the normalized error of $100$ graph realizations, whereas the curve stands for mean error of the $100$ realized graphs. }
-  \vskip -0.2cm
+  {Numerical illustration of convergence, with normalized error ${\normd{\bm{m}^{(n)}-\bm{m}^{\ast}}}/{\normd{\bm{m}^{\ast}}}$ versus the number of iterations. Blue region: range of the normalized error of $100$ graph realizations. Curve: mean error of the $100$ realized graphs. }
+
+\end{frame}
+
+\begin{frame}{Some Numerical Results}
+  \graphicspath{{../source/chapter3/}}
   \begin{columns}
     \column{0.5\textwidth}
     \begin{center}
@@ -335,7 +340,7 @@
     \includegraphics[width=0.8\columnwidth]{figures/tbp/mf_tbp_compare.pdf}
   \end{columns}
   \centering
-  {\tiny Numerical results of $\alpha$-BP: symbol error of MIMO detection.}
+  {Numerical results of $\alpha$-BP: symbol error of MIMO detection.}
 
 \end{frame}
 
@@ -503,10 +508,10 @@
       \draw[-] (b) to (x4);
       \draw[-] (c) to (x4);
       
-      \node[fnode, fit=(x1)(x2)] (box) {};
-      \node[fnoder, fit=(x3)(b)] (box) {};
+      \node[fnode, thin, fit=(x1)(x2)] (box) {};
+      \node[fnoder, thin, fit=(x3)(b)] (box) {};
 
-      \node[fnode, fit=(x2)(x3)(x4)(b)(c)] (box) {};
+      \node[fnode, thin, fit=(x2)(x3)(x4)(b)(c)] (box) {};
     \end{tikzpicture}
     \column{0.4\textwidth}
     \begin{itemize}[label=\textbullet]
@@ -604,7 +609,7 @@
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
       %% The 3-layer region graph
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
-      \begin{scope}[xshift=0.6cm, yshift=-3.1cm,scale=0.8, every node/.append style={transform shape},local bounding box=rg3, opacity=0.3]
+      \begin{scope}[xshift=0.6cm, yshift=-3.1cm,scale=0.8, every node/.append style={transform shape},local bounding box=rg3]
         \tikzstyle{rnode} = [thick, rectangle, rounded corners = 2pt,minimum size = 0.0cm,draw,inner sep = 2pt]
         \node[rnode] (r01) at (0,0) {\small\begin{tabular}[x]{@{}c@{}}1, 2, 4, 5 \\ $A,C,D,F$ \end{tabular}};
         \node[rnode] (r02) at (3.7,0) {\small\begin{tabular}[x]{@{}c@{}}2, 3, 5, 6\\ $B,D,E,G$ \end{tabular}};
@@ -672,7 +677,7 @@
         \draw[->] (r17.south) -- (r26.north);
       \end{scope}
       \draw[green, ->, shorten >=5pt, shorten <=5pt] (grid) -- (rg2);
-      \draw[opacity=0.3, dashed, ->, shorten >=5pt, shorten <=5pt] (grid) -- (rg3);
+      \draw[->, shorten >=5pt, shorten <=5pt] (grid) -- (rg3);
       
 
     \end{tikzpicture}
@@ -700,7 +705,7 @@
   \item region average energy: $- \sum_{a\in A_R} \ln{\phi_a(\bm{x}_a; \bm{\theta}_a)}$
   \end{itemize}
   
-  
+  \only<2>{
   
   \begin{columns}
     \column{0.3\textwidth}
@@ -821,7 +826,7 @@
       
     \end{tikzpicture}
   \end{columns}
-  
+  }
 \end{frame}
 
 \begin{frame}{RENN}
@@ -842,14 +847,14 @@
         \node[below=0.1cm of r11] {\tiny Average incoming marginalization from parents};
       \end{tikzpicture}
     \end{center}
-    
+    \vskip -0.5cm
     Objective of RENN:\\
     \begin{equation*}
       \min_{\text{\begin{tabular}{c}parameter \\of NN\end{tabular}}} \mathrm{\underbrace{\textbf{region-based free energy} (F_R)}_{\text{Assumulated average of all regions}}} + \underbrace{\mathrm{\textbf{panelty on belief consistency} }}_{\text{Recursively computed via levels of region graph}}
     \end{equation*}
   }
   \\
-  \onslide<2->{
+  \only<2->{
     RENN Inference:
     \begin{center}
     \begin{tikzpicture}

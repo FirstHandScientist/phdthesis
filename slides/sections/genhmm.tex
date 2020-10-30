@@ -343,6 +343,18 @@
 
 \end{frame}
 
+\begin{frame}{Remark On GenMM/GenHMM}
+  \begin{block}{Attributes}
+    \begin{itemize}[label=\textbullet]
+    \item Free dimension for flexibility: number of mixture + complexity of functional form of neural networks
+    \item Compatible with statistic methods and neural network techniques (error back-propagation, optimizer)
+    \item Embed batch-gradient descent into M-step
+    \item Lack of closed-form update rule and generator changes at each gradient step. We tackle by maintaining old and new generators in EM steps
+    \end{itemize}
+    
+  \end{block}
+\end{frame}
+
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "../ppgm_slide"

@@ -18,7 +18,7 @@
         \node[rnode, fill=white, text=black] (bn) at (2,-2) {Directed\\
           BNs};
         \begin{scope}[on background layer]
-          \node[rnode, inner sep = 12pt, fill=gray, opacity=0.9, fit=(PandG)(mrf)(bn)] (core) {};
+          \node[rnode, inner sep = 12pt, fill=gray!50, opacity=0.9, fit=(PandG)(mrf)(bn)] (core) {};
           \node[nnode] at (0,-1.5) {Preliminary \\ Chpt. 1, 2};
         \end{scope}
       \end{scope}
@@ -61,7 +61,7 @@
     Intrinsic property: \textbf{reasoning with uncertainty}
   }\\
   \vskip 0.8cm
-  \onslide<2->{
+  
     A directed/undirected graph encoding dependencies/indepedencies of distribution $p(\bm{x}; \bm{\theta})$:
     \begin{itemize}[label={$\bullet$}]
     \item A BN/Generative model is a directed graph
@@ -78,7 +78,7 @@
       \item $Z(\bm{\theta}) = \sum_{\bm{x}}\prod_{a} \psi_a(\bm{x}_a;\bm{\theta}_a)$.
       \end{itemize}
     \end{itemize}
-  }
+  
   
 \end{frame}
 \begin{frame}{Usage of Graphical Models}
@@ -97,7 +97,7 @@
   \end{itemize}
   
 
-  \onslide<2->{
+  
     Two key components interacting with each other:
     \begin{figure}[!t]
       \centering
@@ -115,7 +115,7 @@
       \end{tikzpicture}
 
     \end{figure}
-  }
+  
 
 \end{frame}
 
@@ -184,18 +184,18 @@
         \node[enode] (x1) at (-0.8,0) {$x_1$};
         \node[enode] (x2) at (0,-1) {$x_2$};
         \node[enode] (x3) at (0,1) {$x_3$};
-        \node[enode, fill=gray] (x4) at (1,-0.5) {$x_4$=?};
+        \node[enode, fill=\stampcolor] (x4) at (1,-0.5) {$x_4$};
         \node[enode] (x5) at (1,0.5) {$x_5$};
         \node[enode] (x6) at (2,-0.8) {$x_6$};
         \node[enode] (x7) at (2,+0.8) {$x_7$};
 
-        \draw[->] (x1) to node[above] {$x_1$} (x4);
+        \draw[green,->] (x1) to node[black,above] {$x_1$} (x4);
         \draw[-] (x1) to (x5);
-        \draw[->] (x2) to node[above] {$x_2$} (x4);
+        \draw[green,->] (x2) to node[black,above] {$x_2$} (x4);
         
         \draw[-] (x3) to (x5);
-        \draw[->] (x6) to node[above] {$x_6$} (x4);
-        \draw[->] (x7) to node[right] {$x_7$} (x4);
+        \draw[green,->] (x6) to node[black,above] {$x_6$} (x4);
+        \draw[green,->] (x7) to node[black,right] {$x_7$} (x4);
         \draw[-] (x5) to (x7);
       \end{tikzpicture}
       \vskip 0.5cm
@@ -210,18 +210,18 @@
       \node[enode] (x1) at (-0.8,0) {$x_1$};
       \node[enode] (x2) at (0,-1.2) {$x_2$};
       \node[enode] (x3) at (0,1) {$x_3$};
-      \node[enode, fill=gray] (x4) at (1,-0.5) {$x_4$=?};
+      \node[enode, fill=\stampcolor] (x4) at (1,-0.5) {$x_4$};
       \node[enode] (x5) at (1,0.5) {$x_5$};
       \node[enode] (x6) at (2,-1.1) {$x_6$};
       \node[enode] (x7) at (2,+0.8) {$x_7$};
 
-      \draw[->] (x1) to node[above=0.05mm] {$b_1$} (x4);
+      \draw[green,->] (x1) to node[black,above=0.05mm] {$b_1$} (x4);
       \draw[-] (x1) to (x5);
-      \draw[->] (x2) to node[above=0.05mm] {$b_2$}(x4);
+      \draw[green,->] (x2) to node[black,above=0.05mm] {$b_2$}(x4);
       
       \draw[-] (x3) to (x5);
-      \draw[->] (x6) to node[above=0.05mm] {$b_6$} (x4);
-      \draw[->] (x7) to node[right] {$b_7$} (x4);
+      \draw[green,->] (x6) to node[black,above=0.05mm] {$b_6$} (x4);
+      \draw[green,->] (x7) to node[black,right] {$b_7$} (x4);
       \draw[-] (x5) to (x7);
     \end{tikzpicture}
     \vskip 0.5cm
