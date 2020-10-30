@@ -1,6 +1,25 @@
 #+TITLE: The slide source files
 
-The slides are made by beamer and tikz, compiled by latexmk.
+The slides are made by beamer and tikz, compiled by latexmk
 #+BEGIN_SRC bash
 $ make
+#+END_SRC
+which would produce all pages by default.
+
+** Too slow to compile all pages in making slides?
+It is true that beamer can be slow when there are many pages of your slides. A possible way to fast your process is to add label to your working-frame and compile this one or these ones only. For instance
+#+BEGIN_SRC latex
+\begin{frame}[label=current]
+Compile this one only
+\end{frame}
+#+END_SRC
+The frames with label 'current' would be compiled only if the following macro is added in your tex:
+#+BEGIN_SRC latex
+\includeonlyframes{current}
+#+END_SRC
+where you can change the label or add more different ones.
+
+Then just call
+#+BEGIN_SRC bash
+$ make dev
 #+END_SRC
