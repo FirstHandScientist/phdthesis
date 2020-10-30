@@ -189,7 +189,7 @@
     Marco Cuturi. Sinkhorn distances: Lightspeed computation of optimal transport}
 \end{frame}
 
-\begin{frame}[label=current]{EOTGM and EOTGAN}
+\begin{frame}{EOTGM and EOTGAN}
   EOTGM\\
   \begin{tikzpicture}
     \tikzstyle{enode} = [thick, draw, circle, inner sep = 4pt,  align=center]
@@ -218,7 +218,7 @@
       \draw [-{Straight Barb[left]}] ($(rowScale.north) + (0, 0.1) $) to ($(colScale.south) +(0,0.1)$);
       \draw [-{Straight Barb[left]}] (colScale) -- node[black, midway, below] {\tiny iterative} (rowScale) ;
     }
-    \only<2>{
+    \only<2->{
       \node[nnode, rotate=-90, inner sep = 8pt, fill=gray!15] (rowScale1) at (5,-0.6) {\tiny ~~Row Scale~~~~};
       \node[nnode, rotate=-90, inner sep = 8pt, fill=gray!5] (colScale1) at (7,-0.6) {\tiny Column Scale};
       
@@ -235,7 +235,7 @@
     }
   \end{tikzpicture}
 
-  
+  \only<3>{
   EOTGAN: learn implicit distribution with feature mapping\\
   
   \begin{tikzpicture}
@@ -248,7 +248,7 @@
     \end{scope}
 
   \end{tikzpicture}
-  
+  }
 \end{frame}
 
 \graphicspath{{../source/chapter8/}}

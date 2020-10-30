@@ -6,7 +6,7 @@
   \begin{frame}
     \usebeamercolor[fg]{normal text}
     \begin{center}
-      {\large Why are Probabilistic Graphical Models interested?}
+      {\large Why are probabilistic graphical models interesting?}
     \end{center}
   \end{frame}
 }
@@ -86,20 +86,20 @@
         Speech Recognition
         \column{0.5\textwidth}
         \begin{tikzpicture}[scale=0.65]
-          \tikzstyle{enode} = [thick, draw, circle, inner sep = 3pt,  align=center]
-          \tikzstyle{cnode} = [thick, fill=gray, draw, circle, inner sep = 3pt,  align=center]
+          \tikzstyle{enode} = [thick, draw, circle, inner sep = 1pt,  align=center]
+          \tikzstyle{cnode} = [thick, fill=gray, draw, circle, inner sep = 1pt,  align=center]
           \begin{scope}{scale=0.5, xshift=1cm}
             \node[cnode] (o1) at (-2, 1.5) {$\Oo_1$};
             \node[cnode] (o2) at (0, 1.5) {$\Oo_2$};
             \node[cnode] (o3) at (2, 1.5) {$\Oo_3$};
             \node[cnode] (o4) at (4, 1.5) {$\Oo_4$};
-            \node[text width=1cm, right = 0.2cm of o4] {Award};
+            \node[text width=1cm, right = 0.2cm of o4] {\begin{tabular}{l}Award\\optimality\end{tabular}};
 
             \node[enode] (a1) at (-2, 0) {$a_1$};
             \node[enode] (a2) at (0, 0) {$a_2$};
             \node[enode] (a3) at (2, 0) {$a_3$};
             \node[enode] (a4) at (4, 0) {$a_4$};
-            \node[text width=1cm, right = 0.2cm of a4] {Action};
+            \node[text width=1cm, right = 0.4cm of a4] {Action};
             \node[enode] (s1) at (-2, -1.5) {$s_1$};
             \node[enode] (s2) at (0, -1.5) {$s_2$};
             \node[enode] (s3) at (2, -1.5) {$s_3$};
@@ -116,12 +116,15 @@
             \draw[->] (s2) to [out=15, in=-15] (o2);
             \draw[->] (s3) to [out=15, in=-15] (o3);
             \draw[->] (s4) to [out=15, in=-15] (o4);
+            \foreach \x in {1,...,4}{
+              \draw[->] (a\x) to (o\x);
+            }
 
           \end{scope}
           
         \end{tikzpicture}
         \centering
-        Control, reinforcement learning        
+        Decision-making (reinforcement learning)
       \end{columns}
     
   \end{itemize}
@@ -129,42 +132,31 @@
 \end{frame}
 
 
-\subsection{Directed}
-\begin{frame}{Undirected Graph Representations}
+\subsection{Undirected}
+\begin{frame}[label=current]{Undirected Graph Representations}
   \begin{itemize}
   \item % image segmentation
         \begin{tikzpicture}
-          \tikzstyle{enode} = [thick, draw, circle, inner sep = 3pt,  align=center]
-          \tikzstyle{cnode} = [thick, fill=gray, draw, circle, inner sep = 3pt,  align=center]
+          \tikzstyle{enode} = [thick, draw, thick,fill=white, circle, inner sep = 2pt,  align=center]
+          \tikzstyle{cnode} = [thick, fill=gray, draw, circle, inner sep = 2pt,  align=center]
           \begin{scope}{scale=0.4}
-            \node[inner sep=0pt] (img) at (-7,0) {\includegraphics[width=.25\textwidth]{images/illustrate/slam_img.png}};
+            \node[inner sep=0pt] (img) at (-8,0) {\includegraphics[width=.25\textwidth]{images/illustrate/slam_img.png}};
           \end{scope}
           \begin{scope}{scale=0.4}
             \node[inner sep=0pt] (slam) at (0,0) {\includegraphics[width=.25\textwidth]{images/illustrate/slam_lab.png}};
           \end{scope}
           
-          \begin{scope}[local bounding box=crf, scale=0.6, xshift=-4cm]
-            \node[enode] (x1) at (-2, 1) {};
-            \node[enode] (x2) at (0, 1) {};
-            \node[enode] (x3) at (-2, -1) {};
-            \node[enode] (x4) at (0, -1) {};
-
-            \node[cnode] (y1) at (-3, 0) {};
-            \node[cnode] (y2) at (-1, 0) {};
-            \node[cnode] (y3) at (-3, -2) {};
-            \node[cnode] (y4) at (-1, -2) {};
-            \node[text width=1cm, left = 0.2cm of x1] {Label};
-            \node[text width=1cm, right = 0.2cm of y4] {Pixel};
-
-            \draw[-] (x1) to (y1);
-            \draw[-] (x2) to (y2);
-            \draw[-] (x3) to (y3);
-            \draw[-] (x4) to (y4);
-
-            \draw[-] (x1) to (x2);
-            \draw[-] (x1) to (x3);
-            \draw[-] (x2) to (x4);
-            \draw[-] (x3) to (x4);
+          \begin{scope}[local bounding box=crf, scale=0.6, shift={(-8, -1)}]
+            \draw (0,0) grid (4,3);
+            \foreach \i in {0,...,4}{
+              \foreach \j in {0,...,3} {
+                \node[enode] (x\i\j) at (\i, \j) {};
+                \node[cnode] (y\i\j) at ($(\i, \j) + (-0.5, -0.5)$) {};
+                \draw[-] (x\i\j) to (y\i\j);
+              }
+            }
+            \node[right = 0.02 of x43] {\tiny Label};
+            \node[left = 0.02 of y00] {\tiny Pixel};
           \end{scope}
           
         \end{tikzpicture}
@@ -173,42 +165,29 @@
         Vision Perception
         \item % digital communication
         \begin{tikzpicture}[scale=0.7]
-          \tikzstyle{enode} = [thick, draw, circle, inner sep = 3pt,  align=center]
-          \tikzstyle{cnode} = [thick, fill=gray, draw, circle, inner sep = 3pt,  align=center]
+          \tikzstyle{enode} = [thick, draw, circle, inner sep = 2pt,  align=center]
+          \tikzstyle{cnode} = [thick, fill=gray, draw, circle, inner sep = 2pt,  align=center]
       
-          \begin{scope}[local bounding box=mrf]{scale=0.2}
-            \node[enode] (x1) at (-2, 1) {};
-            \node[enode] (x2) at (-1, 1) {};
-            \node[enode] (x3) at (0, 1) {};
-
-            \node[cnode] (y1) at (-3, -1) {};
-            \node[cnode] (y2) at (-1, -1) {};
-            \node[cnode] (y3) at (1, -1) {};
-            
-            \node[text width=1cm, right = 0.2cm of x3] {True Symbol};
-            \node[text width=1cm, right = 0.2cm of y3] {Received Symbol};
-
-            \draw[-] (x1) to (y1);
-            \draw[-] (x1) to (y2);
-            \draw[-] (x1) to (y3);
-
-            \draw[-] (x2) to (y1);
-            \draw[-] (x2) to (y2);
-            \draw[-] (x2) to (y3);
-
-            \draw[-] (x3) to (y1);
-            \draw[-] (x3) to (y2);
-            \draw[-] (x3) to (y3);
+          \begin{scope}[local bounding box=mrf]{scale=0.15, shift={(-2,10)}}
+            \foreach \i in {-3,...,0} {
+              \node[cnode] (x\i) at (0, \i) {};
+              \node[enode] (y\i) at (-5, \i) {};
+            }
+            \foreach \i in {-3,...,0} {
+              \foreach \j in {-3,...,0} {
+                \draw (x\i) to (y\j) ;
+              }
+            }
 
           \end{scope}
 
-          \begin{scope}[shift={(-4,0)}, scale=0.9, every node/.append style={transform shape}]
-          \node[block](tx) at (-6,-1) {transmitter};
+          \begin{scope}[shift={($(mrf)+(-1.5,0)$)}, scale=0.9, every node/.append style={transform shape}]
+          \node[block](tx) at (-6,-1) {Transmitter};
           \node[antenna] at (tx.east) {};
-          \node[block,right = 1.5cm of tx](rx){receiver};
+          \node[block,right = 12 of tx](rx){Receiver};
           \node[antenna,xscale=-1] at (rx.west) {};
           \end{scope}
-        \end{tikzpicture}
+        \end{tikzpicture}\\
         \centering
         Digital communication
       \item % Solid physics
@@ -236,7 +215,7 @@
             \node[enode] (x42) at (1, 3) {};
             \node[enode] (x43) at (2, 3) {};
             \node[enode] (x44) at (3, 3) {};
-
+            \node[black] (text) [right=0.1 of x24] {\begin{tabular}{c}Physics \\Ising or Potts \end{tabular}};
             \draw (x11)--(x12)--(x13)--(x14);
             \draw (x21)--(x22)--(x23)--(x24);
             \draw (x31)--(x32)--(x33)--(x34);
@@ -249,7 +228,7 @@
           \end{scope}
         \end{tikzpicture}\\
         \centering
-        Physics (Ising or Potts model)
+        
         \column{0.5\textwidth}
         \begin{itemize}[label=$\bullet$]
         \item Error-control codes

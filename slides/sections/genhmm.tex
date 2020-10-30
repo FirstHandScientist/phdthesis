@@ -1,5 +1,5 @@
 
-\begin{frame}[label=current]
+\begin{frame}
   {GenHMM: Bring the concept into HMM}
   \begin{tikzpicture}
     \begin{scope}[scale=0.8, local bounding box=genhmmTemplate]
@@ -18,7 +18,7 @@
           where 
           \begin{itemize}
           \item[-] $\pi_{s, \kappa} = p(\kappa | s; \bm{H})$, naturally $\sum_{\kappa = 1}^{K} \pi_{s, \kappa}= 1$
-          \item[-]$p_k(\bm{x})$ is induced by the $k$th generator $\bm{g}_k(\bm{z})=\bm{g}(\bm{z};\boldsymbol{\theta}_k)$
+          \item[-] $p(\bm{x}|s, \kappa; \bm{\theta}_{s, \kappa})$ is induced by the $k$th generator $\bm{g}_k(\bm{z})=\bm{g}(\bm{z};\boldsymbol{\theta}_k)$
           \end{itemize}
         \end{minipage}
       };}
@@ -115,16 +115,23 @@
 
 
 
-\begin{frame}[label=current]{Alternative View of GenHMM}
+\begin{frame}{Alternative View of GenHMM}
   \centering
   \begin{tikzpicture}
     \begin{scope}[scale=0.8]
       \tikzstyle{enode} = [thick, draw=black, ellipse, inner sep = 1pt,  align=center]
       \tikzstyle{nnode} = [thick, rectangle, rounded corners = 2pt,minimum size = 0.8cm,draw,inner sep = 2pt]
       \draw[step=1.0, black , xshift=0cm,yshift=0cm] (0,0) grid (5,4);
+      % \foreach \x in {1,...,4}{
+      %   \node[black] at ($(0,5) - (0.2,\x) $) {\x};
+      % }
+      % \foreach \x in {1,...,5}{
+      %   \node[black] at ($(\x, 4.2) $) {\x};
+      % }
+      
       \draw[->] (5,4) -- node[midway, above] {$s$} (5.2,4);
       \draw[->] (0,0) -- node[midway, left] {$\kappa$} (0,-0.2);
-      \node[black] at (0, 4.3) {$p(\bm{x}| s, \kappa; \bm{\Phi}_{s})$};
+      \node[black] at (-0.3, 4.3) {$p(\bm{x}| s, \kappa; \bm{\th}_{s,\kappa})$};
       % \node[enode, pin={[pin edge={->}]right:{}}] (g1) at (-0.5,1.8) {$p(\bm{x}| s=1, \kappa=1; \bm{\Phi}_{1})$};
       % \node[enode] (g2) at (-0.5,0.5) {$p(\bm{x}| s=2, \kappa=1; \bm{\Phi}_{2})$};
       % \node[enode, pin={[pin edge={->}]right:{}}] (gs) at (-0.5, -1.8) {$p(\bm{x}| s=|\Ss|, \kappa=K; \bm{\Phi}_{|\Ss|})$};
@@ -150,28 +157,34 @@
         \node[nnode] (a) at (3.5,-0.5) {$\bm{A}$};
 
         \draw (2.1,0.9)-- (2.2, 0.);
-        \draw (2.2,0.)-- node {\midarrow} (2.2,-2);
+        \draw (2.2,0.)-- node (arr1) {\midarrow} (2.2,-2);
         \draw (2.2,-2)-- (m);
         \draw (m)-- (5, -2);
-        \draw (5, -2)-- node {\midarrow} (5 ,-0.5);
+        \draw (5, -2)-- node (arr2) {\midarrow} (5 ,-0.5);
         \draw (5, -0.5) -- (a);
         \draw (a)-- node {\midarrow} (2.2, -0.5);
-        \node (st) at (4.8, -1) {$s_{t}$};
+        \only<1-2>{
+        \node (st) at (4.8, -1) {$s_{t}$~~};
         \node (st1) at (2.56, -0.25) {$s_{t+1}$};
+        }
+        \only<3>{
+        \node (st) at (4.8, -1) {$s_{t+1}$};
+        \node (st1) at (2.56, -0.25) {$s_{t+2}$};
+        }
       \end{scope}
       \begin{scope}[on background layer]
-        \node [rounded corners = 4pt, rectangle, inner sep = 4pt,  align=center, fit=(a)(m)(st)(st1), label=below:{($s,\kappa$)}, fill=blue!20] () {};
+        \node [rounded corners = 4pt, rectangle, inner sep = 4pt,  align=center, fit=(a)(m)(arr2)(st1), label=below:{($s,\kappa$)}, fill=blue!20] () {};
       \end{scope}
       
     \end{scope}
   \end{tikzpicture}
-  
-  We define the hypothesis set of HMM as $\Hh := \{\bm{H} | \bm{H}=\{\Ss, \bm{q}, \bm{A}, p(\bm{x}|{s}; \bm{\Phi}_{s})\}\}$, where
+  \flushleft
+  Hypothesis set of GenHMM as $\Hh := \{\bm{H} | \bm{H}=\{\Ss, \bm{q}, \bm{A}, p(\bm{x}|{s}; \bm{\Phi}_{s})\}\}$
   \begin{itemize}
-  \item[-] $\Ss$ is the set of hidden states of $\bm{H}$.
-  \item[-] $\bm{q} = \left[ q_1, q_2, \cdots, q_{|\Ss|}\right]^\intercal$ is the initial state distribution of $\bm{H}$ with $|\Ss|$ as cardinality of $\Ss$. For $i \in \Ss$, $q_i = p(s_{1}=i;\bm{H})$. We use $s_t$ to denote the state $s$ at time $t$.
-  \item[-] $\bm{A}$ matrix of size $|\Ss| \times |\Ss|$ is the transition matrix of states in $\bm{H}$. That is, $\forall i, j \in \Ss$,  $\bm{A}_{i,j} = p(s_{t+1}=j|s_{t}=i; \bm{H})$.
-  \item[-] For a given hidden state $s$, the density function of the observable signal is $p({\bm{x}}|{s};\bm{\Phi}_{s})$, where $\bm{\Phi}_{s}$ is the parameter set that defines this probabilistic model. Denote $\bm{\Phi} = \left\{ \bm{\Phi}_{s}| s \in \Ss \right\}$.
+  \item[-] $\Ss$: the set of hidden states of $\bm{H}$.
+  \item[-] $\bm{q} = \left[ q_1, \cdots, q_{|\Ss|}\right]^\intercal$: the initial state distributions of $\bm{H}$. $q_i = p(s_{1}=i;\bm{H})$.
+  \item[-] $\bm{A}$: the transition matrix of states in $\bm{H}$. 
+  \item[-] $\bm{\Phi} = \left\{ \bm{\Phi}_{s}| s \in \Ss \right\}$.
   \end{itemize}
 \end{frame}
 
