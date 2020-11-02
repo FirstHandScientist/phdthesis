@@ -47,7 +47,9 @@
         output/.style = {coordinate},
         pinstyle/.style = {pin edge={to-,t,black}}
     }
-
+\tikzset{cross/.style={cross out, draw=black, minimum size=2*(#1-\pgflinewidth), inner sep=0pt, outer sep=0pt},
+%default radius will be 1pt. 
+cross/.default={1pt}}
 \newcommand{\ubar}[1]{\mkern2mu\underline{\mkern-2mu #1\mkern-2mu}\mkern2mu}
 \logo{\copyright Dong Liu\vspace{-0.43cm}\hspace{2cm}}
 % \logo{\copyright Dong Liu}

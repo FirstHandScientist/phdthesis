@@ -45,7 +45,7 @@
   \begin{columns}
     \column{0.6\textwidth}
     \begin{align*}
-      l(\bm{x}_O; \bm{\theta}) &\geq - \underbrace{F_v(q(\bm{x}_U|\bm{x}_O))}_{Variational Free Energy} - \log{Z(\bm{\theta})} \nonumber \\
+      l(\bm{x}_O; \bm{\theta}) &\geq - \underbrace{F_v(q(\bm{x}_U|\bm{x}_O))}_{\text{Variational Free Energy}} - \log{Z(\bm{\theta})} \nonumber \\
                                & = \EE_{q(\bm{x}_U|\bm{x}_O)}\left[ \log{\frac{{p}(\bm{x}_U, \bm{x}_O; \bm{\theta})}{q(\bm{x}_U|\bm{x}_O)}} \right] \nonumber \\
                                & = \underbrace{\EE_{q(\bm{x}_U|\bm{x}_O)}\left[ \log{{p}(\bm{x}_U, \bm{x}_O; \bm{\theta})} \right] + H({q(\bm{x}_U|\bm{x}_O)})}_{\text{Evidence Lower Bound $F(q, \bm{\theta})$}}
     \end{align*}
@@ -92,7 +92,7 @@
       \begin{itemize}[label=\textbullet]
       \item Ideal case: The underline true $p^{\ast}(\bm{x})$ is in hypothesis space $\Hh$, i.e. $p^{\ast}(\bm{x}) \in \Hh$.
       \item Out of reach: Test $p^{\ast}(\bm{x}) \stackrel{?}{\in} \Hh$
-      \item A general desire:
+      \item Luckily, what is at our hands is:
         \begin{equation*}
           \Hh ~\mathrm{is~large}  \rightarrow \mathrm{condidate}~ p(\bm{x};\bm{\theta})~\mathrm{is~flexible}
         \end{equation*}
@@ -441,10 +441,10 @@
   \only<1>{
     IS, FID, MMD and 1NN of GenMM and LatMM for MNIST dataset.
     \begin{itemize}
-    \item[-]{IS: Inseption Score}
-    \item[-]{FID: Frechet Inception Distance}
-    \item[-]{MMD: Maximum Mean Discrepancy}
-    \item[-]{1NN: 1-Nearest Neighbor}
+    \item[-]{IS: Inseption Score (large is good)}
+    \item[-]{FID: Frechet Inception Distance (small is good)}
+    \item[-]{MMD: Maximum Mean Discrepancy (small is good)}
+    \item[-]{1NN: 1-Nearest Neighbor (the closer to 0.5 the better)}
     \end{itemize}
     \vfill
   }

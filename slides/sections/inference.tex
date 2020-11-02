@@ -38,16 +38,16 @@
 \begin{frame}{Alternative Veiw of BP: $\alpha$-BP}
   Input:
   \begin{columns}
-    \column{0.6\textwidth}
+    \column{0.45\textwidth}
     \begin{itemize}[label=$\bullet$]
     \item A pairwise Markov random field: $p(\bm{x}) \propto \prod_{{s\in \Vv}} \phi_s(x_s) \prod_{(s,t) \in \Ee} \phi_{st}(x_s, x_t)$
     \item A trial distribution: $q(\bm{x}) \propto \prod_{{s\in \Vv}} \tilde{\phi}_s(x_s) \prod_{(s,t) \in \Ee} \tilde{\phi}_{st}(x_s, x_t)$ with factorization $\tilde{\phi}_{s,t}(x_s, x_t) := m_{st}(x_t) m_{ts}(x_s)$
     \item A metric: $\alpha$-Divergence 
     \end{itemize}
     
-    \column{0.4\textwidth}
+    \column{0.55\textwidth}
     \begin{tikzpicture}
-      \begin{scope}[scale=0.6, every node/.append style={transform shape}]
+      \begin{scope}[scale=0.8, every node/.append style={transform shape}]
         \tikzstyle{enode} = [thick, draw=black, circle, inner sep = 4pt, minimum size = 0.7cm, align=center]
         \tikzstyle{nnode} = [thick, rectangle, rounded corners = 0pt, minimum size = 0.5cm,draw,inner sep = 2pt]
         \tikzstyle{cnode} = [thick, cloud, draw,cloud puffs=10, cloud puff arc=120, aspect=2, inner ysep=4pt]
@@ -72,19 +72,18 @@
         \draw[-] (xj) to (pajk);
       \end{scope}
     \end{tikzpicture}
-    \centering{$\Gg:=(\Vv, \Ee)$}
+    \centering{$\Gg_F:=(\Vv \cup \Ff, \Ee_F)$}
   \end{columns}
   \vskip 1cm
-  Approximate local minimization:
-  \begin{itemize}[label=$\bullet$]
-  \item Direct minimization: $ \!\!\!\uargmin{\tilde{\phi}_{ts}^{\mathrm{new}}(x_t, x_s)}\!\!\!\! \Dd_{\alpha_{ts}}\!\!\left(  p^{\backslash (t,s)}\!(\bm{x})\phi_{ts}(x_t, x_s)\|q^{\backslash (t,s)}\!(\bm{x})\tilde{\phi}_{ts}^{\mathrm{new}}(x_t, x_s)\right)$
-  \item Local minimization: $\!\!\!\uargmin{\tilde{\phi}_{ts}^{\mathrm{new}}(x_t, x_s)}\!\!\!\!  \Dd_{\alpha_{ts}}\!\!\left( q^{\backslash (t,s)}\!(\bm{x}){\phi}_{ts}(x_t, x_s) \|q^{\backslash (t,s)}\!(\bm{x})\tilde{\phi}_{ts}^{\mathrm{new}}(x_t, x_s) \right)$, say you are updating $\tilde{\phi}_{ts}^{\mathrm{new}}(x_t, x_s) = m_{ts}^{\mathrm{new}}(x_s) m_{st}(x_t)$
-
-  \end{itemize}
 
   \let\thefootnote\relax\footnotetext{\tiny
     \vskip -0.2cm
-    Definition of $\alpha$-divergence $\Dd_{\alpha}(p \| q ) = \frac{\sum_{\bm{x}} \alpha p(\bm{x}) + (1-\alpha) q (\bm{x}) - p(\bm{x})^{\alpha} q(\bm{x})^{1-\alpha}}{\alpha(1-\alpha)}$
+    Definition of $\alpha$-divergence $\Dd_{\alpha}(p \| q ) = \frac{\sum_{\bm{x}} \alpha p(\bm{x}) + (1-\alpha) q (\bm{x}) - p(\bm{x})^{\alpha} q(\bm{x})^{1-\alpha}}{\alpha(1-\alpha)}$\\
+      Approximate local minimization:
+  \begin{itemize}[label=$\bullet$]
+  \item Direct minimization: $ \!\!\!\uargmin{\tilde{\phi}_{ts}^{\mathrm{new}}(x_t, x_s)}\!\!\!\! \Dd_{\alpha_{ts}}\!\!\left(  p^{\backslash (t,s)}\!(\bm{x})\phi_{ts}(x_t, x_s)\|q^{\backslash (t,s)}\!(\bm{x})\tilde{\phi}_{ts}^{\mathrm{new}}(x_t, x_s)\right)$
+  \item Local minimization: $\!\!\!\uargmin{\tilde{\phi}_{ts}^{\mathrm{new}}(x_t, x_s)}\!\!\!\!  \Dd_{\alpha_{ts}}\!\!\left( q^{\backslash (t,s)}\!(\bm{x}){\phi}_{ts}(x_t, x_s) \|q^{\backslash (t,s)}\!(\bm{x})\tilde{\phi}_{ts}^{\mathrm{new}}(x_t, x_s) \right)$, say you are updating $\tilde{\phi}_{ts}^{\mathrm{new}}(x_t, x_s) = m_{ts}^{\mathrm{new}}(x_s) m_{st}(x_t)$
+  \end{itemize}
   }
 \end{frame}
 
@@ -270,7 +269,7 @@
     \begin{block}{\small Connection to standard BP}
       \begin{itemize}[label=$\bullet$]
       \item $\alpha \rightarrow 0$ 
-      \item $\alpha$-divergence reduce KL-divergence
+      \item $\alpha$-divergence reduces to KL-divergence
       \item Update rule of $\alpha$-BP reduces to ${m}^{\text{new}}_{ts}(x_s) \propto \sum_{x_t} \phi_{st}(x_s, x_t) {\phi}_t(x_t) \prod_{w\in \Nn(t)\backslash s}m_{wt}(x_t)$, which is standard BP update rule
         
       \end{itemize}
@@ -330,15 +329,18 @@
 
 \begin{frame}{Some Numerical Results}
   \graphicspath{{../source/chapter3/}}
-  \begin{columns}
-    \column{0.5\textwidth}
-    \begin{center}
-      \includegraphics[width=0.8\columnwidth]{figures/alpha_compare_crop.pdf}
-    \end{center}
-    \column{0.5\textwidth}
-    \centering
-    \includegraphics[width=0.8\columnwidth]{figures/tbp/mf_tbp_compare.pdf}
-  \end{columns}
+  % \begin{columns}
+  %   \column{0.5\textwidth}
+  %   \begin{center}
+  %     \includegraphics[width=0.8\columnwidth]{figures/alpha_compare_crop.pdf}
+  %   \end{center}
+  %   \column{0.5\textwidth}
+  %   \centering
+  %   \includegraphics[width=0.8\columnwidth]{figures/tbp/mf_tbp_compare.pdf}
+  % \end{columns}
+  \centering
+  \includegraphics[width=0.5\textwidth]{figures/tbp/mf_tbp_compare.pdf}
+
   \centering
   {Numerical results of $\alpha$-BP: symbol error of MIMO detection.}
 
@@ -479,7 +481,7 @@
 \begin{frame}{Continuing: What is the state of $x$?}
   \framesubtitle{Yedidia, Freeman, Weiss: A step to generalization}
   \textbf{Message among variables \& factors $\rightarrow$ message among regions}
-  \textcolor{red}{Maybe I should combine this slide to the next one}
+  % \textcolor{red}{Maybe I should combine this slide to the next one}
   \begin{columns}
     \column{0.6\textwidth}
     \centering
@@ -531,14 +533,14 @@
   \item higher complexity
   \item sensitive to scheduling of region messages
   \end{itemize}
-  Corresponding to minimization of approximated \textbf{variational free energy $F_v(b)$  with trial $b$ including $\{b_R\}$}.
+  Approximating \textbf{variational free energy $F_v(b)$  with trial $b$ including $\{b_R\}$}.
   \let\thefootnote\relax\footnotetext{\tiny
     \vskip -0.2cm
     A \textit{region} $R$ is a set $V_R$ of variables nodes and a set $A_R$ of factor nodes, such that if a factor node '$a$' belongs to $A_R$, all the variables nodes neighboring $a$ are in $V_R$.
   }
 \end{frame}
 
-\begin{frame}{An Toy Example of Region Graphs}
+\begin{frame}{A Toy Example of Region Graphs}
   Factor graph representation of MRF (2-by-3 grid) with factor nodes.\\
   MRF $\rightarrow$ region graph:\\
   \vskip 0.5cm
@@ -684,8 +686,8 @@
     \column{0.3\textwidth}
     \begin{itemize}[label=\textbullet]
     \item Clustering nodes
-    \item Valid regions
-    \item Energy Calculated per region
+    \item level/layer-wise
+    \item Hierarchical
     \item Msg. Scheduling
     \item ...
     \item See Section 4.1
@@ -735,7 +737,7 @@
           \node[rnode] (r11) at (1.5, -2.1) {$R_1^{[1]}$};
         \end{scope}
         \tikzstyle{nnode} = [dashed, draw=blue, rectangle, rounded corners = 2pt, inner sep = 4pt]
-        \node[nnode, fit=(r01)(r02), label=right:$\Rr_0$] {};
+        \node[nnode, fit=(r01)(r02), label=right:{$\Rr_0$,root}] {};
         \node[nnode, fit=(r11), label=right:$\Rr_1$] {};
 
         \draw[->] (r01.south) -- (r11.north);

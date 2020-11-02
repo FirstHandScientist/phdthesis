@@ -8,42 +8,45 @@
       \tikzstyle{cnode} = [thick, ellipse, align=center, draw, inner sep = 6pt]
       \tikzstyle{nnode} = [thick, rectangle, rounded corners = 2pt,minimum size = 0.8cm,draw,inner sep = 6pt]
       \node[nnode] (kl) at (0,0) {KL-divergence};
+      \node[nnode] (alpha) [above=of kl] {$\alpha$-divergence};
+      
       \node[nnode, right= 5cm of kl] (freeEnergy) {\begin{tabular}{c}Free energy $F_V(q(\bm{x}_U|\bm{x}_O))$ \\ (Variational/Gibbs)\end{tabular}};
       \node[nnode, below= of freeEnergy] (elbo) {\begin{tabular}{c}Evidence lower\\ bound $F(q(\bm{x}_U|\bm{x}_O))$ (ELBO)\end{tabular}};
       \node[nnode, below= of kl] (q-fun) {\begin{tabular}{c}Q-function\\ in EM\end{tabular}};
       \node[nnode, below right= of q-fun] (llk) {log-likelihood $\log{p(\bm{x}_O;\bm{\theta})}$};
-      \draw[->] (kl) --node [text width=5cm, midway, above]{\tiny
+      \draw[->] (alpha) to (kl);
+      \draw[->] (kl) --node [black,text width=5cm, midway, above]{\tiny
         \begin{tabular}{c}
           Diff. by a sub-partition func. \\
           $F_V(q(\bm{x}_U|\bm{x}_O)) = \mathrm{KL}(q(\bm{x}_U|\bm{x}_O) || p(\bm{x}_U|\bm{x}_O; \bm{\theta})) $ \\
           $- \log{Z(\bm{x}_O; \bm{\theta})}$
         \end{tabular}}
       (freeEnergy);
-      \draw[ ->] (freeEnergy) --node [text width=3cm, midway, left]{\tiny
+      \draw[ ->] (freeEnergy) --node [black,text width=3cm, midway, left]{\tiny
         \begin{tabular}{c}
           Negative \\
           $F(q(\bm{x}_U|\bm{x}_O)) = -F_V(q(\bm{x}_U|\bm{x}_O))- \underbrace{\log{Z(\bm{\theta})}}_{\text{0 in DAGs}}$
         \end{tabular}}
       (elbo);
 
-      \draw[->] (kl) --node [text width=3cm, midway, left]{\tiny
+      \draw[->] (kl) --node [black,text width=3cm, midway, left]{\tiny
         \begin{tabular}{c}
           $-\mathrm{KL}(q(\bm{x}_U|\bm{x}_O) || p(\bm{x}_U,\bm{x}_O; \bm{\theta})) $
         \end{tabular}}
       (elbo);
 
-      \draw[ ->] (elbo) --node [text width=3cm, midway, above]{\tiny
+      \draw[ ->] (elbo) --node [black, text width=3cm, midway, above]{\tiny
         \begin{tabular}{c}
           Diff. by an Entropy term\\
           $F(q(\bm{x}_U|\bm{x}_O))= \Qq + H({q(\bm{x}_U|\bm{x}_O)})$
         \end{tabular}}
       (q-fun);
 
-      \draw[ ->] (elbo) --node [text width=3cm, midway, above]{\tiny
+      \draw[ ->] (elbo) --node [black, text width=3cm, midway, above]{\tiny
         Below
       }
       (llk);
-      \draw[ ->] (q-fun) --node [text width=3cm, midway, right]{\tiny
+      \draw[ ->] (q-fun) --node [black, text width=3cm, midway, right]{\tiny
         Below
       }
       (llk);
@@ -121,11 +124,12 @@
         \item KL-divergence, $\alpha$-divergence
         \end{itemize}
       \end{minipage}} (emp);
+    \node[cross, red, fit=(trckmetric)] {};
     \node[fill=white!30, below= of trckmetric, align=center] (ot) {
       \begin{minipage}{0.6\textwidth}
         Optimal transport (OT): moving mass from a dist. to another
         \begin{equation*}
-          T(p^{\ast},p)=\min_{ \pi \in \Pi(p^{\ast},p)} \dotp{\underbrace{\pi}_{\text{marginalize to $p^{\ast},p$}}}{\underbrace{\bm{M}}_{\text{\begin{tabular}{c}cost matrix\\ sample difference \end{tabular}}}},
+          T(p^{\ast},p)=\min_{ \pi \in \Pi(p^{\ast},p)} \dotp{\underbrace{\pi}_{\text{marginalize to $p^{\ast},p$}}}{\underbrace{\bm{M}}_{\text{\begin{tabular}{c}cost matrix\\ pair-wise sample difference \end{tabular}}}},
         \end{equation*}
         Key attributes:
         \begin{itemize}[label=\textbullet]
@@ -160,7 +164,8 @@
     \node[elnode] (eot) at (3,-2) {\begin{tabular}{c} EOTGM \\ {\tiny NN generator + Sinkhorn solver} \\ {\tiny Applicable to implicit \& explicit models} \end{tabular}};
     \draw[->] (ot) -- node[midway,above] {\tiny Kantorovich duality} (wgan);
     \draw[->] (ot) -- node[midway,right] {\tiny Entropy regularization} (eot);
-    \node[text width=4cm] [right=-0.1cm of eot] {\begin{equation*} \min_{p} \underbrace{\min_{\pi\in\Pp(p^{\ast},p) } \dotp{\pi}{\bm{M}} - \la H(\pi)}_{W(p^{\ast}, p)}
+    
+    \node[text width=4cm] [right=-0.1cm of eot] {\begin{equation*} \underbrace{\min_{p}}_{induced~ by~ \bm{g}} \underbrace{\min_{\pi\in\Pi(p^{\ast},p) } \dotp{\pi}{\bm{M}} - \la H(\pi)}_{W(p^{\ast}, p)}
       \end{equation*}};   
   \end{tikzpicture}
   Alternatively scale the rows \& columns of matrix $e^{-\bm{M}/\lambda}$ (Sinkhorn \& Knopp) gives 'soft' solution
@@ -169,22 +174,7 @@
   \item subgradient $\beta^{\ast}$
   \end{itemize}
   which provides the gradient information for adjusting $\bm{g}$.
-  \only<2>{
-    \begin{textblock}{5}(2,4.3)
-      \begin{tikzpicture}
-        
-        \begin{scope}[scale=1.6, local bounding box=algo]
-          \input{images/eot/alo_flow.tex}
-
-        \end{scope}
-        \begin{scope}[on background layer]
-          \node[rounded corners = 4pt, rectangle, inner sep = 4pt, fill=gray!20, align=center, text width=10cm, label=below:{}, fit=(algo)] () {};
-        \end{scope}
-        
-      \end{tikzpicture}
-    \end{textblock}
-  }
-
+  
   \let\thefootnote\relax\footnotetext{\tiny
     Marco Cuturi. Sinkhorn distances: Lightspeed computation of optimal transport}
 \end{frame}
@@ -236,7 +226,7 @@
   \end{tikzpicture}
 
   \only<3>{
-  EOTGAN: learn implicit distribution with feature mapping\\
+  EOTGAN: learn implicit distribution with feature mapping, c.f. Section 8.2.2\\
   
   \begin{tikzpicture}
     \tikzstyle{ecnode} = [thick, draw, ellipse, inner sep = 4pt,  align=center]
@@ -248,7 +238,23 @@
     \end{scope}
 
   \end{tikzpicture}
-  }
+}
+% \only<4>{
+%     \begin{textblock}{5}(2,4.3)
+%       \begin{tikzpicture}
+        
+%         \begin{scope}[scale=1.6, local bounding box=algo]
+%           \input{images/eot/alo_flow.tex}
+
+%         \end{scope}
+%         \begin{scope}[on background layer]
+%           \node[rounded corners = 4pt, rectangle, inner sep = 4pt, fill=gray!20, align=center, text width=10cm, label=below:{}, fit=(algo)] () {};
+%         \end{scope}
+        
+%       \end{tikzpicture}
+%     \end{textblock}
+%   }
+
 \end{frame}
 
 \graphicspath{{../source/chapter8/}}

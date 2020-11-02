@@ -33,69 +33,69 @@
     
   \end{frame}
 }
-\begin{frame}{Two Direction Impact}
-  Why impact in two direction?
-  \begin{itemize}[label=$\bullet$]
+% \begin{frame}{Two Direction Impact}
+%   Why impact in two direction?
+%   \begin{itemize}[label=$\bullet$]
     
-    \item Learning to Inference:\\
-      \begin{figure}[!t]
-        \centering
-        \begin{tikzpicture}
-          \tikzstyle{cnode} = [thick, draw=black, ellipse, inner sep = 2pt,  align=center]
-          \tikzstyle{fnode} = [thick, draw=black, ellipse, inner sep = 10pt,  align=center]
+%     \item Learning to Inference:\\
+%       \begin{figure}[!t]
+%         \centering
+%         \begin{tikzpicture}
+%           \tikzstyle{cnode} = [thick, draw=black, ellipse, inner sep = 2pt,  align=center]
+%           \tikzstyle{fnode} = [thick, draw=black, ellipse, inner sep = 10pt,  align=center]
           
-          \node[cnode] (infn) at (0,0) {Inference};
-          \node[cnode] (lern) at (3,0) {Learning};
+%           \node[cnode] (infn) at (0,0) {Inference};
+%           \node[cnode] (lern) at (3,0) {Learning};
           
-          % \node[fnode, fit=(infn)(lern)] (box) {};
-          % \node[] at (1.4, -0.6) {Probabilistic Graphical Model};
-          \draw[->,line width=0.2mm] (infn) to[out=15, in=165] (lern);
-          \draw[green, ->,line width=0.2mm] (lern) to[out=195, in=-15] (infn);
-        \end{tikzpicture}
-      \end{figure}
-      Stuff we have been taken as default, a given $p(\bm{x};\bm{\theta})$
-      \begin{itemize}[label=$\bullet$]
-      \item built by expert knowledge, or
-      \item built by extracting information from evidence (empirical data).
-      \end{itemize}
-    \item Inference to Learning:\\
-      \begin{figure}[!t]
-        \centering
-        \begin{tikzpicture}
-          \tikzstyle{cnode} = [thick, draw=black, ellipse, inner sep = 2pt,  align=center]
-          \tikzstyle{fnode} = [thick, draw=black, ellipse, inner sep = 10pt,  align=center]
+%           % \node[fnode, fit=(infn)(lern)] (box) {};
+%           % \node[] at (1.4, -0.6) {Probabilistic Graphical Model};
+%           \draw[->,line width=0.2mm] (infn) to[out=15, in=165] (lern);
+%           \draw[green, ->,line width=0.2mm] (lern) to[out=195, in=-15] (infn);
+%         \end{tikzpicture}
+%       \end{figure}
+%       Stuff we have been taken as default, a given $p(\bm{x};\bm{\theta})$
+%       \begin{itemize}[label=$\bullet$]
+%       \item built by expert knowledge, or
+%       \item built by extracting information from evidence (empirical data).
+%       \end{itemize}
+%     \item Inference to Learning:\\
+%       \begin{figure}[!t]
+%         \centering
+%         \begin{tikzpicture}
+%           \tikzstyle{cnode} = [thick, draw=black, ellipse, inner sep = 2pt,  align=center]
+%           \tikzstyle{fnode} = [thick, draw=black, ellipse, inner sep = 10pt,  align=center]
           
-          \node[cnode] (infn) at (0,0) {Inference};
-          \node[cnode] (lern) at (3,0) {Learning};
+%           \node[cnode] (infn) at (0,0) {Inference};
+%           \node[cnode] (lern) at (3,0) {Learning};
           
-          % \node[fnode, fit=(infn)(lern)] (box) {};
-          % \node[] at (1.4, -0.6) {Probabilistic Graphical Model};
-          \draw[green, ->,line width=0.2mm] (infn) to[out=15, in=165] (lern);
-          \draw[->,line width=0.2mm] (lern) to[out=195, in=-15] (infn);
-        \end{tikzpicture}
-      \end{figure}
-      Model learning: an error trial process that compares inferred 'fact' and actual fact (evidence).\\
-      Model learning usually needs inference as a subroutine, which sometimes are replaced by sampling in particle based methods.
+%           % \node[fnode, fit=(infn)(lern)] (box) {};
+%           % \node[] at (1.4, -0.6) {Probabilistic Graphical Model};
+%           \draw[green, ->,line width=0.2mm] (infn) to[out=15, in=165] (lern);
+%           \draw[->,line width=0.2mm] (lern) to[out=195, in=-15] (infn);
+%         \end{tikzpicture}
+%       \end{figure}
+%       Model learning: an error trial process that compares inferred 'fact' and actual fact (evidence).\\
+%       Model learning usually needs inference as a subroutine, which sometimes are replaced by sampling in particle based methods.
     
-  \end{itemize}
+%   \end{itemize}
   
   
-\end{frame}
+% \end{frame}
 \begin{frame}{\large Inference Routine in Learning}
   
   What is $\bm{\theta}$ in $p(\bm{x}; \bm{\theta}) = \frac{1}{Z(\bm{\theta})} \prod_{a} \psi_a(\bm{x}_a; \bm{\theta}_a)$? \\
   A direct view:
   \begin{align*}
-    \max_{\bm{\theta}} \log{p(\bm{x}; \bm{\theta})} =  \max_{\bm{\theta}}\sum_{a}\log{ \psi_a(\bm{x}_a; \bm{\theta}_a) } \underbrace{- \log{Z(\bm{\theta})}}_{\text{Helmholtz free energy, can be est. by $F$}},
+    \max_{\bm{\theta}} \log{p(\bm{x}; \bm{\theta})} =  \max_{\bm{\theta}}\sum_{a}\log{ \psi_a(\bm{x}_a; \bm{\theta}_a) } \underbrace{- \textcolor{blue}{\log{Z(\bm{\theta})}}}_{\text{can be est. by $\min{F_V}$}},
   \end{align*}
   An alternative view:
   \begin{align*}
-    \pd{\log{p}(\bm{x};\bm{\theta})}{\bm{\theta}_a} = \pd{\log{{\phi_a}(\bm{x}_a; \bm{\theta}_a)}}{\bm{\theta}_a} - \underbrace{\EE_{p(\bm{x}_a; \bm{\theta})}\left[ \pd{\log{{\phi_a}(\bm{x}_a; \bm{\theta}_a)}}{\bm{\theta}_a} \right]}_{\text{can be est. by beliefs}}.
+    \pd{\log{p}(\bm{x};\bm{\theta})}{\bm{\theta}_a} = \pd{\log{{\phi_a}(\bm{x}_a; \bm{\theta}_a)}}{\bm{\theta}_a} - \underbrace{\EE_{\textcolor{blue}{p(\bm{x}_a; \bm{\theta})}}\left[ \pd{\log{{\phi_a}(\bm{x}_a; \bm{\theta}_a)}}{\bm{\theta}_a} \right]}_{\text{can be est. by beliefs}}.
   \end{align*}
 
   Remark:
   \begin{itemize}[label={$\bullet$}]
-  \item This essentially requires estimation of Helmholtz free energy or marginal probabilities.
+  \item This essentially requires estimation of partition function or marginal probabilities.
   \item Stationary points translate into moment matching.
   \end{itemize}
   \only<2->{

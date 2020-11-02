@@ -47,7 +47,7 @@
         
       \end{scope}
       \begin{scope}[on background layer, every node/.append style={transform shape}]
-        \node [rounded corners = 2pt, inner sep=4pt, fill=blue!30,fit=(g1)(g2)(gs), label={[label distance=0.3cm]-60:{\tiny Mixture of generators}}] {};
+        \node [rounded corners = 2pt, inner sep=4pt, fill=blue!15,fit=(g1)(g2)(gs), label={[label distance=0.3cm]-60:{\tiny Mixture of generators}}] {};
       \end{scope}
     }
     \begin{scope}[scale=0.8,every node/.append style={transform shape}, shift={($(genhmmTemplate.south)+(3.5, -2cm)$)}, local bounding box=unroll]
@@ -59,7 +59,7 @@
     \only<2>{
       \draw[dashed, ->, shorten >=10pt, shorten <=10pt] (genhmmTemplate) |- (unroll);
       \begin{scope}[on background layer, every node/.append style={transform shape}]
-        \node [rounded corners = 2pt, inner sep=4pt, fill=gray!30, fit=(sp)(zp)(kp)(x)] {};
+        \node [rounded corners = 2pt, inner sep=4pt, fill=\stampcolor, fit=(sp)(zp)(kp)(x)] {};
       \end{scope}
     }
     \node [text width=2cm, black, left=-0.2cm of s1]{\tiny Unroll the template};
@@ -131,7 +131,7 @@
       
       \draw[->] (5,4) -- node[midway, above] {$s$} (5.2,4);
       \draw[->] (0,0) -- node[midway, left] {$\kappa$} (0,-0.2);
-      \node[black] at (-0.3, 4.3) {$p(\bm{x}| s, \kappa; \bm{\th}_{s,\kappa})$};
+      \node[black] at (-0.3, 4.3) {$\{p(\bm{x}| s, \kappa; \bm{\th}_{s,\kappa})\}$};
       % \node[enode, pin={[pin edge={->}]right:{}}] (g1) at (-0.5,1.8) {$p(\bm{x}| s=1, \kappa=1; \bm{\Phi}_{1})$};
       % \node[enode] (g2) at (-0.5,0.5) {$p(\bm{x}| s=2, \kappa=1; \bm{\Phi}_{2})$};
       % \node[enode, pin={[pin edge={->}]right:{}}] (gs) at (-0.5, -1.8) {$p(\bm{x}| s=|\Ss|, \kappa=K; \bm{\Phi}_{|\Ss|})$};
@@ -173,7 +173,7 @@
         }
       \end{scope}
       \begin{scope}[on background layer]
-        \node [rounded corners = 4pt, rectangle, inner sep = 4pt,  align=center, fit=(a)(m)(arr2)(st1), label=below:{($s,\kappa$)}, fill=blue!20] () {};
+        \node [rounded corners = 4pt, rectangle, inner sep = 4pt,  align=center, fit=(a)(m)(arr2)(st1), label=above:{($s,\kappa$)}, fill=blue!20] () {};
       \end{scope}
       
     \end{scope}
@@ -337,7 +337,7 @@
   Application to sepsis detection for infants, c.f. see Section 7.5.
   \begin{itemize}[label=\textbullet]
   \item generative training + discriminative training
-  \item innovative feature engineering: bring derivative features into this problem
+  \item innovative feature inspired from acoustic signal feature
   \end{itemize}
   
 
@@ -347,7 +347,7 @@
   \begin{block}{Attributes}
     \begin{itemize}[label=\textbullet]
     \item Free dimension for flexibility: number of mixture + complexity of functional form of neural networks
-    \item Compatible with statistic methods and neural network techniques (error back-propagation, optimizer)
+    \item Compatible with classic statistic methods and neural network techniques (error back-propagation, optimizer)
     \item Embed batch-gradient descent into M-step
     \item Lack of closed-form update rule and generator changes at each gradient step. We tackle by maintaining old and new generators in EM steps
     \end{itemize}
