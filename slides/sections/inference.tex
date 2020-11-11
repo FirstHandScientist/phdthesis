@@ -108,7 +108,7 @@
         \draw[->] (w) -- node[midway,above=1em]{$m_{wt}$} (t);
         \draw[->] (w2) to (t);
         \draw[->] (t) to (phiSt);
-        \draw[->] (phiSt) to node[midway,above=1em]{$m_{st}$} (s);
+        \draw[->] (phiSt) to node[midway,above=1em]{$m_{ts}$} (s);
 
       \end{scope}
     \end{tikzpicture}
@@ -196,7 +196,7 @@
         \draw[->] (w) -- node[midway,above=1em]{$m_{wt}$} (t);
         \draw[->] (w2) to (t);
         \draw[->] (t) to (phiSt);
-        \draw[->] (phiSt) to node[midway,above=1em]{$m_{st}$} (s);
+        \draw[->] (phiSt) to node[midway,above=1em]{$m_{ts}$} (s);
 
       \end{scope}
     \end{tikzpicture}
@@ -268,7 +268,7 @@
     \column{0.5\textwidth}
     \begin{block}{\small Connection to standard BP}
       \begin{itemize}[label=$\bullet$]
-      \item $\alpha \rightarrow 0$ 
+      \item $\alpha \rightarrow 1$ 
       \item $\alpha$-divergence reduces to KL-divergence
       \item Update rule of $\alpha$-BP reduces to ${m}^{\text{new}}_{ts}(x_s) \propto \sum_{x_t} \phi_{st}(x_s, x_t) {\phi}_t(x_t) \prod_{w\in \Nn(t)\backslash s}m_{wt}(x_t)$, which is standard BP update rule
         
@@ -700,11 +700,11 @@
 \begin{frame}{RENN: Region-based Energy Neural Network}
   The \textbf{region-based free energy} of a region graph is
   \begin{equation*}
-    F_R(\Bb; \bm{\theta}) = \sum_{R\in \Rr} \underbrace{c_R}_{\text{Counting number}} \sum_{\bm{x}_R}\underbrace{b_R(\bm{x}_R)}_{\text{Belief on region R}} (\underbrace{E_R(\bm{x}_R; \bm{\theta}_R)}_{\text{Region average energy}} + \ln{b_R}(\bm{x}_R)),
+    F_R(\Bb; \bm{\theta}) = \sum_{R\in \Rr} \underbrace{c_R}_{\text{Counting number}} \sum_{\bm{x}_R}\underbrace{b_R(\bm{x}_R)}_{\text{Belief on region R}} (\underbrace{E_R(\bm{x}_R; \bm{\theta}_R)}_{\text{Region energy}} + \ln{b_R}(\bm{x}_R)),
   \end{equation*}
   \begin{itemize}[label=$\bullet$]
   \item counting number: balance the contribution of each region
-  \item region average energy: $- \sum_{a\in A_R} \ln{\phi_a(\bm{x}_a; \bm{\theta}_a)}$
+  \item region energy: $- \sum_{a\in A_R} \ln{\phi_a(\bm{x}_a; \bm{\theta}_a)}$
   \end{itemize}
   
   \only<2>{
