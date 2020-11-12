@@ -6,6 +6,8 @@ The repository contains the source files and compile recipe for making my thesis
 - Thesis file: [[file:main.pdf][main.pdf]]
 - Slide file: [[slides/ppgm_slide.pdf]]
 
+Found this topic interesting? Check out [[https://github.com/FirstHandScientist/pgm_map][this page for a collection]] of related topics.
+  
 /No need to go further down if you are here to view the pdf files/.
 
 ** The environment requires
