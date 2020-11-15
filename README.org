@@ -4,7 +4,7 @@
 
 The repository contains the source files and compile recipe for making my thesis pdf. All compiling processes are via the recipe [[file:Makefile][Makefile]] with Latexmk (see, [[https://mg.readthedocs.io/latexmk.html][Using Latexmk]]). The sources are to generate:
 - Thesis file: [[file:main.pdf][main.pdf]]
-- Slide file: [[slides/ppgm_slide.pdf]]
+- Slide file: [[file:slides/ppgm.pdf][slides/ppgm.pdf]] (or [[slides/ppgm_slide.pdf]])
 
 Found this topic interesting? Check out [[https://github.com/FirstHandScientist/pgm_map][this page for a collection]] of related topics.
   
